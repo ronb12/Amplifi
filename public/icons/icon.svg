@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)" stroke="#ffffff" stroke-width="8"/>
+  
+  <!-- Amplifi "A" symbol -->
+  <path d="M 180 380 L 220 280 L 292 280 L 332 380 L 300 380 L 290 350 L 222 350 L 212 380 Z" fill="#ffffff"/>
+  <path d="M 230 320 L 282 320 L 256 250 Z" fill="#6366f1"/>
+  
+  <!-- Signal waves -->
+  <path d="M 120 200 Q 140 180 160 200 Q 180 220 200 200 Q 220 180 240 200 Q 260 220 280 200 Q 300 180 320 200 Q 340 220 360 200 Q 380 180 400 200" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.8"/>
+  <path d="M 130 220 Q 150 200 170 220 Q 190 240 210 220 Q 230 200 250 220 Q 270 240 290 220 Q 310 200 330 220 Q 350 240 370 220 Q 390 200 410 220" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.6"/>
+  <path d="M 140 240 Q 160 220 180 240 Q 200 260 220 240 Q 240 220 260 240 Q 280 260 300 240 Q 320 220 340 240 Q 360 260 380 240 Q 400 220 420 240" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.4"/>
+</svg> 

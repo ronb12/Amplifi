@@ -308,8 +308,8 @@ class AmplifiApp {
 
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = var(--primary-color);
-            uploadArea.style.backgroundColor = var(--bg-tertiary);
+            uploadArea.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+            uploadArea.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary');
         });
 
         uploadArea.addEventListener('dragleave', (e) => {
