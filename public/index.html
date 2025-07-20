@@ -109,6 +109,121 @@
             </div>
         </div>
 
+        <!-- Live Streaming Tab -->
+        <div id="liveTab" class="tab-content">
+            <div class="live-container">
+                <div class="live-header">
+                    <h2>Live Streaming</h2>
+                    <div class="live-actions">
+                        <button class="btn btn-primary" id="startLiveBtn" onclick="app.startLiveStream()">
+                            <i class="fas fa-broadcast-tower"></i> Go Live
+                        </button>
+                        <button class="btn btn-secondary" id="joinLiveBtn" onclick="app.showLiveStreams()">
+                            <i class="fas fa-play"></i> Watch Live
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Live Stream Setup -->
+                <div id="liveSetup" class="live-setup" style="display: none;">
+                    <h3>Setup Your Live Stream</h3>
+                    <form id="liveStreamForm" class="live-stream-form">
+                        <div class="form-group">
+                            <label for="streamTitle">Stream Title</label>
+                            <input type="text" id="streamTitle" placeholder="Enter your stream title..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="streamDescription">Description</label>
+                            <textarea id="streamDescription" placeholder="Tell viewers what your stream is about..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="streamCategory">Category</label>
+                            <select id="streamCategory" required>
+                                <option value="">Select a category</option>
+                                <option value="gaming">Gaming</option>
+                                <option value="music">Music</option>
+                                <option value="education">Education</option>
+                                <option value="lifestyle">Lifestyle</option>
+                                <option value="tech">Technology</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="streamPrivacy">Privacy</label>
+                            <select id="streamPrivacy" required>
+                                <option value="public">Public</option>
+                                <option value="unlisted">Unlisted</option>
+                                <option value="private">Private</option>
+                            </select>
+                        </div>
+                        <div class="stream-controls">
+                            <button type="button" class="btn btn-secondary" onclick="app.cancelLiveSetup()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Start Streaming
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Live Stream Player -->
+                <div id="livePlayer" class="live-player" style="display: none;">
+                    <div class="stream-header">
+                        <h3 id="currentStreamTitle">Live Stream</h3>
+                        <div class="stream-stats">
+                            <span id="viewerCount"><i class="fas fa-eye"></i> 0 viewers</span>
+                            <span id="streamDuration"><i class="fas fa-clock"></i> 00:00</span>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <video id="liveVideo" autoplay muted></video>
+                        <div class="stream-overlay">
+                            <div class="live-indicator">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stream-controls">
+                        <button class="btn btn-danger" onclick="app.endLiveStream()">
+                            <i class="fas fa-stop"></i> End Stream
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.toggleChat()">
+                            <i class="fas fa-comments"></i> Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Streams List -->
+                <div id="liveStreamsList" class="live-streams-list" style="display: none;">
+                    <h3>Live Now</h3>
+                    <div id="activeStreams" class="active-streams">
+                        <!-- Active streams will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Live Chat -->
+                <div id="liveChat" class="live-chat" style="display: none;">
+                    <div class="chat-header">
+                        <h4>Live Chat</h4>
+                        <button class="btn btn-sm" onclick="app.toggleChat()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="liveChatMessages" class="chat-messages">
+                        <!-- Live chat messages will appear here -->
+                    </div>
+                    <form id="liveChatForm" class="chat-form">
+                        <input type="text" id="liveChatInput" placeholder="Type a message..." maxlength="200">
+                        <button type="submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <!-- Dashboard Tab -->
         <div id="dashboardTab" class="tab-content">
             <div class="dashboard-container">

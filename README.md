@@ -67,13 +67,15 @@ cd Amplifi
 ```javascript
 const firebaseConfig = {
   apiKey: "your-api-key",
-  authDomain: "amplifi-a54d9.firebaseapp.com",
-  projectId: "amplifi-a54d9",
-  storageBucket: "amplifi-a54d9.appspot.com",
+  authDomain: "your-project-id.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project-id.appspot.com",
   messagingSenderId: "your-sender-id",
   appId: "your-app-id"
 };
 ```
+
+**⚠️ Security Note**: The repository contains placeholder values for API keys. Replace them with your actual Firebase and Stripe configuration before deploying.
 
 #### Deploy Firebase Rules
 ```bash

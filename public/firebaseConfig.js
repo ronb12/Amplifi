@@ -1,11 +1,13 @@
 // Firebase configuration for Amplifi
+// IMPORTANT: Replace these placeholder values with your actual Firebase configuration
+// Get your config from: https://console.firebase.google.com/project/YOUR_PROJECT_ID/settings/general
 const firebaseConfig = {
-  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "amplifi-a54d9.firebaseapp.com",
-  projectId: "amplifi-a54d9",
-  storageBucket: "amplifi-a54d9.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdefghijklmnop"
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 // Initialize Firebase
@@ -17,4 +19,5 @@ const db = firebase.firestore();
 const storage = firebase.storage();
 
 // Stripe configuration (test mode)
-const stripe = Stripe('pk_test_51XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'); 
+// Get your publishable key from: https://dashboard.stripe.com/apikeys
+const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY'); 

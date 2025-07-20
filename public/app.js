@@ -1142,6 +1142,354 @@ class AmplifiApp {
         }
     }
 
+    // Live Streaming System
+    async startLiveStream() {
+        if (!this.currentUser) {
+            alert('Please login to start a live stream');
+            return;
+        }
+
+        // Show setup form
+        document.getElementById('liveSetup').style.display = 'block';
+        document.getElementById('livePlayer').style.display = 'none';
+        document.getElementById('liveStreamsList').style.display = 'none';
+
+        // Setup form submission
+        this.setupLiveStreamForm();
+    }
+
+    setupLiveStreamForm() {
+        const liveStreamForm = document.getElementById('liveStreamForm');
+        
+        liveStreamForm.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.createLiveStream();
+        };
+    }
+
+    async createLiveStream() {
+        const title = document.getElementById('streamTitle').value;
+        const description = document.getElementById('streamDescription').value;
+        const category = document.getElementById('streamCategory').value;
+        const privacy = document.getElementById('streamPrivacy').value;
+
+        if (!title || !category || !privacy) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        try {
+            // Request camera and microphone permissions
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+
+            // Create live stream document
+            const streamData = {
+                title: title,
+                description: description,
+                category: category,
+                privacy: privacy,
+                streamerId: this.currentUser.uid,
+                streamerName: this.userProfile.displayName,
+                streamerUsername: this.userProfile.username,
+                streamerPic: this.userProfile.profilePic,
+                status: 'live',
+                viewers: 0,
+                startedAt: new Date(),
+                thumbnailUrl: ''
+            };
+
+            const streamRef = await db.collection('liveStreams').add(streamData);
+            this.currentStreamId = streamRef.id;
+
+            // Start the stream
+            await this.startStreaming(stream, streamRef.id);
+
+        } catch (error) {
+            console.error('Error starting live stream:', error);
+            if (error.name === 'NotAllowedError') {
+                alert('Camera and microphone access is required to start a live stream');
+            } else {
+                alert('Failed to start live stream. Please try again.');
+            }
+        }
+    }
+
+    async startStreaming(mediaStream, streamId) {
+        // Hide setup, show player
+        document.getElementById('liveSetup').style.display = 'none';
+        document.getElementById('livePlayer').style.display = 'block';
+
+        // Set video source
+        const videoElement = document.getElementById('liveVideo');
+        videoElement.srcObject = mediaStream;
+
+        // Update stream title
+        document.getElementById('currentStreamTitle').textContent = 
+            document.getElementById('streamTitle').value;
+
+        // Start stream timer
+        this.startStreamTimer();
+
+        // Setup live chat
+        this.setupLiveChat(streamId);
+
+        // Listen for viewers
+        this.listenForViewers(streamId);
+
+        // Store media stream for cleanup
+        this.currentMediaStream = mediaStream;
+    }
+
+    startStreamTimer() {
+        this.streamStartTime = Date.now();
+        this.streamTimer = setInterval(() => {
+            const duration = Date.now() - this.streamStartTime;
+            const minutes = Math.floor(duration / 60000);
+            const seconds = Math.floor((duration % 60000) / 1000);
+            document.getElementById('streamDuration').innerHTML = 
+                `<i class="fas fa-clock"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    setupLiveChat(streamId) {
+        const liveChatForm = document.getElementById('liveChatForm');
+        const liveChatInput = document.getElementById('liveChatInput');
+
+        liveChatForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const message = liveChatInput.value.trim();
+            if (!message) return;
+
+            await this.sendLiveChatMessage(streamId, message);
+            liveChatInput.value = '';
+        };
+
+        // Listen for live chat messages
+        this.listenForLiveChat(streamId);
+    }
+
+    async sendLiveChatMessage(streamId, message) {
+        try {
+            const chatData = {
+                streamId: streamId,
+                authorId: this.currentUser.uid,
+                authorName: this.userProfile.displayName,
+                message: message,
+                createdAt: new Date()
+            };
+
+            await db.collection('liveChat').add(chatData);
+        } catch (error) {
+            console.error('Error sending live chat message:', error);
+        }
+    }
+
+    listenForLiveChat(streamId) {
+        const chatRef = db.collection('liveChat')
+            .where('streamId', '==', streamId)
+            .orderBy('createdAt', 'desc')
+            .limit(50);
+
+        chatRef.onSnapshot((snapshot) => {
+            const messages = [];
+            snapshot.forEach(doc => {
+                messages.unshift({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            this.renderLiveChat(messages);
+        });
+    }
+
+    renderLiveChat(messages) {
+        const chatMessages = document.getElementById('liveChatMessages');
+        
+        chatMessages.innerHTML = messages.map(msg => `
+            <div class="chat-message">
+                <span class="author">${msg.authorName}:</span>
+                <span class="text">${msg.message}</span>
+            </div>
+        `).join('');
+
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    listenForViewers(streamId) {
+        const streamRef = db.collection('liveStreams').doc(streamId);
+        
+        streamRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('viewerCount').innerHTML = 
+                    `<i class="fas fa-eye"></i> ${data.viewers} viewers`;
+            }
+        });
+    }
+
+    async endLiveStream() {
+        if (!this.currentStreamId) return;
+
+        try {
+            // Stop media stream
+            if (this.currentMediaStream) {
+                this.currentMediaStream.getTracks().forEach(track => track.stop());
+            }
+
+            // Clear timer
+            if (this.streamTimer) {
+                clearInterval(this.streamTimer);
+            }
+
+            // Update stream status
+            await db.collection('liveStreams').doc(this.currentStreamId).update({
+                status: 'ended',
+                endedAt: new Date()
+            });
+
+            // Reset UI
+            document.getElementById('livePlayer').style.display = 'none';
+            document.getElementById('liveSetup').style.display = 'none';
+            document.getElementById('liveStreamsList').style.display = 'none';
+
+            // Clear current stream
+            this.currentStreamId = null;
+            this.currentMediaStream = null;
+
+            alert('Live stream ended successfully');
+
+        } catch (error) {
+            console.error('Error ending live stream:', error);
+            alert('Failed to end live stream. Please try again.');
+        }
+    }
+
+    async showLiveStreams() {
+        // Hide other sections
+        document.getElementById('liveSetup').style.display = 'none';
+        document.getElementById('livePlayer').style.display = 'none';
+        document.getElementById('liveStreamsList').style.display = 'block';
+
+        // Load active streams
+        await this.loadActiveStreams();
+    }
+
+    async loadActiveStreams() {
+        try {
+            const streamsRef = db.collection('liveStreams')
+                .where('status', '==', 'live')
+                .where('privacy', '==', 'public')
+                .orderBy('startedAt', 'desc');
+
+            const snapshot = await streamsRef.get();
+            const streams = [];
+
+            snapshot.forEach(doc => {
+                streams.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            this.renderActiveStreams(streams);
+        } catch (error) {
+            console.error('Error loading active streams:', error);
+        }
+    }
+
+    renderActiveStreams(streams) {
+        const activeStreams = document.getElementById('activeStreams');
+
+        if (streams.length === 0) {
+            activeStreams.innerHTML = `
+                <div class="no-streams">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <p>No live streams at the moment</p>
+                    <p>Be the first to go live!</p>
+                </div>
+            `;
+            return;
+        }
+
+        activeStreams.innerHTML = streams.map(stream => `
+            <div class="stream-card" onclick="app.joinLiveStream('${stream.id}')">
+                <div class="stream-thumbnail">
+                    <img src="${stream.thumbnailUrl || 'https://via.placeholder.com/300x169/6366f1/ffffff?text=Live'}" 
+                         alt="${stream.title}">
+                    <div class="live-badge">LIVE</div>
+                </div>
+                <div class="stream-info">
+                    <div class="stream-title">${stream.title}</div>
+                    <div class="stream-meta">
+                        <div class="stream-author">
+                            <img src="${stream.streamerPic || 'https://via.placeholder.com/24x24/6366f1/ffffff?text=?'}" 
+                                 alt="${stream.streamerName}">
+                            <span>${stream.streamerName}</span>
+                        </div>
+                        <span>${stream.viewers} viewers</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async joinLiveStream(streamId) {
+        try {
+            // Get stream data
+            const streamDoc = await db.collection('liveStreams').doc(streamId).get();
+            if (!streamDoc.exists) {
+                alert('Stream not found');
+                return;
+            }
+
+            const streamData = streamDoc.data();
+
+            // Increment viewer count
+            await db.collection('liveStreams').doc(streamId).update({
+                viewers: firebase.firestore.FieldValue.increment(1)
+            });
+
+            // Show stream player
+            document.getElementById('livePlayer').style.display = 'block';
+            document.getElementById('liveStreamsList').style.display = 'none';
+
+            // Update stream title
+            document.getElementById('currentStreamTitle').textContent = streamData.title;
+
+            // Setup live chat for viewing
+            this.setupLiveChat(streamId);
+
+            // Store current stream ID
+            this.currentStreamId = streamId;
+
+            // Show join message
+            alert(`Joined ${streamData.streamerName}'s live stream!`);
+
+        } catch (error) {
+            console.error('Error joining live stream:', error);
+            alert('Failed to join live stream. Please try again.');
+        }
+    }
+
+    toggleChat() {
+        const liveChat = document.getElementById('liveChat');
+        if (liveChat.style.display === 'none') {
+            liveChat.style.display = 'flex';
+        } else {
+            liveChat.style.display = 'none';
+        }
+    }
+
+    cancelLiveSetup() {
+        document.getElementById('liveSetup').style.display = 'none';
+        document.getElementById('liveStreamForm').reset();
+    }
+
     async showTipModal(creatorId, creatorName) {
         if (!this.currentUser) {
             alert('Please login to tip creators');
