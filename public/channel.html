@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel - Amplifi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html"><h1><i class="fas fa-broadcast-tower"></i> Amplifi</h1></a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link" id="loginBtn">Login</a>
+                <a href="#" class="nav-link" id="logoutBtn" style="display: none;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Channel Header -->
+    <div class="channel-header">
+        <div class="channel-banner" id="channelBanner">
+            <div class="channel-profile">
+                <img id="profilePic" src="https://via.placeholder.com/120x120/6366f1/ffffff?text=?" alt="Profile Picture">
+                <div class="channel-info">
+                    <h1 id="displayName">Loading...</h1>
+                    <p id="username">@loading</p>
+                    <p id="bio">Loading bio...</p>
+                    <div class="channel-stats">
+                        <span id="followerCount">0 followers</span>
+                        <span id="postCount">0 posts</span>
+                    </div>
+                    <div class="channel-actions">
+                        <button id="followBtn" class="btn btn-primary" style="display: none;">
+                            <i class="fas fa-plus"></i> Follow
+                        </button>
+                        <button id="unfollowBtn" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-check"></i> Following
+                        </button>
+                        <button id="tipBtn" class="btn btn-success">
+                            <i class="fas fa-gift"></i> Tip Creator
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Channel Content -->
+    <main class="channel-content">
+        <div class="channel-tabs">
+            <button class="channel-tab active" data-tab="posts">Posts</button>
+            <button class="channel-tab" data-tab="about">About</button>
+        </div>
+
+        <!-- Posts Tab -->
+        <div id="postsTab" class="channel-tab-content active">
+            <div class="posts-grid" id="channelPosts">
+                <!-- Channel posts will be loaded here -->
+            </div>
+            <div id="loadingSpinner" class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="aboutTab" class="channel-tab-content">
+            <div class="about-section">
+                <h3>About</h3>
+                <p id="aboutBio">Loading...</p>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Joined <span id="joinDate">Loading...</span></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-eye"></i>
+                        <span><span id="totalViews">0</span> total views</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-heart"></i>
+                        <span><span id="totalLikes">0</span> total likes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Welcome to Amplifi</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <form id="loginForm" class="auth-form">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            
+            <form id="signupForm" class="auth-form" style="display: none;">
+                <input type="text" placeholder="Display Name" required>
+                <input type="text" placeholder="Username (unique)" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <textarea placeholder="Bio (optional)"></textarea>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tip Modal -->
+    <div id="tipModal" class="modal">
+        <div class="modal-content tip-modal">
+            <span class="close">&times;</span>
+            <h2>Tip Creator</h2>
+            <div id="tipCreatorInfo">
+                <!-- Creator info will be loaded here -->
+            </div>
+            <form id="tipForm">
+                <div class="tip-amounts">
+                    <button type="button" class="tip-amount" data-amount="1">$1</button>
+                    <button type="button" class="tip-amount" data-amount="5">$5</button>
+                    <button type="button" class="tip-amount" data-amount="10">$10</button>
+                    <button type="button" class="tip-amount" data-amount="25">$25</button>
+                </div>
+                <input type="number" id="customTipAmount" placeholder="Custom amount" min="0.50" step="0.50">
+                <button type="submit" id="tipSubmitBtn">
+                    <i class="fas fa-gift"></i> Send Tip
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="channel.js"></script>
+</body>
+</html> 

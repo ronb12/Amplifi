@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amplifi - Share Your Voice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h1><i class="fas fa-broadcast-tower"></i> Amplifi</h1>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-link active" data-tab="feed">Feed</a>
+                <a href="#" class="nav-link" data-tab="upload">Upload</a>
+                <a href="#" class="nav-link" data-tab="live" id="liveTab" style="display: none;">Live</a>
+                <a href="#" class="nav-link" data-tab="dashboard" id="dashboardTab" style="display: none;">Dashboard</a>
+                <a href="#" class="nav-link" data-tab="messages" id="messagesTab" style="display: none;">Messages</a>
+                <a href="#" class="nav-link" id="profileLink" style="display: none;">Profile</a>
+                <a href="#" class="nav-link" id="loginBtn">Login</a>
+                <a href="#" class="nav-link" id="logoutBtn" style="display: none;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Welcome to Amplifi</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <form id="loginForm" class="auth-form">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            
+            <form id="signupForm" class="auth-form" style="display: none;">
+                <input type="text" placeholder="Display Name" required>
+                <input type="text" placeholder="Username (unique)" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <textarea placeholder="Bio (optional)"></textarea>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Feed Tab -->
+        <div id="feedTab" class="tab-content active">
+            <div class="feed-container">
+                <div class="feed-header">
+                    <h2>Discover Amazing Content</h2>
+                    <div class="feed-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="videos">Videos</button>
+                        <button class="filter-btn" data-filter="photos">Photos</button>
+                    </div>
+                </div>
+                <div id="feedPosts" class="posts-grid">
+                    <!-- Posts will be loaded here -->
+                </div>
+                <div id="loadingSpinner" class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="uploadTab" class="tab-content">
+            <div class="upload-container">
+                <h2>Share Your Content</h2>
+                <form id="uploadForm" class="upload-form">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop your video or image here</p>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" accept="video/*,image/*" style="display: none;">
+                    </div>
+                    <div id="filePreview" class="file-preview" style="display: none;">
+                        <video id="videoPreview" controls style="display: none;"></video>
+                        <img id="imagePreview" style="display: none;">
+                        <button type="button" id="removeFile" class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <textarea placeholder="What's on your mind?" id="postCaption"></textarea>
+                    <button type="submit" id="uploadBtn" disabled>
+                        <i class="fas fa-upload"></i> Upload Content
+                    </button>
+                </form>
+                <div id="uploadProgress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p>Uploading... <span id="progressText">0%</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="tab-content">
+            <div class="dashboard-container">
+                <h2>Creator Dashboard</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-eye"></i>
+                        <h3>Total Views</h3>
+                        <p id="totalViews">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Total Earnings</h3>
+                        <p id="totalEarnings">$0.00</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <h3>Tips Received</h3>
+                        <p id="totalTips">$0.00</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-gift"></i>
+                        <h3>Payout Threshold</h3>
+                        <p>$25.00</p>
+                    </div>
+                </div>
+                <div class="earnings-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <p>💰 Earnings available after platform payout (AdMob cycle)</p>
+                </div>
+                <div class="dashboard-content">
+                    <h3>Your Content</h3>
+                    <div id="userPosts" class="user-posts">
+                        <!-- User's posts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div id="messagesTab" class="tab-content">
+            <div class="messages-container">
+                <h2>Direct Messages</h2>
+                <div class="messages-layout">
+                    <div class="conversations-list">
+                        <div class="conversations-header">
+                            <h3>Conversations</h3>
+                            <button class="btn btn-sm" onclick="app.startNewConversation()">
+                                <i class="fas fa-plus"></i> New
+                            </button>
+                        </div>
+                        <div id="conversationsList" class="conversations-list">
+                            <!-- Conversations will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="chat-area">
+                        <div id="chatHeader" class="chat-header" style="display: none;">
+                            <div class="chat-user-info">
+                                <img src="" alt="" id="chatUserPic" class="chat-user-pic">
+                                <div>
+                                    <h4 id="chatUserName">Select a conversation</h4>
+                                    <span id="chatUserStatus" class="user-status">offline</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chatMessages" class="chat-messages">
+                            <div class="no-chat-selected">
+                                <i class="fas fa-comments"></i>
+                                <p>Select a conversation to start messaging</p>
+                            </div>
+                        </div>
+                        <form id="messageForm" class="message-form" style="display: none;">
+                            <div class="message-input-container">
+                                <textarea id="messageText" placeholder="Type your message..." required></textarea>
+                                <button type="submit" id="sendMessageBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Post Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content post-modal">
+            <span class="close">&times;</span>
+            <div id="postModalContent">
+                <!-- Post content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tip Modal -->
+    <div id="tipModal" class="modal">
+        <div class="modal-content tip-modal">
+            <span class="close">&times;</span>
+            <h2>Tip Creator</h2>
+            <div id="tipCreatorInfo">
+                <!-- Creator info will be loaded here -->
+            </div>
+            <form id="tipForm">
+                <div class="tip-amounts">
+                    <button type="button" class="tip-amount" data-amount="1">$1</button>
+                    <button type="button" class="tip-amount" data-amount="5">$5</button>
+                    <button type="button" class="tip-amount" data-amount="10">$10</button>
+                    <button type="button" class="tip-amount" data-amount="25">$25</button>
+                </div>
+                <input type="number" id="customTipAmount" placeholder="Custom amount" min="0.50" step="0.50">
+                <button type="submit" id="tipSubmitBtn">
+                    <i class="fas fa-gift"></i> Send Tip
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comments Modal -->
+    <div id="commentsModal" class="modal">
+        <div class="modal-content comments-modal">
+            <span class="close">&times;</span>
+            <div class="comments-header">
+                <h2>Comments</h2>
+                <div id="commentsPostInfo">
+                    <!-- Post info will be loaded here -->
+                </div>
+            </div>
+            <div class="comments-container">
+                <div id="commentsList" class="comments-list">
+                    <!-- Comments will be loaded here -->
+                </div>
+                <div id="commentsLoading" class="comments-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading comments...
+                </div>
+            </div>
+            <form id="commentForm" class="comment-form">
+                <div class="comment-input-container">
+                    <img src="" alt="Your profile" id="commentUserPic" class="comment-user-pic">
+                    <textarea id="commentText" placeholder="Write a comment..." required></textarea>
+                </div>
+                <button type="submit" id="commentSubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Post Comment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Conversation Modal -->
+    <div id="newConversationModal" class="modal">
+        <div class="modal-content new-conversation-modal">
+            <span class="close">&times;</span>
+            <h2>Start New Conversation</h2>
+            <div class="users-list" id="usersList">
+                <!-- Users will be loaded here -->
+            </div>
+            <div id="usersLoading" class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i> Loading users...
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 

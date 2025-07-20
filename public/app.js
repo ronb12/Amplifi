@@ -1,0 +1,1352 @@
+// Amplifi - Main Application JavaScript
+
+class AmplifiApp {
+    constructor() {
+        this.currentUser = null;
+        this.currentTab = 'feed';
+        this.posts = [];
+        this.isLoading = false;
+        this.lastPost = null;
+        this.postsPerPage = 10;
+        
+        this.init();
+    }
+
+    async init() {
+        this.setupEventListeners();
+        this.setupAuthStateListener();
+        this.loadPosts();
+    }
+
+    setupEventListeners() {
+        // Navigation tabs
+        document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.switchTab(e.target.dataset.tab);
+            });
+        });
+
+        // Modals
+        const authModal = document.getElementById('authModal');
+        const tipModal = document.getElementById('tipModal');
+        const commentsModal = document.getElementById('commentsModal');
+        const newConversationModal = document.getElementById('newConversationModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeBtns = document.querySelectorAll('.close');
+
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            authModal.style.display = 'block';
+        });
+
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                authModal.style.display = 'none';
+                tipModal.style.display = 'none';
+                commentsModal.style.display = 'none';
+                newConversationModal.style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
+            }
+            if (e.target === tipModal) {
+                tipModal.style.display = 'none';
+            }
+            if (e.target === commentsModal) {
+                commentsModal.style.display = 'none';
+            }
+            if (e.target === newConversationModal) {
+                newConversationModal.style.display = 'none';
+            }
+        });
+
+        // Auth tabs
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.switchAuthTab(e.target.dataset.tab);
+            });
+        });
+
+        // Auth forms
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleLogin(e.target);
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleSignup(e.target);
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.handleLogout();
+        });
+
+        // Upload form
+        this.setupUploadForm();
+
+        // Feed filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.filterPosts(e.target.dataset.filter);
+            });
+        });
+    }
+
+    setupUploadForm() {
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        const removeFileBtn = document.getElementById('removeFile');
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = var(--primary-color);
+            uploadArea.style.backgroundColor = var(--bg-tertiary);
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '';
+            uploadArea.style.backgroundColor = '';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '';
+            uploadArea.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                this.handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        removeFileBtn.addEventListener('click', () => {
+            this.removeSelectedFile();
+        });
+
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleUpload();
+        });
+    }
+
+    async setupAuthStateListener() {
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                this.currentUser = user;
+                await this.loadUserProfile();
+                this.updateUIForAuthenticatedUser();
+            } else {
+                this.currentUser = null;
+                this.updateUIForUnauthenticatedUser();
+            }
+        });
+    }
+
+    async loadUserProfile() {
+        try {
+            const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
+            if (userDoc.exists) {
+                this.userProfile = userDoc.data();
+            } else {
+                // Create user profile if it doesn't exist
+                this.userProfile = {
+                    displayName: this.currentUser.displayName || 'Anonymous',
+                    username: this.currentUser.email.split('@')[0],
+                    bio: '',
+                    profilePic: '',
+                    banner: '',
+                    createdAt: new Date(),
+                    isAdmin: false
+                };
+                await db.collection('users').doc(this.currentUser.uid).set(this.userProfile);
+            }
+        } catch (error) {
+            console.error('Error loading user profile:', error);
+        }
+    }
+
+    updateUIForAuthenticatedUser() {
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'block';
+        document.getElementById('dashboardTab').style.display = 'block';
+        document.getElementById('messagesTab').style.display = 'block';
+        document.getElementById('profileLink').style.display = 'block';
+        document.getElementById('profileLink').href = `/channel/${this.userProfile.username}`;
+        
+        // Enable upload tab
+        document.querySelector('.nav-link[data-tab="upload"]').style.display = 'block';
+    }
+
+    updateUIForUnauthenticatedUser() {
+        document.getElementById('loginBtn').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'none';
+        document.getElementById('dashboardTab').style.display = 'none';
+        document.getElementById('messagesTab').style.display = 'none';
+        document.getElementById('profileLink').style.display = 'none';
+        
+        // Disable upload tab
+        document.querySelector('.nav-link[data-tab="upload"]').style.display = 'none';
+        
+        // Switch to feed if on upload, dashboard, or messages
+        if (this.currentTab === 'upload' || this.currentTab === 'dashboard' || this.currentTab === 'messages') {
+            this.switchTab('feed');
+        }
+    }
+
+    switchTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Show selected tab content
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        this.currentTab = tabName;
+
+        // Load specific content for tabs
+        if (tabName === 'dashboard' && this.currentUser) {
+            this.loadDashboard();
+        }
+        if (tabName === 'messages' && this.currentUser) {
+            this.loadConversations();
+        }
+    }
+
+    switchAuthTab(tabName) {
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.auth-form').forEach(form => {
+            form.style.display = 'none';
+        });
+
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}Form`).style.display = 'block';
+    }
+
+    async handleLogin(form) {
+        const email = form.querySelector('input[type="email"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            document.getElementById('authModal').style.display = 'none';
+            form.reset();
+        } catch (error) {
+            alert('Login failed: ' + error.message);
+        }
+    }
+
+    async handleSignup(form) {
+        const displayName = form.querySelector('input[type="text"]').value;
+        const username = form.querySelectorAll('input[type="text"]')[1].value;
+        const email = form.querySelector('input[type="email"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+        const bio = form.querySelector('textarea').value;
+
+        try {
+            // Check if username is available
+            const usernameCheck = await db.collection('users').where('username', '==', username).get();
+            if (!usernameCheck.empty) {
+                alert('Username already taken. Please choose another.');
+                return;
+            }
+
+            // Create user account
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            // Create user profile
+            const userProfile = {
+                displayName,
+                username,
+                bio,
+                profilePic: '',
+                banner: '',
+                createdAt: new Date(),
+                isAdmin: false
+            };
+
+            await db.collection('users').doc(userCredential.user.uid).set(userProfile);
+            
+            document.getElementById('authModal').style.display = 'none';
+            form.reset();
+        } catch (error) {
+            alert('Signup failed: ' + error.message);
+        }
+    }
+
+    async handleLogout() {
+        try {
+            await auth.signOut();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    }
+
+    handleFileSelect(file) {
+        if (file.size > 50 * 1024 * 1024) {
+            alert('File size must be less than 50MB');
+            return;
+        }
+
+        const isVideo = file.type.startsWith('video/');
+        const isImage = file.type.startsWith('image/');
+
+        if (!isVideo && !isImage) {
+            alert('Please select a video or image file');
+            return;
+        }
+
+        this.selectedFile = file;
+        this.showFilePreview(file);
+        document.getElementById('uploadBtn').disabled = false;
+    }
+
+    showFilePreview(file) {
+        const preview = document.getElementById('filePreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const imagePreview = document.getElementById('imagePreview');
+
+        preview.style.display = 'block';
+
+        if (file.type.startsWith('video/')) {
+            videoPreview.style.display = 'block';
+            imagePreview.style.display = 'none';
+            videoPreview.src = URL.createObjectURL(file);
+        } else {
+            imagePreview.style.display = 'block';
+            videoPreview.style.display = 'none';
+            imagePreview.src = URL.createObjectURL(file);
+        }
+    }
+
+    removeSelectedFile() {
+        this.selectedFile = null;
+        document.getElementById('filePreview').style.display = 'none';
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('fileInput').value = '';
+    }
+
+    async handleUpload() {
+        if (!this.selectedFile || !this.currentUser) return;
+
+        const caption = document.getElementById('postCaption').value;
+        const uploadBtn = document.getElementById('uploadBtn');
+        const progressDiv = document.getElementById('uploadProgress');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.getElementById('progressText');
+
+        uploadBtn.disabled = true;
+        progressDiv.style.display = 'block';
+
+        try {
+            // Create post document first
+            const postRef = db.collection('posts').doc();
+            const postData = {
+                id: postRef.id,
+                authorId: this.currentUser.uid,
+                authorName: this.userProfile.displayName,
+                authorUsername: this.userProfile.username,
+                authorPic: this.userProfile.profilePic,
+                caption,
+                mediaType: this.selectedFile.type.startsWith('video/') ? 'video' : 'image',
+                mediaUrl: '',
+                thumbnailUrl: '',
+                likes: 0,
+                comments: 0,
+                views: 0,
+                status: 'active',
+                createdAt: new Date()
+            };
+
+            // Upload file to Storage
+            const fileExtension = this.selectedFile.name.split('.').pop();
+            const fileName = `${postRef.id}.${fileExtension}`;
+            const storageRef = storage.ref(`posts/${postRef.id}/${fileName}`);
+            
+            const uploadTask = storageRef.put(this.selectedFile);
+            
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressFill.style.width = progress + '%';
+                    progressText.textContent = Math.round(progress) + '%';
+                },
+                (error) => {
+                    throw error;
+                },
+                async () => {
+                    // Upload completed
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    postData.mediaUrl = downloadURL;
+
+                    // Generate thumbnail for videos
+                    if (postData.mediaType === 'video') {
+                        postData.thumbnailUrl = await this.generateVideoThumbnail(this.selectedFile, postRef.id);
+                    } else {
+                        postData.thumbnailUrl = downloadURL;
+                    }
+
+                    // Save post to Firestore
+                    await postRef.set(postData);
+
+                    // Reset form
+                    this.removeSelectedFile();
+                    document.getElementById('postCaption').value = '';
+                    progressDiv.style.display = 'none';
+                    uploadBtn.disabled = true;
+
+                    // Reload posts
+                    this.loadPosts();
+
+                    alert('Post uploaded successfully!');
+                }
+            );
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Upload failed: ' + error.message);
+            progressDiv.style.display = 'none';
+            uploadBtn.disabled = false;
+        }
+    }
+
+    async generateVideoThumbnail(videoFile, postId) {
+        return new Promise((resolve) => {
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(videoFile);
+            video.currentTime = 1; // Seek to 1 second
+            
+            video.addEventListener('loadeddata', async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                canvas.toBlob(async (blob) => {
+                    const thumbnailRef = storage.ref(`thumbnails/${postId}/thumbnail.jpg`);
+                    await thumbnailRef.put(blob);
+                    const thumbnailURL = await thumbnailRef.getDownloadURL();
+                    resolve(thumbnailURL);
+                }, 'image/jpeg', 0.8);
+            });
+        });
+    }
+
+    async loadPosts() {
+        if (this.isLoading) return;
+        
+        this.isLoading = true;
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        loadingSpinner.style.display = 'block';
+
+        try {
+            let query = db.collection('posts')
+                .where('status', '==', 'active')
+                .orderBy('createdAt', 'desc')
+                .limit(this.postsPerPage);
+
+            if (this.lastPost) {
+                query = query.startAfter(this.lastPost);
+            }
+
+            const snapshot = await query.get();
+            
+            if (snapshot.empty) {
+                loadingSpinner.style.display = 'none';
+                this.isLoading = false;
+                return;
+            }
+
+            const newPosts = [];
+            snapshot.forEach(doc => {
+                newPosts.push({ id: doc.id, ...doc.data() });
+            });
+
+            this.lastPost = snapshot.docs[snapshot.docs.length - 1];
+            this.posts = this.lastPost ? [...this.posts, ...newPosts] : newPosts;
+            
+            this.renderPosts();
+            loadingSpinner.style.display = 'none';
+        } catch (error) {
+            console.error('Error loading posts:', error);
+            loadingSpinner.style.display = 'none';
+        }
+        
+        this.isLoading = false;
+    }
+
+    renderPosts() {
+        const feedPosts = document.getElementById('feedPosts');
+        
+        if (!this.lastPost) {
+            feedPosts.innerHTML = '';
+        }
+
+        this.posts.forEach(post => {
+            if (!document.getElementById(`post-${post.id}`)) {
+                const postElement = this.createPostElement(post);
+                feedPosts.appendChild(postElement);
+            }
+        });
+    }
+
+    createPostElement(post) {
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post-card';
+        postDiv.id = `post-${post.id}`;
+
+        const mediaElement = post.mediaType === 'video' 
+            ? `<video src="${post.mediaUrl}" poster="${post.thumbnailUrl}" onclick="app.playVideo(this)"></video>`
+            : `<img src="${post.mediaUrl}" alt="Post image">`;
+
+        postDiv.innerHTML = `
+            <div class="post-media">
+                ${mediaElement}
+            </div>
+            <div class="post-info">
+                <div class="post-header">
+                    <img src="${post.authorPic || 'https://via.placeholder.com/32x32/6366f1/ffffff?text=?'}" 
+                         alt="${post.authorName}" class="post-author-pic">
+                    <a href="/channel/${post.authorUsername}" class="post-author">${post.authorName}</a>
+                    <span class="post-timestamp">${this.formatTimestamp(post.createdAt)}</span>
+                </div>
+                <p class="post-caption">${post.caption}</p>
+                <div class="post-actions">
+                    <div class="post-stats">
+                        <span><i class="fas fa-eye"></i> ${post.views}</span>
+                        <span><i class="fas fa-heart"></i> ${post.likes}</span>
+                        <span><i class="fas fa-comment"></i> ${post.comments}</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm" onclick="app.toggleLike('${post.id}')" id="like-${post.id}">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="btn btn-sm" onclick="app.showComments('${post.id}')">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                        <button class="btn btn-sm" onclick="app.showTipModal('${post.authorId}', '${post.authorName}')">
+                            <i class="fas fa-gift"></i>
+                        </button>
+                        <button class="btn btn-sm" onclick="app.reportPost('${post.id}')">
+                            <i class="fas fa-flag"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        return postDiv;
+    }
+
+    async toggleLike(postId) {
+        if (!this.currentUser) {
+            alert('Please login to like posts');
+            return;
+        }
+
+        const likeRef = db.collection('likes').doc(`${this.currentUser.uid}_${postId}`);
+        const likeDoc = await likeRef.get();
+
+        try {
+            if (likeDoc.exists) {
+                // Unlike
+                await likeRef.delete();
+                await db.collection('posts').doc(postId).update({
+                    likes: firebase.firestore.FieldValue.increment(-1)
+                });
+                document.getElementById(`like-${postId}`).classList.remove('liked');
+            } else {
+                // Like
+                await likeRef.set({
+                    userId: this.currentUser.uid,
+                    postId: postId,
+                    createdAt: new Date()
+                });
+                await db.collection('posts').doc(postId).update({
+                    likes: firebase.firestore.FieldValue.increment(1)
+                });
+                document.getElementById(`like-${postId}`).classList.add('liked');
+            }
+
+            // Update the post in our local array
+            const postIndex = this.posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                this.posts[postIndex].likes += likeDoc.exists ? -1 : 1;
+                this.renderPosts();
+            }
+        } catch (error) {
+            console.error('Error toggling like:', error);
+        }
+    }
+
+    async showComments(postId) {
+        if (!this.currentUser) {
+            alert('Please login to view comments');
+            return;
+        }
+
+        const post = this.posts.find(p => p.id === postId);
+        if (!post) return;
+
+        const commentsModal = document.getElementById('commentsModal');
+        const commentsPostInfo = document.getElementById('commentsPostInfo');
+        const commentsList = document.getElementById('commentsList');
+        const commentsLoading = document.getElementById('commentsLoading');
+        const commentUserPic = document.getElementById('commentUserPic');
+
+        // Set post info
+        commentsPostInfo.innerHTML = `
+            <p><strong>${post.authorName}</strong> • ${this.formatTimestamp(post.createdAt)}</p>
+            <p>${post.caption}</p>
+        `;
+
+        // Set user profile pic for comment form
+        commentUserPic.src = this.userProfile.profilePic || 'https://via.placeholder.com/32x32/6366f1/ffffff?text=?';
+
+        // Show modal
+        commentsModal.style.display = 'block';
+        commentsLoading.style.display = 'block';
+        commentsList.innerHTML = '';
+
+        // Load comments
+        await this.loadComments(postId);
+
+        // Setup comment form
+        this.setupCommentForm(postId);
+    }
+
+    async loadComments(postId) {
+        try {
+            const commentsRef = db.collection('comments')
+                .where('postId', '==', postId)
+                .orderBy('createdAt', 'desc');
+            
+            const snapshot = await commentsRef.get();
+            const comments = [];
+
+            snapshot.forEach(doc => {
+                comments.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            this.renderComments(comments);
+        } catch (error) {
+            console.error('Error loading comments:', error);
+            this.renderComments([]);
+        }
+    }
+
+    renderComments(comments) {
+        const commentsList = document.getElementById('commentsList');
+        const commentsLoading = document.getElementById('commentsLoading');
+
+        commentsLoading.style.display = 'none';
+
+        if (comments.length === 0) {
+            commentsList.innerHTML = `
+                <div class="no-comments">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No comments yet. Be the first to comment!</p>
+                </div>
+            `;
+            return;
+        }
+
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="comment-item" id="comment-${comment.id}">
+                <img src="${comment.authorPic || 'https://via.placeholder.com/32x32/6366f1/ffffff?text=?'}" 
+                     alt="${comment.authorName}" class="comment-user-pic">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <a href="/channel/${comment.authorUsername}" class="comment-author">${comment.authorName}</a>
+                        <span class="comment-timestamp">${this.formatTimestamp(comment.createdAt)}</span>
+                    </div>
+                    <p class="comment-text">${comment.text}</p>
+                    <div class="comment-actions">
+                        ${comment.authorId === this.currentUser?.uid ? 
+                            `<button class="comment-action" onclick="app.deleteComment('${comment.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>` : ''
+                        }
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    setupCommentForm(postId) {
+        const commentForm = document.getElementById('commentForm');
+        const commentText = document.getElementById('commentText');
+        const commentSubmitBtn = document.getElementById('commentSubmitBtn');
+
+        // Reset form
+        commentForm.reset();
+        commentSubmitBtn.disabled = true;
+
+        // Handle text input
+        commentText.addEventListener('input', () => {
+            commentSubmitBtn.disabled = !commentText.value.trim();
+        });
+
+        // Handle form submission
+        commentForm.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.postComment(postId);
+        };
+    }
+
+    async postComment(postId) {
+        const commentText = document.getElementById('commentText');
+        const commentSubmitBtn = document.getElementById('commentSubmitBtn');
+        const text = commentText.value.trim();
+
+        if (!text) return;
+
+        try {
+            commentSubmitBtn.disabled = true;
+            commentSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+
+            const commentData = {
+                postId: postId,
+                authorId: this.currentUser.uid,
+                authorName: this.userProfile.displayName,
+                authorUsername: this.userProfile.username,
+                authorPic: this.userProfile.profilePic,
+                text: text,
+                createdAt: new Date()
+            };
+
+            await db.collection('comments').add(commentData);
+
+            // Update post comment count
+            await db.collection('posts').doc(postId).update({
+                comments: firebase.firestore.FieldValue.increment(1)
+            });
+
+            // Update local post data
+            const postIndex = this.posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                this.posts[postIndex].comments += 1;
+                this.renderPosts();
+            }
+
+            // Reload comments
+            await this.loadComments(postId);
+
+            // Reset form
+            commentText.value = '';
+            commentSubmitBtn.disabled = true;
+            commentSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Comment';
+
+        } catch (error) {
+            console.error('Error posting comment:', error);
+            alert('Failed to post comment. Please try again.');
+            commentSubmitBtn.disabled = false;
+            commentSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Comment';
+        }
+    }
+
+    async deleteComment(commentId) {
+        if (!confirm('Are you sure you want to delete this comment?')) return;
+
+        try {
+            const commentRef = db.collection('comments').doc(commentId);
+            const commentDoc = await commentRef.get();
+
+            if (!commentDoc.exists) return;
+
+            const commentData = commentDoc.data();
+
+            // Delete comment
+            await commentRef.delete();
+
+            // Update post comment count
+            await db.collection('posts').doc(commentData.postId).update({
+                comments: firebase.firestore.FieldValue.increment(-1)
+            });
+
+            // Update local post data
+            const postIndex = this.posts.findIndex(p => p.id === commentData.postId);
+            if (postIndex !== -1) {
+                this.posts[postIndex].comments -= 1;
+                this.renderPosts();
+            }
+
+            // Remove comment from UI
+            const commentElement = document.getElementById(`comment-${commentId}`);
+            if (commentElement) {
+                commentElement.remove();
+            }
+
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            alert('Failed to delete comment. Please try again.');
+        }
+    }
+
+    // Messaging System
+    async loadConversations() {
+        if (!this.currentUser) return;
+
+        try {
+            const conversationsRef = db.collection('conversations')
+                .where('participants', 'array-contains', this.currentUser.uid)
+                .orderBy('lastMessageAt', 'desc');
+            
+            const snapshot = await conversationsRef.get();
+            const conversations = [];
+
+            for (const doc of snapshot.docs) {
+                const conversation = doc.data();
+                const otherUserId = conversation.participants.find(id => id !== this.currentUser.uid);
+                
+                // Get other user's profile
+                const userDoc = await db.collection('users').doc(otherUserId).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    conversations.push({
+                        id: doc.id,
+                        ...conversation,
+                        otherUser: {
+                            id: otherUserId,
+                            ...userData
+                        }
+                    });
+                }
+            }
+
+            this.renderConversations(conversations);
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+        }
+    }
+
+    renderConversations(conversations) {
+        const conversationsList = document.getElementById('conversationsList');
+
+        if (conversations.length === 0) {
+            conversationsList.innerHTML = `
+                <div class="no-conversations">
+                    <i class="fas fa-comments"></i>
+                    <p>No conversations yet</p>
+                    <p>Start a new conversation to begin messaging!</p>
+                </div>
+            `;
+            return;
+        }
+
+        conversationsList.innerHTML = conversations.map(conversation => `
+            <div class="conversation-item" onclick="app.selectConversation('${conversation.id}', '${conversation.otherUser.id}')">
+                <img src="${conversation.otherUser.profilePic || 'https://via.placeholder.com/48x48/6366f1/ffffff?text=?'}" 
+                     alt="${conversation.otherUser.displayName}">
+                <div class="conversation-info">
+                    <div class="conversation-name">${conversation.otherUser.displayName}</div>
+                    <div class="conversation-preview">${conversation.lastMessage || 'No messages yet'}</div>
+                    <div class="conversation-time">${conversation.lastMessageAt ? this.formatTimestamp(conversation.lastMessageAt) : ''}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async selectConversation(conversationId, otherUserId) {
+        this.currentConversationId = conversationId;
+        this.currentOtherUserId = otherUserId;
+
+        // Update UI
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.target.closest('.conversation-item').classList.add('active');
+
+        // Show chat area
+        document.getElementById('chatHeader').style.display = 'block';
+        document.getElementById('messageForm').style.display = 'block';
+
+        // Load user info
+        const userDoc = await db.collection('users').doc(otherUserId).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            document.getElementById('chatUserPic').src = userData.profilePic || 'https://via.placeholder.com/40x40/6366f1/ffffff?text=?';
+            document.getElementById('chatUserName').textContent = userData.displayName;
+        }
+
+        // Load messages
+        await this.loadMessages(conversationId);
+
+        // Setup message form
+        this.setupMessageForm(conversationId);
+    }
+
+    async loadMessages(conversationId) {
+        try {
+            const messagesRef = db.collection('messages')
+                .where('conversationId', '==', conversationId)
+                .orderBy('createdAt', 'asc');
+            
+            const snapshot = await messagesRef.get();
+            const messages = [];
+
+            snapshot.forEach(doc => {
+                messages.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            this.renderMessages(messages);
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+
+    renderMessages(messages) {
+        const chatMessages = document.getElementById('chatMessages');
+
+        if (messages.length === 0) {
+            chatMessages.innerHTML = `
+                <div class="no-messages">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No messages yet. Start the conversation!</p>
+                </div>
+            `;
+            return;
+        }
+
+        chatMessages.innerHTML = messages.map(message => `
+            <div class="message-item ${message.senderId === this.currentUser.uid ? 'sent' : 'received'}">
+                <div class="message-bubble">
+                    ${message.text}
+                    <div class="message-time">${this.formatTimestamp(message.createdAt)}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    setupMessageForm(conversationId) {
+        const messageForm = document.getElementById('messageForm');
+        const messageText = document.getElementById('messageText');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+        // Reset form
+        messageForm.reset();
+        sendMessageBtn.disabled = true;
+
+        // Handle text input
+        messageText.addEventListener('input', () => {
+            sendMessageBtn.disabled = !messageText.value.trim();
+        });
+
+        // Handle form submission
+        messageForm.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.sendMessage(conversationId);
+        };
+    }
+
+    async sendMessage(conversationId) {
+        const messageText = document.getElementById('messageText');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const text = messageText.value.trim();
+
+        if (!text) return;
+
+        try {
+            sendMessageBtn.disabled = true;
+            sendMessageBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const messageData = {
+                conversationId: conversationId,
+                senderId: this.currentUser.uid,
+                senderName: this.userProfile.displayName,
+                text: text,
+                createdAt: new Date()
+            };
+
+            await db.collection('messages').add(messageData);
+
+            // Update conversation
+            await db.collection('conversations').doc(conversationId).update({
+                lastMessage: text,
+                lastMessageAt: new Date()
+            });
+
+            // Reload messages
+            await this.loadMessages(conversationId);
+
+            // Reset form
+            messageText.value = '';
+            sendMessageBtn.disabled = true;
+            sendMessageBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+            sendMessageBtn.disabled = false;
+            sendMessageBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        }
+    }
+
+    async startNewConversation() {
+        if (!this.currentUser) {
+            alert('Please login to start a conversation');
+            return;
+        }
+
+        const newConversationModal = document.getElementById('newConversationModal');
+        const usersList = document.getElementById('usersList');
+        const usersLoading = document.getElementById('usersLoading');
+
+        newConversationModal.style.display = 'block';
+        usersLoading.style.display = 'block';
+        usersList.innerHTML = '';
+
+        // Load users
+        await this.loadUsers();
+
+        // Setup user selection
+        this.setupUserSelection();
+    }
+
+    async loadUsers() {
+        try {
+            const usersRef = db.collection('users')
+                .where('uid', '!=', this.currentUser.uid);
+            
+            const snapshot = await usersRef.get();
+            const users = [];
+
+            snapshot.forEach(doc => {
+                users.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            this.renderUsers(users);
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    }
+
+    renderUsers(users) {
+        const usersList = document.getElementById('usersList');
+        const usersLoading = document.getElementById('usersLoading');
+
+        usersLoading.style.display = 'none';
+
+        if (users.length === 0) {
+            usersList.innerHTML = `
+                <div class="no-users">
+                    <i class="fas fa-users"></i>
+                    <p>No users found</p>
+                </div>
+            `;
+            return;
+        }
+
+        usersList.innerHTML = users.map(user => `
+            <div class="user-item" data-user-id="${user.id}">
+                <img src="${user.profilePic || 'https://via.placeholder.com/40x40/6366f1/ffffff?text=?'}" 
+                     alt="${user.displayName}">
+                <div class="user-item-info">
+                    <h4>${user.displayName}</h4>
+                    <p>@${user.username}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    setupUserSelection() {
+        const userItems = document.querySelectorAll('.user-item');
+        
+        userItems.forEach(item => {
+            item.addEventListener('click', async () => {
+                const userId = item.dataset.userId;
+                await this.createConversation(userId);
+            });
+        });
+    }
+
+    async createConversation(otherUserId) {
+        try {
+            // Check if conversation already exists
+            const existingConversation = await db.collection('conversations')
+                .where('participants', 'array-contains', this.currentUser.uid)
+                .get();
+
+            let conversationId = null;
+            
+            for (const doc of existingConversation.docs) {
+                const conversation = doc.data();
+                if (conversation.participants.includes(otherUserId)) {
+                    conversationId = doc.id;
+                    break;
+                }
+            }
+
+            if (!conversationId) {
+                // Create new conversation
+                const conversationData = {
+                    participants: [this.currentUser.uid, otherUserId],
+                    createdAt: new Date(),
+                    lastMessageAt: new Date()
+                };
+
+                const conversationRef = await db.collection('conversations').add(conversationData);
+                conversationId = conversationRef.id;
+            }
+
+            // Close modal and switch to messages tab
+            document.getElementById('newConversationModal').style.display = 'none';
+            this.switchTab('messages');
+
+            // Select the conversation
+            await this.selectConversation(conversationId, otherUserId);
+
+        } catch (error) {
+            console.error('Error creating conversation:', error);
+            alert('Failed to create conversation. Please try again.');
+        }
+    }
+
+    async showTipModal(creatorId, creatorName) {
+        if (!this.currentUser) {
+            alert('Please login to tip creators');
+            return;
+        }
+
+        if (this.currentUser.uid === creatorId) {
+            alert('You cannot tip yourself');
+            return;
+        }
+
+        const tipModal = document.getElementById('tipModal');
+        const creatorInfo = document.getElementById('tipCreatorInfo');
+        
+        creatorInfo.innerHTML = `
+            <p>Tip <strong>${creatorName}</strong></p>
+            <p>Show your appreciation for their content!</p>
+        `;
+
+        tipModal.style.display = 'block';
+
+        // Setup tip form
+        this.setupTipForm(creatorId);
+    }
+
+    setupTipForm(creatorId) {
+        const tipForm = document.getElementById('tipForm');
+        const tipAmounts = document.querySelectorAll('.tip-amount');
+        const customAmount = document.getElementById('customTipAmount');
+
+        // Reset form
+        tipForm.reset();
+        tipAmounts.forEach(btn => btn.classList.remove('selected'));
+
+        // Handle preset amounts
+        tipAmounts.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tipAmounts.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                customAmount.value = btn.dataset.amount;
+            });
+        });
+
+        // Handle form submission
+        tipForm.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.processTip(creatorId);
+        };
+    }
+
+    async processTip(creatorId) {
+        const amount = parseFloat(document.getElementById('customTipAmount').value);
+        
+        if (!amount || amount < 0.50) {
+            alert('Minimum tip amount is $0.50');
+            return;
+        }
+
+        try {
+            // Create tip record
+            const tipData = {
+                senderId: this.currentUser.uid,
+                senderName: this.userProfile.displayName,
+                recipientId: creatorId,
+                amount: amount,
+                createdAt: new Date()
+            };
+
+            await db.collection('tips').add(tipData);
+
+            // Update creator's earnings
+            const earningsRef = db.collection('earnings').doc(creatorId);
+            await earningsRef.set({
+                totalTips: firebase.firestore.FieldValue.increment(amount),
+                lastUpdated: new Date()
+            }, { merge: true });
+
+            document.getElementById('tipModal').style.display = 'none';
+            alert(`Tip of $${amount.toFixed(2)} sent successfully!`);
+        } catch (error) {
+            console.error('Error processing tip:', error);
+            alert('Failed to send tip. Please try again.');
+        }
+    }
+
+    async reportPost(postId) {
+        if (!this.currentUser) {
+            alert('Please login to report posts');
+            return;
+        }
+
+        const reason = prompt('Please provide a reason for reporting this post:');
+        if (!reason) return;
+
+        try {
+            await db.collection('reports').add({
+                postId: postId,
+                reporterId: this.currentUser.uid,
+                reporterName: this.userProfile.displayName,
+                reason: reason,
+                createdAt: new Date(),
+                status: 'pending'
+            });
+
+            alert('Post reported successfully. Thank you for helping keep our community safe.');
+        } catch (error) {
+            console.error('Error reporting post:', error);
+            alert('Failed to report post. Please try again.');
+        }
+    }
+
+    async loadDashboard() {
+        if (!this.currentUser) return;
+
+        try {
+            // Load user's posts
+            const postsSnapshot = await db.collection('posts')
+                .where('authorId', '==', this.currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .get();
+
+            const userPosts = [];
+            postsSnapshot.forEach(doc => {
+                userPosts.push({ id: doc.id, ...doc.data() });
+            });
+
+            this.renderUserPosts(userPosts);
+
+            // Load earnings data
+            const earningsDoc = await db.collection('earnings').doc(this.currentUser.uid).get();
+            if (earningsDoc.exists) {
+                const earnings = earningsDoc.data();
+                document.getElementById('totalViews').textContent = earnings.totalViews || 0;
+                document.getElementById('totalEarnings').textContent = `$${(earnings.totalEarnings || 0).toFixed(2)}`;
+                document.getElementById('totalTips').textContent = `$${(earnings.totalTips || 0).toFixed(2)}`;
+            }
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+        }
+    }
+
+    renderUserPosts(posts) {
+        const userPostsContainer = document.getElementById('userPosts');
+        userPostsContainer.innerHTML = '';
+
+        if (posts.length === 0) {
+            userPostsContainer.innerHTML = '<p>No posts yet. Start sharing your content!</p>';
+            return;
+        }
+
+        posts.forEach(post => {
+            const postElement = this.createPostElement(post);
+            userPostsContainer.appendChild(postElement);
+        });
+    }
+
+    filterPosts(filter) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+
+        // Reset posts and reload with filter
+        this.posts = [];
+        this.lastPost = null;
+        this.loadPosts();
+    }
+
+    playVideo(videoElement) {
+        if (videoElement.paused) {
+            videoElement.play();
+        } else {
+            videoElement.pause();
+        }
+    }
+
+    formatTimestamp(timestamp) {
+        const now = new Date();
+        const postDate = timestamp.toDate();
+        const diffInSeconds = Math.floor((now - postDate) / 1000);
+
+        if (diffInSeconds < 60) {
+            return 'Just now';
+        } else if (diffInSeconds < 3600) {
+            return `${Math.floor(diffInSeconds / 60)}m ago`;
+        } else if (diffInSeconds < 86400) {
+            return `${Math.floor(diffInSeconds / 3600)}h ago`;
+        } else if (diffInSeconds < 2592000) {
+            return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        } else {
+            return postDate.toLocaleDateString();
+        }
+    }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new AmplifiApp();
+});
+
+// Infinite scroll
+window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+        if (window.app && window.app.currentTab === 'feed') {
+            window.app.loadPosts();
+        }
+    }
+}); 
