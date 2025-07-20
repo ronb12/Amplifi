@@ -12,18 +12,22 @@ A full-featured social media platform built with Firebase and JavaScript, design
 - **Social Features** - Like, comment, and follow functionality
 - **Comments System** - Full comment functionality with real-time updates
 - **Direct Messaging** - User-to-user messaging with conversation management
+- **Live Streaming** - Real-time video streaming with live chat
 - **Content Safety** - Report system for inappropriate content
 
 ### Monetization
 - **View-based Earnings** - $0.005 per view ($5 per 1000 views)
 - **Creator Dashboard** - Track views, earnings, and tips
 - **Tip System** - Users can tip creators using Stripe (test mode)
+- **AdMob Integration** - Banner and interstitial ads for monetization
 - **Payout Tracking** - Monitor earnings against $25 payout threshold
 
 ### Technical Features
 - **Firebase SDK v9** - Modular Firebase implementation
 - **Real-time Updates** - Live feed and statistics
 - **Mobile-first Design** - Responsive UI for all devices
+- **PWA Support** - Progressive Web App with offline functionality
+- **Push Notifications** - Real-time notifications for user engagement
 - **Firebase Hosting Ready** - Optimized for deployment
 
 ## 🛠️ Tech Stack
@@ -33,6 +37,7 @@ A full-featured social media platform built with Firebase and JavaScript, design
 - **Authentication**: Firebase Auth
 - **Storage**: Firebase Storage (for media files)
 - **Payments**: Stripe (test mode)
+- **Ads**: AdMob (Google AdSense)
 - **Hosting**: Firebase Hosting
 - **Security**: Firebase Security Rules
 
@@ -42,6 +47,7 @@ A full-featured social media platform built with Firebase and JavaScript, design
 - Node.js (v14 or higher)
 - Firebase CLI
 - Stripe account (for test payments)
+- AdMob account (for monetization)
 
 ### 1. Clone the Repository
 ```bash
@@ -66,16 +72,17 @@ cd Amplifi
 
 ```javascript
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id"
+  apiKey: "AIzaSyANHtCLmNLvp9k_px0lsUHuWK5PasK_gJY", // Replace with your actual API key
+  authDomain: "amplifi-a54d9.firebaseapp.com",
+  projectId: "amplifi-a54d9",
+  storageBucket: "amplifi-a54d9.firebasestorage.app",
+  messagingSenderId: "542171119183",
+  appId: "1:542171119183:web:cd96402d1fe4d3ef6ef43a",
+  measurementId: "G-X845LM0VSM"
 };
 ```
 
-**⚠️ Security Note**: The repository contains placeholder values for API keys. Replace them with your actual Firebase and Stripe configuration before deploying.
+**🔑 Important Note**: The Firebase API key is a **public client-side key** and is safe to expose in your repository. It's designed to be included in web applications and cannot be used to access your Firebase project without proper authentication.
 
 #### Deploy Firebase Rules
 ```bash
@@ -94,7 +101,42 @@ firebase deploy --only storage
 const stripe = Stripe('pk_test_your_stripe_key_here');
 ```
 
-### 4. Local Development
+### 4. AdMob Setup
+
+#### Get AdMob Keys
+1. Create an [AdMob account](https://admob.google.com/)
+2. Create ad units for banner and interstitial ads
+3. Update the AdMob configuration in `public/app.js`:
+
+```javascript
+this.adMobConfig = {
+    bannerAdUnitId: 'ca-pub-YOUR_ADMOB_BANNER_ID',
+    interstitialAdUnitId: 'ca-pub-YOUR_ADMOB_INTERSTITIAL_ID',
+    rewardedAdUnitId: 'ca-pub-YOUR_ADMOB_REWARDED_ID'
+};
+```
+
+4. Update the AdMob publisher ID in `public/index.html`:
+
+```html
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADMOB_PUBLISHER_ID" crossorigin="anonymous"></script>
+```
+
+### 5. Push Notifications Setup
+
+#### Get VAPID Key
+1. In Firebase Console, go to Project Settings > Cloud Messaging
+2. Generate a new Web Push certificate (VAPID key)
+3. Update the VAPID key in `public/app.js`:
+
+```javascript
+this.notificationConfig = {
+    vapidKey: 'YOUR_VAPID_KEY',
+    supported: 'serviceWorker' in navigator && 'PushManager' in window
+};
+```
+
+### 6. Local Development
 
 #### Install Firebase CLI (if not already installed)
 ```bash
@@ -118,7 +160,7 @@ firebase serve
 
 The app will be available at `http://localhost:5000`
 
-### 5. Deploy to Production
+### 7. Deploy to Production
 
 #### Deploy to Firebase Hosting
 ```bash
@@ -133,14 +175,13 @@ Your app will be live at `https://amplifi-a54d9.web.app`
 Amplifi/
 ├── public/
 │   ├── index.html          # Main app page
-│   ├── channel.html        # Channel/profile pages
 │   ├── app.js             # Main application logic
-│   ├── channel.js         # Channel page logic
 │   ├── firebaseConfig.js  # Firebase configuration
-│   └── styles.css         # Main stylesheet
+│   ├── styles.css         # Main stylesheet
+│   ├── manifest.json      # PWA manifest
+│   └── sw.js             # Service worker
 ├── firebase.json          # Firebase hosting config
 ├── firestore.rules        # Firestore security rules
-├── storage.rules          # Storage security rules
 ├── firestore.indexes.json # Firestore indexes
 └── README.md             # This file
 ```
@@ -149,7 +190,7 @@ Amplifi/
 
 The platform includes comprehensive security rules for:
 
-- **Firestore**: User data, posts, comments, likes, follows, earnings, tips, reports
+- **Firestore**: User data, posts, comments, likes, follows, earnings, tips, reports, push subscriptions
 - **Storage**: Profile pictures, post media, thumbnails (50MB max for videos)
 
 ## 💰 Monetization Logic
@@ -165,6 +206,11 @@ The platform includes comprehensive security rules for:
 - **Custom Amounts**: Any amount above $0.50
 - **Test Mode**: Uses Stripe test keys (no real charges)
 
+### AdMob Integration
+- **Banner Ads**: Sticky banner ads at the top of the app
+- **Interstitial Ads**: Full-screen ads triggered at appropriate moments
+- **Revenue Sharing**: Ad revenue contributes to creator earnings
+
 ## 🎨 UI/UX Features
 
 ### Design Principles
@@ -177,7 +223,8 @@ The platform includes comprehensive security rules for:
 - **Feed**: Grid layout for content discovery
 - **Upload**: Drag-and-drop file upload with progress
 - **Dashboard**: Creator analytics and earnings
-- **Channel Pages**: User profiles with content and tipping
+- **Live Streaming**: Real-time video streaming with chat
+- **Direct Messaging**: User-to-user conversations
 
 ## 🔧 Configuration
 
@@ -208,29 +255,27 @@ The app is optimized for Firebase Hosting with:
 2. Update DNS records
 3. Deploy with `firebase deploy`
 
-## 📱 PWA Features (Future)
+## 📱 PWA Features
 
-The platform is designed to be PWA-ready with:
-- Service worker support
-- Offline functionality
-- App-like experience
-- Push notifications
+The platform includes full PWA support:
+
+- **Service Worker**: Offline functionality and background sync
+- **App Manifest**: Installable on mobile devices
+- **Push Notifications**: Real-time notifications
+- **Offline Support**: Cached content and offline actions
 
 ## 🔮 Future Enhancements
 
 ### Planned Features
-- **Live Streaming** - Real-time video streaming
-- **AdMob Integration** - Banner and interstitial ads
-- **Cloud Functions** - Automated earnings updates
+- **Cloud Functions** - Automated earnings updates and notification sending
 - **Admin Panel** - Content moderation tools
-- **Push Notifications** - Real-time notifications for messages and interactions
 - **Video Editing** - Built-in video editing tools
+- **Analytics Dashboard** - Detailed user behavior tracking
 
 ### Technical Improvements
 - **Performance**: Lazy loading and optimization
-- **Analytics**: User behavior tracking
 - **SEO**: Meta tags and structured data
-- **Accessibility**: WCAG compliance
+- **Accessibility**: WCAG compliance improvements
 
 ## 🤝 Contributing
 
@@ -255,6 +300,7 @@ For support and questions:
 
 - [Firebase Documentation](https://firebase.google.com/docs)
 - [Stripe Documentation](https://stripe.com/docs)
+- [AdMob Documentation](https://developers.google.com/admob)
 - [Amplifi Live Demo](https://amplifi-a54d9.web.app)
 
 ---

@@ -2,7 +2,7 @@
 // IMPORTANT: Replace these placeholder values with your actual Firebase configuration
 // Get your config from: https://console.firebase.google.com/project/YOUR_PROJECT_ID/settings/general
 const firebaseConfig = {
-  apiKey: "AIzaSyANHtCLmNLvp9k_px0lsUHuWK5PasK_gJY",
+  apiKey: "YOUR_FIREBASE_API_KEY",
   authDomain: "amplifi-a54d9.firebaseapp.com",
   projectId: "amplifi-a54d9",
   storageBucket: "amplifi-a54d9.firebasestorage.app",
