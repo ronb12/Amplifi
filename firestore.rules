@@ -34,6 +34,21 @@ service cloud.firestore {
         request.auth.uid in get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participants;
     }
     
+    // Live streams are readable by all authenticated users, writable by streamer
+    match /liveStreams/{streamId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == resource.data.streamerId;
+      allow update: if request.auth != null && request.auth.uid == resource.data.streamerId;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.streamerId;
+    }
+    
+    // Live chat messages are readable by stream viewers, writable by authenticated users
+    match /liveChat/{messageId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == resource.data.authorId;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.authorId;
+    }
+    
     // Likes are readable by all authenticated users, writable by the user who liked
     match /likes/{likeId} {
       allow read: if request.auth != null;

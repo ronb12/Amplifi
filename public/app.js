@@ -188,6 +188,7 @@ class AmplifiApp {
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('logoutBtn').style.display = 'block';
         document.getElementById('dashboardTab').style.display = 'block';
+        document.getElementById('liveTab').style.display = 'block';
         document.getElementById('messagesTab').style.display = 'block';
         document.getElementById('profileLink').style.display = 'block';
         document.getElementById('profileLink').href = `/channel/${this.userProfile.username}`;
