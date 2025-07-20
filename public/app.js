@@ -216,39 +216,54 @@ class AmplifiApp {
     }
 
     setupEventListeners() {
-        // Navigation tabs
-        document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+        // Navigation tabs - use tab-btn instead of nav-link
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.switchTab(e.target.dataset.tab);
             });
         });
 
-        // Modals
-        const authModal = document.getElementById('authModal');
+        // Modals - handle missing elements gracefully
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
         const tipModal = document.getElementById('tipModal');
         const commentsModal = document.getElementById('commentsModal');
         const newConversationModal = document.getElementById('newConversationModal');
         const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
         const closeBtns = document.querySelectorAll('.close');
 
-        loginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            authModal.style.display = 'block';
-        });
+        if (loginBtn && loginModal) {
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'block';
+            });
+        }
+
+        if (signupBtn && signupModal) {
+            signupBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.style.display = 'block';
+            });
+        }
 
         closeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                authModal.style.display = 'none';
-                tipModal.style.display = 'none';
-                commentsModal.style.display = 'none';
-                newConversationModal.style.display = 'none';
+                if (loginModal) loginModal.style.display = 'none';
+                if (signupModal) signupModal.style.display = 'none';
+                if (tipModal) tipModal.style.display = 'none';
+                if (commentsModal) commentsModal.style.display = 'none';
+                if (newConversationModal) newConversationModal.style.display = 'none';
             });
         });
 
         window.addEventListener('click', (e) => {
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (e.target === signupModal) {
+                signupModal.style.display = 'none';
             }
             if (e.target === tipModal) {
                 tipModal.style.display = 'none';
@@ -261,29 +276,31 @@ class AmplifiApp {
             }
         });
 
-        // Auth tabs
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                this.switchAuthTab(e.target.dataset.tab);
-            });
-        });
-
         // Auth forms
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleLogin(e.target);
-        });
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-        document.getElementById('signupForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleSignup(e.target);
-        });
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleLogin(e.target);
+            });
+        }
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.handleLogout();
-        });
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleSignup(e.target);
+            });
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLogout();
+            });
+        }
 
         // Upload form
         this.setupUploadForm();
@@ -302,47 +319,56 @@ class AmplifiApp {
         const uploadForm = document.getElementById('uploadForm');
         const removeFileBtn = document.getElementById('removeFile');
 
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+        // Only set up event listeners if elements exist
+        if (uploadArea) {
+            uploadArea.addEventListener('click', () => {
+                if (fileInput) fileInput.click();
+            });
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
-            uploadArea.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary');
-        });
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+                uploadArea.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary');
+            });
 
-        uploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '';
-            uploadArea.style.backgroundColor = '';
-        });
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '';
+                uploadArea.style.backgroundColor = '';
+            });
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '';
-            uploadArea.style.backgroundColor = '';
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                this.handleFileSelect(files[0]);
-            }
-        });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '';
+                uploadArea.style.backgroundColor = '';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.handleFileSelect(files[0]);
+                }
+            });
+        }
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                this.handleFileSelect(e.target.files[0]);
-            }
-        });
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    this.handleFileSelect(e.target.files[0]);
+                }
+            });
+        }
 
-        removeFileBtn.addEventListener('click', () => {
-            this.removeSelectedFile();
-        });
+        if (removeFileBtn) {
+            removeFileBtn.addEventListener('click', () => {
+                this.removeSelectedFile();
+            });
+        }
 
-        uploadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleUpload();
-        });
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleUpload();
+            });
+        }
     }
 
     async setupAuthStateListener() {
@@ -382,27 +408,36 @@ class AmplifiApp {
     }
 
     updateUIForAuthenticatedUser() {
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'block';
-        document.getElementById('dashboardTab').style.display = 'block';
-        document.getElementById('liveTab').style.display = 'block';
-        document.getElementById('messagesTab').style.display = 'block';
-        document.getElementById('profileLink').style.display = 'block';
-        document.getElementById('profileLink').href = `/channel/${this.userProfile.username}`;
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userMenu = document.getElementById('userMenu');
+        const profileLink = document.getElementById('profileLink');
         
-        // Enable upload tab
-        document.querySelector('.nav-link[data-tab="upload"]').style.display = 'block';
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'block';
+        if (profileLink) {
+            profileLink.style.display = 'block';
+            profileLink.href = `/channel/${this.userProfile.username}`;
+        }
+        
+        // Show app content
+        const appContent = document.getElementById('appContent');
+        if (appContent) appContent.style.display = 'block';
     }
 
     updateUIForUnauthenticatedUser() {
-        document.getElementById('loginBtn').style.display = 'block';
-        document.getElementById('logoutBtn').style.display = 'none';
-        document.getElementById('dashboardTab').style.display = 'none';
-        document.getElementById('messagesTab').style.display = 'none';
-        document.getElementById('profileLink').style.display = 'none';
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userMenu = document.getElementById('userMenu');
+        const profileLink = document.getElementById('profileLink');
+        const appContent = document.getElementById('appContent');
         
-        // Disable upload tab
-        document.querySelector('.nav-link[data-tab="upload"]').style.display = 'none';
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'none';
+        if (profileLink) profileLink.style.display = 'none';
+        if (appContent) appContent.style.display = 'none';
         
         // Switch to feed if on upload, dashboard, or messages
         if (this.currentTab === 'upload' || this.currentTab === 'dashboard' || this.currentTab === 'messages') {
@@ -416,14 +451,22 @@ class AmplifiApp {
             tab.classList.remove('active');
         });
 
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
+        // Remove active class from all tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
         });
 
         // Show selected tab content
-        document.getElementById(`${tabName}Tab`).classList.add('active');
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const selectedTab = document.getElementById(`${tabName}Tab`);
+        const selectedBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+        }
+        
+        if (selectedBtn) {
+            selectedBtn.classList.add('active');
+        }
 
         this.currentTab = tabName;
 
