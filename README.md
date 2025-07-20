@@ -193,6 +193,11 @@ The platform includes comprehensive security rules for:
 - **Firestore**: User data, posts, comments, likes, follows, earnings, tips, reports, push subscriptions
 - **Storage**: Profile pictures, post media, thumbnails (50MB max for videos)
 
+### 🔒 **GitHub Secrets Configuration**
+For server-side operations and secure deployment, see [GitHub Secrets Setup](docs/GITHUB_SECRETS.md).
+
+**Important**: Client-side keys (Firebase API key, Stripe publishable keys) are safe to expose and are included in the repository. Server-side secrets should be stored in GitHub Secrets.
+
 ## 💰 Monetization Logic
 
 ### Earnings Calculation
