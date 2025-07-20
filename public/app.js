@@ -9,6 +9,19 @@ class AmplifiApp {
         this.lastPost = null;
         this.postsPerPage = 10;
         
+        // AdMob configuration
+        this.adMobConfig = {
+            bannerAdUnitId: 'ca-pub-YOUR_ADMOB_BANNER_ID',
+            interstitialAdUnitId: 'ca-pub-YOUR_ADMOB_INTERSTITIAL_ID',
+            rewardedAdUnitId: 'ca-pub-YOUR_ADMOB_REWARDED_ID'
+        };
+        
+        // Push notification configuration
+        this.notificationConfig = {
+            vapidKey: 'YOUR_VAPID_KEY',
+            supported: 'serviceWorker' in navigator && 'PushManager' in window
+        };
+        
         this.init();
     }
 
@@ -16,6 +29,190 @@ class AmplifiApp {
         this.setupEventListeners();
         this.setupAuthStateListener();
         this.loadPosts();
+        this.initializeAdMob();
+        this.initializePushNotifications();
+        this.registerServiceWorker();
+    }
+
+    // Initialize AdMob
+    initializeAdMob() {
+        if (typeof adsbygoogle !== 'undefined') {
+            this.loadBannerAd();
+            this.loadInterstitialAd();
+        }
+    }
+
+    // Load banner ad
+    loadBannerAd() {
+        const bannerAd = document.getElementById('bannerAd');
+        if (bannerAd) {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                document.getElementById('adBanner').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading banner ad:', error);
+            }
+        }
+    }
+
+    // Load interstitial ad
+    loadInterstitialAd() {
+        const interstitialAd = document.getElementById('interstitialAdContent');
+        if (interstitialAd) {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (error) {
+                console.error('Error loading interstitial ad:', error);
+            }
+        }
+    }
+
+    // Show interstitial ad
+    showInterstitialAd() {
+        const interstitialAd = document.getElementById('interstitialAd');
+        if (interstitialAd) {
+            interstitialAd.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                interstitialAd.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    // Initialize push notifications
+    async initializePushNotifications() {
+        if (!this.notificationConfig.supported) {
+            console.log('Push notifications not supported');
+            return;
+        }
+
+        // Check if user has already granted permission
+        if (Notification.permission === 'granted') {
+            this.setupNotificationButton();
+        } else if (Notification.permission === 'default') {
+            this.showNotificationPermissionModal();
+        }
+    }
+
+    // Show notification permission modal
+    showNotificationPermissionModal() {
+        const modal = document.getElementById('notificationPermissionModal');
+        if (modal) {
+            modal.style.display = 'block';
+            
+            // Setup event listeners
+            document.getElementById('enableNotifications').addEventListener('click', () => {
+                this.requestNotificationPermission();
+                modal.style.display = 'none';
+            });
+            
+            document.getElementById('skipNotifications').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+    }
+
+    // Request notification permission
+    async requestNotificationPermission() {
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                this.setupNotificationButton();
+                this.subscribeToPushNotifications();
+            }
+        } catch (error) {
+            console.error('Error requesting notification permission:', error);
+        }
+    }
+
+    // Setup notification button
+    setupNotificationButton() {
+        const notificationBtn = document.getElementById('notificationBtn');
+        if (notificationBtn) {
+            notificationBtn.style.display = 'block';
+            notificationBtn.addEventListener('click', () => {
+                this.showNotificationSettings();
+            });
+        }
+    }
+
+    // Show notification settings
+    showNotificationSettings() {
+        // Show notification settings modal or redirect to browser settings
+        if (Notification.permission === 'granted') {
+            alert('Notifications are enabled! You can manage them in your browser settings.');
+        } else {
+            this.requestNotificationPermission();
+        }
+    }
+
+    // Subscribe to push notifications
+    async subscribeToPushNotifications() {
+        if (!this.currentUser) return;
+
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: this.urlBase64ToUint8Array(this.notificationConfig.vapidKey)
+            });
+
+            // Save subscription to Firestore
+            await db.collection('pushSubscriptions').doc(this.currentUser.uid).set({
+                subscription: subscription,
+                userId: this.currentUser.uid,
+                createdAt: new Date()
+            });
+
+            console.log('Push notification subscription saved');
+        } catch (error) {
+            console.error('Error subscribing to push notifications:', error);
+        }
+    }
+
+    // Convert VAPID key to Uint8Array
+    urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    // Register service worker
+    async registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('Service Worker registered:', registration);
+            } catch (error) {
+                console.error('Service Worker registration failed:', error);
+            }
+        }
+    }
+
+    // Send local notification
+    sendLocalNotification(title, options = {}) {
+        if (Notification.permission === 'granted') {
+            const notification = new Notification(title, {
+                icon: '/icons/icon-192x192.png',
+                badge: '/icons/icon-72x72.png',
+                ...options
+            });
+
+            notification.onclick = function() {
+                window.focus();
+                notification.close();
+            };
+        }
     }
 
     setupEventListeners() {

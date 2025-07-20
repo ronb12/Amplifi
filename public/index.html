@@ -3,385 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amplifi - Share Your Voice</title>
+    <title>Amplifi - Social Media Platform</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://js.stripe.com/v3/"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <!-- AdMob SDK -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADMOB_PUBLISHER_ID" crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h1><i class="fas fa-broadcast-tower"></i> Amplifi</h1>
-            </div>
-            <div class="nav-menu" id="navMenu">
-                <a href="#" class="nav-link active" data-tab="feed">Feed</a>
-                <a href="#" class="nav-link" data-tab="upload">Upload</a>
-                <a href="#" class="nav-link" data-tab="live" id="liveTab" style="display: none;">Live</a>
-                <a href="#" class="nav-link" data-tab="dashboard" id="dashboardTab" style="display: none;">Dashboard</a>
-                <a href="#" class="nav-link" data-tab="messages" id="messagesTab" style="display: none;">Messages</a>
-                <a href="#" class="nav-link" id="profileLink" style="display: none;">Profile</a>
-                <a href="#" class="nav-link" id="loginBtn">Login</a>
-                <a href="#" class="nav-link" id="logoutBtn" style="display: none;">Logout</a>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Amplifi</h1>
+            <div class="header-actions">
+                <button id="notificationBtn" class="notification-btn" style="display: none;">
+                    <span class="notification-icon">🔔</span>
+                </button>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="signupBtn" class="btn btn-secondary">Sign Up</button>
+                <div id="userMenu" class="user-menu" style="display: none;">
+                    <img id="userAvatar" src="default-avatar.png" alt="User Avatar" class="user-avatar">
+                    <div class="user-dropdown">
+                        <a href="#" id="profileLink">Profile</a>
+                        <a href="#" id="dashboardLink">Dashboard</a>
+                        <a href="#" id="settingsLink">Settings</a>
+                        <a href="#" id="logoutBtn">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Welcome to Amplifi</h2>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Login</button>
-                <button class="auth-tab" data-tab="signup">Sign Up</button>
-            </div>
-            
-            <form id="loginForm" class="auth-form">
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-            
-            <form id="signupForm" class="auth-form" style="display: none;">
-                <input type="text" placeholder="Display Name" required>
-                <input type="text" placeholder="Username (unique)" required>
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <textarea placeholder="Bio (optional)"></textarea>
-                <button type="submit">Sign Up</button>
-            </form>
+    <!-- AdMob Banner Ad -->
+    <div id="adBanner" class="ad-banner" style="display: none;">
+        <div class="ad-container">
+            <div class="ad-label">Advertisement</div>
+            <div id="bannerAd" class="banner-ad"></div>
         </div>
     </div>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Feed Tab -->
-        <div id="feedTab" class="tab-content active">
-            <div class="feed-container">
-                <div class="feed-header">
-                    <h2>Discover Amazing Content</h2>
-                    <div class="feed-filters">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="videos">Videos</button>
-                        <button class="filter-btn" data-filter="photos">Photos</button>
-                    </div>
-                </div>
-                <div id="feedPosts" class="posts-grid">
-                    <!-- Posts will be loaded here -->
-                </div>
-                <div id="loadingSpinner" class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Upload Tab -->
-        <div id="uploadTab" class="tab-content">
-            <div class="upload-container">
-                <h2>Share Your Content</h2>
-                <form id="uploadForm" class="upload-form">
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Drag & drop your video or image here</p>
-                        <p>or click to browse</p>
-                        <input type="file" id="fileInput" accept="video/*,image/*" style="display: none;">
-                    </div>
-                    <div id="filePreview" class="file-preview" style="display: none;">
-                        <video id="videoPreview" controls style="display: none;"></video>
-                        <img id="imagePreview" style="display: none;">
-                        <button type="button" id="removeFile" class="remove-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <textarea placeholder="What's on your mind?" id="postCaption"></textarea>
-                    <button type="submit" id="uploadBtn" disabled>
-                        <i class="fas fa-upload"></i> Upload Content
-                    </button>
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Login to Amplifi</h2>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit" class="btn btn-primary">Login</button>
                 </form>
-                <div id="uploadProgress" class="upload-progress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <p>Uploading... <span id="progressText">0%</span></p>
-                </div>
+                <p>Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
             </div>
         </div>
 
-        <!-- Live Streaming Tab -->
-        <div id="liveTab" class="tab-content">
-            <div class="live-container">
-                <div class="live-header">
-                    <h2>Live Streaming</h2>
-                    <div class="live-actions">
-                        <button class="btn btn-primary" id="startLiveBtn" onclick="app.startLiveStream()">
-                            <i class="fas fa-broadcast-tower"></i> Go Live
-                        </button>
-                        <button class="btn btn-secondary" id="joinLiveBtn" onclick="app.showLiveStreams()">
-                            <i class="fas fa-play"></i> Watch Live
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Live Stream Setup -->
-                <div id="liveSetup" class="live-setup" style="display: none;">
-                    <h3>Setup Your Live Stream</h3>
-                    <form id="liveStreamForm" class="live-stream-form">
-                        <div class="form-group">
-                            <label for="streamTitle">Stream Title</label>
-                            <input type="text" id="streamTitle" placeholder="Enter your stream title..." required>
-                        </div>
-                        <div class="form-group">
-                            <label for="streamDescription">Description</label>
-                            <textarea id="streamDescription" placeholder="Tell viewers what your stream is about..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="streamCategory">Category</label>
-                            <select id="streamCategory" required>
-                                <option value="">Select a category</option>
-                                <option value="gaming">Gaming</option>
-                                <option value="music">Music</option>
-                                <option value="education">Education</option>
-                                <option value="lifestyle">Lifestyle</option>
-                                <option value="tech">Technology</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="streamPrivacy">Privacy</label>
-                            <select id="streamPrivacy" required>
-                                <option value="public">Public</option>
-                                <option value="unlisted">Unlisted</option>
-                                <option value="private">Private</option>
-                            </select>
-                        </div>
-                        <div class="stream-controls">
-                            <button type="button" class="btn btn-secondary" onclick="app.cancelLiveSetup()">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-play"></i> Start Streaming
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Live Stream Player -->
-                <div id="livePlayer" class="live-player" style="display: none;">
-                    <div class="stream-header">
-                        <h3 id="currentStreamTitle">Live Stream</h3>
-                        <div class="stream-stats">
-                            <span id="viewerCount"><i class="fas fa-eye"></i> 0 viewers</span>
-                            <span id="streamDuration"><i class="fas fa-clock"></i> 00:00</span>
-                        </div>
-                    </div>
-                    <div class="video-container">
-                        <video id="liveVideo" autoplay muted></video>
-                        <div class="stream-overlay">
-                            <div class="live-indicator">
-                                <span class="live-dot"></span>
-                                LIVE
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stream-controls">
-                        <button class="btn btn-danger" onclick="app.endLiveStream()">
-                            <i class="fas fa-stop"></i> End Stream
-                        </button>
-                        <button class="btn btn-secondary" onclick="app.toggleChat()">
-                            <i class="fas fa-comments"></i> Chat
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Live Streams List -->
-                <div id="liveStreamsList" class="live-streams-list" style="display: none;">
-                    <h3>Live Now</h3>
-                    <div id="activeStreams" class="active-streams">
-                        <!-- Active streams will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Live Chat -->
-                <div id="liveChat" class="live-chat" style="display: none;">
-                    <div class="chat-header">
-                        <h4>Live Chat</h4>
-                        <button class="btn btn-sm" onclick="app.toggleChat()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div id="liveChatMessages" class="chat-messages">
-                        <!-- Live chat messages will appear here -->
-                    </div>
-                    <form id="liveChatForm" class="chat-form">
-                        <input type="text" id="liveChatInput" placeholder="Type a message..." maxlength="200">
-                        <button type="submit">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                </div>
+        <!-- Signup Modal -->
+        <div id="signupModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <input type="text" id="signupUsername" placeholder="Username" required>
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                    <textarea id="signupBio" placeholder="Bio (optional)"></textarea>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+                <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
             </div>
         </div>
 
-        <!-- Dashboard Tab -->
-        <div id="dashboardTab" class="tab-content">
-            <div class="dashboard-container">
-                <h2>Creator Dashboard</h2>
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <i class="fas fa-eye"></i>
-                        <h3>Total Views</h3>
-                        <p id="totalViews">0</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-dollar-sign"></i>
-                        <h3>Total Earnings</h3>
-                        <p id="totalEarnings">$0.00</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-heart"></i>
-                        <h3>Tips Received</h3>
-                        <p id="totalTips">$0.00</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-gift"></i>
-                        <h3>Payout Threshold</h3>
-                        <p>$25.00</p>
-                    </div>
+        <!-- App Content (shown after login) -->
+        <div id="appContent" class="app-content" style="display: none;">
+            <!-- Navigation Tabs -->
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="feed">Feed</button>
+                <button class="tab-btn" data-tab="upload">Upload</button>
+                <button class="tab-btn" data-tab="dashboard">Dashboard</button>
+                <button class="tab-btn" data-tab="comments">Comments</button>
+                <button class="tab-btn" data-tab="messages">Messages</button>
+                <button class="tab-btn" data-tab="live">Live</button>
+            </nav>
+
+            <!-- Feed Tab -->
+            <div id="feedTab" class="tab-content active">
+                <div class="feed-container">
+                    <div id="feedPosts" class="posts-grid"></div>
+                    <div id="feedLoading" class="loading">Loading posts...</div>
                 </div>
-                <div class="earnings-notice">
-                    <i class="fas fa-info-circle"></i>
-                    <p>💰 Earnings available after platform payout (AdMob cycle)</p>
-                </div>
-                <div class="dashboard-content">
-                    <h3>Your Content</h3>
-                    <div id="userPosts" class="user-posts">
-                        <!-- User's posts will be loaded here -->
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="uploadTab" class="tab-content">
+                <div class="upload-container">
+                    <h2>Upload Content</h2>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <p>Drag and drop your video or image here</p>
+                        <p>or</p>
+                        <input type="file" id="fileInput" accept="video/*,image/*" style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                    </div>
+                    <div id="uploadProgress" class="upload-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p id="progressText">Uploading...</p>
+                    </div>
+                    <div id="uploadForm" class="upload-form" style="display: none;">
+                        <input type="text" id="postTitle" placeholder="Title" required>
+                        <textarea id="postDescription" placeholder="Description"></textarea>
+                        <button class="btn btn-primary" id="publishBtn">Publish</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Messages Tab -->
-        <div id="messagesTab" class="tab-content">
-            <div class="messages-container">
-                <h2>Direct Messages</h2>
-                <div class="messages-layout">
-                    <div class="conversations-list">
-                        <div class="conversations-header">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content">
+                <div class="dashboard-container">
+                    <h2>Creator Dashboard</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Views</h3>
+                            <p id="totalViews">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Earnings</h3>
+                            <p id="totalEarnings">$0.00</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Tips</h3>
+                            <p id="totalTips">$0.00</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Payout Status</h3>
+                            <p id="payoutStatus">Not eligible</p>
+                        </div>
+                    </div>
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="recentActivity" class="activity-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Tab -->
+            <div id="commentsTab" class="tab-content">
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div id="commentsList" class="comments-list"></div>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messagesTab" class="tab-content">
+                <div class="messages-container">
+                    <div class="messages-sidebar">
+                        <div class="messages-header">
                             <h3>Conversations</h3>
-                            <button class="btn btn-sm" onclick="app.startNewConversation()">
-                                <i class="fas fa-plus"></i> New
-                            </button>
+                            <button id="newConversationBtn" class="btn btn-small">New</button>
                         </div>
-                        <div id="conversationsList" class="conversations-list">
-                            <!-- Conversations will be loaded here -->
-                        </div>
+                        <div id="conversationsList" class="conversations-list"></div>
                     </div>
-                    <div class="chat-area">
-                        <div id="chatHeader" class="chat-header" style="display: none;">
-                            <div class="chat-user-info">
-                                <img src="" alt="" id="chatUserPic" class="chat-user-pic">
-                                <div>
-                                    <h4 id="chatUserName">Select a conversation</h4>
-                                    <span id="chatUserStatus" class="user-status">offline</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="chatMessages" class="chat-messages">
-                            <div class="no-chat-selected">
-                                <i class="fas fa-comments"></i>
+                    <div class="messages-main">
+                        <div id="messagesMain" class="messages-main-content">
+                            <div class="messages-placeholder">
                                 <p>Select a conversation to start messaging</p>
                             </div>
                         </div>
-                        <form id="messageForm" class="message-form" style="display: none;">
-                            <div class="message-input-container">
-                                <textarea id="messageText" placeholder="Type your message..." required></textarea>
-                                <button type="submit" id="sendMessageBtn">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Streaming Tab -->
+            <div id="liveTab" class="tab-content">
+                <div class="live-container">
+                    <div class="live-header">
+                        <h2>Live Streaming</h2>
+                        <button id="startLiveBtn" class="btn btn-primary">Start Live Stream</button>
+                    </div>
+                    
+                    <!-- Live Stream Setup Modal -->
+                    <div id="liveSetupModal" class="modal">
+                        <div class="modal-content large">
+                            <span class="close">&times;</span>
+                            <h2>Start Live Stream</h2>
+                            <form id="liveSetupForm">
+                                <input type="text" id="streamTitle" placeholder="Stream Title" required>
+                                <textarea id="streamDescription" placeholder="Stream Description"></textarea>
+                                <select id="streamPrivacy">
+                                    <option value="public">Public</option>
+                                    <option value="private">Private</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Start Streaming</button>
+                                <button type="button" id="cancelLiveSetup" class="btn btn-secondary">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Live Stream Player -->
+                    <div id="livePlayer" class="live-player" style="display: none;">
+                        <div class="live-video-container">
+                            <video id="liveVideo" controls autoplay muted></video>
+                            <div class="live-controls">
+                                <button id="endStreamBtn" class="btn btn-danger">End Stream</button>
+                                <button id="toggleChatBtn" class="btn btn-secondary">Toggle Chat</button>
                             </div>
-                        </form>
+                        </div>
+                        <div id="liveChat" class="live-chat">
+                            <div class="chat-header">
+                                <h3>Live Chat</h3>
+                                <span id="viewerCount">0 viewers</span>
+                            </div>
+                            <div id="liveChatMessages" class="chat-messages"></div>
+                            <div class="chat-input">
+                                <input type="text" id="liveChatInput" placeholder="Type a message...">
+                                <button id="sendLiveChatBtn" class="btn btn-primary">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Streams List -->
+                    <div id="liveStreamsList" class="live-streams-list">
+                        <h3>Live Now</h3>
+                        <div id="activeStreams" class="streams-grid"></div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Post Modal -->
-    <div id="postModal" class="modal">
-        <div class="modal-content post-modal">
-            <span class="close">&times;</span>
-            <div id="postModalContent">
-                <!-- Post content will be loaded here -->
+    <!-- AdMob Interstitial Ad -->
+    <div id="interstitialAd" class="interstitial-ad" style="display: none;">
+        <div class="ad-overlay">
+            <div class="ad-content">
+                <div class="ad-close" id="closeInterstitial">&times;</div>
+                <div id="interstitialAdContent" class="interstitial-content"></div>
             </div>
         </div>
     </div>
 
-    <!-- Tip Modal -->
-    <div id="tipModal" class="modal">
-        <div class="modal-content tip-modal">
+    <!-- Push Notification Permission Modal -->
+    <div id="notificationPermissionModal" class="modal">
+        <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Tip Creator</h2>
-            <div id="tipCreatorInfo">
-                <!-- Creator info will be loaded here -->
-            </div>
-            <form id="tipForm">
-                <div class="tip-amounts">
-                    <button type="button" class="tip-amount" data-amount="1">$1</button>
-                    <button type="button" class="tip-amount" data-amount="5">$5</button>
-                    <button type="button" class="tip-amount" data-amount="10">$10</button>
-                    <button type="button" class="tip-amount" data-amount="25">$25</button>
-                </div>
-                <input type="number" id="customTipAmount" placeholder="Custom amount" min="0.50" step="0.50">
-                <button type="submit" id="tipSubmitBtn">
-                    <i class="fas fa-gift"></i> Send Tip
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Comments Modal -->
-    <div id="commentsModal" class="modal">
-        <div class="modal-content comments-modal">
-            <span class="close">&times;</span>
-            <div class="comments-header">
-                <h2>Comments</h2>
-                <div id="commentsPostInfo">
-                    <!-- Post info will be loaded here -->
-                </div>
-            </div>
-            <div class="comments-container">
-                <div id="commentsList" class="comments-list">
-                    <!-- Comments will be loaded here -->
-                </div>
-                <div id="commentsLoading" class="comments-loading">
-                    <i class="fas fa-spinner fa-spin"></i> Loading comments...
-                </div>
-            </div>
-            <form id="commentForm" class="comment-form">
-                <div class="comment-input-container">
-                    <img src="" alt="Your profile" id="commentUserPic" class="comment-user-pic">
-                    <textarea id="commentText" placeholder="Write a comment..." required></textarea>
-                </div>
-                <button type="submit" id="commentSubmitBtn">
-                    <i class="fas fa-paper-plane"></i> Post Comment
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- New Conversation Modal -->
-    <div id="newConversationModal" class="modal">
-        <div class="modal-content new-conversation-modal">
-            <span class="close">&times;</span>
-            <h2>Start New Conversation</h2>
-            <div class="users-list" id="usersList">
-                <!-- Users will be loaded here -->
-            </div>
-            <div id="usersLoading" class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i> Loading users...
+            <h2>Stay Updated!</h2>
+            <p>Get notified about new messages, comments, and tips from your followers.</p>
+            <div class="notification-options">
+                <button id="enableNotifications" class="btn btn-primary">Enable Notifications</button>
+                <button id="skipNotifications" class="btn btn-secondary">Maybe Later</button>
             </div>
         </div>
     </div>
@@ -391,6 +262,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="firebaseConfig.js"></script>
     <script src="app.js"></script>
 </body>
