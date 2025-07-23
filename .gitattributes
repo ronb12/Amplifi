@@ -1,0 +1,17 @@
+# Git attributes for Amplifi project
+
+# Mark Firebase config as safe for public exposure
+public/firebaseConfig.js linguist-detectable=false
+public/firebaseConfig.js linguist-generated=false
+
+# Mark service worker as generated
+public/sw.js linguist-generated=true
+
+# Mark manifest as generated
+public/manifest.json linguist-generated=true
+
+# Mark CSS as generated (since it's compiled/minified)
+public/styles.css linguist-generated=true
+
+# Mark HTML as generated (since it's a template)
+public/index.html linguist-generated=true 
