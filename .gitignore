@@ -81,4 +81,4 @@ temp/
 .dynamodb/
 
 # TernJS port file
-.tern-port 
+.tern-port serviceAccountKey.json
