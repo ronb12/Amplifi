@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Notifications - Amplifi</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Amplifi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <h2 style="margin: 0; font-size: 1.2rem; color: #374151;">Notifications</h2>
+      </div>
+      <div class="header-actions">
+        <button id="markAllReadBtn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+          Mark All Read
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+
+  <div class="main-layout">
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+      <!-- Notification Tabs -->
+      <div class="notification-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem;">
+        <button class="tab-btn active" data-tab="all" style="background: #6366f1; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+          All
+        </button>
+        <button class="tab-btn" data-tab="likes" style="background: none; color: #64748b; border: 1px solid #e5e7eb; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+          ❤️ Likes
+        </button>
+        <button class="tab-btn" data-tab="comments" style="background: none; color: #64748b; border: 1px solid #e5e7eb; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+          💬 Comments
+        </button>
+        <button class="tab-btn" data-tab="followers" style="background: none; color: #64748b; border: 1px solid #e5e7eb; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+          👥 Followers
+        </button>
+        <button class="tab-btn" data-tab="tips" style="background: none; color: #64748b; border: 1px solid #e5e7eb; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+          💰 Tips
+        </button>
+      </div>
+
+      <!-- Notifications Container -->
+      <div id="notificationsContainer" style="max-width: 600px; margin: 0 auto;">
+        <!-- Loading State -->
+        <div id="loadingState" style="text-align: center; padding: 2rem;">
+          <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+          <p style="color: #64748b;">Loading notifications...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🔔</div>
+          <h3 style="margin-bottom: 0.5rem; color: #374151;">No notifications yet</h3>
+          <p style="color: #64748b; margin-bottom: 1.5rem;">When you get likes, comments, or new followers, they'll appear here.</p>
+          <a href="feed.html" class="btn btn-primary" style="text-decoration: none;">Explore Feed</a>
+        </div>
+
+        <!-- Notifications List -->
+        <div id="notificationsList" style="display: none;">
+          <!-- Sample notifications for demonstration -->
+          <div class="notification-item" style="display: flex; align-items: start; gap: 1rem; padding: 1rem; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer;">
+            <img src="default-avatar.svg" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-weight: 600; color: #374151;">John Doe</span>
+                <span style="color: #64748b; font-size: 0.9rem;">liked your post</span>
+                <span style="color: #9ca3af; font-size: 0.8rem;">2h ago</span>
+              </div>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">"Great content! Keep it up!"</p>
+            </div>
+            <div class="notification-dot" style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="notification-item" style="display: flex; align-items: start; gap: 1rem; padding: 1rem; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer;">
+            <img src="default-avatar.svg" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-weight: 600; color: #374151;">Jane Smith</span>
+                <span style="color: #64748b; font-size: 0.9rem;">started following you</span>
+                <span style="color: #9ca3af; font-size: 0.8rem;">5h ago</span>
+              </div>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">You have a new follower!</p>
+            </div>
+            <div class="notification-dot" style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="notification-item" style="display: flex; align-items: start; gap: 1rem; padding: 1rem; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer;">
+            <img src="default-avatar.svg" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-weight: 600; color: #374151;">Mike Johnson</span>
+                <span style="color: #64748b; font-size: 0.9rem;">tipped you</span>
+                <span style="color: #9ca3af; font-size: 0.8rem;">1d ago</span>
+              </div>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">💰 $5.00 - "Amazing work!"</p>
+            </div>
+            <div class="notification-dot" style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="notification-item" style="display: flex; align-items: start; gap: 1rem; padding: 1rem; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer;">
+            <img src="default-avatar.svg" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-weight: 600; color: #374151;">Sarah Wilson</span>
+                <span style="color: #64748b; font-size: 0.9rem;">commented on your post</span>
+                <span style="color: #9ca3af; font-size: 0.8rem;">2d ago</span>
+              </div>
+              <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">"This is exactly what I needed! Thank you!"</p>
+            </div>
+            <div class="notification-dot" style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="profile.html" class="tab-item active" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  
+  <!-- App Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/notifications.js"></script>
+</body>
+</html> 

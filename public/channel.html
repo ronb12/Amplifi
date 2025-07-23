@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Channel - Amplifi</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- Desktop tab navigation -->
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+  <main class="main-content feed-main-content" id="mainContent" tabindex="-1" role="main">
+    <div class="feed-container grid-feed-container">
+      <!-- Channel Profile Card -->
+      <section class="user-profile-card" style="margin-bottom:2.5rem;">
+        <div class="user-profile-avatar" style="width:96px;height:96px;">
+          <img src="default-avatar.svg" alt="Channel Avatar" id="channelAvatar">
+        </div>
+        <div class="user-profile-info">
+          <div class="user-profile-name" id="channelName">Nature Channel</div>
+          <div class="user-profile-meta" id="channelMeta">@naturelover • 12.3k subscribers</div>
+          <nav class="user-profile-links" aria-label="Channel actions">
+            <button class="btn btn-primary" aria-label="Subscribe">Subscribe</button>
+            <button class="btn btn-secondary" aria-label="Message">Message</button>
+          </nav>
+        </div>
+      </section>
+      <h2 style="margin-bottom: 1.5rem; text-align:center; font-size:1.5rem; font-weight:700; color:#3730a3;">Channel Posts</h2>
+      <div id="channelPosts" class="posts-grid grid-feed" aria-live="polite">
+        <!-- Sample channel posts -->
+        <div class="post-card">
+          <div class="post-media"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Channel Post 1"></div>
+          <div class="post-info">
+            <div class="post-header">
+              <div class="post-header-content">
+                <span class="post-title">Wildlife Wonders</span>
+                <span class="post-meta">2h ago • 1.2k views</span>
+              </div>
+            </div>
+            <div class="post-caption">A look at some of the most fascinating animals in the wild.</div>
+            <div class="post-actions">
+              <button class="action-btn" title="Like"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z"/></svg> <span>320</span></button>
+              <button class="action-btn" title="Comment"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>18</span></button>
+              <button class="action-btn" title="Share"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="post-card">
+          <div class="post-media"><img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" alt="Channel Post 2"></div>
+          <div class="post-info">
+            <div class="post-header">
+              <div class="post-header-content">
+                <span class="post-title">Mountain Views</span>
+                <span class="post-meta">1d ago • 2.3k views</span>
+              </div>
+            </div>
+            <div class="post-caption">Breathtaking views from the top of the world.</div>
+            <div class="post-actions">
+              <button class="action-btn" title="Like"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z"/></svg> <span>210</span></button>
+              <button class="action-btn" title="Comment"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>7</span></button>
+              <button class="action-btn" title="Share"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Mobile Tab Navigation -->
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="profile.html" class="tab-item" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+</body>
+</html>

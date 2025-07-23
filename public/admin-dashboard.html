@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amplifi - Admin Dashboard</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .admin-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-action-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .admin-action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .admin-action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .admin-action-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .admin-action-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .admin-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .admin-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-nav-right {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .admin-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .admin-btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .admin-btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .admin-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .admin-nav-left,
+            .admin-nav-right {
+                justify-content: center;
+            }
+            
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="admin-badge">👑 Admin Dashboard</div>
+        <h1>Amplifi Platform Administration</h1>
+        <p>Manage your platform and create AI-generated content</p>
+    </div>
+
+    <!-- Admin Navigation -->
+    <div class="admin-content">
+        <div class="admin-nav">
+            <div class="admin-nav-left">
+                <span id="adminEmail" style="font-weight: 600; color: var(--text-primary);">Loading...</span>
+            </div>
+            <div class="admin-nav-right">
+                <button class="admin-btn admin-btn-secondary" onclick="adminDashboard.logout()">
+                    🚪 Logout
+                </button>
+                <a href="feed.html" class="admin-btn admin-btn-primary">
+                    📱 View Feed
+                </a>
+            </div>
+        </div>
+
+        <!-- Admin Stats -->
+        <div class="admin-stats">
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">📊</div>
+                <div class="admin-stat-number" id="totalPosts">0</div>
+                <div class="admin-stat-label">Total Posts</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">👥</div>
+                <div class="admin-stat-number" id="totalUsers">0</div>
+                <div class="admin-stat-label">Total Users</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">🤖</div>
+                <div class="admin-stat-number" id="aiPosts">0</div>
+                <div class="admin-stat-label">AI-Generated Posts</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">📈</div>
+                <div class="admin-stat-number" id="totalViews">0</div>
+                <div class="admin-stat-label">Total Views</div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="admin-actions">
+            <div class="admin-action-card" onclick="adminDashboard.createAIContent()">
+                <div class="admin-action-icon">🤖</div>
+                <div class="admin-action-title">AI Content Creator</div>
+                <div class="admin-action-desc">Generate and post AI-created content with images, quotes, tips, and more</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.viewAnalytics()">
+                <div class="admin-action-icon">📊</div>
+                <div class="admin-action-title">Platform Analytics</div>
+                <div class="admin-action-desc">View detailed analytics, user engagement, and content performance</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.manageUsers()">
+                <div class="admin-action-icon">👥</div>
+                <div class="admin-action-title">User Management</div>
+                <div class="admin-action-desc">Manage users, view profiles, and monitor platform activity</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.contentModeration()">
+                <div class="admin-action-icon">🛡️</div>
+                <div class="admin-action-title">Content Moderation</div>
+                <div class="admin-action-desc">Review and moderate user-generated content</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.platformSettings()">
+                <div class="admin-action-icon">⚙️</div>
+                <div class="admin-action-title">Platform Settings</div>
+                <div class="admin-action-desc">Configure platform settings, features, and system preferences</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.manageMessages()">
+                <div class="admin-action-icon">💬</div>
+                <div class="admin-action-title">Contact Messages</div>
+                <div class="admin-action-desc">View and respond to contact form submissions from users</div>
+            </div>
+            
+            <div class="admin-action-card" onclick="adminDashboard.backupData()">
+                <div class="admin-action-icon">💾</div>
+                <div class="admin-action-title">Data Backup</div>
+                <div class="admin-action-desc">Backup platform data and export analytics</div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="admin-stat-card">
+            <h3>🕒 Recent Platform Activity</h3>
+            <div id="recentActivity" class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">⏳</div>
+                    <div class="activity-content">
+                        <p>Loading recent activity...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html> 

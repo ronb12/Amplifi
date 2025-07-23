@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Amplifi - Upload</title>
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
+    
+    <!-- iOS Touch Icons -->
+    <link rel="apple-touch-startup-image" href="icons/icon-512x512.png">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Amplifi">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    <meta name="msapplication-TileImage" content="icons/icon-192x192.png">
+    
+    <!-- iOS Status Bar -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="feed.css?v=1">
+    <link rel="stylesheet" href="upload.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <!-- AdMob SDK -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADMOB_PUBLISHER_ID" crossorigin="anonymous"></script>
+    
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Amplifi</h1>
+            <div class="header-actions">
+                <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                <button id="postBtn" class="btn btn-primary" disabled>Post</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Upload Container -->
+        <div class="upload-container">
+            <div class="upload-title">Add Photos or Videos</div>
+            <!-- Media Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-placeholder" id="uploadPlaceholder">
+                    <div class="upload-icon">📷</div>
+                    <h3>Add Photos or Videos</h3>
+                    <p>Drag and drop files here, or click to browse</p>
+                    <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('mediaInput').click()">
+                        Choose Files
+                    </button>
+                </div>
+                <div class="upload-preview" id="uploadPreview" style="display: none;">
+                    <div class="preview-container">
+                        <img id="previewImage" src="default-avatar.svg" alt="Preview" style="display: none;">
+                        <video id="previewVideo" src="" controls style="display: none;"></video>
+                        <button class="remove-media" id="removeMedia">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Details Form -->
+            <div class="post-details">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" id="postTitle" placeholder="Add a title..." maxlength="100">
+                    <div class="char-count" id="titleCharCount">0/100</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="postDescription">Description</label>
+                    <textarea id="postDescription" placeholder="What's on your mind?" rows="4" maxlength="500"></textarea>
+                    <div class="char-count" id="descCharCount">0/500</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="postTags">Tags (optional)</label>
+                    <input type="text" id="postTags" placeholder="Add tags separated by commas...">
+                    <div class="tags-suggestions" id="tagsSuggestions">
+                        <span class="tag-suggestion" data-tag="gaming">🎮 Gaming</span>
+                        <span class="tag-suggestion" data-tag="music">🎵 Music</span>
+                        <span class="tag-suggestion" data-tag="cooking">👨‍🍳 Cooking</span>
+                        <span class="tag-suggestion" data-tag="fitness">💪 Fitness</span>
+                        <span class="tag-suggestion" data-tag="travel">✈️ Travel</span>
+                        <span class="tag-suggestion" data-tag="art">🎨 Art</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="allowComments" checked>
+                        <span class="checkmark"></span>
+                        Allow comments
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="allowTips">
+                        <span class="checkmark"></span>
+                        Allow tips
+                    </label>
+                </div>
+            </div>
+
+            <!-- Upload Progress -->
+            <div class="upload-progress" id="uploadProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="progressText">Uploading...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Tab Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item active" aria-label="Create" aria-current="page">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>

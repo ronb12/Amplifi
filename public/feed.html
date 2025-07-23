@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Amplifi - Feed</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Amplifi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <a href="#mainContent" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:1000;">Skip to main content</a>
+  <!-- Only one header at the top -->
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- Desktop tab navigation -->
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link active" aria-current="page">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+
+  <div class="main-layout">
+    <!-- Feed Content Area -->
+    <main class="main-content feed-main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="feed-container grid-feed-container">
+        <div id="feedPosts" class="posts-grid grid-feed" aria-live="polite"></div>
+        <div id="feedEmptyState" class="feed-empty-state" style="display:none;">No posts to display yet. Start by following creators or uploading your first post!</div>
+        <div id="feedLoading" class="loading" aria-live="polite">Loading posts...</div>
+        <div class="load-more-container">
+          <button id="loadMoreBtn" class="btn btn-secondary" aria-label="Load more posts">Load More Posts</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Tab Navigation -->
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item active" aria-label="Home" aria-current="page">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="profile.html" class="tab-item" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+
+  <!-- Comments Modal -->
+  <div id="commentsModal" class="modal" aria-label="Comments modal" role="dialog" aria-modal="true">
+    <div class="modal-content comments-modal">
+      <span class="close" aria-label="Close comments">&times;</span>
+      <div class="comments-header">
+        <h2>Comments</h2>
+        <div id="commentsPostInfo"></div>
+      </div>
+      <div class="comments-container">
+        <div id="commentsList" class="comments-list"></div>
+        <div id="commentsLoading" class="comments-loading" aria-live="polite">Loading comments...</div>
+        <form id="commentForm" class="comment-form" style="display: none;">
+          <div class="comment-input-container">
+            <img id="commentUserPic" src="default-avatar.svg" alt="User" class="comment-user-pic">
+            <textarea id="commentText" placeholder="Write a comment..." required aria-label="Write a comment"></textarea>
+          </div>
+          <button type="submit" id="commentSubmitBtn" class="btn btn-primary" aria-label="Post comment">Post Comment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tip Modal -->
+  <div id="tipModal" class="modal" aria-label="Tip modal" role="dialog" aria-modal="true">
+    <div class="modal-content tip-modal">
+      <span class="close" aria-label="Close tip">&times;</span>
+      <div id="tipCreatorInfo"></div>
+      <form id="tipForm">
+        <div class="tip-amounts" role="group" aria-label="Tip amounts">
+          <button type="button" class="tip-amount" data-amount="1.00" aria-label="Tip $1.00">$1.00</button>
+          <button type="button" class="tip-amount" data-amount="5.00" aria-label="Tip $5.00">$5.00</button>
+          <button type="button" class="tip-amount" data-amount="10.00" aria-label="Tip $10.00">$10.00</button>
+          <button type="button" class="tip-amount" data-amount="25.00" aria-label="Tip $25.00">$25.00</button>
+        </div>
+        <input type="number" id="customTipAmount" placeholder="Custom amount" min="0.50" step="0.01" required aria-label="Custom tip amount">
+        <button type="submit" id="tipSubmitBtn" class="btn btn-primary" aria-label="Send tip">Send Tip</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer" style="text-align:center; padding:1.5rem 0; background:#f3f4f6; color:#888; font-size:0.98rem;">
+    &copy; 2025 Amplifi. All rights reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pwa-manager.js"></script>
+  <script src="js/feed.js"></script>
+</body>
+</html> 

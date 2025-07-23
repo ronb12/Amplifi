@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Content Creator - Amplifi</title>
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+  <meta name="theme-color" content="#6366f1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+  <div class="main-layout" style="background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 100%);min-height:100vh;">
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="ai-content-container" style="max-width:600px;margin:3rem auto 0 auto;background:#fff;border-radius:1.5rem;box-shadow:0 6px 32px rgb(99 102 241 / 10%);border:1.5px solid #e0e7ef;padding:2.7rem 2.2rem 2.2rem 2.2rem;text-align:center;">
+        <div style="margin-bottom:2.2rem;">
+          <h2 class="font-xl font-bold mb-1" style="font-family:'Inter',sans-serif;font-size:2.1rem;letter-spacing:-1px;">AI Content Creator</h2>
+          <div style="font-size:2.7rem;margin-bottom:0.5rem;">🤖</div>
+          <div class="text-secondary" style="color:#6366f1;font-size:1.1rem;margin-bottom:0.5rem;">Create stunning posts, images, and more with AI-powered tools.</div>
+          <div style="color:#64748b;font-size:0.98rem;">Let AI help you craft engaging content for your audience.</div>
+        </div>
+        <form id="aiContentForm" autocomplete="off" style="text-align:left;">
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label for="aiContentType" style="font-weight:600;">Content Type</label>
+            <select id="aiContentType" class="form-control" style="width:100%;padding:0.6rem 0.8rem;border-radius:0.7rem;border:1.5px solid #e5e7eb;font-size:1rem;margin-top:0.3rem;">
+              <option value="inspirational">💭 Inspirational Quote</option>
+              <option value="tech">💻 Tech Tip</option>
+              <option value="lifestyle">🌟 Lifestyle</option>
+              <option value="business">💼 Business</option>
+              <option value="creative">🎨 Creative</option>
+              <option value="custom">✏️ Custom</option>
+            </select>
+          </div>
+          <div class="form-group" id="customPromptGroup" style="display:none;margin-bottom:1.2rem;">
+            <label for="customPrompt" style="font-weight:600;">Custom Prompt</label>
+            <textarea id="customPrompt" class="form-control" placeholder="Describe the content you want to create..." style="width:100%;padding:0.7rem 0.9rem;border-radius:0.7rem;border:1.5px solid #e5e7eb;font-size:1rem;margin-top:0.3rem;min-height:70px;"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label for="includeAIImage" style="font-weight:600;">Include AI Image</label>
+            <input type="checkbox" id="includeAIImage" checked style="margin-left:0.5rem;">
+            <small style="color:#64748b;">Generate matching image with AI</small>
+          </div>
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label for="aiHashtags" style="font-weight:600;">Hashtags</label>
+            <input type="text" id="aiHashtags" class="form-control" placeholder="#amplifi #social #content" style="width:100%;padding:0.6rem 0.8rem;border-radius:0.7rem;border:1.5px solid #e5e7eb;font-size:1rem;margin-top:0.3rem;">
+          </div>
+          <div style="height:1px;background:#e5e7eb;margin:2rem 0 1.5rem 0;"></div>
+          <div class="ai-preview" id="aiPreview" style="display:none;background:#f3f4f6;border-radius:1rem;padding:1.2rem 1rem 1.2rem 1rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgb(99 102 241 / 5%);">
+            <h4 style="font-size:1.15rem;font-weight:700;color:#6366f1;margin-bottom:0.7rem;">Preview</h4>
+            <div id="aiPreviewContent"></div>
+          </div>
+          <div class="ai-actions" style="text-align:center;">
+            <button type="button" id="generateAIContentBtn" class="btn btn-primary" style="background:#6366f1;color:#fff;font-weight:600;padding:0.7rem 1.5rem;border-radius:0.7rem;font-size:1.08rem;margin-right:0.7rem;box-shadow:0 2px 8px rgb(99 102 241 / 10%);border:none;">🎨 Generate Content</button>
+            <button type="button" id="postAIBtn" class="btn btn-success" style="background:#10b981;color:#fff;font-weight:600;padding:0.7rem 1.5rem;border-radius:0.7rem;font-size:1.08rem;display:none;box-shadow:0 2px 8px rgb(16 185 129 / 10%);border:none;">📤 Post to Feed</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="dashboard.html" class="tab-item" aria-label="Dashboard">
+      <div class="tab-icon" aria-hidden="true">📊</div>
+      <span class="tab-label">Dashboard</span>
+    </a>
+    <a href="profile.html" class="tab-item" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+  <footer class="footer" style="text-align:center; padding:1.5rem 0; background:#f3f4f6; color:#888; font-size:0.98rem;">
+    &copy; 2025 Amplifi. All rights reserved.
+  </footer>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ai-content.js"></script>
+</body>
+</html> 

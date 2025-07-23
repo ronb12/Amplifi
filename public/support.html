@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        .help-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .help-section {
+            margin-bottom: 3rem;
+        }
+        
+        .help-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faq-answer {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <label for="searchInput" class="sr-only">Search posts, users</label>
+                <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+                <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+            <div class="header-actions">
+                <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                    <span class="notification-icon" aria-label="Notification bell">🔔</span>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+                    <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- Desktop tab navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="feed.html" class="nav-link">Feed</a>
+        <a href="trending.html" class="nav-link">Trending</a>
+        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+        <a href="upload.html" class="nav-link">Upload</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="messages.html" class="nav-link">Messages</a>
+        <a href="live.html" class="nav-link">Live</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+    <!-- Mobile Tab Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="help-content">
+            <a href="index.html" class="back-link">← Back to Home</a>
+            
+            <h1>Help Center</h1>
+            <p>Find answers to common questions and get help with Amplifi.</p>
+            
+            <!-- Getting Started -->
+            <div class="help-section">
+                <h2>Getting Started</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I create an account?</div>
+                    <div class="faq-answer">
+                        Click the "Sign Up" button on the homepage and fill in your email, password, and username. You'll receive a confirmation email to verify your account.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I upload my first post?</div>
+                    <div class="faq-answer">
+                        After logging in, click the "+" button in the top navigation. You can upload photos, videos, or create text posts. Add a caption and hashtags to reach more people.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">What types of content can I share?</div>
+                    <div class="faq-answer">
+                        You can share photos, videos, live streams, and text posts. We support most common image and video formats including JPG, PNG, MP4, and MOV.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account & Profile -->
+            <div class="help-section">
+                <h2>Account & Profile</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I change my profile picture?</div>
+                    <div class="faq-answer">
+                        Go to your profile page and click on your current profile picture. You can then upload a new image from your device or take a new photo.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Can I change my username?</div>
+                    <div class="faq-answer">
+                        Yes, you can change your username once every 30 days. Go to Settings &gt; Profile and click "Edit Username". Note that your old username will become available for others to use.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I reset my password?</div>
+                    <div class="faq-answer">
+                        On the login page, click "Forgot Password?" and enter your email address. You'll receive a link to reset your password securely.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content & Sharing -->
+            <div class="help-section">
+                <h2>Content & Sharing</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I go live?</div>
+                    <div class="faq-answer">
+                        Click the "+" button and select "Go Live". You can add a title and description for your stream. Make sure you have a stable internet connection for the best experience.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I use hashtags?</div>
+                    <div class="faq-answer">
+                        Add hashtags to your posts by typing # followed by your keyword (e.g., #food, #travel). Hashtags help others discover your content and can increase your reach.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Can I schedule posts?</div>
+                    <div class="faq-answer">
+                        Currently, we don't support post scheduling, but this feature is coming soon! For now, you can create drafts and post them when you're ready.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Privacy & Safety -->
+            <div class="help-section">
+                <h2>Privacy & Safety</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I make my account private?</div>
+                    <div class="faq-answer">
+                        Go to Settings &gt; Privacy and toggle "Private Account". With a private account, only approved followers can see your posts.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I block someone?</div>
+                    <div class="faq-answer">
+                        Go to their profile and click the three dots menu. Select "Block User". Blocked users cannot see your posts or contact you.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I report inappropriate content?</div>
+                    <div class="faq-answer">
+                        Click the three dots on any post and select "Report". Choose the reason for reporting and provide additional details if needed. We review all reports within 24 hours.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Monetization -->
+            <div class="help-section">
+                <h2>Monetization</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I start earning money?</div>
+                    <div class="faq-answer">
+                        Once you have 1,000 followers, you can apply for the Creator Program. This allows you to receive tips from viewers and earn money through ads on your content.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do tips work?</div>
+                    <div class="faq-answer">
+                        Viewers can send you tips during live streams or on your posts. Tips are processed securely and you'll receive 90% of the tip amount (10% goes to platform fees).
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">When do I get paid?</div>
+                    <div class="faq-answer">
+                        Payments are processed monthly. You need a minimum balance of $50 to receive a payout. Payments are made via PayPal or direct bank transfer.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technical Support -->
+            <div class="help-section">
+                <h2>Technical Support</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">The app is not loading properly</div>
+                    <div class="faq-answer">
+                        Try refreshing the page or clearing your browser cache. If the problem persists, check your internet connection or try using a different browser.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">My upload is taking too long</div>
+                    <div class="faq-answer">
+                        Large files may take longer to upload. Try compressing your video or image, or check your internet connection speed. We recommend uploads under 100MB for faster processing.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">I can't log in to my account</div>
+                    <div class="faq-answer">
+                        Make sure you're using the correct email and password. If you've forgotten your password, use the "Forgot Password?" link. If you're still having issues, contact our support team.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Support -->
+            <div class="help-section">
+                <h2>Still Need Help?</h2>
+                <p>If you couldn't find the answer you're looking for, our support team is here to help!</p>
+                <div style="margin-top: 1rem;">
+                    <a href="contact.html" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Amplifi</h3>
+                    <p>Share your world with millions of creators and fans.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li><a href="index.html">Upload Content</a></li>
+                        <li><a href="index.html">Live Streaming</a></li>
+                        <li><a href="index.html">Messaging</a></li>
+                        <li><a href="index.html">Monetization</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="support.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">YouTube</a>
+                        <a href="#" class="social-link">Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Amplifi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

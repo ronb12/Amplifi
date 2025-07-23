@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Search - Amplifi</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Amplifi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+  <div class="main-layout">
+    <main class="main-content feed-main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="feed-container grid-feed-container">
+        <section class="search-bar-section mt-6 mb-4" style="display:flex;justify-content:center;">
+          <form id="mainSearchForm" class="shadow-md bg-primary rounded-lg p-2" style="width:100%;max-width:480px;display:flex;align-items:center;">
+            <input type="text" id="mainSearchInput" placeholder="Search posts, users, videos..." class="search-input font-md" aria-label="Search posts, users, videos" style="flex:1;border:none;background:#fff;color:#1f2937;font-size:1.1rem;outline:none;">
+            <button id="mainSearchBtn" class="search-btn" aria-label="Search" style="background:#6366f1;color:#fff;border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-left:0.3rem;cursor:pointer;transition:background 0.15s;"><span>🔍</span></button>
+          </form>
+        </section>
+        <nav class="search-filter-tabs mb-6" role="tablist" aria-label="Search filters">
+          <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true" aria-controls="tab-all">All</button>
+          <button class="filter-tab" data-filter="posts" role="tab" aria-selected="false" aria-controls="tab-posts">Posts</button>
+          <button class="filter-tab" data-filter="users" role="tab" aria-selected="false" aria-controls="tab-users">Users</button>
+          <button class="filter-tab" data-filter="videos" role="tab" aria-selected="false" aria-controls="tab-videos">Videos</button>
+          <button class="filter-tab" data-filter="images" role="tab" aria-selected="false" aria-controls="tab-images">Images</button>
+        </nav>
+        <section id="tab-all" class="search-results-section" role="tabpanel" aria-labelledby="tab-all">
+          <div class="posts-grid grid-feed mb-8">
+            <!-- Sample Post Result -->
+            <div class="post-card">
+              <div class="post-media"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=600&q=80" alt="Sample Post"></div>
+              <div class="post-info">
+                <div class="post-header">
+                  <div class="post-header-content">
+                    <span class="post-title">Amazing Sunset</span>
+                    <span class="post-meta">Sarah Johnson • 156 ❤️</span>
+                  </div>
+                </div>
+                <div class="post-caption">Captured this beautiful sunset during my evening walk. Nature never fails to amaze me! 🌅</div>
+                <div class="post-actions">
+                  <button class="action-btn" title="Like"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z"/></svg> <span>156</span></button>
+                  <button class="action-btn" title="Comment"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>42</span></button>
+                  <button class="action-btn" title="Share"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <!-- Sample User Result -->
+            <div class="post-card" style="display:flex;align-items:center;gap:1.2rem;padding:1.2rem 1.5rem;">
+              <img src="default-avatar.svg" alt="User Avatar" style="width:56px;height:56px;border-radius:50%;border:2px solid #e5e7eb;">
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:1.1rem;color:#3730a3;">@naturelover</div>
+                <div style="color:#6b7280;font-size:0.98rem;">Nature Channel</div>
+              </div>
+              <button class="btn btn-primary" style="border-radius:999px;padding:0.5rem 1.3rem;font-weight:500;">Follow</button>
+            </div>
+          </div>
+          <!-- Empty State -->
+          <div class="feed-empty-state" style="display:none;justify-content:center;align-items:center;flex-direction:column;">
+            <div style="font-size:2.5rem;">🔍</div>
+            <h3 style="margin:0.7rem 0 0.2rem 0;">No results found</h3>
+            <p style="color:#6b7280;">Try adjusting your search terms or browse trending content</p>
+            <a href="trending.html" class="btn btn-secondary" style="margin-top:1rem;">Browse Trending</a>
+          </div>
+        </section>
+        <section class="trending-topics-section mt-8">
+          <h3 class="font-semibold mb-3">Trending Topics</h3>
+          <div class="topics-grid" style="display:flex;flex-wrap:wrap;gap:0.7rem;">
+            <button class="topic-btn topic-pill">🎮 Gaming</button>
+            <button class="topic-btn topic-pill">🎵 Music</button>
+            <button class="topic-btn topic-pill">👨‍🍳 Cooking</button>
+            <button class="topic-btn topic-pill">💪 Fitness</button>
+            <button class="topic-btn topic-pill">✈️ Travel</button>
+            <button class="topic-btn topic-pill">🎨 Art</button>
+            <button class="topic-btn topic-pill">💻 Tech</button>
+            <button class="topic-btn topic-pill">👗 Fashion</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item active" aria-label="Search" aria-current="page">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="profile.html" class="tab-item" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+  <footer class="footer" style="text-align:center; padding:1.5rem 0; background:#f3f4f6; color:#888; font-size:0.98rem;">
+    &copy; 2025 Amplifi. All rights reserved.
+  </footer>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pwa-manager.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html> 

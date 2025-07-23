@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Amplifi</title>
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="dashboard.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+  <meta name="theme-color" content="#6366f1">
+  <script src="version.js"></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link active" aria-current="page">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+  <div class="main-layout">
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="dashboard-container">
+        <div class="dashboard-header-card">
+          <div class="dashboard-header mb-6">
+            <h2 class="font-xl font-bold mb-1">Creator Dashboard</h2>
+            <p class="text-secondary">Track your performance and manage your content</p>
+          </div>
+          <!-- Stats Overview -->
+          <div class="stats-overview flex gap-5 mb-7" aria-label="Stats overview">
+            <div class="stat-card">
+              <div class="stat-icon">👁️</div>
+              <div class="stat-content">
+                <h3>Total Views</h3>
+                <p id="totalViews">0</p>
+                <span class="stat-change positive">+12% this week</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">❤️</div>
+              <div class="stat-content">
+                <h3>Total Likes</h3>
+                <p id="totalLikes">0</p>
+                <span class="stat-change positive">+8% this week</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-content">
+                <h3>Total Earnings</h3>
+                <p id="totalEarnings">$0.00</p>
+                <span class="stat-change positive">+15% this week</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-content">
+                <h3>Followers</h3>
+                <p id="totalFollowers">0</p>
+                <span class="stat-change positive">+5% this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs flex gap-2 mb-6" role="tablist" aria-label="Dashboard sections">
+          <button class="dashboard-tab active" data-tab="overview" role="tab" aria-selected="true" aria-controls="overviewTab" id="tab-overview">Overview</button>
+          <button class="dashboard-tab" data-tab="posts" role="tab" aria-selected="false" aria-controls="postsTab" id="tab-posts">My Posts</button>
+          <button class="dashboard-tab" data-tab="analytics" role="tab" aria-selected="false" aria-controls="analyticsTab" id="tab-analytics">Analytics</button>
+          <button class="dashboard-tab" data-tab="earnings" role="tab" aria-selected="false" aria-controls="earningsTab" id="tab-earnings">Earnings</button>
+        </div>
+        <!-- Tab Content -->
+        <div class="dashboard-content">
+          <!-- Overview Tab -->
+          <div id="overviewTab" class="dashboard-tab-content active" role="tabpanel" aria-labelledby="tab-overview">
+            <div class="overview-grid flex gap-5 flex-wrap">
+              <div class="overview-card flex-1 min-w-[260px]">
+                <h3 class="section-heading">Recent Activity</h3>
+                <div id="recentActivity" class="activity-list">
+                  <div class="activity-item flex items-center gap-2 mb-1">
+                    <div class="activity-icon">📈</div>
+                    <div class="activity-content">
+                      <p>Your post "Amazing Sunset" got 50 new views</p>
+                      <span class="activity-time">2 hours ago</span>
+                    </div>
+                  </div>
+                  <div class="activity-item flex items-center gap-2 mb-1">
+                    <div class="activity-icon">💬</div>
+                    <div class="activity-content">
+                      <p>New comment on "Travel Adventures"</p>
+                      <span class="activity-time">4 hours ago</span>
+                    </div>
+                  </div>
+                  <div class="activity-item flex items-center gap-2 mb-1">
+                    <div class="activity-icon">💰</div>
+                    <div class="activity-content">
+                      <p>Received $5.00 tip from @user123</p>
+                      <span class="activity-time">1 day ago</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="overview-card flex-1 min-w-[260px]">
+                <h3 class="section-heading">Quick Actions</h3>
+                <div class="quick-actions flex gap-2 flex-wrap">
+                  <a href="ai-content.html" class="quick-action-btn admin-only" title="Create AI Content" aria-label="Create AI Content" style="display:none;">
+                    <span class="action-icon">🤖</span>
+                    <span>AI Content Creator</span>
+                  </a>
+                  <a href="upload.html" class="quick-action-btn" title="Upload New Content" aria-label="Upload New Content">
+                    <span class="action-icon">📤</span>
+                    <span>Upload New Content</span>
+                  </a>
+                  <a href="live.html" class="quick-action-btn" title="Go Live" aria-label="Go Live">
+                    <span class="action-icon">📺</span>
+                    <span>Go Live</span>
+                  </a>
+                  <a href="profile.html" class="quick-action-btn" title="Edit Profile" aria-label="Edit Profile">
+                    <span class="action-icon">👤</span>
+                    <span>Edit Profile</span>
+                  </a>
+                  <a href="settings.html" class="quick-action-btn" title="Settings" aria-label="Settings">
+                    <span class="action-icon">⚙️</span>
+                    <span>Settings</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Posts Tab -->
+          <div id="postsTab" class="dashboard-tab-content" role="tabpanel" aria-labelledby="tab-posts">
+            <div class="my-posts-card">
+              <div class="posts-header flex items-center gap-2 mb-3">
+                <h3 class="section-heading">My Posts</h3>
+                <div class="posts-filters flex gap-1">
+                  <button class="filter-btn active" data-filter="all" aria-label="Show all posts">All</button>
+                  <button class="filter-btn" data-filter="videos" aria-label="Show videos">Videos</button>
+                  <button class="filter-btn" data-filter="images" aria-label="Show images">Images</button>
+                  <button class="filter-btn" data-filter="drafts" aria-label="Show drafts">Drafts</button>
+                </div>
+              </div>
+              <div id="userPosts" class="posts-grid"></div>
+              <div id="postsLoading" class="loading empty-state">
+                <div class="empty-state-illustration">📭</div>
+                <div>No posts yet. Start creating content!</div>
+              </div>
+            </div>
+          </div>
+          <!-- Analytics Tab -->
+          <div id="analyticsTab" class="dashboard-tab-content" role="tabpanel" aria-labelledby="tab-analytics">
+            <h3 class="section-heading">Analytics</h3>
+            <div class="analytics-grid flex gap-5 flex-wrap">
+              <div class="analytics-card flex-1 min-w-[260px]">
+                <h3 class="font-lg font-semibold mb-2">Views Over Time</h3>
+                <div id="viewsChart" class="chart-container">
+                  <canvas id="viewsCanvas"></canvas>
+                </div>
+              </div>
+              <div class="analytics-card flex-1 min-w-[260px]">
+                <h3 class="font-lg font-semibold mb-2">Engagement Rate</h3>
+                <div id="engagementChart" class="chart-container">
+                  <canvas id="engagementCanvas"></canvas>
+                </div>
+              </div>
+              <div class="analytics-card flex-1 min-w-[260px]">
+                <h3 class="font-lg font-semibold mb-2">Top Performing Posts</h3>
+                <div id="topPosts" class="top-posts-list"></div>
+              </div>
+              <div class="analytics-card flex-1 min-w-[260px]">
+                <h3 class="font-lg font-semibold mb-2">Audience Demographics</h3>
+                <div id="demographicsChart" class="chart-container">
+                  <canvas id="demographicsCanvas"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Earnings Tab -->
+          <div id="earningsTab" class="dashboard-tab-content" role="tabpanel" aria-labelledby="tab-earnings">
+            <h3 class="section-heading">Earnings</h3>
+            <div class="earnings-overview flex gap-5 flex-wrap mb-5">
+              <div class="earnings-card flex-1 min-w-[220px]">
+                <h3>This Month</h3>
+                <p class="earnings-amount" id="monthlyEarnings">$0.00</p>
+                <span class="earnings-change positive">+0% from last month</span>
+              </div>
+              <div class="earnings-card flex-1 min-w-[220px]">
+                <h3>Total Lifetime</h3>
+                <p class="earnings-amount" id="lifetimeEarnings">$0.00</p>
+                <span class="earnings-change positive">Growing steadily</span>
+              </div>
+              <div class="earnings-card flex-1 min-w-[220px]">
+                <h3>Payout Status</h3>
+                <p class="payout-status" id="payoutStatus">Not eligible</p>
+                <span class="payout-info">Minimum $50 to withdraw</span>
+              </div>
+            </div>
+            <div class="earnings-breakdown">
+              <h3 class="font-lg font-semibold mb-2">Earnings Breakdown</h3>
+              <div id="earningsBreakdown" class="breakdown-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="dashboard.html" class="tab-item active" aria-label="Dashboard" aria-current="page">
+      <div class="tab-icon" aria-hidden="true">📊</div>
+      <span class="tab-label">Dashboard</span>
+    </a>
+    <a href="profile.html" class="tab-item" aria-label="Profile">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+  <footer class="footer" style="text-align:center; padding:1.5rem 0; background:#f3f4f6; color:#888; font-size:0.98rem;">
+    &copy; 2025 Amplifi. All rights reserved.
+  </footer>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+// Hide AI Content Creator button for non-admins
+// Replace this with your actual admin check logic
+const isAdmin = window.localStorage.getItem('isAdmin') === 'true';
+const aiContentBtn = document.getElementById('aiContentBtn');
+if (aiContentBtn) {
+  aiContentBtn.style.display = isAdmin ? '' : 'none';
+}
+</script>
+</body>
+</html> 

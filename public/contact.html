@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .contact-section {
+            margin-bottom: 3rem;
+        }
+        
+        .contact-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-form {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .contact-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .contact-method {
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-method h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <label for="searchInput" class="sr-only">Search posts, users</label>
+                <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+                <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+            <div class="header-actions">
+                <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                    <span class="notification-icon" aria-label="Notification bell">🔔</span>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+                    <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- Desktop tab navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="feed.html" class="nav-link">Feed</a>
+        <a href="trending.html" class="nav-link">Trending</a>
+        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+        <a href="upload.html" class="nav-link">Upload</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="messages.html" class="nav-link">Messages</a>
+        <a href="live.html" class="nav-link">Live</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+    <!-- Mobile Tab Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="contact-content">
+            <a href="index.html" class="back-link">← Back to Home</a>
+            
+            <h1>Contact Us</h1>
+            <p>We're here to help! Get in touch with our team for support, feedback, or business inquiries.</p>
+            
+            <!-- Contact Information -->
+            <div class="contact-section">
+                <h2>Get in Touch</h2>
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <h4>📧 Email Support</h4>
+                        <p><strong>General Inquiries:</strong> ronellbradley@bradleyvs.com</p>
+                        <p><strong>Technical Support:</strong> ronellbradley@bradleyvs.com</p>
+                        <p><strong>Business Partnerships:</strong> ronellbradley@bradleyvs.com</p>
+                        <p><strong>Press & Media:</strong> ronellbradley@bradleyvs.com</p>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <h4>📍 Location</h4>
+                        <p><strong>Amplifi</strong><br>
+                        Columbia, South Carolina<br>
+                        United States</p>
+                        <p><em>We're currently working remotely and don't have a physical office yet.</em></p>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <h4>⏰ Response Times</h4>
+                        <p><strong>Email Support:</strong> Within 24 hours</p>
+                        <p><strong>Urgent Issues:</strong> Within 4 hours</p>
+                        <p><strong>Business Inquiries:</strong> Within 48 hours</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="contact-section">
+                <h2>Send us a Message</h2>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Select a topic</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="account">Account Issues</option>
+                            <option value="content">Content & Moderation</option>
+                            <option value="monetization">Monetization</option>
+                            <option value="partnership">Business Partnership</option>
+                            <option value="feedback">Feedback & Suggestions</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priority">Priority Level</label>
+                        <select id="priority" name="priority">
+                            <option value="low">Low - General Question</option>
+                            <option value="medium" selected>Medium - Standard Support</option>
+                            <option value="high">High - Urgent Issue</option>
+                            <option value="critical">Critical - System Down</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" placeholder="Please describe your issue or inquiry in detail..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            Subscribe to our newsletter for updates and tips
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">Send Message</button>
+                </form>
+            </div>
+            
+            <!-- FAQ Quick Links -->
+            <div class="contact-section">
+                <h2>Quick Help</h2>
+                <p>Before contacting us, you might find answers to common questions in our Help Center:</p>
+                <div style="margin-top: 1rem;">
+                    <a href="support.html" class="btn btn-secondary">Visit Help Center</a>
+                </div>
+            </div>
+            
+            <!-- Social Media -->
+            <div class="contact-section">
+                <h2>Connect With Us</h2>
+                <p>Follow us on social media for updates, tips, and community discussions:</p>
+                <div style="margin-top: 1rem;">
+                    <a href="#" class="btn btn-secondary" style="margin-right: 0.5rem;">Twitter</a>
+                    <a href="#" class="btn btn-secondary" style="margin-right: 0.5rem;">Instagram</a>
+                    <a href="#" class="btn btn-secondary" style="margin-right: 0.5rem;">YouTube</a>
+                    <a href="#" class="btn btn-secondary">Discord</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Amplifi</h3>
+                    <p>Share your world with millions of creators and fans.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li><a href="index.html">Upload Content</a></li>
+                        <li><a href="index.html">Live Streaming</a></li>
+                        <li><a href="index.html">Messaging</a></li>
+                        <li><a href="index.html">Monetization</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="support.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">YouTube</a>
+                        <a href="#" class="social-link">Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Amplifi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+
+    <script>
+        // Contact form handling with Firestore integration
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="btn-loading show">Sending...</span>';
+            
+            try {
+                // Save message to Firestore
+                await firebase.firestore().collection('contactMessages').add({
+                    name: data.name,
+                    email: data.email,
+                    subject: data.subject,
+                    priority: data.priority,
+                    message: data.message,
+                    newsletter: data.newsletter === 'on',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    read: false,
+                    replied: false
+                });
+                
+                // Show success message
+                alert('Thank you for your message! We\'ll get back to you within 24 hours.');
+                
+                // Reset form
+                this.reset();
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Sorry, there was an error sending your message. Please try again or email us directly at ronellbradley@bradleyvs.com');
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+</body>
+</html> 

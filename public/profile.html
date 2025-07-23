@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Amplifi</title>
+  <link rel="stylesheet" href="base.css?v=1">
+  <link rel="stylesheet" href="feed.css?v=1">
+  <link rel="stylesheet" href="profile.css?v=1">
+  <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+  <link rel="stylesheet" href="modal-overlays.css?v=1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <script src="version.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    }
+    .profile-banner {
+      position: relative;
+      border-radius: 1.5rem 1.5rem 0 0;
+      overflow: hidden;
+      height: 220px;
+      background: linear-gradient(120deg, #6366f1 60%, #818cf8 100%);
+      margin-bottom: -60px;
+    }
+    .profile-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+    .profile-banner::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: linear-gradient(120deg, #6366f1 60%, #818cf8 100%);
+      opacity: 0.5;
+      z-index: 1;
+    }
+    .profile-avatar {
+      position: relative;
+      z-index: 2;
+      margin-top: -80px;
+      margin-left: 2rem;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      box-shadow: 0 4px 24px 0 rgba(99,102,241,0.18);
+      border: 6px solid #fff;
+      overflow: hidden;
+      background: #fff;
+    }
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .profile-details {
+      margin-left: 2.5rem;
+    }
+    .profile-action-tabs .btn {
+      margin-right: 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.7rem;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .profile-action-tabs .btn:hover {
+      background: #6366f1;
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(99,102,241,0.16);
+    }
+    .profile-stats {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.06);
+      padding: 1.2rem 2rem;
+      margin-top: 1.2rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      gap: 2.5rem;
+      justify-content: flex-start;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 1.3rem;
+      color: #6366f1;
+    }
+    .stat-label {
+      font-size: 0.98rem;
+      color: #888;
+    }
+    .bio-section, .quick-actions, .recent-activity {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.06);
+      padding: 2rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .quick-actions .action-btn {
+      background: #f1f5f9;
+      border-radius: 0.7rem;
+      padding: 1rem 1.5rem;
+      font-size: 1.05rem;
+      color: #6366f1;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      box-shadow: 0 2px 8px 0 rgba(99,102,241,0.04);
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .quick-actions .action-btn:hover {
+      background: #6366f1;
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(99,102,241,0.10);
+    }
+    .activity-list {
+      margin-top: 1rem;
+    }
+    .activity-item {
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      padding: 0.7rem 1rem;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      box-shadow: 0 1px 4px 0 rgba(99,102,241,0.04);
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <label for="searchInput" class="sr-only">Search posts, users</label>
+        <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+        <div id="searchResults" class="search-results" style="display: none;"></div>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+          <span class="notification-icon" aria-label="Notification bell">🔔</span>
+          <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        </button>
+        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+          <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+        </a>
+      </div>
+    </div>
+  </header>
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+  <div class="main-layout">
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="profile-container">
+        <!-- Profile Banner -->
+        <div class="profile-banner" id="profileBanner">
+          <img src="default-banner.svg" alt="Profile Banner" id="bannerImage">
+        </div>
+        <!-- Profile Info -->
+        <div class="profile-info flex gap-6 mt-4 mb-6" style="align-items:flex-end;">
+          <div class="profile-avatar" style="position:relative;">
+            <img src="default-avatar.svg" alt="Profile Picture" id="profileAvatar">
+          </div>
+          <div class="profile-details">
+            <h1 id="profileDisplayName" class="font-xl font-bold mb-1">User Name</h1>
+            <p id="profileUsername" class="text-secondary mb-1">@username</p>
+            <p id="profileBio" class="profile-bio mb-2">User bio goes here...</p>
+            <div class="profile-action-tabs">
+              <button id="editProfileBtn" class="btn btn-primary" style="display: none;" aria-label="Edit Profile">Edit Profile</button>
+              <button id="followBtn" class="btn btn-primary" aria-label="Follow">Follow</button>
+              <button id="tipBtn" class="btn btn-secondary" aria-label="Tip">Tip</button>
+              <button id="messageBtn" class="btn btn-secondary" aria-label="Message">Message</button>
+            </div>
+            <div class="profile-stats flex gap-6 mt-2" role="group" aria-label="Profile statistics">
+              <div class="stat">
+                <span class="stat-number font-bold" id="subscribersStat">0</span>
+                <span class="stat-label">Subscribers</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number font-bold" id="subscribingStat">0</span>
+                <span class="stat-label">Subscriptions</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number font-bold" id="postsCount">0</span>
+                <span class="stat-label">Posts</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number font-bold" id="totalViews">0</span>
+                <span class="stat-label">Views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- About Section -->
+        <section class="bio-section mb-6" aria-label="About user">
+          <div class="bio-header flex items-center gap-2 mb-2">
+            <h3 class="font-lg font-semibold">About</h3>
+            <button id="editBioBtn" class="btn btn-small" style="display: none;" aria-label="Edit bio">Edit</button>
+          </div>
+          <div class="bio-content">
+            <p id="aboutBio" class="bio-text mb-2">No bio available.</p>
+            <div class="user-details flex gap-4 flex-wrap">
+              <div class="detail-item flex items-center gap-1">
+                <span class="detail-icon" aria-hidden="true">📅</span>
+                <span>Joined <span id="joinDate" class="detail-value">Unknown</span></span>
+              </div>
+              <div class="detail-item flex items-center gap-1">
+                <span class="detail-icon" aria-hidden="true">📍</span>
+                <span id="location" class="detail-value">Location not set</span>
+              </div>
+              <div class="detail-item flex items-center gap-1">
+                <span class="detail-icon" aria-hidden="true">🌐</span>
+                <a href="#" id="website" class="detail-link" target="_blank" aria-label="User website">No website</a>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Quick Actions -->
+        <section class="quick-actions mb-6" aria-label="Quick actions">
+          <div class="action-grid flex gap-3 flex-wrap" role="group" aria-label="Profile quick actions">
+            <a href="#posts" id="viewPostsBtn" class="action-btn" aria-label="View Posts">
+              <span class="action-icon" aria-hidden="true">📝</span>
+              <span class="action-label">View Posts</span>
+            </a>
+            <a href="#subscribers" id="viewSubscribersBtn" class="action-btn" aria-label="Subscribers">
+              <span class="action-icon" aria-hidden="true">👥</span>
+              <span class="action-label">Subscribers</span>
+            </a>
+            <a href="#subscriptions" id="viewSubscribingBtn" class="action-btn" aria-label="Subscriptions">
+              <span class="action-icon" aria-hidden="true">👤</span>
+              <span class="action-label">Subscriptions</span>
+            </a>
+            <button id="shareProfileBtn" class="action-btn" aria-label="Share Profile">
+              <span class="action-icon" aria-hidden="true">📤</span>
+              <span class="action-label">Share Profile</span>
+            </button>
+          </div>
+        </section>
+        <!-- Recent Activity -->
+        <section class="recent-activity" aria-label="Recent activity">
+          <h3 class="font-lg font-semibold mb-2">Recent Activity</h3>
+          <div id="recentActivity" class="activity-list" aria-live="polite">
+            <div class="activity-item flex items-center gap-2 mb-1">
+              <span class="activity-icon" aria-hidden="true">🎉</span>
+              <span class="activity-text">Welcome to Amplifi!</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+    <a href="feed.html" class="tab-item" aria-label="Home">
+      <div class="tab-icon" aria-hidden="true">🏠</div>
+      <span class="tab-label">Home</span>
+    </a>
+    <a href="search.html" class="tab-item" aria-label="Search">
+      <div class="tab-icon" aria-hidden="true">🔍</div>
+      <span class="tab-label">Search</span>
+    </a>
+    <a href="upload.html" class="tab-item" aria-label="Create">
+      <div class="tab-icon" aria-hidden="true">➕</div>
+      <span class="tab-label">Create</span>
+    </a>
+    <a href="messages.html" class="tab-item" aria-label="Messages">
+      <div class="tab-icon" aria-hidden="true">💬</div>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a href="profile.html" class="tab-item active" aria-label="Profile" aria-current="page">
+      <div class="tab-icon" aria-hidden="true">👤</div>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+  <footer class="footer" style="text-align:center; padding:1.5rem 0; background:#f3f4f6; color:#888; font-size:0.98rem;">
+    &copy; 2025 Amplifi. All rights reserved.
+  </footer>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html> 

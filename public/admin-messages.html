@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Messages - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        .messages-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .message-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .messages-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .message-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        .message-card.unread {
+            border-left-color: var(--primary-color);
+            background: #f8f9ff;
+        }
+        
+        .message-card.urgent {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .message-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .message-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .message-priority {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .priority-low { background: #e9ecef; color: #495057; }
+        .priority-medium { background: #fff3cd; color: #856404; }
+        .priority-high { background: #f8d7da; color: #721c24; }
+        .priority-critical { background: #f5c6cb; color: #721c24; }
+        
+        .message-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .reply-form {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .reply-form.show {
+            display: block;
+        }
+        
+        .reply-form textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        
+        .no-messages {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .message-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Amplifi Admin</h1>
+            <div class="header-actions">
+                <a href="admin-dashboard.html" class="btn btn-secondary">Dashboard</a>
+                <button id="logoutBtn" class="btn btn-primary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="messages-container">
+            <div class="messages-header">
+                <h1>Contact Messages</h1>
+                <div>
+                    <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+                </div>
+            </div>
+
+            <!-- Message Statistics -->
+            <div class="message-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMessages">0</div>
+                    <div class="stat-label">Total Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="unreadMessages">0</div>
+                    <div class="stat-label">Unread</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="urgentMessages">0</div>
+                    <div class="stat-label">Urgent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="repliedMessages">0</div>
+                    <div class="stat-label">Replied</div>
+                </div>
+            </div>
+
+            <!-- Message Filters -->
+            <div class="message-filters">
+                <button class="filter-btn active" data-filter="all">All Messages</button>
+                <button class="filter-btn" data-filter="unread">Unread</button>
+                <button class="filter-btn" data-filter="urgent">Urgent</button>
+                <button class="filter-btn" data-filter="replied">Replied</button>
+            </div>
+
+            <!-- Messages Grid -->
+            <div class="messages-grid" id="messagesGrid">
+                <div class="no-messages">
+                    <h3>No messages yet</h3>
+                    <p>Contact form submissions will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script>
+        class AdminMessages {
+            constructor() {
+                this.currentUser = null;
+                this.messages = [];
+                this.currentFilter = 'all';
+                this.init();
+            }
+
+            async init() {
+                await this.checkAdminAuth();
+                this.setupEventListeners();
+                this.loadMessages();
+                this.setupRealTimeUpdates();
+            }
+
+            async checkAdminAuth() {
+                return new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged(async (user) => {
+                        if (user) {
+                            // Check if user is admin
+                            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                            if (userDoc.exists && userDoc.data().isAdmin) {
+                                this.currentUser = user;
+                                resolve();
+                            } else {
+                                alert('Access denied. Admin privileges required.');
+                                window.location.href = 'index.html';
+                            }
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    });
+                });
+            }
+
+            setupEventListeners() {
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentFilter = btn.dataset.filter;
+                        this.filterMessages();
+                    });
+                });
+
+                // Refresh button
+                document.getElementById('refreshBtn').addEventListener('click', () => {
+                    this.loadMessages();
+                });
+
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    firebase.auth().signOut();
+                });
+            }
+
+            async loadMessages() {
+                try {
+                    const snapshot = await firebase.firestore()
+                        .collection('contactMessages')
+                        .orderBy('timestamp', 'desc')
+                        .get();
+
+                    this.messages = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    this.updateStats();
+                    this.filterMessages();
+                } catch (error) {
+                    console.error('Error loading messages:', error);
+                    this.showError('Failed to load messages');
+                }
+            }
+
+            setupRealTimeUpdates() {
+                firebase.firestore()
+                    .collection('contactMessages')
+                    .orderBy('timestamp', 'desc')
+                    .onSnapshot((snapshot) => {
+                        this.messages = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        this.updateStats();
+                        this.filterMessages();
+                    });
+            }
+
+            updateStats() {
+                const total = this.messages.length;
+                const unread = this.messages.filter(m => !m.read).length;
+                const urgent = this.messages.filter(m => m.priority === 'high' || m.priority === 'critical').length;
+                const replied = this.messages.filter(m => m.replied).length;
+
+                document.getElementById('totalMessages').textContent = total;
+                document.getElementById('unreadMessages').textContent = unread;
+                document.getElementById('urgentMessages').textContent = urgent;
+                document.getElementById('repliedMessages').textContent = replied;
+            }
+
+            filterMessages() {
+                let filteredMessages = this.messages;
+
+                switch (this.currentFilter) {
+                    case 'unread':
+                        filteredMessages = this.messages.filter(m => !m.read);
+                        break;
+                    case 'urgent':
+                        filteredMessages = this.messages.filter(m => m.priority === 'high' || m.priority === 'critical');
+                        break;
+                    case 'replied':
+                        filteredMessages = this.messages.filter(m => m.replied);
+                        break;
+                }
+
+                this.renderMessages(filteredMessages);
+            }
+
+            renderMessages(messages) {
+                const grid = document.getElementById('messagesGrid');
+                
+                if (messages.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-messages">
+                            <h3>No messages found</h3>
+                            <p>No messages match the current filter.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = messages.map(message => this.createMessageCard(message)).join('');
+            }
+
+            createMessageCard(message) {
+                const timestamp = message.timestamp ? new Date(message.timestamp.toDate()).toLocaleString() : 'Unknown';
+                const priorityClass = `priority-${message.priority || 'medium'}`;
+                const cardClass = `message-card ${!message.read ? 'unread' : ''} ${(message.priority === 'high' || message.priority === 'critical') ? 'urgent' : ''}`;
+
+                return `
+                    <div class="${cardClass}" data-message-id="${message.id}">
+                        <div class="message-header">
+                            <div class="message-info">
+                                <h3>${message.name || 'Anonymous'}</h3>
+                                <div class="message-meta">
+                                    <strong>Email:</strong> ${message.email}<br>
+                                    <strong>Subject:</strong> ${message.subject}<br>
+                                    <strong>Received:</strong> ${timestamp}
+                                </div>
+                            </div>
+                            <span class="message-priority ${priorityClass}">${message.priority || 'medium'}</span>
+                        </div>
+                        
+                        <div class="message-content">
+                            <strong>Message:</strong><br>
+                            ${message.message}
+                        </div>
+                        
+                        <div class="message-actions">
+                            ${!message.read ? `<button class="btn btn-primary btn-small" onclick="adminMessages.markAsRead('${message.id}')">Mark Read</button>` : ''}
+                            <button class="btn btn-secondary btn-small" onclick="adminMessages.toggleReply('${message.id}')">Reply</button>
+                            ${message.replied ? '<span class="message-priority priority-low">Replied</span>' : ''}
+                        </div>
+                        
+                        <div class="reply-form" id="replyForm-${message.id}">
+                            <textarea placeholder="Type your reply..." id="replyText-${message.id}"></textarea>
+                            <button class="btn btn-primary btn-small" onclick="adminMessages.sendReply('${message.id}')">Send Reply</button>
+                            <button class="btn btn-secondary btn-small" onclick="adminMessages.toggleReply('${message.id}')">Cancel</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async markAsRead(messageId) {
+                try {
+                    await firebase.firestore()
+                        .collection('contactMessages')
+                        .doc(messageId)
+                        .update({
+                            read: true,
+                            readAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                } catch (error) {
+                    console.error('Error marking message as read:', error);
+                    this.showError('Failed to mark message as read');
+                }
+            }
+
+            toggleReply(messageId) {
+                const replyForm = document.getElementById(`replyForm-${messageId}`);
+                replyForm.classList.toggle('show');
+            }
+
+            async sendReply(messageId) {
+                const replyText = document.getElementById(`replyText-${messageId}`).value.trim();
+                
+                if (!replyText) {
+                    this.showError('Please enter a reply message');
+                    return;
+                }
+
+                try {
+                    const message = this.messages.find(m => m.id === messageId);
+                    
+                    // Save reply to Firestore
+                    await firebase.firestore()
+                        .collection('contactMessages')
+                        .doc(messageId)
+                        .update({
+                            replied: true,
+                            replyText: replyText,
+                            replyAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            repliedBy: this.currentUser.uid
+                        });
+
+                    // Here you could also send an email notification to the user
+                    // For now, we'll just show a success message
+                    this.showSuccess('Reply sent successfully');
+                    
+                    // Clear reply form
+                    document.getElementById(`replyText-${messageId}`).value = '';
+                    this.toggleReply(messageId);
+                    
+                } catch (error) {
+                    console.error('Error sending reply:', error);
+                    this.showError('Failed to send reply');
+                }
+            }
+
+            showError(message) {
+                alert('Error: ' + message);
+            }
+
+            showSuccess(message) {
+                alert('Success: ' + message);
+            }
+        }
+
+        // Initialize admin messages
+        const adminMessages = new AdminMessages();
+    </script>
+</body>
+</html> 

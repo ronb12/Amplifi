@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Messages - Amplifi</title>
+  <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
+  <meta name="theme-color" content="#1877f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Amplifi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="base.css?v=13">
+  <link rel="stylesheet" href="messages.css?v=13">
+  <script src="version.js?v=13"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="logo">Amplifi</h1>
+      </div>
+      <div class="header-center">
+        <h2 class="page-title">Messages</h2>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="btn btn-icon notification-btn" aria-label="Notifications" onclick="messagesPage.toggleNotificationDropdown()">
+          <span class="notification-icon">🔔</span>
+          <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+        </button>
+        <div id="userMenu" class="user-menu" style="display: none;">
+          <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+            <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+          </a>
+          <div class="user-dropdown">
+            <a href="settings.html">Settings</a>
+            <a href="profile.html">Profile</a>
+            <button onclick="messagesPage.handleLogout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="feed.html" class="nav-link">Feed</a>
+    <a href="trending.html" class="nav-link">Trending</a>
+    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+    <a href="upload.html" class="nav-link">Upload</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="messages.html" class="nav-link active">Messages</a>
+    <a href="live.html" class="nav-link">Live</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </nav>
+
+  <!-- Messenger Layout -->
+  <div class="main-layout">
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+      <div class="messages-container" style="display: flex; height: 80vh; min-height: 500px;">
+        <!-- Sidebar: People who sent you messages -->
+        <aside class="conversations-sidebar show-mobile" aria-label="Conversations">
+          <div class="conversations-header">
+            <span class="sidebar-title">Conversations</span>
+            <div class="conversations-actions">
+              <button id="newConversationBtn" class="new-conversation-btn btn-icon" title="New Conversation" aria-label="New Conversation" onclick="messagesPage.showNewConversationModal()">＋</button>
+              <!-- Removed hardcoded New Group button to prevent duplicate -->
+            </div>
+          </div>
+          <div class="conversations-search">
+            <div class="search-input-wrapper" style="position: relative;">
+              <span class="search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%);">🔍</span>
+              <input type="text" id="conversationsSearch" placeholder="Search conversations..." autocomplete="off" style="padding-left: 2.2rem;" oninput="messagesPage.filterConversations(this.value)">
+              <button class="clear-search" onclick="messagesPage.clearSearch()" style="display: none;">×</button>
+            </div>
+          </div>
+          <div id="conversationsList" class="conversations-list" tabindex="0">
+            <!-- Conversations will be loaded here -->
+          </div>
+        </aside>
+
+        <!-- Draggable divider for resizing -->
+        <div id="sidebar-resizer" class="sidebar-resizer" aria-label="Resize conversations sidebar" tabindex="0"></div>
+
+        <!-- Main Chat Area: Conversation and chat box -->
+        <section class="messages-area hide-mobile" aria-label="Chat">
+          <!-- Chat Header with Back Button for Mobile -->
+          <div class="messages-header" id="messagesHeader">
+            <button class="back-btn" onclick="messagesPage.showSidebarMobile()" aria-label="Back">←</button>
+            <div class="conversation-info">
+              <img id="conversationAvatar" src="default-avatar.svg" alt="Conversation" class="conversation-avatar">
+              <div class="conversation-details">
+                <h4 id="conversationName">Conversation Name</h4>
+                <span id="conversationStatus" class="conversation-status">Online</span>
+              </div>
+            </div>
+            <div class="conversation-actions">
+              <button class="btn-icon call-btn" onclick="messagesPage.startVoiceCall()" aria-label="Voice call" title="Voice call">📞</button>
+              <button class="btn-icon call-btn" onclick="messagesPage.startVideoCall()" aria-label="Video call" title="Video call">
+                <!-- Modern camera SVG -->
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="15" height="10" rx="2"/><polygon points="17 11 22 7 22 17 17 13"/></svg>
+              </button>
+              <button class="btn-icon" onclick="messagesPage.showConversationOptions()" aria-label="More options">⋯</button>
+            </div>
+          </div>
+
+          <!-- Only one main chat search box -->
+          <div class="search-input-wrapper" style="position: relative; margin: 1.2rem 0 0.5rem 0;">
+            <span class="search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%);">🔍</span>
+            <input type="text" class="search-messages-input" placeholder="Search messages..." style="padding-left: 2.2rem;">
+          </div>
+
+          <!-- Messages Scrollable Area -->
+          <div class="messages-main" id="messagesMain">
+            <div class="select-conversation-prompt">
+              <div class="prompt-icon">💬</div>
+              <h3>Select a conversation</h3>
+              <p>Choose a conversation from the sidebar to start messaging</p>
+            </div>
+          </div>
+
+          <!-- Input Bar: Only one set of icons, emoji picker placeholder -->
+          <form id="messageForm" class="message-form">
+            <div class="message-input-container">
+              <!-- Removed hardcoded media, voice, and emoji buttons. Only input and send button remain. -->
+              <div id="emoji-picker" style="display:none; position:absolute; bottom:60px; right:20px; z-index:1000;"></div>
+              <input type="text" id="messageInput" placeholder="Type a message..." class="message-input" disabled>
+              <button type="submit" class="send-btn" aria-label="Send message" disabled>➤</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="firebaseConfig.js?v=13"></script>
+  <script src="js/utils.js?v=13"></script>
+  <script src="js/messages.js?v=13"></script>
+  <script src="app.js?v=13"></script>
+</body>
+</html> 

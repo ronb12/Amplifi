@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Settings - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        .privacy-settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .privacy-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .privacy-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .privacy-section h3 {
+            color: #333;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group small {
+            display: block;
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-group {
+            margin: 1rem 0;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 0;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .privacy-info {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .privacy-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+        }
+        
+        .privacy-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .alias-preview {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .alias-preview h4 {
+            margin: 0 0 0.5rem 0;
+            color: #0c5460;
+        }
+        
+        .alias-preview .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #bee5eb;
+        }
+        
+        .alias-preview .preview-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preview-label {
+            font-weight: 500;
+            color: #0c5460;
+        }
+        
+        .preview-value {
+            color: #666;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Amplifi</h1>
+            <div class="header-actions">
+                <a href="settings.html" class="btn btn-secondary">Back to Settings</a>
+                <button id="logoutBtn" class="btn btn-primary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="privacy-settings-container">
+            <a href="settings.html" class="back-link">← Back to Settings</a>
+            
+            <h1>Privacy Settings</h1>
+            <p>Control how your information is displayed and who can see your content.</p>
+            
+            <!-- Name & Alias Settings -->
+            <div class="privacy-section">
+                <h2>🕵️ Name & Alias Settings</h2>
+                
+                <div class="privacy-info">
+                    <h4>Privacy First</h4>
+                    <p>You can choose to use an alias instead of your real name for privacy, just like on YouTube and other platforms.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="realName">Real Name (Private)</label>
+                    <input type="text" id="realName" placeholder="Your real name">
+                    <small>This is kept private and only used for account verification. Other users cannot see this.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="displayName">Display Name</label>
+                    <input type="text" id="displayName" placeholder="Name shown to other users" required>
+                    <small>This is the name that appears on your posts, profile, and comments.</small>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="useAlias" checked>
+                        <span>Use display name instead of real name for privacy</span>
+                    </label>
+                </div>
+                
+                <!-- Alias Preview -->
+                <div class="alias-preview" id="aliasPreview">
+                    <h4>How Your Name Will Appear</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">On Posts:</span>
+                        <span class="preview-value" id="previewPostName">Display Name</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">On Comments:</span>
+                        <span class="preview-value" id="previewCommentName">Display Name</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">On Profile:</span>
+                        <span class="preview-value" id="previewProfileName">Display Name</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Privacy -->
+            <div class="privacy-section">
+                <h2>👤 Profile Privacy</h2>
+                
+                <div class="form-group">
+                    <label for="profileVisibility">Profile Visibility</label>
+                    <select id="profileVisibility">
+                        <option value="public">Public - Anyone can view your profile</option>
+                        <option value="followers">Followers Only - Only your followers can view your profile</option>
+                        <option value="private">Private - Only you can view your profile</option>
+                    </select>
+                    <small>Control who can see your profile information and posts.</small>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showEmail">
+                        <span>Show email address on profile</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showFollowers">
+                        <span>Show follower count publicly</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Content Privacy -->
+            <div class="privacy-section">
+                <h2>📝 Content Privacy</h2>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="allowComments">
+                        <span>Allow comments on my posts</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="allowReposts">
+                        <span>Allow others to repost my content</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showLocation">
+                        <span>Show location in posts (if available)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Data & Privacy -->
+            <div class="privacy-section">
+                <h2>🔒 Data & Privacy</h2>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="analyticsTracking">
+                        <span>Allow analytics tracking to improve your experience</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="personalizedAds">
+                        <span>Show personalized advertisements</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="emailNotifications">
+                        <span>Receive email notifications</span>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="pushNotifications">
+                        <span>Receive push notifications</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Save Button -->
+            <div class="privacy-section">
+                <button id="saveSettings" class="btn btn-primary btn-full">Save Privacy Settings</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Amplifi</h3>
+                    <p>Share your world with millions of creators and fans.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li><a href="feed.html">Upload Content</a></li>
+                        <li><a href="feed.html">Live Streaming</a></li>
+                        <li><a href="feed.html">Messaging</a></li>
+                        <li><a href="feed.html">Monetization</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="support.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">YouTube</a>
+                        <a href="#" class="social-link">Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Amplifi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        class PrivacySettings {
+            constructor() {
+                this.currentUser = null;
+                this.userProfile = null;
+                this.init();
+            }
+
+            async init() {
+                await this.setupAuthStateListener();
+                this.setupEventListeners();
+            }
+
+            async setupAuthStateListener() {
+                firebase.auth().onAuthStateChanged(async (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        await this.loadUserProfile();
+                        this.populateForm();
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+
+            async loadUserProfile() {
+                try {
+                    const userDoc = await firebase.firestore()
+                        .collection('users')
+                        .doc(this.currentUser.uid)
+                        .get();
+                    
+                    if (userDoc.exists) {
+                        this.userProfile = userDoc.data();
+                    }
+                } catch (error) {
+                    console.error('Error loading user profile:', error);
+                }
+            }
+
+            populateForm() {
+                if (!this.userProfile) return;
+
+                // Populate form fields
+                document.getElementById('realName').value = this.userProfile.realName || '';
+                document.getElementById('displayName').value = this.userProfile.displayName || '';
+                document.getElementById('useAlias').checked = this.userProfile.useAlias !== false;
+                document.getElementById('profileVisibility').value = this.userProfile.privacySettings?.profileVisibility || 'public';
+                document.getElementById('showEmail').checked = this.userProfile.privacySettings?.showEmail || false;
+                document.getElementById('showFollowers').checked = this.userProfile.privacySettings?.showFollowers !== false;
+                document.getElementById('allowComments').checked = this.userProfile.privacySettings?.allowComments !== false;
+                document.getElementById('allowReposts').checked = this.userProfile.privacySettings?.allowReposts !== false;
+                document.getElementById('showLocation').checked = this.userProfile.privacySettings?.showLocation !== false;
+                document.getElementById('analyticsTracking').checked = this.userProfile.privacySettings?.analyticsTracking !== false;
+                document.getElementById('personalizedAds').checked = this.userProfile.privacySettings?.personalizedAds !== false;
+                document.getElementById('emailNotifications').checked = this.userProfile.privacySettings?.emailNotifications !== false;
+                document.getElementById('pushNotifications').checked = this.userProfile.privacySettings?.pushNotifications !== false;
+
+                this.updatePreview();
+            }
+
+            setupEventListeners() {
+                // Save settings
+                document.getElementById('saveSettings').addEventListener('click', () => {
+                    this.saveSettings();
+                });
+
+                // Update preview when fields change
+                document.getElementById('displayName').addEventListener('input', () => {
+                    this.updatePreview();
+                });
+
+                document.getElementById('useAlias').addEventListener('change', () => {
+                    this.updatePreview();
+                });
+
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    firebase.auth().signOut();
+                });
+            }
+
+            updatePreview() {
+                const displayName = document.getElementById('displayName').value || 'Display Name';
+                const useAlias = document.getElementById('useAlias').checked;
+                
+                const previewName = useAlias ? displayName : (this.userProfile?.realName || displayName);
+                
+                document.getElementById('previewPostName').textContent = previewName;
+                document.getElementById('previewCommentName').textContent = previewName;
+                document.getElementById('previewProfileName').textContent = previewName;
+            }
+
+            async saveSettings() {
+                const saveBtn = document.getElementById('saveSettings');
+                const originalText = saveBtn.innerHTML;
+                
+                try {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<span class="btn-loading show">Saving...</span>';
+
+                    const settings = {
+                        realName: document.getElementById('realName').value || null,
+                        displayName: document.getElementById('displayName').value,
+                        useAlias: document.getElementById('useAlias').checked,
+                        privacySettings: {
+                            profileVisibility: document.getElementById('profileVisibility').value,
+                            showEmail: document.getElementById('showEmail').checked,
+                            showFollowers: document.getElementById('showFollowers').checked,
+                            allowComments: document.getElementById('allowComments').checked,
+                            allowReposts: document.getElementById('allowReposts').checked,
+                            showLocation: document.getElementById('showLocation').checked,
+                            analyticsTracking: document.getElementById('analyticsTracking').checked,
+                            personalizedAds: document.getElementById('personalizedAds').checked,
+                            emailNotifications: document.getElementById('emailNotifications').checked,
+                            pushNotifications: document.getElementById('pushNotifications').checked,
+                            showRealName: !document.getElementById('useAlias').checked
+                        }
+                    };
+
+                    await firebase.firestore()
+                        .collection('users')
+                        .doc(this.currentUser.uid)
+                        .update(settings);
+
+                    // Update local profile
+                    this.userProfile = { ...this.userProfile, ...settings };
+
+                    alert('Privacy settings saved successfully!');
+                    
+                } catch (error) {
+                    console.error('Error saving settings:', error);
+                    alert('Error saving settings. Please try again.');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        // Initialize privacy settings
+        const privacySettings = new PrivacySettings();
+    </script>
+</body>
+</html> 

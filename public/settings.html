@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="settings.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <!-- AdMob SDK -->
+    <!-- Version Management -->
+    <script src="version.js"></script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+      }
+      .settings-container {
+        background: #fff;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 32px 0 rgba(99,102,241,0.10);
+        max-width: 900px;
+        margin: 2.5rem auto 2rem auto;
+        padding: 2.5rem 2rem 2rem 2rem;
+      }
+      .settings-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+      }
+      .settings-header p {
+        color: #6366f1;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+      }
+      .settings-nav {
+        display: flex;
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+      }
+      .settings-nav-btn {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6366f1;
+        padding: 0.7rem 1.2rem;
+        border-radius: 0.7rem 0.7rem 0 0;
+        transition: background 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .settings-nav-btn.active, .settings-nav-btn[aria-selected="true"] {
+        background: #6366f1;
+        color: #fff;
+        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+      }
+      .settings-section {
+        background: #f8fafc;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.06);
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .form-group input, .form-group textarea, .form-group select {
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        display: block;
+      }
+      .danger-actions .btn {
+        margin-right: 1rem;
+      }
+      .danger-warning {
+        color: #ef4444;
+        font-weight: 600;
+        margin-top: 0.7rem;
+      }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link for screen readers -->
+    <a href="#mainContent" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:1000;">Skip to main content</a>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <label for="searchInput" class="sr-only">Search posts, users</label>
+                <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+                <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+            <div class="header-actions">
+                <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                    <span class="notification-icon" aria-label="Notification bell">🔔</span>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+                    <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- Desktop tab navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="feed.html" class="nav-link">Feed</a>
+        <a href="trending.html" class="nav-link">Trending</a>
+        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+        <a href="upload.html" class="nav-link">Upload</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="messages.html" class="nav-link">Messages</a>
+        <a href="live.html" class="nav-link">Live</a>
+        <a href="settings.html" class="nav-link active" aria-current="page">Settings</a>
+    </nav>
+    <!-- Mobile Tab Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+        <!-- Settings Container -->
+        <div class="settings-container" aria-label="Settings section">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <p>Manage your account and preferences</p>
+            </div>
+            <!-- Settings Navigation -->
+            <div class="settings-nav" role="tablist" aria-label="Settings tabs">
+                <button class="settings-nav-btn active" data-tab="profile" role="tab" aria-selected="true" aria-controls="profileTab" id="tab-profile">👤 Profile</button>
+                <button class="settings-nav-btn" data-tab="privacy" role="tab" aria-selected="false" aria-controls="privacyTab" id="tab-privacy">🔒 Privacy</button>
+                <button class="settings-nav-btn" data-tab="notifications" role="tab" aria-selected="false" aria-controls="notificationsTab" id="tab-notifications">🔔 Notifications</button>
+                <button class="settings-nav-btn" data-tab="security" role="tab" aria-selected="false" aria-controls="securityTab" id="tab-security">🛡️ Security</button>
+                <button class="settings-nav-btn" data-tab="monetization" role="tab" aria-selected="false" aria-controls="monetizationTab" id="tab-monetization">💸 Monetization</button>
+                <button class="settings-nav-btn" data-tab="account" role="tab" aria-selected="false" aria-controls="accountTab" id="tab-account">⚙️ Account</button>
+            </div>
+            <!-- Settings Content -->
+            <div class="settings-content">
+                <!-- Profile Settings -->
+                <section id="profileTab" class="settings-tab-content active" role="tabpanel" aria-labelledby="tab-profile">
+                    <div class="settings-section">
+                        <h3>Profile Information</h3>
+                        <form id="profileSettingsForm" class="settings-form" aria-label="Profile settings form">
+                            <div class="form-group">
+                                <label for="profileDisplayName">Display Name</label>
+                                <input type="text" id="profileDisplayName" placeholder="Your display name">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileUsername">Username</label>
+                                <input type="text" id="profileUsername" placeholder="Your username">
+                                <small>This will be your unique URL: amplifi.com/@username</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileBio">Bio</label>
+                                <textarea id="profileBio" placeholder="Tell us about yourself" maxlength="500"></textarea>
+                                <small><span id="bioCharCount">0</span>/500 characters</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileLocation">Location</label>
+                                <input type="text" id="profileLocation" placeholder="Your location">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileWebsite">Website</label>
+                                <input type="url" id="profileWebsite" placeholder="https://yourwebsite.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="profilePic">Profile Picture</label>
+                                <input type="file" id="profilePic" accept="image/*">
+                                <small>Recommended size: 400x400 pixels</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileBanner">Banner Image</label>
+                                <input type="file" id="profileBanner" accept="image/*">
+                                <small>Recommended size: 1200x400 pixels</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary" aria-label="Save Profile">Save Profile</button>
+                        </form>
+                    </div>
+                </section>
+                <!-- Privacy Settings -->
+                <section id="privacyTab" class="settings-tab-content" role="tabpanel" aria-labelledby="tab-privacy">
+                    <div class="settings-section">
+                        <h3>Privacy Settings</h3>
+                        <div class="settings-form" aria-label="Privacy settings form">
+                            <div class="privacy-info" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 1rem; margin: 1rem 0; border-radius: 4px;">
+                                <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-color);">🕵️‍♂️ Name & Alias Privacy</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">You can use an alias instead of your real name for privacy, just like on YouTube and other platforms.</p>
+                                <a href="privacy-settings.html" class="btn btn-secondary" style="margin-top: 1rem;" aria-label="Manage Name & Alias Settings">Manage Name & Alias Settings</a>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="privateProfile">
+                                    <span class="checkmark"></span>
+                                    Private Profile
+                                </label>
+                                <small>Only approved followers can see your content</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="allowComments">
+                                    <span class="checkmark"></span>
+                                    Allow Comments on Posts
+                                </label>
+                                <small>Let users comment on your posts</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="allowMessages">
+                                    <span class="checkmark"></span>
+                                    Allow Direct Messages
+                                </label>
+                                <small>Let users send you direct messages</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="showOnlineStatus">
+                                    <span class="checkmark"></span>
+                                    Show Online Status
+                                </label>
+                                <small>Let others see when you're online</small>
+                            </div>
+                            <button type="button" id="savePrivacyBtn" class="btn btn-primary" aria-label="Save Privacy Settings">Save Privacy Settings</button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Notification Settings -->
+                <section id="notificationsTab" class="settings-tab-content" role="tabpanel" aria-labelledby="tab-notifications">
+                    <div class="settings-section">
+                        <h3>Notification Preferences</h3>
+                        <div class="settings-form" aria-label="Notification settings form">
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyComments">
+                                    <span class="checkmark"></span>
+                                    New Comments
+                                </label>
+                                <small>Get notified when someone comments on your posts</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyLikes">
+                                    <span class="checkmark"></span>
+                                    New Likes
+                                </label>
+                                <small>Get notified when someone likes your posts</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyMessages">
+                                    <span class="checkmark"></span>
+                                    New Messages
+                                </label>
+                                <small>Get notified when someone sends you a message</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyTips">
+                                    <span class="checkmark"></span>
+                                    New Tips
+                                </label>
+                                <small>Get notified when someone sends you a tip</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyFollowers">
+                                    <span class="checkmark"></span>
+                                    New Followers
+                                </label>
+                                <small>Get notified when someone follows you</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="notifyLive">
+                                    <span class="checkmark"></span>
+                                    Live Stream Notifications
+                                </label>
+                                <small>Get notified when people you follow go live</small>
+                            </div>
+                            <button type="button" id="saveNotificationBtn" class="btn btn-primary" aria-label="Save Notification Settings">Save Notification Settings</button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Security Settings -->
+                <section id="securityTab" class="settings-tab-content" role="tabpanel" aria-labelledby="tab-security">
+                    <div class="settings-section">
+                        <h3>Security Settings</h3>
+                        <div class="settings-form" aria-label="Security settings form">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                            </div>
+                            <button type="button" id="changePasswordBtn" class="btn btn-primary" aria-label="Change Password">Change Password</button>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Two-Factor Authentication</h3>
+                        <div class="settings-form" aria-label="Two-Factor Authentication form">
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enable2FA">
+                                    <span class="checkmark"></span>
+                                    Enable Two-Factor Authentication
+                                </label>
+                                <small>Add an extra layer of security to your account</small>
+                            </div>
+                            <button type="button" id="setup2FABtn" class="btn btn-secondary" aria-label="Setup 2FA">Setup 2FA</button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Monetization Settings -->
+                <section id="monetizationTab" class="settings-tab-content" role="tabpanel" aria-labelledby="tab-monetization">
+                    <div class="settings-section">
+                        <h3>Monetization Settings</h3>
+                        <div class="settings-form" aria-label="Monetization settings form">
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableTips">
+                                    <span class="checkmark"></span>
+                                    Enable Tips
+                                </label>
+                                <small>Allow followers to send you tips</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableAds">
+                                    <span class="checkmark"></span>
+                                    Enable Ad Revenue
+                                </label>
+                                <small>Show ads on your content to earn revenue</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="payoutEmail">Payout Email</label>
+                                <input type="email" id="payoutEmail" placeholder="Email for receiving payments">
+                                <small>We'll send payments to this email address</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="payoutThreshold">Payout Threshold</label>
+                                <select id="payoutThreshold">
+                                    <option value="50">$50</option>
+                                    <option value="100">$100</option>
+                                    <option value="200">$200</option>
+                                </select>
+                                <small>Minimum amount before we send you a payout</small>
+                            </div>
+                            <button type="button" id="saveMonetizationBtn" class="btn btn-primary" aria-label="Save Monetization Settings">Save Monetization Settings</button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Account Settings -->
+                <section id="accountTab" class="settings-tab-content" role="tabpanel" aria-labelledby="tab-account">
+                    <div class="settings-section">
+                        <h3>Account Information</h3>
+                        <div class="settings-form" aria-label="Account information form">
+                            <div class="form-group">
+                                <label for="accountEmail">Email Address</label>
+                                <input type="email" id="accountEmail" readonly>
+                                <small>Contact support to change your email</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="accountCreated">Account Created</label>
+                                <input type="text" id="accountCreated" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastLogin">Last Login</label>
+                                <input type="text" id="lastLogin" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Danger Zone</h3>
+                        <div class="settings-form" aria-label="Danger zone actions">
+                            <div class="danger-actions">
+                                <button type="button" id="deactivateAccountBtn" class="btn btn-warning" aria-label="Deactivate Account">Deactivate Account</button>
+                                <button type="button" id="deleteAccountBtn" class="btn btn-danger" aria-label="Delete Account">Delete Account</button>
+                            </div>
+                            <small class="danger-warning">⚠️ These actions cannot be undone</small>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html> 

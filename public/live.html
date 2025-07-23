@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Streaming - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <!-- AdMob SDK -->
+    <!-- Version Management -->
+    <script src="version.js"></script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+      }
+      .live-hero {
+        background: linear-gradient(120deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        padding: 2.5rem 2rem 2rem 2rem;
+        border-radius: 1.5rem;
+        margin: 2rem auto 2.5rem auto;
+        max-width: 900px;
+        box-shadow: 0 6px 32px 0 rgba(99,102,241,0.12);
+        text-align: center;
+      }
+      .live-hero h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .live-hero p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+      }
+      .btn-primary {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        border: none;
+        border-radius: 0.7rem;
+        font-size: 1.1rem;
+        padding: 0.7rem 2.2rem;
+        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .btn-primary:hover {
+        background: #4f46e5;
+        box-shadow: 0 4px 16px 0 rgba(99,102,241,0.18);
+      }
+      .streams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
+      .stream-card {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 16px 0 rgba(99,102,241,0.08);
+        padding: 1.5rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: box-shadow 0.2s;
+      }
+      .stream-card:hover {
+        box-shadow: 0 6px 32px 0 rgba(99,102,241,0.16);
+      }
+      .stream-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .stream-meta {
+        color: #6366f1;
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+      }
+      .no-streams {
+        background: #f1f5f9;
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        color: #888;
+        margin-top: 2rem;
+      }
+      .live-player {
+        background: #fff;
+        border-radius: 1.2rem;
+        box-shadow: 0 2px 16px 0 rgba(99,102,241,0.10);
+        margin: 2rem auto;
+        max-width: 900px;
+        padding: 2rem;
+      }
+      .live-video-container video {
+        border-radius: 1rem;
+        box-shadow: 0 2px 12px 0 rgba(99,102,241,0.10);
+      }
+      .live-overlay {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+      }
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #ef4444;
+      }
+      .live-dot {
+        width: 12px;
+        height: 12px;
+        background: #ef4444;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.3rem;
+      }
+      .modal-content.large {
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 32px 0 rgba(99,102,241,0.18);
+        padding: 2.5rem 2rem;
+      }
+      .form-group input, .form-group textarea, .form-group select {
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        display: block;
+      }
+      .stream-setup-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      /* Header improvements */
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-bottom: none;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 0;
+      }
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        height: 70px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .header-left .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        letter-spacing: -0.5px;
+      }
+      .header-center .page-title {
+        font-weight: 600;
+        color: white;
+        margin: 0;
+        font-size: 1.3rem;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .notification-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+      .notification-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.05);
+      }
+      .notification-icon {
+        font-size: 1.2rem;
+        color: white;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.3);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .user-avatar:hover {
+        border-color: rgba(255,255,255,0.6);
+        transform: scale(1.05);
+      }
+
+      /* Desktop tab view */
+      .page-nav {
+        display: flex;
+        justify-content: center;
+        gap: 2.2rem;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.06);
+        border-radius: 0 0 1.2rem 1.2rem;
+        margin-bottom: 2rem;
+        padding: 0.7rem 0 0.3rem 0;
+        position: sticky;
+        top: 70px;
+        z-index: 99;
+      }
+      .nav-link {
+        color: #6366f1;
+        font-weight: 600;
+        font-size: 1.08rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: 0.7rem;
+        transition: background 0.18s, color 0.18s;
+        text-decoration: none;
+        position: relative;
+      }
+      .nav-link.active, .nav-link[aria-current="page"] {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+      }
+      .nav-link:hover {
+        background: #f3f4f6;
+        color: #4f46e5;
+      }
+
+      /* Mobile tab view */
+      .mobile-tab-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        background: #fff;
+        box-shadow: 0 -2px 12px rgba(99,102,241,0.08);
+        z-index: 200;
+        padding: 0.3rem 0 0.2rem 0;
+        border-radius: 1.2rem 1.2rem 0 0;
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        color: #6366f1;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 0.5rem 0 0.2rem 0;
+        border-radius: 0.7rem;
+        transition: background 0.18s, color 0.18s;
+        text-decoration: none;
+      }
+      .tab-item.active, .tab-item[aria-current="page"] {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+      }
+      .tab-item:hover {
+        background: #f3f4f6;
+        color: #4f46e5;
+      }
+      .tab-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.1rem;
+      }
+      .tab-label {
+        font-size: 0.95rem;
+      }
+      @media (min-width: 769px) {
+        .mobile-tab-nav { display: none; }
+      }
+      @media (max-width: 768px) {
+        .page-nav { display: none; }
+        .header-content { padding: 0 1rem; height: 56px; }
+        .header-left .logo { font-size: 1.2rem; }
+        .header-center .page-title { font-size: 1.05rem; }
+      }
+    </style>
+    <style>
+      /* YouTube-style live chat area */
+      .live-chat {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.06);
+        max-width: 350px;
+        min-width: 260px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 420px;
+        margin-left: 2rem;
+      }
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.8rem 1.2rem 0.5rem 1.2rem;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f8fafc;
+        border-radius: 1rem 1rem 0 0;
+      }
+      .chat-header h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #6366f1;
+      }
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 1.2rem;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .chat-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+      }
+      .chat-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #f3f4f6;
+      }
+      .chat-message-content {
+        background: #f3f4f6;
+        border-radius: 0.7rem;
+        padding: 0.5rem 1rem;
+        min-width: 0;
+        flex: 1;
+      }
+      .chat-message-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.1rem;
+      }
+      .chat-author {
+        font-weight: 600;
+        color: #6366f1;
+        font-size: 0.98rem;
+      }
+      .chat-timestamp {
+        color: #aaa;
+        font-size: 0.85rem;
+      }
+      .chat-text {
+        font-size: 1rem;
+        color: #222;
+        word-break: break-word;
+      }
+      .chat-input {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.2rem;
+        border-top: 1px solid #e5e7eb;
+        background: #f8fafc;
+        border-radius: 0 0 1rem 1rem;
+      }
+      .chat-input input[type="text"] {
+        flex: 1;
+        border-radius: 0.7rem;
+        border: 1px solid #d1d5db;
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+      }
+      .chat-input button {
+        border-radius: 0.7rem;
+        font-size: 1rem;
+        padding: 0.6rem 1.5rem;
+      }
+      @media (max-width: 900px) {
+        .live-chat { max-width: 100%; min-width: 0; margin-left: 0; }
+      }
+    </style>
+    <style>
+      /* Responsive modal and chat for mobile */
+      @media (max-width: 700px) {
+        .modal-content.large {
+          padding: 1rem 0.5rem;
+          border-radius: 0.7rem;
+          width: 98vw;
+          min-width: 0;
+          max-width: 99vw;
+        }
+        .stream-view-container {
+          flex-direction: column !important;
+          gap: 1rem !important;
+        }
+        .stream-video, .stream-chat {
+          min-width: 0 !important;
+          width: 100% !important;
+        }
+        .viewer-list {
+          padding: 0.5rem 0 0.2rem 0 !important;
+        }
+        .chat-header, .chat-input {
+          padding-left: 0.5rem !important;
+          padding-right: 0.5rem !important;
+        }
+        .chat-messages {
+          padding-left: 0.5rem !important;
+          padding-right: 0.5rem !important;
+        }
+        .chat-message-content {
+          padding: 0.4rem 0.7rem !important;
+        }
+        .stream-card {
+          min-width: 0 !important;
+          width: 100% !important;
+        }
+        .streams-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1rem !important;
+        }
+      }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <span class="page-title">Live</span>
+            </div>
+            <div class="header-center">
+                <label for="searchInput" class="sr-only">Search posts, users</label>
+                <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
+                <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+            <div class="header-actions">
+                <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                    <span class="notification-icon" aria-label="Notification bell">🔔</span>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+                    <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Banner -->
+        <section class="live-hero">
+            <h2>Go Live on Amplifi</h2>
+            <p>Start your own live stream and connect with your audience in real time. Discover trending live streams or be the first to go live!</p>
+            <button id="startLiveBtn" class="btn btn-primary">Start Live Stream</button>
+        </section>
+        <!-- Navigation -->
+        <!-- Desktop tab navigation -->
+        <nav class="page-nav" role="navigation" aria-label="Main navigation">
+            <a href="feed.html" class="nav-link">Feed</a>
+            <a href="trending.html" class="nav-link">Trending</a>
+            <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+            <a href="upload.html" class="nav-link">Upload</a>
+            <a href="dashboard.html" class="nav-link">Dashboard</a>
+            <a href="messages.html" class="nav-link">Messages</a>
+            <a href="live.html" class="nav-link active" aria-current="page">Live</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+
+        <!-- Mobile Tab Navigation -->
+        <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+            <a href="feed.html" class="tab-item" aria-label="Home">
+                <div class="tab-icon" aria-hidden="true">🏠</div>
+                <span class="tab-label">Home</span>
+            </a>
+            <a href="search.html" class="tab-item" aria-label="Search">
+                <div class="tab-icon" aria-hidden="true">🔍</div>
+                <span class="tab-label">Search</span>
+            </a>
+            <a href="upload.html" class="tab-item" aria-label="Create">
+                <div class="tab-icon" aria-hidden="true">➕</div>
+                <span class="tab-label">Create</span>
+            </a>
+            <a href="messages.html" class="tab-item" aria-label="Messages">
+                <div class="tab-icon" aria-hidden="true">💬</div>
+                <span class="tab-label">Messages</span>
+            </a>
+            <a href="live.html" class="tab-item active" aria-label="Live" aria-current="page">
+                <div class="tab-icon" aria-hidden="true">📺</div>
+                <span class="tab-label">Live</span>
+            </a>
+            <a href="profile.html" class="tab-item" aria-label="Profile">
+                <div class="tab-icon" aria-hidden="true">👤</div>
+                <span class="tab-label">Profile</span>
+            </a>
+        </nav>
+
+        <!-- Live Container -->
+        <div class="live-container">
+            <!-- Live Header removed, replaced by hero banner above -->
+
+            <!-- Live Streams Tabs -->
+            <div class="live-tabs" style="display:flex;gap:1.5rem;margin-bottom:1.5rem;">
+                <button id="tabLiveNow" class="live-tab-btn active">Live Now</button>
+                <button id="tabPastStreams" class="live-tab-btn">Past Streams</button>
+            </div>
+            <!-- Live Streams List -->
+            <div id="liveNowSection" class="live-streams-section">
+                <div id="activeStreams" class="streams-grid">
+                    <!-- Active streams will be populated here as .stream-card elements -->
+                </div>
+                <div id="noLiveStreams" class="no-streams" style="display: none;">
+                    <div class="no-streams-icon">📺</div>
+                    <h3>No live streams right now</h3>
+                    <p>Be the first to go live or check back later!</p>
+                </div>
+            </div>
+            <div id="pastStreamsSection" class="live-streams-section" style="display:none;">
+                <div id="historyStreams" class="streams-grid">
+                    <!-- Completed streams will be populated here as .stream-card elements -->
+                </div>
+                <div id="noHistoryStreams" class="no-streams" style="display: none;">
+                    <div class="no-streams-icon">📺</div>
+                    <h3>No past live streams</h3>
+                    <p>Completed and ended streams will appear here.</p>
+                </div>
+            </div>
+            <style>
+                .live-tabs { justify-content: center; }
+                .live-tab-btn { background: #f3f4f6; color: #6366f1; border: none; border-radius: 0.7rem 0.7rem 0 0; font-weight: 600; font-size: 1.08rem; padding: 0.7rem 2.2rem; cursor: pointer; transition: background 0.18s, color 0.18s; }
+                .live-tab-btn.active { background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%); color: #fff; }
+                .live-tab-btn:hover { background: #e0e7ff; color: #4f46e5; }
+            </style>
+
+            <!-- Live Stream Player (hidden by default) -->
+            <div id="livePlayer" class="live-player" style="display: none;">
+                <div class="live-video-container">
+                    <video id="liveVideo" controls autoplay muted></video>
+                    <div class="live-overlay">
+                        <div class="live-indicator">
+                            <span class="live-dot"></span>
+                            <span>LIVE</span>
+                        </div>
+                        <div class="live-controls">
+                            <button id="endStreamBtn" class="btn btn-danger">End Stream</button>
+                            <button id="toggleChatBtn" class="btn btn-secondary">Toggle Chat</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="liveChat" class="live-chat">
+                    <div class="chat-header">
+                        <h3>Live Chat</h3>
+                        <span id="viewerCount">0 viewers</span>
+                    </div>
+                    <div id="liveChatMessages" class="chat-messages"></div>
+                    <div class="chat-input">
+                        <button id="emojiPickerBtn" type="button" style="font-size:1.3rem;background:none;border:none;cursor:pointer;">😊</button>
+                        <input type="text" id="liveChatInput" placeholder="Type a message..." autocomplete="off">
+                        <button id="sendLiveChatBtn" class="btn btn-primary">Send</button>
+                        <div id="emojiPicker" style="display:none;position:absolute;bottom:60px;right:20px;z-index:1000;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Live Stream Setup Modal -->
+    <div id="liveSetupModal" class="modal">
+        <div class="modal-content large">
+            <span class="close">&times;</span>
+            <h2>Start Live Stream</h2>
+            <form id="liveSetupForm">
+                <div class="form-group">
+                    <label for="streamTitle">Stream Title</label>
+                    <input type="text" id="streamTitle" placeholder="Enter your stream title" required>
+                </div>
+                <div class="form-group">
+                    <label for="streamThumbnail">Stream Thumbnail</label>
+                    <input type="file" id="streamThumbnail" accept="image/*">
+                    <small>Recommended size: 1280x720px. JPG or PNG.</small>
+                    <div id="thumbnailPreview" style="margin-top:0.5rem;"></div>
+                </div>
+                <div class="form-group">
+                    <label for="streamDescription">Description</label>
+                    <textarea id="streamDescription" placeholder="Tell viewers what your stream is about"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="streamCategory">Category</label>
+                    <select id="streamCategory">
+                        <option value="">Select a category</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="music">Music</option>
+                        <option value="talk">Talk Show</option>
+                        <option value="cooking">Cooking</option>
+                        <option value="fitness">Fitness</option>
+                        <option value="education">Education</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="streamPrivacy">Privacy</label>
+                    <select id="streamPrivacy">
+                        <option value="public">Public</option>
+                        <option value="private">Private (Followers Only)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="enableChat">
+                        <span class="checkmark"></span>
+                        Enable live chat
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="enableTips">
+                        <span class="checkmark"></span>
+                        Allow tips during stream
+                    </label>
+                </div>
+                <div class="stream-setup-actions">
+                    <button type="submit" class="btn btn-primary">Start Streaming</button>
+                    <button type="button" id="cancelLiveSetup" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/live.js"></script>
+</body>
+</html> 

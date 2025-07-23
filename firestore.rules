@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow read/write for authenticated users on liveStreams
+    match /liveStreams/{streamId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.streamerId;
+      // Viewers subcollection
+      match /viewers/{viewerId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+    // Allow read/write for authenticated users on liveChat
+    match /liveChat/{chatId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null &&
+        (!exists(/databases/$(database)/documents/liveChat/$(chatId)) ||
+         request.time > resource.data.createdAt + duration.value(3, 's'));
+      allow delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true);
+      allow update: if false;
+    }
+    // Allow all users to read user profiles, only allow users to write their own
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    // Chat timeouts
+    match /liveChatTimeouts/{timeoutId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Conversations: only participants can read/write
+    match /conversations/{conversationId} {
+      allow read, write: if request.auth != null && request.auth.uid in resource.data.participants;
+      // Typing indicators subcollection (if used)
+      match /typing/{typingId} {
+        allow read, write: if request.auth != null && request.auth.uid in resource.data.participants;
+      }
+    }
+
+    // Messages: only participants in the conversation can read/write
+    match /messages/{messageId} {
+      allow read, write: if request.auth != null &&
+        request.auth.uid in get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participants;
+    }
+  }
+} 

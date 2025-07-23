@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Favicons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+    <!-- Version Management -->
+    <script src="version.js"></script>
+</head>
+<body>
+    <h1>Amplifi Favicon Generator</h1>
+    <p>This page generates favicon PNGs from the SVG icon. Click the buttons to download the icons.</p>
+    
+    <div id="iconPreviews"></div>
+    
+    <script>
+        const sizes = [16, 32, 48, 64, 128, 192, 256, 512];
+        const iconContainer = document.getElementById('iconPreviews');
+        
+        // Load the SVG
+        const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Background circle -->
+          <circle cx="256" cy="256" r="240" fill="url(#gradient)" stroke="#4f46e5" stroke-width="8"/>
+          
+          <!-- Amplifi "A" symbol -->
+          <path d="M 180 380 L 220 280 L 292 280 L 332 380 L 300 380 L 290 350 L 222 350 L 212 380 Z" fill="white"/>
+          <path d="M 230 320 L 282 320 L 256 250 Z" fill="white"/>
+          
+          <!-- Signal waves -->
+          <circle cx="256" cy="256" r="80" fill="none" stroke="white" stroke-width="4" opacity="0.3"/>
+          <circle cx="256" cy="256" r="120" fill="none" stroke="white" stroke-width="3" opacity="0.2"/>
+          <circle cx="256" cy="256" r="160" fill="none" stroke="white" stroke-width="2" opacity="0.1"/>
+        </svg>
+        `;
+        
+        sizes.forEach(size => {
+            const div = document.createElement('div');
+            div.className = 'icon-preview';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const button = document.createElement('button');
+            button.textContent = `Download ${size}x${size}`;
+            button.onclick = () => downloadIcon(canvas, `icon-${size}x${size}.png`);
+            
+            div.appendChild(canvas);
+            div.appendChild(document.createElement('br'));
+            div.appendChild(button);
+            div.appendChild(document.createElement('br'));
+            div.appendChild(document.createTextNode(`${size}x${size}`));
+            
+            iconContainer.appendChild(div);
+            
+            // Draw the SVG on canvas
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, size, size);
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        });
+        
+        function downloadIcon(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html> 
