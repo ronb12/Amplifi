@@ -382,12 +382,9 @@ class NotificationsPage {
             await batch.commit();
             this.renderNotifications();
             
-            // Show success message
-            this.showToast('All notifications marked as read');
             
         } catch (error) {
             console.error('Error marking notifications as read:', error);
-            this.showToast('Error marking notifications as read', 'error');
         }
     }
 
@@ -425,28 +422,7 @@ class NotificationsPage {
         document.getElementById('emptyState').style.display = 'block';
     }
 
-    showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#10b981' : '#ef4444'};
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            font-weight: 500;
-        `;
-        toast.textContent = message;
-        
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
+
 }
 
 // Initialize the page

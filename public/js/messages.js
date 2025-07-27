@@ -281,7 +281,6 @@ class MessagesPage {
             
         } catch (error) {
             console.error('Error uploading file:', error);
-            this.showToast('Error uploading file', 'error');
         }
     }
 
@@ -315,7 +314,6 @@ class MessagesPage {
             
         } catch (error) {
             console.error('Error accessing microphone:', error);
-            this.showToast('Cannot access microphone', 'error');
         }
     }
 
@@ -347,7 +345,6 @@ class MessagesPage {
             
         } catch (error) {
             console.error('Error uploading voice message:', error);
-            this.showToast('Error uploading voice message', 'error');
         }
     }
 
@@ -1145,16 +1142,7 @@ class MessagesPage {
         document.querySelector('.messages-container').classList.remove('hide-mobile');
     }
 
-    showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
         
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
 
     showGroupChatModal() {
         // Remove any existing modal
@@ -1235,7 +1223,6 @@ class MessagesPage {
         const groupAvatarInput = document.getElementById('groupAvatarInput');
         const checkboxes = document.querySelectorAll('.group-user-checkbox:checked');
         if (!groupName || checkboxes.length === 0) {
-            this.showToast('Please enter a group name and select at least one user.', 'error');
             return;
         }
         const participantIds = [this.currentUser.uid, ...Array.from(checkboxes).map(cb => cb.value)];

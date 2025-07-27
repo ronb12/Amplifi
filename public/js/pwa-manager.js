@@ -319,7 +319,7 @@ class PWAManager {
             });
         }
         
-        // Also try immediate sync
+        // Also try immediate sync (only if we have a proper API endpoint)
         try {
             const response = await fetch('/api/sync', {
                 method: 'POST',
@@ -328,13 +328,26 @@ class PWAManager {
             });
             
             if (!response.ok) {
-                throw new Error('Sync failed');
+                throw new Error(`Sync failed: ${response.status} ${response.statusText}`);
             }
             
+            // Check if response is JSON before parsing
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
             return await response.json();
+            } else {
+                // If not JSON, just return success status
+                return { success: true, message: 'Synced to background queue' };
+            }
         } catch (error) {
+            // Don't log errors for missing API endpoints - this is expected
+            if (error.message.includes('404') || error.message.includes('Failed to fetch')) {
+                console.log('API endpoint not available, using background sync only');
+            } else {
             console.log('Immediate sync failed, will retry in background:', error);
-            throw error;
+            }
+            // Return success to prevent UI errors
+            return { success: true, message: 'Queued for background sync' };
         }
     }
 
@@ -347,9 +360,6 @@ class PWAManager {
         
         // Show in-app notification
         this.showInAppNotification(title, body, options);
-        
-        // Show toast notification
-        this.showToastNotification(title, body, options);
     }
 
     showInAppNotification(title, body, options = {}) {
@@ -409,73 +419,15 @@ class PWAManager {
         };
     }
 
-    showToastNotification(title, body, options = {}) {
-        const toast = document.createElement('div');
-        toast.className = 'toast-notification';
-        toast.innerHTML = `
-            <div class="toast-content">
-                <span class="toast-icon">${options.icon || 'ℹ️'}</span>
-                <div class="toast-text">
-                    <strong>${title}</strong>
-                    <p>${body}</p>
-                </div>
-                <button class="toast-close">&times;</button>
-            </div>
-        `;
-        
-        // Add styles
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 8px;
-            padding: 12px 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 10000;
-            min-width: 300px;
-            max-width: 400px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            border-left: 4px solid #6366f1;
-        `;
-        
-        document.body.appendChild(toast);
-        
-        // Animate in
-        setTimeout(() => {
-            toast.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Auto-remove
-        setTimeout(() => {
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.parentElement.removeChild(toast);
-                }
-            }, 300);
-        }, 4000);
-        
-        // Close button
-        const closeBtn = toast.querySelector('.toast-close');
-        closeBtn.onclick = () => {
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.parentElement.removeChild(toast);
-                }
-            }, 300);
-        };
-    }
+
 
     // Status Methods
     showOnlineStatus() {
-        this.showToastNotification('Back Online! 🌐', 'Your connection has been restored', { icon: '✅' });
+        // Connection restored - no notification needed
     }
 
     showOfflineStatus() {
-        this.showToastNotification('You\'re Offline 📡', 'Working in offline mode', { icon: '⚠️' });
+        // Working offline - no notification needed
     }
 
     showUpdateNotification() {

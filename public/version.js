@@ -1,5 +1,5 @@
 // Version configuration for cache busting
-const APP_VERSION = '1.0.28';
+const APP_VERSION = '1.0.48';
 
 // Function to append version to URLs
 function getVersionedUrl(url) {

@@ -89,12 +89,44 @@ class LandingPage {
 
     async setupAuthStateListener() {
         try {
-            firebase.auth().onAuthStateChanged((user) => {
+            firebase.auth().onAuthStateChanged(async (user) => {
                 this.currentUser = user;
-                this.updateUI();
                 
-                // No longer auto-redirect - users can stay on the landing page
-                // They can navigate to feed.html using the navigation menu
+                if (user) {
+                    // Fetch additional user data from Firestore
+                    try {
+                        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            // Merge Firestore data with auth data
+                            this.currentUser = {
+                                ...user,
+                                displayName: userData.displayName || user.displayName || user.email?.split('@')[0] || 'User',
+                                photoURL: userData.photoURL || user.photoURL || 'default-avatar.svg',
+                                username: userData.username || userData.displayName || user.displayName || user.email?.split('@')[0] || 'user'
+                            };
+                        } else {
+                            // If no Firestore profile, use auth data with better fallbacks
+                            this.currentUser = {
+                                ...user,
+                                displayName: user.displayName || user.email?.split('@')[0] || 'User',
+                                photoURL: user.photoURL || 'default-avatar.svg',
+                                username: user.displayName || user.email?.split('@')[0] || 'user'
+                            };
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user profile:', error);
+                        // Fallback to auth data
+                        this.currentUser = {
+                            ...user,
+                            displayName: user.displayName || user.email?.split('@')[0] || 'User',
+                            photoURL: user.photoURL || 'default-avatar.svg',
+                            username: user.displayName || user.email?.split('@')[0] || 'user'
+                        };
+                    }
+                }
+                
+                this.updateUI();
             });
         } catch (error) {
             console.error('Error setting up auth state listener:', error);
@@ -109,7 +141,7 @@ class LandingPage {
             if (headerActions) {
                 headerActions.innerHTML = `
                     <div class="user-menu" style="display: flex; align-items: center; gap: 1rem;">
-                        <span style="color: #6366f1; font-weight: 500;">Welcome back, ${this.currentUser.displayName || 'User'}!</span>
+                        <span style="color: #6366f1; font-weight: 500;">Welcome back, ${this.getUserDisplayName()}!</span>
                         <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
                             <span class="notification-icon" aria-label="Notification bell">🔔</span>
                             <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
@@ -580,6 +612,27 @@ class LandingPage {
                 notification.remove();
             });
         }
+    }
+
+    getUserDisplayName() {
+        if (!this.currentUser) return 'User';
+        
+        // Try different sources for the display name
+        if (this.currentUser.displayName && this.currentUser.displayName.trim()) {
+            return this.currentUser.displayName;
+        }
+        
+        if (this.currentUser.email) {
+            const emailName = this.currentUser.email.split('@')[0];
+            // Capitalize first letter and replace dots/underscores with spaces
+            return emailName.charAt(0).toUpperCase() + emailName.slice(1).replace(/[._]/g, ' ');
+        }
+        
+        if (this.currentUser.username && this.currentUser.username.trim()) {
+            return this.currentUser.username;
+        }
+        
+        return 'User';
     }
 }
 

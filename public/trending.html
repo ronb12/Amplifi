@@ -54,6 +54,72 @@
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
     }
+    /* Enhanced Action Button Styles */
+    .post-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      min-width: 60px;
+    }
+    .action-btn:hover {
+      background: #f9fafb;
+    }
+    .action-icon {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .action-count {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    .action-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    .action-btn:hover .action-label {
+      color: #374151;
+    }
+    /* Like button specific styles */
+    .action-btn[title="Like"] .action-icon svg {
+      transition: all 0.2s;
+    }
+    .action-btn[title="Like"]:hover .action-icon svg {
+      transform: scale(1.1);
+    }
+    /* Comment button specific styles */
+    .action-btn[title="Comment"]:hover .action-icon svg {
+      stroke: #3b82f6;
+    }
+    /* Share button specific styles */
+    .action-btn[title="Share"]:hover .action-icon svg {
+      stroke: #10b981;
+    }
+    /* Tip button specific styles */
+    .action-btn[title="Tip Creator"]:hover {
+      background: #fef3c7;
+    }
+    .action-btn[title="Tip Creator"]:hover .action-label {
+      color: #d97706;
+    }
   </style>
 </head>
 <body>

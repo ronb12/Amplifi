@@ -10,6 +10,7 @@ class FeedPage {
         this.noMorePosts = false;
         this.currentFilter = 'all';
         this.bookmarkedPosts = new Set();
+        this.currentCommentPostId = null;
         
         this.init();
     }
@@ -425,176 +426,151 @@ class FeedPage {
     }
 
     async loadPosts() {
-        console.log('loadPosts called');
-        if (this.isLoading) {
-            console.log('Already loading, returning');
-            return;
-        }
+        if (this.isLoading || this.noMorePosts) return;
         
         this.isLoading = true;
-        const loadingElement = document.getElementById('feedLoading');
-        if (loadingElement) loadingElement.style.display = 'block';
-
-        console.log('Starting to load posts from Firestore...');
-
-        // Add timeout to prevent hanging
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Load posts timeout')), 3000); // Reduced timeout to 3 seconds
-        });
+        console.log('loadPosts called');
 
         try {
-            let query = db.collection('posts').orderBy('createdAt', 'desc').limit(10);
+        console.log('Starting to load posts from Firestore...');
+
+            let query = db.collection('posts')
+                .orderBy('createdAt', 'desc')
+                .limit(10);
             
             if (this.lastPost) {
                 query = query.startAfter(this.lastPost);
             }
 
             console.log('Executing Firestore query...');
-
-            // Race between the query and timeout
-            const snapshot = await Promise.race([
-                query.get(),
-                timeoutPromise
-            ]);
-            
+            const snapshot = await query.get();
             console.log('Query completed, snapshot empty:', snapshot.empty);
-            
-            if (snapshot.empty && this.posts.length === 0) {
-                console.log('No posts found, showing sample posts');
-                // Show sample posts if no real posts exist
-                this.showSamplePosts();
-                if (loadingElement) loadingElement.style.display = 'none';
-                this.isLoading = false;
-                return;
-            }
 
             if (snapshot.empty) {
                 console.log('No more posts to load');
                 this.noMorePosts = true;
-                if (loadingElement) loadingElement.style.display = 'none';
-                this.isLoading = false;
+                
+                // If this is the first load and no posts exist, show sample posts
+                if (this.posts.length === 0) {
+                    console.log('No posts found, showing sample posts');
+                    this.showSamplePosts();
+                }
                 return;
             }
 
             const newPosts = [];
             snapshot.forEach(doc => {
-                newPosts.push({ id: doc.id, ...doc.data() });
+                const postData = doc.data();
+                newPosts.push({
+                    id: doc.id,
+                    ...postData,
+                    createdAt: postData.createdAt?.toDate() || new Date()
+                });
             });
-
-            console.log('Loaded', newPosts.length, 'new posts');
-
-            this.posts = [...this.posts, ...newPosts];
+            
+            console.log(`Loaded ${newPosts.length} new posts`);
+            
+            // Update last post for pagination
             this.lastPost = snapshot.docs[snapshot.docs.length - 1];
             
-            this.renderPosts(newPosts);
+            // Add new posts to existing posts
+            this.posts = [...this.posts, ...newPosts];
+            
+            // Render all posts
+            this.renderPosts(this.posts);
+            
+            // Hide loading state
+            const loadingElement = document.getElementById('feedLoading');
+            const emptyStateElement = document.getElementById('feedEmptyState');
+            
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+            
+            if (emptyStateElement && this.posts.length > 0) {
+                emptyStateElement.style.display = 'none';
+            }
             
         } catch (error) {
             console.error('Error loading posts:', error);
+            
             // Show sample posts on error
+            if (this.posts.length === 0) {
+                console.log('Error loading posts, showing sample posts');
             this.showSamplePosts();
+            }
         } finally {
             this.isLoading = false;
-            if (loadingElement) loadingElement.style.display = 'none';
         }
     }
 
     showSamplePosts() {
-        console.log('showSamplePosts called');
+        console.log('Showing sample posts for testing');
+        
         const samplePosts = [
             {
-                id: 'sample1',
+                id: 'sample-1',
                 title: 'Welcome to Amplifi! 🎉',
-                description: 'This is your first post on Amplifi. Start sharing your amazing content with the world! #Welcome #Amplifi #NewBeginnings',
-                mediaUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop',
-                mediaType: 'image',
+                description: 'This is a sample post to test the comment functionality. Try clicking the comment button below!',
                 authorName: 'Amplifi Team',
-                authorUsername: 'amplifi',
-                authorPic: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face',
-                likes: 42,
-                comments: 8,
+                authorId: 'sample-user-1',
+                authorPic: 'default-avatar.svg',
+                mediaUrl: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                mediaType: 'image',
                 createdAt: new Date(Date.now() - 3600000), // 1 hour ago
-                liked: false
+                likes: 42,
+                comments: 5,
+                views: 1234,
+                userReaction: null
             },
             {
-                id: 'sample2',
-                title: '🌟 Daily Inspiration',
-                description: '"The only way to do great work is to love what you do." - Steve Jobs\n\nRemember, passion is the fuel that drives innovation. What are you passionate about today? #Inspiration #Motivation #Success',
-                mediaUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+                id: 'sample-2',
+                title: 'Test Comment System 💬',
+                description: 'This post is specifically for testing comments. Leave a comment below to see how it works!',
+                authorName: 'Test User',
+                authorId: 'sample-user-2',
+                authorPic: 'default-avatar.svg',
+                mediaUrl: 'https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 mediaType: 'image',
-                authorName: 'Creative Soul', // Using alias instead of real name
-                authorUsername: 'sarahj',
-                authorPic: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face',
-                likes: 156,
-                comments: 23,
                 createdAt: new Date(Date.now() - 7200000), // 2 hours ago
-                liked: false
+                likes: 18,
+                comments: 2,
+                views: 567,
+                userReaction: null
             },
             {
-                id: 'sample3',
-                title: '💻 Tech Tip Tuesday',
-                description: 'Did you know? Keyboard shortcuts can save you hours every week! Here are my favorites:\n\n⌘+C/V: Copy/Paste\n⌘+Z: Undo\n⌘+Shift+4: Screenshot\n⌘+Space: Spotlight Search\n\nWhat\'s your favorite shortcut? #TechTips #Productivity #KeyboardShortcuts',
-                mediaUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop',
+                id: 'sample-3',
+                title: 'Amplifi Features Demo 🚀',
+                description: 'Explore all the amazing features of Amplifi including live streaming, music library, and more!',
+                authorName: 'Demo Creator',
+                authorId: 'sample-user-3',
+                authorPic: 'default-avatar.svg',
+                mediaUrl: 'https://images.pexels.com/photos/3183156/pexels-photo-3183156.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 mediaType: 'image',
-                authorName: 'Tech Guru', // Using alias
-                authorUsername: 'mikechen',
-                authorPic: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face',
-                likes: 89,
-                comments: 15,
                 createdAt: new Date(Date.now() - 10800000), // 3 hours ago
-                liked: false
-            },
-            {
-                id: 'sample4',
-                title: '🍳 Cooking Adventure',
-                description: 'Tried making homemade pasta today! It was a messy but fun experience. The result was absolutely delicious! 🍝\n\nPro tip: Fresh pasta cooks in just 2-3 minutes vs 8-10 for dried pasta. Worth the effort! #Cooking #Homemade #Pasta #Foodie',
-                mediaUrl: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&h=300&fit=crop',
-                mediaType: 'image',
-                authorName: 'Kitchen Explorer', // Using alias
-                authorUsername: 'emilycooks',
-                authorPic: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face',
-                likes: 203,
-                comments: 31,
-                createdAt: new Date(Date.now() - 14400000), // 4 hours ago
-                liked: false
-            },
-            {
-                id: 'sample5',
-                title: '🌍 Travel Diaries',
-                description: 'Just arrived in Tokyo! The energy here is incredible. First stop: Shibuya crossing at night. The neon lights and crowds are absolutely mesmerizing! 🇯🇵\n\nCan\'t wait to explore more of this amazing city. Any recommendations for must-visit spots? #Tokyo #Travel #Japan #Shibuya',
-                mediaUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=300&fit=crop',
-                mediaType: 'image',
-                authorName: 'Wanderlust', // Using alias
-                authorUsername: 'alexwander',
-                authorPic: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face',
-                likes: 312,
-                comments: 45,
-                createdAt: new Date(Date.now() - 18000000), // 5 hours ago
-                liked: false
-            },
-            {
-                id: 'sample6',
-                title: '💪 Fitness Journey',
-                description: 'Week 8 of my fitness journey! Today\'s workout was intense but so rewarding. Remember, progress isn\'t always linear, but consistency is key! 💪\n\nWhat\'s your favorite workout routine? #Fitness #Motivation #Health #Workout',
-                mediaUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-                mediaType: 'image',
-                authorName: 'Fitness Enthusiast', // Using alias
-                authorUsername: 'jamesfit',
-                authorPic: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face',
-                likes: 178,
-                comments: 28,
-                createdAt: new Date(Date.now() - 21600000), // 6 hours ago
-                liked: false
+                likes: 89,
+                comments: 12,
+                views: 2345,
+                userReaction: null
             }
         ];
-
-        console.log('Rendering', samplePosts.length, 'sample posts');
+        
+        this.posts = samplePosts;
         this.renderPosts(samplePosts);
         
-        // Hide loading indicator
+        // Hide loading and show empty state if needed
         const loadingElement = document.getElementById('feedLoading');
+        const emptyStateElement = document.getElementById('feedEmptyState');
+        
         if (loadingElement) {
             loadingElement.style.display = 'none';
         }
+        
+        if (emptyStateElement) {
+            emptyStateElement.style.display = 'none';
+        }
+        
+        console.log('Sample posts rendered successfully');
     }
 
     renderPosts(posts) {
@@ -705,60 +681,68 @@ class FeedPage {
             infoDiv.appendChild(caption);
         }
 
-        // Actions row (like, comment, share, bookmark, tip)
+        // Actions row (like, comment, tip, share)
         const actionRow = document.createElement('div');
-        actionRow.className = 'post-actions';
-        actionRow.style.display = 'flex';
-        actionRow.style.alignItems = 'center';
-        actionRow.style.gap = '1.5rem';
-        actionRow.style.marginTop = '1rem';
-        actionRow.style.padding = '0.5rem 0';
+        actionRow.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.25rem;
+            margin-top: 1rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+        `;
 
         // Helper to create action button with icon only
-        function createActionBtn({className, title, innerHTML, onClick, isPrimary = false, accentColor = '#64748b', iconSize = 24, count = null, showLabel = true}) {
+        function createActionBtn({className, title, innerHTML, onClick, isPrimary = false, accentColor = '#64748b', count = null}) {
             const btn = document.createElement('button');
             btn.className = `action-btn ${className || ''} ${isPrimary ? 'primary-action' : ''}`;
             btn.setAttribute('title', title);
             btn.setAttribute('aria-label', title);
             
-            // Create button content with icon and optional label
-            let content = innerHTML;
-            if (showLabel) {
-                content += `<span class="action-label" style="margin-left: 6px; font-size: 0.85rem; font-weight: 500; color: ${accentColor};">${title}</span>`;
-            }
+            let content = `
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 1px;">
+                    <span style="font-size: 16px;">${innerHTML}</span>
+                    <span style="font-size: 0.6rem; font-weight: 500; color: ${accentColor}; line-height: 1;">${title}</span>
+                </div>
+            `;
             if (count !== null && count > 0) {
-                content += `<span class="action-count" style="margin-left: 4px; font-size: 0.75rem; font-weight: 400; color: #6b7280;">${count}</span>`;
+                content = `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 1px; position: relative;">
+                        <span style="font-size: 16px;">${innerHTML}</span>
+                        <span style="font-size: 0.6rem; font-weight: 500; color: ${accentColor}; line-height: 1;">${title}</span>
+                        <span class="action-count" style="position: absolute; top: -5px; right: -8px; font-size: 0.55rem; font-weight: 600; color: white; background: ${accentColor}; padding: 1px 3px; border-radius: 6px; min-width: 12px; text-align: center;">${count}</span>
+                    </div>
+                `;
             }
             
             btn.innerHTML = content;
             btn.onclick = onClick;
-            btn.style.display = 'flex';
-            btn.style.alignItems = 'center';
-            btn.style.justifyContent = 'center';
-            btn.style.background = 'none';
-            btn.style.border = 'none';
-            btn.style.cursor = 'pointer';
-            btn.style.padding = '0.75rem 1rem';
-            btn.style.fontSize = '0.9rem';
-            btn.style.color = accentColor;
-            btn.style.borderRadius = '8px';
-            btn.style.transition = 'all 0.2s ease';
-            btn.style.minWidth = 'auto';
-            btn.style.height = 'auto';
-            btn.style.position = 'relative';
-            btn.style.fontWeight = '500';
+            btn.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.4rem 0.2rem;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                min-width: 50px;
+                position: relative;
+                ${isPrimary ? 'flex: 1;' : ''}
+            `;
             
             // Add hover effect
             btn.addEventListener('mouseenter', () => {
                 btn.style.backgroundColor = `${accentColor}10`;
                 btn.style.transform = 'translateY(-1px)';
-                btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
             });
             
             btn.addEventListener('mouseleave', () => {
                 btn.style.backgroundColor = 'transparent';
                 btn.style.transform = 'translateY(0)';
-                btn.style.boxShadow = 'none';
             });
             
             return btn;
@@ -770,9 +754,10 @@ class FeedPage {
             title: post.userReaction === 'like' ? 'Unlike' : 'Like',
             isPrimary: true,
             accentColor: '#ef4444',
-            iconSize: 24,
-            innerHTML: `<svg width='20' height='20' viewBox='0 0 24 24' fill='${post.userReaction === 'like' ? '#ef4444' : 'none'}' stroke='#ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z'/></svg>`,
-            count: post.likes || 0,
+            innerHTML: post.userReaction === 'like' 
+                ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+            count: post.reactions?.like || post.likes || 0,
             onClick: (e) => {
                 e.stopPropagation();
                 this.toggleReaction(post.id, 'like');
@@ -788,9 +773,8 @@ class FeedPage {
         const commentsBtn = createActionBtn({
             title: 'Comment',
             accentColor: '#64748b',
-            iconSize: 24,
-            innerHTML: `<svg width='20' height='20' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>`,
-            count: post.commentCount || 0,
+            innerHTML: '💬',
+            count: post.reactions?.comment || post.comments || 0,
             onClick: (e) => {
                 e.stopPropagation();
                 this.showComments(post.id);
@@ -798,12 +782,25 @@ class FeedPage {
         });
         actionRow.appendChild(commentsBtn);
 
+        // Tip - Special action (only show if user is logged in)
+        if (this.currentUser) {
+            const tipBtn = createActionBtn({
+                title: 'Tip',
+                accentColor: '#10b981',
+                innerHTML: '💰',
+                onClick: (e) => {
+                    e.stopPropagation();
+                    this.showTipModal(post.authorId, post.authorName);
+                }
+            });
+            actionRow.appendChild(tipBtn);
+        }
+
         // Share - Standard action
         const shareBtn = createActionBtn({
             title: 'Share',
             accentColor: '#64748b',
-            iconSize: 24,
-            innerHTML: `<svg width='20' height='20' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><circle cx='18' cy='5' r='3'/><circle cx='6' cy='12' r='3'/><circle cx='18' cy='19' r='3'/><path d='M8.59 13.51l6.83 3.98'/><path d='M15.41 6.51l-6.82 3.98'/></svg>`,
+            innerHTML: '📤',
             onClick: (e) => {
                 e.stopPropagation();
                 this.sharePost(post.id);
@@ -811,40 +808,18 @@ class FeedPage {
         });
         actionRow.appendChild(shareBtn);
 
-        // Bookmark - Utility action
-        const bookmarkBtn = createActionBtn({
-            className: this.bookmarkedPosts.has(post.id) ? 'bookmarked' : '',
-            title: this.bookmarkedPosts.has(post.id) ? 'Saved' : 'Save',
-            accentColor: '#f59e42',
-            iconSize: 24,
-            innerHTML: `<svg width='20' height='20' fill='${this.bookmarkedPosts.has(post.id) ? '#f59e42' : 'none'}' stroke='#f59e42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/></svg>`,
-            onClick: (e) => {
-                e.stopPropagation();
-                this.toggleBookmark(post.id);
-            }
-        });
-        actionRow.appendChild(bookmarkBtn);
-
-        // Tip - Special action
-        const tipBtn = createActionBtn({
-            title: 'Tip Creator',
-            accentColor: '#10b981',
-            iconSize: 24,
-            innerHTML: `<span style="font-size: 18px; line-height: 1;">💰</span>`,
-            onClick: (e) => {
-                e.stopPropagation();
-                this.showTipModal(post.authorId, post.authorName);
-            }
-        });
-        actionRow.appendChild(tipBtn);
-
         infoDiv.appendChild(actionRow);
 
         postDiv.appendChild(infoDiv);
         return postDiv;
     }
 
-    showPostDetails(post) {
+    async showPostDetails(post) {
+        try {
+            // Fetch fresh post data from Firestore to get updated like count
+            const postDoc = await db.collection('posts').doc(post.id).get();
+            const freshPostData = postDoc.exists ? { id: post.id, ...postDoc.data() } : post;
+            
         // Create modal for post details
         const modal = document.createElement('div');
         modal.className = 'modal post-detail-modal';
@@ -896,31 +871,31 @@ class FeedPage {
         authorDiv.style.alignItems = 'center';
         authorDiv.style.marginBottom = '15px';
         authorDiv.innerHTML = `
-            <img src="${post.authorPic || 'default-avatar.svg'}" alt="Author" style="width:40px;height:40px;border-radius:50%;margin-right:10px;">
+                <img src="${freshPostData.authorPic || 'default-avatar.svg'}" alt="Author" style="width:40px;height:40px;border-radius:50%;margin-right:10px;">
             <div>
-                <div style="font-weight:bold;">${post.authorName || 'Anonymous'}</div>
-                <div style="color:#666;font-size:14px;">${this.formatTimestamp(post.createdAt)}</div>
+                    <div style="font-weight:bold;">${freshPostData.authorName || 'Anonymous'}</div>
+                    <div style="color:#666;font-size:14px;">${this.formatTimestamp(freshPostData.createdAt)}</div>
             </div>
         `;
 
         // Title
         const title = document.createElement('h2');
-        title.textContent = post.title || '';
+            title.textContent = freshPostData.title || '';
         title.style.marginBottom = '15px';
 
         // Media
         let mediaElement = null;
-        if (post.mediaUrl && post.mediaUrl.trim() !== '') {
-            if (post.mediaType === 'video') {
+            if (freshPostData.mediaUrl && freshPostData.mediaUrl.trim() !== '') {
+                if (freshPostData.mediaType === 'video') {
                 mediaElement = document.createElement('video');
-                mediaElement.src = post.mediaUrl;
+                    mediaElement.src = freshPostData.mediaUrl;
                 mediaElement.controls = true;
                 mediaElement.style.width = '100%';
                 mediaElement.style.borderRadius = '8px';
                 mediaElement.style.marginBottom = '15px';
             } else {
                 mediaElement = document.createElement('img');
-                mediaElement.src = post.mediaUrl;
+                    mediaElement.src = freshPostData.mediaUrl;
                 mediaElement.alt = 'Post image';
                 mediaElement.style.width = '100%';
                 mediaElement.style.borderRadius = '8px';
@@ -930,24 +905,24 @@ class FeedPage {
 
         // Description
         const description = document.createElement('p');
-        description.textContent = post.description || '';
+            description.textContent = freshPostData.description || '';
         description.style.lineHeight = '1.6';
         description.style.marginBottom = '15px';
 
-        // Stats
+            // Stats with fresh data
         const statsDiv = document.createElement('div');
         statsDiv.style.display = 'flex';
         statsDiv.style.gap = '20px';
         statsDiv.style.color = '#666';
         statsDiv.style.fontSize = '14px';
         statsDiv.innerHTML = `
-            <span>👁️ ${post.views || Math.floor(Math.random()*10000+100)} views</span>
-            <span>❤️ ${post.reactions?.like || post.likes || 0} likes</span>
-            <span>💬 ${post.comments || 0} comments</span>
+                <span>👁️ ${freshPostData.views || Math.floor(Math.random()*10000+100)} views</span>
+                <span>❤️ ${freshPostData.reactions?.like || freshPostData.likes || 0} likes</span>
+                <span>💬 ${freshPostData.comments || 0} comments</span>
         `;
 
         // AI Generated badge
-        if (post.isAIGenerated) {
+            if (freshPostData.isAIGenerated) {
             const aiBadge = document.createElement('div');
             aiBadge.innerHTML = '🤖 AI Generated';
             aiBadge.style.background = '#6366f1';
@@ -991,6 +966,9 @@ class FeedPage {
             }
         };
         document.addEventListener('keydown', handleEscape);
+        } catch (error) {
+            console.error('Error showing post details:', error);
+        }
     }
 
     async toggleReaction(postId, reactionType) {
@@ -1010,6 +988,14 @@ class FeedPage {
                     [`reactions.${reactionType}`]: firebase.firestore.FieldValue.increment(-1)
                 });
                 this.updateReactionUI(postId, reactionType, false);
+                
+                // Update like count in UI
+                if (reactionType === 'like') {
+                    const postDoc = await db.collection('posts').doc(postId).get();
+                    const newLikeCount = postDoc.data()?.reactions?.like || 0;
+                    console.log(`Removing like, new count: ${newLikeCount}`);
+                    this.updatePostLikeCount(postId, newLikeCount);
+                }
             } else {
                 // Add/Change reaction
                 const reactionData = {
@@ -1034,6 +1020,14 @@ class FeedPage {
                     [`reactions.${reactionType}`]: firebase.firestore.FieldValue.increment(1)
                 });
                 this.updateReactionUI(postId, reactionType, true);
+                
+                // Update like count in UI
+                if (reactionType === 'like') {
+                    const postDoc = await db.collection('posts').doc(postId).get();
+                    const newLikeCount = postDoc.data()?.reactions?.like || 0;
+                    console.log(`Adding like, new count: ${newLikeCount}`);
+                    this.updatePostLikeCount(postId, newLikeCount);
+                }
             }
         } catch (error) {
             console.error('Error toggling reaction:', error);
@@ -1041,12 +1035,26 @@ class FeedPage {
     }
 
     updateReactionUI(postId, reactionType, isActive) {
-        const reactionBtn = document.querySelector(`[onclick="feedPage.toggleReaction('${postId}', '${reactionType}')"]`);
-        if (reactionBtn) {
+        // Find the post element and update the like button
+        const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+        if (postElement) {
+            const likeBtn = postElement.querySelector('.action-btn');
+            if (likeBtn) {
             if (isActive) {
-                reactionBtn.classList.add('active');
+                    likeBtn.classList.add('active');
+                    // Update the heart icon to filled
+                    likeBtn.innerHTML = likeBtn.innerHTML.replace(
+                        /<svg[^>]*fill="none"[^>]*>/,
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444">'
+                    );
             } else {
-                reactionBtn.classList.remove('active');
+                    likeBtn.classList.remove('active');
+                    // Update the heart icon to outline
+                    likeBtn.innerHTML = likeBtn.innerHTML.replace(
+                        /<svg[^>]*fill="#ef4444"[^>]*>/,
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">'
+                    );
+                }
             }
         }
     }
@@ -1103,10 +1111,20 @@ class FeedPage {
     async showComments(postId) {
         const modal = document.getElementById('commentsModal');
         const postInfo = document.getElementById('commentsPostInfo');
+        const commentsList = document.getElementById('commentsList');
+        const commentsLoading = document.getElementById('commentsLoading');
         
         if (modal && postInfo) {
             modal.style.display = 'block';
             postInfo.textContent = 'Loading comments...';
+            
+            // Clear comments list and show loading
+            if (commentsList) {
+                commentsList.innerHTML = '';
+            }
+            if (commentsLoading) {
+                commentsLoading.style.display = 'block';
+            }
             
             await this.loadComments(postId);
         }
@@ -1117,17 +1135,60 @@ class FeedPage {
         modals.forEach(modal => {
             modal.style.display = 'none';
         });
+        
+        // Reset comment form tracking
+        this.currentCommentPostId = null;
     }
 
     updatePostCommentCount(postId) {
         // Find the post element and update its comment count
         const postElement = document.querySelector(`[data-post-id="${postId}"]`);
         if (postElement) {
-            const commentBtn = postElement.querySelector('.action-btn');
+            const commentBtn = postElement.querySelector('.action-btn[title="Comment"], .action-btn[title="Comments"]');
             if (commentBtn) {
-                const currentCount = parseInt(commentBtn.querySelector('span').textContent) || 0;
-                commentBtn.querySelector('span').textContent = currentCount + 1;
+                const countSpan = commentBtn.querySelector('.action-count');
+                if (countSpan) {
+                    const currentCount = parseInt(countSpan.textContent) || 0;
+                    countSpan.textContent = currentCount + 1;
+                }
             }
+        }
+    }
+
+    updatePostLikeCount(postId, newLikeCount) {
+        console.log(`Updating like count for post ${postId} to ${newLikeCount}`);
+        // Find the post element and update its like count
+        const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+        if (postElement) {
+            // Find the like button by looking for the first action button (which is the like button)
+            const likeBtn = postElement.querySelector('.action-btn');
+            if (likeBtn) {
+                const countSpan = likeBtn.querySelector('.action-count');
+                if (countSpan) {
+                    countSpan.textContent = newLikeCount;
+                    console.log(`Updated existing count span to ${newLikeCount}`);
+                } else if (newLikeCount > 0) {
+                    // If no count span exists but we have likes, create one
+                    const existingContent = likeBtn.innerHTML;
+                    const newContent = existingContent.replace(
+                        /<span style="font-size: 0\.6rem; font-weight: 500; color: [^;]+; line-height: 1;">[^<]+<\/span>/,
+                        `<span style="font-size: 0.6rem; font-weight: 500; color: #ef4444; line-height: 1;">${likeBtn.getAttribute('title')}</span><span class="action-count" style="position: absolute; top: -5px; right: -8px; font-size: 0.55rem; font-weight: 600; color: white; background: #ef4444; padding: 1px 3px; border-radius: 6px; min-width: 12px; text-align: center;">${newLikeCount}</span>`
+                    );
+                    likeBtn.innerHTML = newContent;
+                    console.log(`Created new count span with ${newLikeCount}`);
+                } else if (newLikeCount === 0) {
+                    // Remove count span if count is 0
+                    const countSpan = likeBtn.querySelector('.action-count');
+                    if (countSpan) {
+                        countSpan.remove();
+                        console.log(`Removed count span for 0 likes`);
+                    }
+                }
+            } else {
+                console.log(`Like button not found for post ${postId}`);
+            }
+        } else {
+            console.log(`Post element not found for post ${postId}`);
         }
     }
 
@@ -1160,6 +1221,13 @@ class FeedPage {
         const commentsList = document.getElementById('commentsList');
         const postInfo = document.getElementById('commentsPostInfo');
         const commentForm = document.getElementById('commentForm');
+        const commentUserPic = document.getElementById('commentUserPic');
+        const commentsLoading = document.getElementById('commentsLoading');
+        
+        // Hide loading indicator
+        if (commentsLoading) {
+            commentsLoading.style.display = 'none';
+        }
         
         if (commentsList) {
             commentsList.innerHTML = '';
@@ -1176,6 +1244,9 @@ class FeedPage {
                         img.src = comment.authorPic || 'default-avatar.svg';
                         img.alt = 'User';
                         img.className = 'comment-user-pic';
+                    img.onerror = () => {
+                        img.src = 'default-avatar.svg';
+                    };
                         
                         const contentDiv = document.createElement('div');
                         contentDiv.className = 'comment-content';
@@ -1214,36 +1285,69 @@ class FeedPage {
 
         if (commentForm) {
             commentForm.style.display = this.currentUser ? 'block' : 'none';
+            
+            // Set user profile picture in comment form
+            if (commentUserPic && this.userProfile?.profilePic) {
+                commentUserPic.src = this.userProfile.profilePic;
+            } else if (commentUserPic) {
+                commentUserPic.src = 'default-avatar.svg';
+            }
+            
             this.setupCommentForm(postId);
         }
     }
 
     setupCommentForm(postId) {
+        // Prevent duplicate setup for the same post
+        if (this.currentCommentPostId === postId) {
+            return;
+        }
+        
         const commentForm = document.getElementById('commentForm');
         const commentText = document.getElementById('commentText');
+        const commentSubmitBtn = document.getElementById('commentSubmitBtn');
         
-        if (commentForm) {
-            commentForm.onsubmit = async (e) => {
+        if (commentForm && commentText && commentSubmitBtn) {
+            // Remove existing event listeners to prevent duplicates
+            const newForm = commentForm.cloneNode(true);
+            commentForm.parentNode.replaceChild(newForm, commentForm);
+            
+            // Get the new elements
+            const newCommentText = newForm.querySelector('#commentText');
+            const newCommentSubmitBtn = newForm.querySelector('#commentSubmitBtn');
+            
+            newForm.onsubmit = async (e) => {
                 e.preventDefault();
-                await this.postComment(postId, commentText.value);
-                commentText.value = '';
+                
+                if (!newCommentText.value.trim()) {
+                    return;
+                }
+                
+                // Show loading state
+                newCommentSubmitBtn.textContent = 'Posting...';
+                newCommentSubmitBtn.disabled = true;
+                
+                try {
+                    await this.postComment(postId, newCommentText.value);
+                    newCommentText.value = '';
+                } catch (error) {
+                    console.error('Error posting comment:', error);
+                } finally {
+                    // Reset button state
+                    newCommentSubmitBtn.textContent = 'Post Comment';
+                    newCommentSubmitBtn.disabled = false;
+                }
             };
+            
+            // Mark this post as having its form set up
+            this.currentCommentPostId = postId;
         }
     }
 
     async postComment(postId, text) {
         if (!this.currentUser || !text.trim()) return;
 
-        const submitBtn = document.getElementById('commentSubmitBtn');
-        const originalText = submitBtn ? submitBtn.textContent : 'Post Comment';
-        
         try {
-            // Show loading state
-            if (submitBtn) {
-                submitBtn.textContent = 'Posting...';
-                submitBtn.disabled = true;
-            }
-
             const commentData = {
                 postId: postId,
                 authorId: this.currentUser.uid,
@@ -1253,6 +1357,7 @@ class FeedPage {
                 createdAt: new Date()
             };
 
+            // Add comment to database
             await db.collection('comments').add(commentData);
             
             // Update post comment count
@@ -1260,7 +1365,7 @@ class FeedPage {
                 comments: firebase.firestore.FieldValue.increment(1)
             });
 
-            // Reload comments
+            // Reload comments to show the new comment
             await this.loadComments(postId);
             
             // Update the post's comment count in the UI
@@ -1268,13 +1373,7 @@ class FeedPage {
             
         } catch (error) {
             console.error('Error posting comment:', error);
-            alert('Failed to post comment. Please try again.');
-        } finally {
-            // Reset button state
-            if (submitBtn) {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            throw error; // Re-throw to be handled by the calling function
         }
     }
 
@@ -1337,12 +1436,12 @@ class FeedPage {
 
         if (tipForm) {
             tipForm.reset();
-            tipAmounts.forEach(btn => btn.classList.remove('selected'));
+            tipAmounts.forEach(btn => btn.classList.remove('active'));
 
             tipAmounts.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    tipAmounts.forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
+                    tipAmounts.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
                     if (customAmount) customAmount.value = btn.dataset.amount;
                 });
             });
@@ -1775,34 +1874,7 @@ class FeedPage {
         localStorage.setItem('amplifi_local_posts', JSON.stringify(localPosts.slice(0, 50))); // Keep last 50 posts
     }
 
-    // Enhanced like functionality with PWA integration
-    async toggleReaction(postId, reactionType) {
-        try {
-            const post = this.posts.find(p => p.id === postId);
-            if (!post) return;
 
-            const likeData = {
-                postId: postId,
-                likerName: this.userProfile?.displayName || 'Anonymous',
-                likerId: this.currentUser?.uid,
-                timestamp: new Date()
-            };
-
-            // Update UI immediately
-            this.updateReactionUI(postId, reactionType, !post.liked);
-
-            // Trigger PWA event
-            document.dispatchEvent(new CustomEvent('newLike', {
-                detail: likeData
-            }));
-
-            // Store locally
-            this.storeLikeLocally(likeData);
-
-        } catch (error) {
-            console.error('Error toggling reaction:', error);
-        }
-    }
 
     storeLikeLocally(likeData) {
         const localLikes = JSON.parse(localStorage.getItem('amplifi_local_likes') || '[]');
@@ -1810,34 +1882,7 @@ class FeedPage {
         localStorage.setItem('amplifi_local_likes', JSON.stringify(localLikes.slice(-100))); // Keep last 100 likes
     }
 
-    // Enhanced comment functionality with PWA integration
-    async postComment(postId, text) {
-        try {
-            const commentData = {
-                postId: postId,
-                commenterName: this.userProfile?.displayName || 'Anonymous',
-                commenterId: this.currentUser?.uid,
-                text: text,
-                timestamp: new Date()
-            };
 
-            // Add comment locally
-            this.addCommentLocally(postId, commentData);
-
-            // Trigger PWA event
-            document.dispatchEvent(new CustomEvent('newComment', {
-                detail: commentData
-            }));
-
-            // Update comment count
-            this.updatePostCommentCount(postId);
-
-            return commentData;
-        } catch (error) {
-            console.error('Error posting comment:', error);
-            throw error;
-        }
-    }
 
     addCommentLocally(postId, commentData) {
         const localComments = JSON.parse(localStorage.getItem('amplifi_local_comments') || '[]');
@@ -2144,6 +2189,194 @@ class FeedPage {
         setInterval(() => {
             this.showNewPostsBanner();
         }, 90000);
+    }
+
+
+
+    downloadMedia(mediaUrl, title) {
+        try {
+            const link = document.createElement('a');
+            link.href = mediaUrl;
+            link.download = `${title || 'amplifi-media'}.${mediaUrl.split('.').pop()}`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Download error:', error);
+        }
+    }
+
+    followCreator(authorId, authorName) {
+        if (!this.currentUser) {
+            return;
+        }
+        
+        // Toggle follow status
+        const isFollowing = this.userProfile?.following?.includes(authorId);
+        
+        // Update follow status in database
+        this.updateFollowStatus(authorId, !isFollowing);
+    }
+
+    async updateFollowStatus(authorId, isFollowing) {
+        try {
+            const userRef = db.collection('users').doc(this.currentUser.uid);
+            
+            if (isFollowing) {
+                await userRef.update({
+                    following: firebase.firestore.FieldValue.arrayUnion(authorId)
+                });
+            } else {
+                await userRef.update({
+                    following: firebase.firestore.FieldValue.arrayRemove(authorId)
+                });
+            }
+        } catch (error) {
+            console.error('Error updating follow status:', error);
+        }
+    }
+
+    reportPost(postId, postTitle) {
+        const reportReasons = [
+            'Inappropriate content',
+            'Spam',
+            'Harassment',
+            'Copyright violation',
+            'False information',
+            'Other'
+        ];
+        
+        const reason = prompt(`Report "${postTitle}"\n\nSelect reason:\n${reportReasons.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n\nEnter reason number (1-6):`);
+        
+        if (reason && reason >= 1 && reason <= 6) {
+            const selectedReason = reportReasons[reason - 1];
+            this.submitReport(postId, selectedReason);
+        }
+    }
+
+    async submitReport(postId, reason) {
+        try {
+            const reportData = {
+                postId,
+                reason,
+                reporterId: this.currentUser?.uid || 'anonymous',
+                reporterName: this.userProfile?.displayName || 'Anonymous',
+                createdAt: new Date(),
+                status: 'pending'
+            };
+            
+            await db.collection('reports').add(reportData);
+        } catch (error) {
+            console.error('Error submitting report:', error);
+        }
+    }
+
+    showMoreOptions(post, event) {
+        // Remove any existing dropdown
+        const existingDropdown = document.querySelector('.more-options-dropdown');
+        if (existingDropdown) {
+            existingDropdown.remove();
+        }
+
+        // Create dropdown menu
+        const dropdown = document.createElement('div');
+        dropdown.className = 'more-options-dropdown';
+        dropdown.style.cssText = `
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 180px;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+        `;
+
+        const options = [
+            {
+                icon: '⬇️',
+                label: 'Download',
+                action: () => this.downloadMedia(post.mediaUrl, post.title),
+                show: !!post.mediaUrl
+            },
+            {
+                icon: '👥',
+                label: 'Follow Creator',
+                action: () => this.followCreator(post.authorId, post.authorName),
+                show: true
+            },
+            {
+                icon: '🔗',
+                label: 'Copy Link',
+                action: () => this.copyLink(post.id),
+                show: true
+            },
+            {
+                icon: '🚨',
+                label: 'Report',
+                action: () => this.reportPost(post.id, post.title),
+                show: true
+            }
+        ];
+
+        options.forEach(option => {
+            if (option.show) {
+                const optionBtn = document.createElement('button');
+                optionBtn.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    padding: 0.75rem 1rem;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    color: #374151;
+                    transition: background-color 0.2s;
+                `;
+                optionBtn.innerHTML = `
+                    <span style="font-size: 16px; margin-right: 0.75rem;">${option.icon}</span>
+                    <span>${option.label}</span>
+                `;
+                
+                optionBtn.addEventListener('mouseenter', () => {
+                    optionBtn.style.backgroundColor = '#f3f4f6';
+                });
+                
+                optionBtn.addEventListener('mouseleave', () => {
+                    optionBtn.style.backgroundColor = 'transparent';
+                });
+                
+                optionBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    option.action();
+                    dropdown.remove();
+                });
+                
+                dropdown.appendChild(optionBtn);
+            }
+        });
+
+        // Position the dropdown relative to the more button
+        const moreButton = event.target.closest('.action-btn');
+        moreButton.style.position = 'relative';
+        moreButton.appendChild(dropdown);
+
+        // Close dropdown when clicking outside
+        const closeDropdown = (e) => {
+            if (!dropdown.contains(e.target) && !moreButton.contains(e.target)) {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+            }
+        };
+        
+        setTimeout(() => {
+            document.addEventListener('click', closeDropdown);
+        }, 0);
     }
 }
 

@@ -31,9 +31,9 @@ if (!db._settingsConfigured) {
     db.settings({
         cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
         ignoreUndefinedProperties: true
-    }, { merge: true });
+    });
     db._settingsConfigured = true;
-    console.log('Firestore settings configured with merge option');
+    console.log('Firestore settings configured');
 }
 
 // Enable offline persistence with multi-tab support

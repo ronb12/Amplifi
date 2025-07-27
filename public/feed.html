@@ -53,9 +53,9 @@
     <a href="upload.html" class="nav-link">Upload</a>
     <a href="dashboard.html" class="nav-link">Dashboard</a>
     <a href="messages.html" class="nav-link">Messages</a>
-    <a href="live.html" class="nav-link">Live</a>
-    <a href="music-library.html" class="nav-link">🎵 Music</a>
-    <a href="settings.html" class="nav-link">Settings</a>
+                <a href="live.html" class="nav-link">Live</a>
+            <a href="music-library.html" class="nav-link">🎵 Music</a>
+            <a href="settings.html" class="nav-link">Settings</a>
   </nav>
 
   <div class="main-layout">
@@ -155,12 +155,18 @@
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
   <script src="https://js.stripe.com/v3/"></script>
-  <script src="js/stripe-vercel-backend.js"></script>
+      <script>
+        // Force cache refresh for Stripe script
+        const timestamp = Date.now();
+        const script = document.createElement('script');
+        script.src = `js/stripe-vercel-backend.js?v=1.0.48&t=${timestamp}`;
+        document.head.appendChild(script);
+      </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3565666509316178" crossorigin="anonymous"></script>
-  <script src="js/adsense-config.js"></script>
-  <script src="firebaseConfig.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/pwa-manager.js"></script>
-  <script src="js/feed.js"></script>
+  <script src="js/adsense-config.js?v=1.0.48"></script>
+  <script src="firebaseConfig.js?v=1.0.48"></script>
+  <script src="js/utils.js?v=1.0.48"></script>
+  <script src="js/pwa-manager.js?v=1.0.48"></script>
+  <script src="js/feed.js?v=1.0.48"></script>
 </body>
 </html> 

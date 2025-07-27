@@ -154,49 +154,268 @@ class DashboardPage {
     async loadDashboardData() {
         await this.loadStats();
         await this.loadRecentActivity();
+        await this.loadUserPosts();
+        await this.loadAnalytics();
+        await this.loadEarnings();
+    }
+
+    async refreshDashboard() {
+        try {
+            console.log('Refreshing dashboard...');
+            
+            // Add loading state to refresh button
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.classList.add('loading');
+                refreshBtn.disabled = true;
+            }
+
+            // Reload all dashboard data
+            await this.loadStats();
+            await this.loadRecentActivity();
+            await this.loadUserPosts();
+            await this.loadAnalytics();
+            await this.loadEarnings();
+            
+            // Check for missing tips
+            // await this.checkAndAddMissingTip(); // Removed as tips are automatic
+
+            console.log('Dashboard refreshed successfully');
+            
+            // Show success feedback
+            this.showRefreshSuccess();
+            
+        } catch (error) {
+            console.error('Error refreshing dashboard:', error);
+            alert('Error refreshing dashboard: ' + error.message);
+        } finally {
+            // Remove loading state
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.classList.remove('loading');
+                refreshBtn.disabled = false;
+            }
+        }
+    }
+
+    showRefreshSuccess() {
+        // Create a temporary success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        `;
+        successMsg.textContent = '✅ Dashboard refreshed successfully!';
+        document.body.appendChild(successMsg);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            if (successMsg.parentNode) {
+                successMsg.parentNode.removeChild(successMsg);
+            }
+        }, 3000);
+    }
+
+    // Test function to debug tips
+    async debugTips() {
+        try {
+            console.log('=== DEBUGGING TIPS ===');
+            console.log('Current user ID:', this.currentUser.uid);
+            
+            // Check all tips in the collection
+            const allTipsSnapshot = await db.collection('tips').get();
+            console.log('Total tips in collection:', allTipsSnapshot.size);
+            
+            allTipsSnapshot.forEach(doc => {
+                const tip = doc.data();
+                console.log('Tip ID:', doc.id, 'Tip data:', tip);
+            });
+            
+            // Check tips for current user
+            const userTipsSnapshot = await db.collection('tips')
+                .where('recipientId', '==', this.currentUser.uid)
+                .get();
+            
+            console.log('Tips for current user:', userTipsSnapshot.size);
+            userTipsSnapshot.forEach(doc => {
+                const tip = doc.data();
+                console.log('User tip ID:', doc.id, 'Tip data:', tip);
+            });
+            
+            // Check earnings
+            const earningsDoc = await db.collection('earnings').doc(this.currentUser.uid).get();
+            console.log('Earnings doc exists:', earningsDoc.exists);
+            if (earningsDoc.exists) {
+                console.log('Current earnings:', earningsDoc.data());
+            }
+            
+            console.log('=== END DEBUGGING ===');
+        } catch (error) {
+            console.error('Error debugging tips:', error);
+        }
+    }
+
+    // Function to clean up manual tips and recalculate earnings
+    async cleanupManualTips() {
+        try {
+            console.log('=== CLEANING UP MANUAL TIPS ===');
+            
+            // Find and remove manual tips
+            const manualTipsSnapshot = await db.collection('tips')
+                .where('recipientId', '==', this.currentUser.uid)
+                .where('paymentIntentId', '==', 'manual-addition')
+                .get();
+            
+            console.log('Manual tips found:', manualTipsSnapshot.size);
+            
+            // Delete manual tips
+            const deletePromises = [];
+            manualTipsSnapshot.forEach(doc => {
+                console.log('Deleting manual tip:', doc.id);
+                deletePromises.push(doc.ref.delete());
+            });
+            
+            await Promise.all(deletePromises);
+            console.log('Manual tips deleted');
+            
+            // Recalculate earnings from remaining tips
+            const remainingTipsSnapshot = await db.collection('tips')
+                .where('recipientId', '==', this.currentUser.uid)
+                .get();
+            
+            let totalEarnings = 0;
+            remainingTipsSnapshot.forEach(doc => {
+                const tip = doc.data();
+                totalEarnings += tip.amount;
+                console.log('Remaining tip:', tip.amount, 'from', tip.senderName);
+            });
+            
+            console.log('Recalculated total earnings:', totalEarnings);
+            
+            // Update earnings document
+            const earningsRef = db.collection('earnings').doc(this.currentUser.uid);
+            await earningsRef.set({
+                totalEarnings: totalEarnings,
+                userId: this.currentUser.uid,
+                lastUpdated: firebase.firestore.Timestamp.fromDate(new Date())
+            }, { merge: true });
+            
+            console.log('Earnings updated to:', totalEarnings);
+            console.log('=== CLEANUP COMPLETE ===');
+            
+            alert(`Cleaned up manual tips. Total earnings now: $${totalEarnings.toFixed(2)}`);
+            
+            // Refresh dashboard
+            await this.refreshDashboard();
+            
+        } catch (error) {
+            console.error('Error cleaning up manual tips:', error);
+            alert('Error cleaning up tips: ' + error.message);
+        }
     }
 
     async loadStats() {
         try {
-            // Load user's posts for stats
+            console.log('Loading stats for user:', this.currentUser.uid);
+            
+            // Get user's posts
             const postsSnapshot = await db.collection('posts')
                 .where('authorId', '==', this.currentUser.uid)
                 .get();
-
+            
             let totalViews = 0;
             let totalLikes = 0;
+            let totalComments = 0;
             const posts = [];
             
             postsSnapshot.forEach(doc => {
                 const post = doc.data();
+                posts.push(post);
                 totalViews += post.views || 0;
                 totalLikes += post.likes || 0;
-                posts.push({ id: doc.id, ...post });
+                totalComments += post.commentCount || 0;
             });
-
-            // Load earnings data
-            const earningsDoc = await db.collection('earnings').doc(this.currentUser.uid).get();
-            let totalEarnings = 0;
-            if (earningsDoc.exists) {
-                const earnings = earningsDoc.data();
-                totalEarnings = earnings.totalEarnings || 0;
-            }
-
-            // Load followers count
+            
+            console.log('Posts found:', posts.length);
+            console.log('Total views:', totalViews);
+            console.log('Total likes:', totalLikes);
+            console.log('Total comments:', totalComments);
+            
+            // Get followers count
             const followersSnapshot = await db.collection('followers')
                 .where('followingId', '==', this.currentUser.uid)
                 .get();
-            const totalFollowers = followersSnapshot.size;
-
-            // Update UI
-            document.getElementById('totalViews').textContent = totalViews.toLocaleString();
-            document.getElementById('totalLikes').textContent = totalLikes.toLocaleString();
-            document.getElementById('totalEarnings').textContent = `$${totalEarnings.toFixed(2)}`;
-            document.getElementById('totalFollowers').textContent = totalFollowers.toLocaleString();
-
+            
+            const followersCount = followersSnapshot.size;
+            console.log('Followers count:', followersCount);
+            
+            // Get earnings
+            const earningsDoc = await db.collection('earnings').doc(this.currentUser.uid).get();
+            const totalEarnings = earningsDoc.exists ? earningsDoc.data().totalEarnings || 0 : 0;
+            console.log('Total earnings:', totalEarnings);
+            
+            // Update stats in UI
+            this.updateStatsUI({
+                totalViews,
+                totalLikes,
+                totalComments,
+                followersCount,
+                totalEarnings,
+                postsCount: posts.length
+            });
+            
         } catch (error) {
             console.error('Error loading stats:', error);
         }
+    }
+
+    updateStatsUI(stats) {
+        console.log('Updating stats UI with:', stats);
+        
+        // Update total views
+        const viewsElement = document.getElementById('totalViews');
+        if (viewsElement) {
+            viewsElement.textContent = stats.totalViews.toLocaleString();
+        }
+        
+        // Update total likes
+        const likesElement = document.getElementById('totalLikes');
+        if (likesElement) {
+            likesElement.textContent = stats.totalLikes.toLocaleString();
+        }
+        
+        // Update total comments
+        const commentsElement = document.getElementById('totalComments');
+        if (commentsElement) {
+            commentsElement.textContent = stats.totalComments.toLocaleString();
+        }
+        
+        // Update followers
+        const followersElement = document.getElementById('totalFollowers');
+        if (followersElement) {
+            followersElement.textContent = stats.followersCount.toLocaleString();
+        }
+        
+        // Update earnings
+        const earningsElement = document.getElementById('totalEarnings');
+        if (earningsElement) {
+            earningsElement.textContent = `$${stats.totalEarnings.toFixed(2)}`;
+        }
+        
+        // Update posts count
+        const postsElement = document.getElementById('totalPosts');
+        if (postsElement) {
+            postsElement.textContent = stats.postsCount.toLocaleString();
+        }
+        
+        console.log('Stats UI updated successfully');
     }
 
     async loadRecentActivity() {
@@ -241,14 +460,17 @@ class DashboardPage {
             });
 
             // Get recent tips
+            console.log('Loading tips for user:', this.currentUser.uid);
             const tipsSnapshot = await db.collection('tips')
                 .where('recipientId', '==', this.currentUser.uid)
                 .orderBy('createdAt', 'desc')
                 .limit(3)
                 .get();
 
+            console.log('Tips found:', tipsSnapshot.size);
             tipsSnapshot.forEach(doc => {
                 const tip = doc.data();
+                console.log('Tip data:', tip);
                 activities.push({
                     type: 'tip',
                     icon: '💰',
@@ -257,8 +479,14 @@ class DashboardPage {
                 });
             });
 
+            console.log('Total activities before sorting:', activities.length);
+            console.log('Activities:', activities);
+
             // Sort activities by time
             activities.sort((a, b) => b.time.toDate() - a.time.toDate());
+
+            console.log('Activities after sorting:', activities);
+            console.log('Rendering top 5 activities:', activities.slice(0, 5));
 
             // Render activities
             this.renderActivities(activities.slice(0, 5));
@@ -270,16 +498,24 @@ class DashboardPage {
 
     renderActivities(activities) {
         const activityList = document.getElementById('recentActivity');
-        if (!activityList) return;
+        if (!activityList) {
+            console.error('Activity list element not found');
+            return;
+        }
+
+        console.log('Rendering activities:', activities);
+        console.log('Activity list element:', activityList);
 
         activityList.innerHTML = '';
 
         if (activities.length === 0) {
+            console.log('No activities to render, showing no activity message');
             activityList.innerHTML = '<p class="no-activity">No recent activity</p>';
             return;
         }
 
-        activities.forEach(activity => {
+        activities.forEach((activity, index) => {
+            console.log(`Rendering activity ${index}:`, activity);
             const activityElement = document.createElement('div');
             activityElement.className = 'activity-item';
             activityElement.innerHTML = `
@@ -290,7 +526,10 @@ class DashboardPage {
                 </div>
             `;
             activityList.appendChild(activityElement);
+            console.log(`Activity ${index} element created:`, activityElement);
         });
+
+        console.log('Final activity list HTML:', activityList.innerHTML);
     }
 
     async loadUserPosts() {
@@ -530,10 +769,10 @@ class DashboardPage {
 
     async loadTopPosts() {
         try {
+            // Get posts by author, then sort client-side to avoid index requirement
             const postsSnapshot = await db.collection('posts')
                 .where('authorId', '==', this.currentUser.uid)
-                .orderBy('views', 'desc')
-                .limit(5)
+                .limit(20) // Get more posts to sort from
                 .get();
 
             const topPostsContainer = document.getElementById('topPosts');
@@ -541,8 +780,17 @@ class DashboardPage {
 
             topPostsContainer.innerHTML = '';
 
+            // Sort posts by views client-side
+            const posts = [];
             postsSnapshot.forEach(doc => {
-                const post = doc.data();
+                posts.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // Sort by views (descending) and take top 5
+            posts.sort((a, b) => (b.views || 0) - (a.views || 0));
+            const topPosts = posts.slice(0, 5);
+
+            topPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.className = 'top-post-item';
                 postElement.innerHTML = `
@@ -1096,5 +1344,23 @@ class DashboardPage {
 
 // Initialize the dashboard page when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.dashboardPage = new DashboardPage();
-}); 
+    try {
+        window.dashboardPage = new DashboardPage();
+        console.log('Dashboard page initialized successfully');
+    } catch (error) {
+        console.error('Error initializing dashboard page:', error);
+    }
+});
+
+// Also initialize immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+    // DOM is still loading, wait for DOMContentLoaded
+} else {
+    // DOM is already loaded, initialize immediately
+    try {
+        window.dashboardPage = new DashboardPage();
+        console.log('Dashboard page initialized immediately');
+    } catch (error) {
+        console.error('Error initializing dashboard page immediately:', error);
+    }
+} 

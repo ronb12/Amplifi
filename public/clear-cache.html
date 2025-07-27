@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache - Amplifi</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        .cache-item {
+            background: #f3f4f6;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .status {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .success { color: #059669; }
+        .error { color: #dc2626; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .version-info {
+            background: #dbeafe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Clear Amplifi Cache</h1>
+        
+        <div class="version-info">
+            <strong>Current Version:</strong> 1.0.47<br>
+            <strong>Last Updated:</strong> <span id="timestamp"></span>
+        </div>
+
+        <div id="results"></div>
+
+        <button onclick="clearAllCaches()">Clear All Caches</button>
+        <button onclick="forceRefresh()">Force Page Refresh</button>
+        <button onclick="goToFeed()">Go to Feed</button>
+    </div>
+
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+        async function clearAllCaches() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="cache-item"><div class="status">🔄 Clearing caches...</div></div>';
+
+            try {
+                // Clear browser cache
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    addResult('✅ Browser caches cleared', 'success');
+                }
+
+                // Clear service worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(reg => reg.unregister()));
+                    addResult('✅ Service worker unregistered', 'success');
+                }
+
+                // Clear localStorage
+                localStorage.clear();
+                addResult('✅ Local storage cleared', 'success');
+
+                // Clear IndexedDB
+                if ('indexedDB' in window) {
+                    const databases = await indexedDB.databases();
+                    databases.forEach(db => {
+                        indexedDB.deleteDatabase(db.name);
+                    });
+                    addResult('✅ IndexedDB cleared', 'success');
+                }
+
+                // Clear sessionStorage
+                sessionStorage.clear();
+                addResult('✅ Session storage cleared', 'success');
+
+                addResult('🎉 All caches cleared successfully!', 'success');
+
+            } catch (error) {
+                addResult(`❌ Error clearing caches: ${error.message}`, 'error');
+            }
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = 'cache-item';
+            div.innerHTML = `<div class="status ${type}">${message}</div>`;
+            results.appendChild(div);
+        }
+
+        function forceRefresh() {
+            // Force reload without cache
+            window.location.reload(true);
+        }
+
+        function goToFeed() {
+            window.location.href = '/feed.html?v=' + Date.now();
+        }
+
+        // Auto-clear on page load
+        window.addEventListener('load', () => {
+            setTimeout(clearAllCaches, 1000);
+        });
+    </script>
+</body>
+</html> 
+</html> 
