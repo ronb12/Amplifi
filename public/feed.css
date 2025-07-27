@@ -1210,4 +1210,57 @@
     max-width: 98vw;
     min-width: 0;
   }
+}
+
+/* Enhanced Action Button Styles */
+.action-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background-color: rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+}
+
+.action-btn.active {
+    color: #ef4444;
+}
+
+.action-btn.primary-action {
+    color: #ef4444;
+}
+
+.action-btn.primary-action:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.action-label {
+    font-weight: 500;
+    color: inherit;
+}
+
+.action-count {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #6b7280;
+    margin-left: 0.25rem;
 } 

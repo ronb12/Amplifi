@@ -715,12 +715,22 @@ class FeedPage {
         actionRow.style.padding = '0.5rem 0';
 
         // Helper to create action button with icon only
-        function createActionBtn({className, title, innerHTML, onClick, isPrimary = false, accentColor = '#64748b', iconSize = 24}) {
+        function createActionBtn({className, title, innerHTML, onClick, isPrimary = false, accentColor = '#64748b', iconSize = 24, count = null, showLabel = true}) {
             const btn = document.createElement('button');
             btn.className = `action-btn ${className || ''} ${isPrimary ? 'primary-action' : ''}`;
             btn.setAttribute('title', title);
             btn.setAttribute('aria-label', title);
-            btn.innerHTML = innerHTML;
+            
+            // Create button content with icon and optional label
+            let content = innerHTML;
+            if (showLabel) {
+                content += `<span class="action-label" style="margin-left: 6px; font-size: 0.85rem; font-weight: 500; color: ${accentColor};">${title}</span>`;
+            }
+            if (count !== null && count > 0) {
+                content += `<span class="action-count" style="margin-left: 4px; font-size: 0.75rem; font-weight: 400; color: #6b7280;">${count}</span>`;
+            }
+            
+            btn.innerHTML = content;
             btn.onclick = onClick;
             btn.style.display = 'flex';
             btn.style.alignItems = 'center';
@@ -728,25 +738,41 @@ class FeedPage {
             btn.style.background = 'none';
             btn.style.border = 'none';
             btn.style.cursor = 'pointer';
-            btn.style.padding = '0.5rem';
-            btn.style.fontSize = '0.98rem';
+            btn.style.padding = '0.75rem 1rem';
+            btn.style.fontSize = '0.9rem';
             btn.style.color = accentColor;
-            btn.style.borderRadius = '50%';
+            btn.style.borderRadius = '8px';
             btn.style.transition = 'all 0.2s ease';
-            btn.style.minWidth = '40px';
-            btn.style.height = '40px';
+            btn.style.minWidth = 'auto';
+            btn.style.height = 'auto';
             btn.style.position = 'relative';
+            btn.style.fontWeight = '500';
+            
+            // Add hover effect
+            btn.addEventListener('mouseenter', () => {
+                btn.style.backgroundColor = `${accentColor}10`;
+                btn.style.transform = 'translateY(-1px)';
+                btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                btn.style.backgroundColor = 'transparent';
+                btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = 'none';
+            });
+            
             return btn;
         }
 
         // Like - Primary action
         const likeBtn = createActionBtn({
             className: post.userReaction === 'like' ? 'active' : '',
-            title: 'Like',
+            title: post.userReaction === 'like' ? 'Unlike' : 'Like',
             isPrimary: true,
             accentColor: '#ef4444',
             iconSize: 24,
-            innerHTML: `<svg width='24' height='24' viewBox='0 0 24 24' fill='${post.userReaction === 'like' ? '#ef4444' : 'none'}' stroke='#ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z'/></svg>`,
+            innerHTML: `<svg width='20' height='20' viewBox='0 0 24 24' fill='${post.userReaction === 'like' ? '#ef4444' : 'none'}' stroke='#ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z'/></svg>`,
+            count: post.likes || 0,
             onClick: (e) => {
                 e.stopPropagation();
                 this.toggleReaction(post.id, 'like');
@@ -763,7 +789,8 @@ class FeedPage {
             title: 'Comment',
             accentColor: '#64748b',
             iconSize: 24,
-            innerHTML: `<svg width='24' height='24' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>`,
+            innerHTML: `<svg width='20' height='20' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>`,
+            count: post.commentCount || 0,
             onClick: (e) => {
                 e.stopPropagation();
                 this.showComments(post.id);
@@ -776,7 +803,7 @@ class FeedPage {
             title: 'Share',
             accentColor: '#64748b',
             iconSize: 24,
-            innerHTML: `<svg width='24' height='24' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><circle cx='18' cy='5' r='3'/><circle cx='6' cy='12' r='3'/><circle cx='18' cy='19' r='3'/><path d='M8.59 13.51l6.83 3.98'/><path d='M15.41 6.51l-6.82 3.98'/></svg>`,
+            innerHTML: `<svg width='20' height='20' fill='none' stroke='#64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><circle cx='18' cy='5' r='3'/><circle cx='6' cy='12' r='3'/><circle cx='18' cy='19' r='3'/><path d='M8.59 13.51l6.83 3.98'/><path d='M15.41 6.51l-6.82 3.98'/></svg>`,
             onClick: (e) => {
                 e.stopPropagation();
                 this.sharePost(post.id);
@@ -787,10 +814,10 @@ class FeedPage {
         // Bookmark - Utility action
         const bookmarkBtn = createActionBtn({
             className: this.bookmarkedPosts.has(post.id) ? 'bookmarked' : '',
-            title: 'Save',
+            title: this.bookmarkedPosts.has(post.id) ? 'Saved' : 'Save',
             accentColor: '#f59e42',
             iconSize: 24,
-            innerHTML: `<svg width='24' height='24' fill='${this.bookmarkedPosts.has(post.id) ? '#f59e42' : 'none'}' stroke='#f59e42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/></svg>`,
+            innerHTML: `<svg width='20' height='20' fill='${this.bookmarkedPosts.has(post.id) ? '#f59e42' : 'none'}' stroke='#f59e42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/></svg>`,
             onClick: (e) => {
                 e.stopPropagation();
                 this.toggleBookmark(post.id);
@@ -800,10 +827,10 @@ class FeedPage {
 
         // Tip - Special action
         const tipBtn = createActionBtn({
-            title: 'Tip',
+            title: 'Tip Creator',
             accentColor: '#10b981',
             iconSize: 24,
-            innerHTML: `<span style="font-size: 24px; line-height: 1;">💰</span>`,
+            innerHTML: `<span style="font-size: 18px; line-height: 1;">💰</span>`,
             onClick: (e) => {
                 e.stopPropagation();
                 this.showTipModal(post.authorId, post.authorName);
@@ -2123,10 +2150,10 @@ class FeedPage {
 // Initialize the feed page when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize payment processor
-    if (typeof StripeFrontendOnly !== "undefined") {
-        window.paymentProcessor = new StripeFrontendOnly();
+    if (typeof StripeVercelBackend !== "undefined") {
+        window.paymentProcessor = new StripeVercelBackend();
     } else {
-        console.error("StripeFrontendOnly not loaded");
+        console.error("StripeVercelBackend not loaded");
     }
 
     // Initialize the feed page

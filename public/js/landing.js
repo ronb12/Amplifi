@@ -17,11 +17,7 @@ class LandingPage {
     }
 
     setupEventListeners() {
-        // Header buttons
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
-        const getStartedBtn = document.getElementById('getStartedBtn');
-        const learnMoreBtn = document.getElementById('learnMoreBtn');
+        // Modal and form elements (these are always present)
         const modal = document.getElementById('loginModal');
         const closeBtn = modal?.querySelector('.close');
         const authTabs = modal?.querySelectorAll('.auth-tab');
@@ -31,12 +27,11 @@ class LandingPage {
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         const backToLoginLink = document.getElementById('backToLoginLink');
 
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => this.showModal('login'));
-        }
-        if (signupBtn) {
-            signupBtn.addEventListener('click', () => this.showModal('signup'));
-        }
+        // Hero section buttons (these are always present)
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const learnMoreBtn = document.getElementById('learnMoreBtn');
+
+        // Set up hero button listeners
         if (getStartedBtn) {
             getStartedBtn.addEventListener('click', () => this.showModal('signup'));
         }
@@ -98,10 +93,8 @@ class LandingPage {
                 this.currentUser = user;
                 this.updateUI();
                 
-                if (user) {
-                    // Redirect to feed if user is already logged in
-                    window.location.href = 'feed.html';
-                }
+                // No longer auto-redirect - users can stay on the landing page
+                // They can navigate to feed.html using the navigation menu
             });
         } catch (error) {
             console.error('Error setting up auth state listener:', error);
@@ -112,28 +105,91 @@ class LandingPage {
         const headerActions = document.querySelector('.header-actions');
         
         if (this.currentUser) {
-            // User is logged in - show user menu
+            // User is logged in - show user menu with welcome message
             if (headerActions) {
                 headerActions.innerHTML = `
-                    <div class="user-menu">
-                        <img src="${this.currentUser.photoURL || 'default-avatar.svg'}" alt="User" class="user-avatar">
-                        <div class="user-dropdown">
-                            <a href="feed.html">Feed</a>
-                            <a href="dashboard.html">Dashboard</a>
-                            <a href="#" onclick="landingPage.signOut()">Sign Out</a>
+                    <div class="user-menu" style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="color: #6366f1; font-weight: 500;">Welcome back, ${this.currentUser.displayName || 'User'}!</span>
+                        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                            <span class="notification-icon" aria-label="Notification bell">🔔</span>
+                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        </button>
+                        <a href="profile.html" id="userAvatarLink" aria-label="Profile">
+                            <img src="${this.currentUser.photoURL || 'default-avatar.svg'}" alt="User Avatar" class="user-avatar">
+                        </a>
+                        <div class="user-dropdown" style="position: relative; display: inline-block;">
+                            <button class="btn btn-secondary" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">▼</button>
+                            <div class="dropdown-content" style="display: none; position: absolute; right: 0; background: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000; padding: 0.5rem 0;">
+                                <a href="feed.html" style="display: block; padding: 0.5rem 1rem; text-decoration: none; color: #333;">📱 Go to Feed</a>
+                                <a href="dashboard.html" style="display: block; padding: 0.5rem 1rem; text-decoration: none; color: #333;">📊 Dashboard</a>
+                                <a href="upload.html" style="display: block; padding: 0.5rem 1rem; text-decoration: none; color: #333;">➕ Create Post</a>
+                                <a href="profile.html" style="display: block; padding: 0.5rem 1rem; text-decoration: none; color: #333;">👤 Profile</a>
+                                <a href="#" onclick="landingPage.signOut()" style="display: block; padding: 0.5rem 1rem; text-decoration: none; color: #333;">🚪 Sign Out</a>
+                            </div>
                         </div>
                     </div>
                 `;
             }
+            
+            // Update hero section for authenticated users
+            this.updateHeroForAuthenticatedUser();
         } else {
             // User is not logged in - show login/signup buttons
             if (headerActions) {
                 headerActions.innerHTML = `
-                    <button id="loginBtn" class="btn btn-primary">Login</button>
+                    <button id="loginBtn" class="btn btn-primary" style="margin-right: 0.5rem;">Login</button>
                     <button id="signupBtn" class="btn btn-secondary">Sign Up</button>
                 `;
                 this.attachAuthButtonListeners();
             }
+            
+            // Reset hero section for non-authenticated users
+            this.updateHeroForNonAuthenticatedUser();
+        }
+    }
+    
+    updateHeroForAuthenticatedUser() {
+        const heroTitle = document.querySelector('.hero-title');
+        const heroSubtitle = document.querySelector('.hero-subtitle');
+        const heroActions = document.querySelector('.hero-actions');
+        
+        if (heroTitle) {
+            heroTitle.textContent = `Welcome back to Amplifi!`;
+        }
+        
+        if (heroSubtitle) {
+            heroSubtitle.textContent = `Ready to create and share? Jump back into your creative journey or explore what's new.`;
+        }
+        
+        if (heroActions) {
+            heroActions.innerHTML = `
+                <a href="feed.html" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.1rem; font-weight: 600;">📱 Go to Feed</a>
+                <a href="upload.html" class="btn btn-secondary" style="padding: 0.75rem 2rem; font-size: 1.1rem; font-weight: 600;">➕ Create Post</a>
+                <a href="dashboard.html" class="btn btn-secondary" style="padding: 0.75rem 2rem; font-size: 1.1rem; font-weight: 600;">📊 Dashboard</a>
+            `;
+        }
+    }
+    
+    updateHeroForNonAuthenticatedUser() {
+        const heroTitle = document.querySelector('.hero-title');
+        const heroSubtitle = document.querySelector('.hero-subtitle');
+        const heroActions = document.querySelector('.hero-actions');
+        
+        if (heroTitle) {
+            heroTitle.textContent = `Share Your World with Amplifi`;
+        }
+        
+        if (heroSubtitle) {
+            heroSubtitle.textContent = `Connect, create, and share your moments with the world. Join millions of creators on Amplifi.`;
+        }
+        
+        if (heroActions) {
+            heroActions.innerHTML = `
+                <button id="getStartedBtn" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.1rem; font-weight: 600;">Get Started</button>
+                <button id="learnMoreBtn" class="btn btn-secondary" style="padding: 0.75rem 2rem; font-size: 1.1rem; font-weight: 600;">Learn More</button>
+            `;
+            // Re-attach event listeners for the new buttons
+            this.attachHeroButtonListeners();
         }
     }
 
@@ -146,6 +202,18 @@ class LandingPage {
         }
         if (signupBtn) {
             signupBtn.addEventListener('click', () => this.showModal('signup'));
+        }
+    }
+
+    // Helper to re-attach hero button listeners
+    attachHeroButtonListeners() {
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const learnMoreBtn = document.getElementById('learnMoreBtn');
+        if (getStartedBtn) {
+            getStartedBtn.addEventListener('click', () => this.showModal('signup'));
+        }
+        if (learnMoreBtn) {
+            learnMoreBtn.addEventListener('click', () => this.scrollToFeatures());
         }
     }
 

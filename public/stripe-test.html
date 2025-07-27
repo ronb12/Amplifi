@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Integration Test - Amplifi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .tip-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .tip-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 400px;
+            width: 90%;
+        }
+        .tip-amounts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tip-amount-btn {
+            padding: 15px;
+            border: 2px solid #007bff;
+            background: white;
+            color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tip-amount-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+        .tip-amount-btn.selected {
+            background: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Stripe Integration Test</h1>
+        <p>Testing frontend and backend Stripe functionality for Amplifi</p>
+        
+        <div class="test-section">
+            <h2>🔧 Configuration Test</h2>
+            <div id="configStatus"></div>
+            <button class="test-button" onclick="testConfiguration()">Test Configuration</button>
+        </div>
+
+        <div class="test-section">
+            <h2>💳 Frontend Stripe Test</h2>
+            <div id="frontendStatus"></div>
+            <button class="test-button" onclick="testFrontendStripe()">Test Frontend Stripe</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Tip Payment Test</h2>
+            <div id="tipStatus"></div>
+            <button class="test-button" onclick="showTipModal()">Test Tip Payment</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <!-- Tip Modal -->
+    <div id="tipModal" class="tip-modal">
+        <div class="tip-modal-content">
+            <h3>Send Test Tip</h3>
+            <p>This will create a test payment using Stripe Checkout</p>
+            
+            <div class="tip-amounts">
+                <button class="tip-amount-btn" data-amount="1.00">$1.00</button>
+                <button class="tip-amount-btn" data-amount="5.00">$5.00</button>
+                <button class="tip-amount-btn" data-amount="10.00">$10.00</button>
+                <button class="tip-amount-btn" data-amount="25.00">$25.00</button>
+            </div>
+            
+            <div>
+                <label for="customAmount">Custom Amount:</label>
+                <input type="number" id="customAmount" min="0.50" step="0.01" placeholder="Enter amount">
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="test-button" onclick="processTipPayment()">Send Tip</button>
+                <button class="test-button" onclick="closeTipModal()" style="background: #6c757d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/stripe-frontend-only.js"></script>
+    <script>
+        let stripeFrontend;
+        let selectedAmount = 5.00;
+        let testResults = [];
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Stripe Frontend
+            if (window.StripeFrontendOnly) {
+                stripeFrontend = new StripeFrontendOnly();
+            }
+            
+            // Set up tip amount selection
+            document.querySelectorAll('.tip-amount-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tip-amount-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedAmount = parseFloat(this.dataset.amount);
+                    document.getElementById('customAmount').value = selectedAmount;
+                });
+            });
+            
+            document.getElementById('customAmount').addEventListener('input', function() {
+                selectedAmount = parseFloat(this.value) || 0;
+            });
+        });
+
+        function addTestResult(test, status, message) {
+            const result = { test, status, message, timestamp: new Date().toISOString() };
+            testResults.push(result);
+            updateTestResults();
+        }
+
+        function updateTestResults() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = testResults.map(result => 
+                `<div class="status ${result.status}">
+                    <strong>${result.test}:</strong> ${result.message}
+                    <small>(${new Date(result.timestamp).toLocaleTimeString()})</small>
+                </div>`
+            ).join('');
+        }
+
+        function testConfiguration() {
+            const statusDiv = document.getElementById('configStatus');
+            
+            try {
+                // Test Stripe.js loading
+                if (typeof Stripe !== 'undefined') {
+                    statusDiv.innerHTML = '<div class="status success">✅ Stripe.js loaded successfully</div>';
+                    addTestResult('Configuration', 'success', 'Stripe.js loaded successfully');
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Stripe.js not loaded</div>';
+                    addTestResult('Configuration', 'error', 'Stripe.js not loaded');
+                    return;
+                }
+
+                // Test publishable key
+                const publishableKey = 'pk_live_51RpT30LHe1RTUAGqdJuiy1GWpobWJYGHMUBeiORdbz6OUwlqoaunI2cct8p51kGncr12b5X5axqYNzCELk80MijH00P4VABBtD';
+                if (publishableKey.startsWith('pk_live_')) {
+                    statusDiv.innerHTML += '<div class="status success">✅ Live Stripe key configured</div>';
+                    addTestResult('Configuration', 'success', 'Live Stripe key configured');
+                } else {
+                    statusDiv.innerHTML += '<div class="status warning">⚠️ Test Stripe key detected</div>';
+                    addTestResult('Configuration', 'warning', 'Test Stripe key detected');
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Configuration error: ${error.message}</div>`;
+                addTestResult('Configuration', 'error', `Configuration error: ${error.message}`);
+            }
+        }
+
+        function testFrontendStripe() {
+            const statusDiv = document.getElementById('frontendStatus');
+            
+            try {
+                if (!stripeFrontend) {
+                    statusDiv.innerHTML = '<div class="status error">❌ StripeFrontendOnly not initialized</div>';
+                    addTestResult('Frontend Stripe', 'error', 'StripeFrontendOnly not initialized');
+                    return;
+                }
+
+                if (stripeFrontend.stripe) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Stripe instance created successfully</div>';
+                    addTestResult('Frontend Stripe', 'success', 'Stripe instance created successfully');
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Stripe instance not created</div>';
+                    addTestResult('Frontend Stripe', 'error', 'Stripe instance not created');
+                }
+
+                // Test configuration
+                if (stripeFrontend.config && stripeFrontend.config.publishableKey) {
+                    statusDiv.innerHTML += '<div class="status success">✅ Stripe configuration loaded</div>';
+                    addTestResult('Frontend Stripe', 'success', 'Stripe configuration loaded');
+                } else {
+                    statusDiv.innerHTML += '<div class="status error">❌ Stripe configuration missing</div>';
+                    addTestResult('Frontend Stripe', 'error', 'Stripe configuration missing');
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Frontend test error: ${error.message}</div>`;
+                addTestResult('Frontend Stripe', 'error', `Frontend test error: ${error.message}`);
+            }
+        }
+
+        function showTipModal() {
+            document.getElementById('tipModal').style.display = 'block';
+        }
+
+        function closeTipModal() {
+            document.getElementById('tipModal').style.display = 'none';
+        }
+
+        async function processTipPayment() {
+            const statusDiv = document.getElementById('tipStatus');
+            
+            if (!stripeFrontend) {
+                statusDiv.innerHTML = '<div class="status error">❌ Stripe not initialized</div>';
+                addTestResult('Tip Payment', 'error', 'Stripe not initialized');
+                return;
+            }
+
+            if (selectedAmount < 0.50) {
+                statusDiv.innerHTML = '<div class="status error">❌ Amount must be at least $0.50</div>';
+                addTestResult('Tip Payment', 'error', 'Amount must be at least $0.50');
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = '<div class="status warning">⏳ Creating payment session...</div>';
+                
+                // Create checkout session
+                const session = await stripeFrontend.createCheckoutSession(
+                    selectedAmount,
+                    'test-recipient-id',
+                    'Test Creator',
+                    'Test tip payment'
+                );
+
+                if (session && session.url) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Payment session created successfully</div>';
+                    addTestResult('Tip Payment', 'success', `Payment session created for $${selectedAmount}`);
+                    
+                    // Redirect to Stripe Checkout
+                    window.location.href = session.url;
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Failed to create payment session</div>';
+                    addTestResult('Tip Payment', 'error', 'Failed to create payment session');
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Payment error: ${error.message}</div>`;
+                addTestResult('Tip Payment', 'error', `Payment error: ${error.message}`);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('tipModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTipModal();
+            }
+        });
+    </script>
+</body>
+</html> 

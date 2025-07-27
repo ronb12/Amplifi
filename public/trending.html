@@ -14,6 +14,47 @@
   <link rel="stylesheet" href="enhanced-buttons.css?v=2">
   <link rel="stylesheet" href="modal-overlays.css?v=1">
   <script src="version.js"></script>
+  <style>
+    .trending-filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    .trending-filter {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .trending-filter.active {
+      background: #6366f1;
+      color: white;
+      border-color: #6366f1;
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem;
+      border-radius: 8px;
+      color: white;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    .toast.error {
+      background: #ef4444;
+    }
+    .toast.success {
+      background: #10b981;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+  </style>
 </head>
 <body>
   <header class="header" role="banner">
@@ -40,6 +81,7 @@
   </header>
   <!-- Desktop tab navigation -->
   <nav class="page-nav" role="navigation" aria-label="Main navigation">
+    <a href="index.html" class="nav-link">Home</a>
     <a href="feed.html" class="nav-link">Feed</a>
     <a href="trending.html" class="nav-link active" aria-current="page">Trending</a>
     <a href="subscriptions.html" class="nav-link">Subscriptions</a>
@@ -53,42 +95,17 @@
   <main class="main-content feed-main-content" id="mainContent" tabindex="-1" role="main">
     <div class="feed-container grid-feed-container">
       <h2 style="margin-bottom: 1.5rem; text-align:center; font-size:2rem; font-weight:700; color:#3730a3;">🔥 Trending</h2>
+      
+      <!-- Trending Filters -->
+      <div class="trending-filters">
+        <button class="trending-filter active" data-filter="all">All Time</button>
+        <button class="trending-filter" data-filter="today">Today</button>
+        <button class="trending-filter" data-filter="week">This Week</button>
+        <button class="trending-filter" data-filter="month">This Month</button>
+      </div>
+      
       <div id="trendingPosts" class="posts-grid grid-feed" aria-live="polite">
-        <!-- Sample trending posts -->
-        <div class="post-card">
-          <div class="post-media"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=600&q=80" alt="Trending Post 1"></div>
-          <div class="post-info">
-            <div class="post-header">
-              <div class="post-header-content">
-                <span class="post-title">Amazing Sunset</span>
-                <span class="post-meta">Sarah Johnson • 156 ❤️</span>
-              </div>
-            </div>
-            <div class="post-caption">Captured this beautiful sunset during my evening walk. Nature never fails to amaze me! 🌅</div>
-            <div class="post-actions">
-              <button class="action-btn" title="Like"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z"/></svg> <span>156</span></button>
-              <button class="action-btn" title="Comment"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>42</span></button>
-              <button class="action-btn" title="Share"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>
-            </div>
-          </div>
-        </div>
-        <div class="post-card">
-          <div class="post-media"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=600&q=80" alt="Trending Post 2"></div>
-          <div class="post-info">
-            <div class="post-header">
-              <div class="post-header-content">
-                <span class="post-title">Cooking Adventure</span>
-                <span class="post-meta">Mike Chen • 89 ❤️</span>
-              </div>
-            </div>
-            <div class="post-caption">Tried making homemade pasta today! It was a messy but fun experience. The result was delicious! 🍝</div>
-            <div class="post-actions">
-              <button class="action-btn" title="Like"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-.8.8-.8-.8c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l6.3 6.3 6.3-6.3c1.5-1.5 1.5-4 0-5.5z"/></svg> <span>89</span></button>
-              <button class="action-btn" title="Comment"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>19</span></button>
-              <button class="action-btn" title="Share"><svg width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>
-            </div>
-          </div>
-        </div>
+        <!-- Dynamic content will be loaded here -->
       </div>
     </div>
   </main>
@@ -119,6 +136,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="js/stripe-vercel-backend.js"></script>
   <script src="firebaseConfig.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pwa-manager.js"></script>
+  <script src="js/trending.js"></script>
 </body>
 </html> 

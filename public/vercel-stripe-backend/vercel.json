@@ -4,7 +4,14 @@
       "maxDuration": 10
     }
   },
-  "env": {
-    "STRIPE_SECRET_KEY": "@stripe-secret-key"
-  }
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+      }
+    }
+  ],
+  "public": true
 } 

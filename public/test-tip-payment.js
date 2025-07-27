@@ -64,6 +64,7 @@ class TipPaymentTester {
             const response = await this.makeRequest(`${this.config.appUrl}/feed.html`);
             const hasStripeScript = response.body.includes('js.stripe.com/v3/');
             const hasStripeConfig = response.body.includes('stripe-frontend-only.js');
+            const hasStripeVercel = response.body.includes('stripe-vercel-backend.js');
             
             if (hasStripeScript) {
                 console.log('  ✅ Stripe.js library loaded');
@@ -72,9 +73,11 @@ class TipPaymentTester {
             }
             
             if (hasStripeConfig) {
-                console.log('  ✅ Stripe configuration loaded');
+                console.log('  ✅ Frontend-only Stripe configuration loaded');
+            } else if (hasStripeVercel) {
+                console.log('  ⚠️  Vercel backend Stripe configuration loaded (requires backend)');
             } else {
-                console.log('  ❌ Stripe configuration not found');
+                console.log('  ❌ No Stripe configuration found');
             }
         } catch (error) {
             console.log(`  ❌ Error checking Stripe integration: ${error.message}`);
