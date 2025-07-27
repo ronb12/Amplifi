@@ -65,8 +65,38 @@ class SettingsPage {
 
     checkAuthentication() {
         if (!this.currentUser) {
-            window.location.href = 'index.html';
+            // Show login prompt instead of redirecting
+            this.showLoginPrompt();
         }
+    }
+
+    showLoginPrompt() {
+        // Create a login prompt modal
+        const modal = document.createElement('div');
+        modal.className = 'login-prompt-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Login Required</h3>
+                <p>Please log in to access settings.</p>
+                <button onclick="window.location.href='index.html'" style="background: #6366f1; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Go to Login</button>
+                <button onclick="this.parentElement.parentElement.remove()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
     }
 
     setupEventListeners() {

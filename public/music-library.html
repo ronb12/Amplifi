@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Library - Amplifi</title>
+    <meta name="description" content="Discover and manage your music library on Amplifi">
+    
+    <!-- Favicon and PWA -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
+    <link rel="apple-touch-startup-image" href="icons/icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="stylesheet" href="feed.css?v=1">
+    <link rel="stylesheet" href="enhanced-buttons.css?v=2">
+    <link rel="stylesheet" href="modal-overlays.css?v=1">
+    
+    <!-- AdSense SDK -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_PUBLISHER_ID" crossorigin="anonymous"></script>
+    
+    <!-- Version Management -->
+    <script src="version.js"></script>
+    
+    <style>
+        /* Modern CSS Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f1f5f9 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-bottom: none;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+            padding: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header-left .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+        
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+            width: 250px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .search-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 0.5rem;
+        }
+        
+        .search-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .notification-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        .notification-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        .notification-icon {
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .user-avatar:hover {
+            border-color: rgba(255,255,255,0.6);
+            transform: scale(1.05);
+        }
+        
+        /* Desktop Navigation */
+        .page-nav {
+            display: flex;
+            justify-content: center;
+            gap: 2.2rem;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.06);
+            border-radius: 0 0 1.2rem 1.2rem;
+            margin-bottom: 2rem;
+            padding: 0.7rem 0 0.3rem 0;
+            position: sticky;
+            top: 70px;
+            z-index: 99;
+        }
+        
+        .nav-link {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 1.08rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.7rem;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+            position: relative;
+        }
+        
+        .nav-link.active, .nav-link[aria-current="page"] {
+            background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+            color: #fff;
+            box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+        }
+        
+        .nav-link:hover {
+            background: #f3f4f6;
+            color: #4f46e5;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-tab-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            background: #fff;
+            box-shadow: 0 -4px 20px rgba(99,102,241,0.15);
+            z-index: 200;
+            padding: 0.5rem 0 0.3rem 0;
+            border-radius: 1.5rem 1.5rem 0 0;
+            border-top: 1px solid rgba(99,102,241,0.1);
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.5rem 0 0.2rem 0;
+            border-radius: 0.7rem;
+            transition: background 0.18s, color 0.18s;
+            text-decoration: none;
+        }
+        
+        .tab-item.active, .tab-item[aria-current="page"] {
+            background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+            color: #fff;
+        }
+        
+        .tab-item:hover {
+            background: #f3f4f6;
+            color: #4f46e5;
+        }
+        
+        .tab-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.1rem;
+        }
+        
+        .tab-label {
+            font-size: 0.95rem;
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-tab-nav { display: none; }
+        }
+        
+        @media (max-width: 768px) {
+            .page-nav { display: none; }
+            .header-content { padding: 0 1rem; height: 56px; }
+            .header-left .logo { font-size: 1.2rem; }
+            .search-input { width: 200px; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem 2rem;
+        }
+        
+        /* Music Library Specific Styles */
+        .music-hero {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(99,102,241,0.3);
+        }
+        
+        .music-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .music-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .music-hero p {
+            font-size: 1.2rem;
+            margin: 0 0 2rem 0;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .music-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: #6366f1;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,255,255,0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .music-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .music-category {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(99,102,241,0.1);
+        }
+        
+        .music-category:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .music-category h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .music-category p {
+            color: #6b7280;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+        }
+        
+        .music-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .music-stat {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(99,102,241,0.1);
+        }
+        
+        .music-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        
+        .music-stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #6366f1;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .music-stat-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .music-features {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .music-features h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem 0;
+            color: #1f2937;
+            text-align: center;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 0.8rem;
+        }
+        
+        .feature-text {
+            flex: 1;
+        }
+        
+        .feature-text h4 {
+            margin: 0 0 0.25rem 0;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .feature-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0 1rem 2rem 1rem;
+            }
+            
+            .music-hero {
+                padding: 2rem 1rem;
+            }
+            
+            .music-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .music-hero p {
+                font-size: 1rem;
+            }
+            
+            .music-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .music-categories {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .music-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .music-category, .music-stat, .feature-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .music-category:nth-child(1) { animation-delay: 0.1s; }
+        .music-category:nth-child(2) { animation-delay: 0.2s; }
+        .music-category:nth-child(3) { animation-delay: 0.3s; }
+        .music-category:nth-child(4) { animation-delay: 0.4s; }
+        
+        .music-stat:nth-child(1) { animation-delay: 0.1s; }
+        .music-stat:nth-child(2) { animation-delay: 0.2s; }
+        .music-stat:nth-child(3) { animation-delay: 0.3s; }
+        .music-stat:nth-child(4) { animation-delay: 0.4s; }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <span class="page-title">Music Library</span>
+                <label for="searchInput" class="sr-only">Search music</label>
+                <input type="text" id="searchInput" placeholder="Search music..." class="search-input" aria-label="Search music">
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" aria-label="Notifications">
+                    <span class="notification-icon">🔔</span>
+                    <span class="notification-badge">3</span>
+                </button>
+                <img src="default-avatar.svg" alt="User" class="user-avatar" id="userAvatar">
+            </div>
+        </div>
+    </header>
+
+    <!-- Desktop Navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="feed.html" class="nav-link">Feed</a>
+        <a href="trending.html" class="nav-link">Trending</a>
+        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+        <a href="upload.html" class="nav-link">Upload</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="messages.html" class="nav-link">Messages</a>
+        <a href="live.html" class="nav-link">Live</a>
+        <a href="music-library.html" class="nav-link active" aria-current="page">🎵 Music</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent" tabindex="-1" role="main">
+        <!-- Music Hero Section -->
+        <section class="music-hero">
+            <h1>🎵 Music Library</h1>
+            <p>Discover, create, and manage your music collection. Access royalty-free music, create playlists, and enhance your content with professional audio.</p>
+            <div class="music-actions">
+                <a href="#browse" class="btn-primary">🎵 Browse Music</a>
+                <a href="#upload" class="btn-secondary">📤 Upload Music</a>
+                <a href="#playlists" class="btn-secondary">📋 My Playlists</a>
+            </div>
+        </section>
+
+        <!-- Music Statistics -->
+        <section class="music-stats">
+            <div class="music-stat">
+                <div class="music-stat-number">1,247</div>
+                <div class="music-stat-label">Available Tracks</div>
+            </div>
+            <div class="music-stat">
+                <div class="music-stat-number">89</div>
+                <div class="music-stat-label">Genres</div>
+            </div>
+            <div class="music-stat">
+                <div class="music-stat-number">2.1M</div>
+                <div class="music-stat-label">Downloads</div>
+            </div>
+            <div class="music-stat">
+                <div class="music-stat-number">4.8</div>
+                <div class="music-stat-label">User Rating</div>
+            </div>
+        </section>
+
+        <!-- Music Categories -->
+        <section class="music-categories">
+            <div class="music-category">
+                <h3>🎵 Popular Genres</h3>
+                <p>Explore trending music across all genres. From hip-hop to classical, find the perfect soundtrack for your content.</p>
+                <a href="#genres" class="btn-primary">Browse Genres</a>
+            </div>
+            <div class="music-category">
+                <h3>🎼 Royalty-Free</h3>
+                <p>Access thousands of royalty-free tracks perfect for creators. No copyright issues, unlimited usage.</p>
+                <a href="#royalty-free" class="btn-primary">Explore Tracks</a>
+            </div>
+            <div class="music-category">
+                <h3>🎧 Playlists</h3>
+                <p>Create and share custom playlists. Organize your favorite tracks and discover curated collections.</p>
+                <a href="#playlists" class="btn-primary">My Playlists</a>
+            </div>
+            <div class="music-category">
+                <h3>🎤 Original Music</h3>
+                <p>Upload and share your original music. Get discovered by creators and build your audience.</p>
+                <a href="#upload" class="btn-primary">Upload Music</a>
+            </div>
+        </section>
+
+        <!-- Music Features -->
+        <section class="music-features">
+            <h2>Music Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎵</div>
+                    <div class="feature-text">
+                        <h4>High Quality Audio</h4>
+                        <p>All tracks available in high-quality formats</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-text">
+                        <h4>Mobile Optimized</h4>
+                        <p>Listen and manage music on any device</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-text">
+                        <h4>Advanced Search</h4>
+                        <p>Find music by genre, mood, tempo, and more</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💾</div>
+                    <div class="feature-text">
+                        <h4>Offline Access</h4>
+                        <p>Download tracks for offline listening</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎧</div>
+                    <div class="feature-text">
+                        <h4>Audio Preview</h4>
+                        <p>Preview tracks before downloading</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <h4>Usage Analytics</h4>
+                        <p>Track your music usage and preferences</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="live.html" class="tab-item" aria-label="Live">
+            <div class="tab-icon" aria-hidden="true">📺</div>
+            <span class="tab-label">Live</span>
+        </a>
+        <a href="music-library.html" class="tab-item active" aria-label="Music" aria-current="page">
+            <div class="tab-icon" aria-hidden="true">🎵</div>
+            <span class="tab-label">Music</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_PUBLISHER_ID" crossorigin="anonymous"></script>
+    <script src="js/adsense-config.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/music-library.js"></script>
+</body>
+</html> 
