@@ -232,6 +232,8 @@ class StripeFrontendOnly {
             console.error('Tip payment error:', error);
             alert('Payment failed. Please try again.');
         }
+    }
+
     async createCheckoutSession(amount, recipientId, recipientName, message) {
         // For frontend-only, create a simple payment link
         const paymentData = {

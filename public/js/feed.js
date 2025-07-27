@@ -2120,10 +2120,15 @@ class FeedPage {
     }
 }
 
-// Initialize payment processor
-window.paymentProcessor = new StripeFrontendOnly();
-
 // Initialize the feed page when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+    // Initialize payment processor
+    if (typeof StripeFrontendOnly !== "undefined") {
+        window.paymentProcessor = new StripeFrontendOnly();
+    } else {
+        console.error("StripeFrontendOnly not loaded");
+    }
+
+    // Initialize the feed page
     window.feedPage = new FeedPage();
 }); 
