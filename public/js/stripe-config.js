@@ -3,8 +3,8 @@
 
 // Stripe configuration
 const stripeConfig = {
-    // Replace with your actual Stripe publishable key
-    publishableKey: 'pk_test_your_stripe_publishable_key_here',
+    // Live Stripe publishable key (safe for client-side)
+    publishableKey: 'pk_live_51RoYuFLozOIn8lA4eD4pmVKUh17pG4T0AjfVf33oVbMFjLpqOUWSOLqps3QDo3Bv9U7HOa8RA19VxC430ILigozi00yErrTYnw',
     
     // Payment settings
     currency: 'usd',
