@@ -241,11 +241,11 @@ class StripeFrontendOnly {
         const lineItems = [{
             price_data: {
                 currency: this.config.currency,
-                product_data: {
-                    name: `Tip to ${recipientName}`,
-                    description: message || `Support for ${recipientName}`,
-                    images: ['https://amplifi-a54d9.web.app/icons/icon-192x192.png']
-                },
+                                    product_data: {
+                        name: `Tip to ${recipientName}`,
+                        description: message || `Support for ${recipientName} via Bradley Virtual Solutions, LLC`,
+                        images: ['https://amplifi-a54d9.web.app/icons/icon-192x192.png']
+                    },
                 unit_amount: Math.round(amount * 100), // Convert to cents
             },
             quantity: 1,
@@ -257,12 +257,13 @@ class StripeFrontendOnly {
             mode: 'payment',
             success_url: `${this.config.successUrl}?session_id={CHECKOUT_SESSION_ID}&recipient=${recipientId}&amount=${amount}`,
             cancel_url: this.config.cancelUrl,
-            metadata: {
-                recipient_id: recipientId,
-                recipient_name: recipientName,
-                tip_message: message,
-                platform: 'amplifi'
-            }
+                            metadata: {
+                    recipient_id: recipientId,
+                    recipient_name: recipientName,
+                    tip_message: message,
+                    platform: 'amplifi',
+                    business: 'Bradley Virtual Solutions, LLC'
+                }
         });
 
         return session;
@@ -282,7 +283,8 @@ class StripeFrontendOnly {
                 customer_email: customerEmail,
                 metadata: {
                     platform: 'amplifi',
-                    subscription_type: 'premium'
+                    subscription_type: 'premium',
+                    business: 'Bradley Virtual Solutions, LLC'
                 }
             });
 
