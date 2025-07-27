@@ -1357,11 +1357,6 @@ class FeedPage {
             alert("Failed to send tip. Please try again.");
         }
     }
-        } catch (error) {
-            console.error("Error processing tip:", error);
-            alert("Failed to send tip. Please try again.");
-        }
-    }
 
     sharePost(postId) {
         const post = this.posts.find(p => p.id === postId);
