@@ -1,0 +1,9 @@
+[build]
+  functions = "functions"
+  publish = "public"
+
+[functions]
+  directory = "functions"
+
+[env]
+  STRIPE_SECRET_KEY = "[YOUR_STRIPE_SECRET_KEY]" 

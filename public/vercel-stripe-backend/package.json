@@ -1,0 +1,17 @@
+{
+  "name": "amplifi-stripe-backend",
+  "version": "1.0.0",
+  "description": "Free Stripe backend for Amplifi using Vercel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+} 
