@@ -525,7 +525,7 @@ textarea:focus {
     background: none;
     cursor: pointer;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     border-bottom: 2px solid transparent;
 }
 
@@ -631,7 +631,7 @@ textarea:focus {
     background: none;
     cursor: pointer;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     border-bottom: 2px solid transparent;
 }
 
@@ -1861,7 +1861,7 @@ textarea:focus {
     border: none;
     cursor: pointer;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     transition: all 0.2s;
     border-bottom: 2px solid transparent;
 }

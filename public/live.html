@@ -13,41 +13,739 @@
     <!-- Version Management -->
     <script src="version.js"></script>
     <style>
-      body {
-        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+      /* Modern CSS Reset and Base Styles */
+      * {
+        box-sizing: border-box;
       }
+      
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f1f5f9 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 1.6;
+        color: #1f2937;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      
+      .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+      
+      /* Enhanced Hero Section */
       .live-hero {
-        background: linear-gradient(120deg, #6366f1 60%, #818cf8 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a78bfa 100%);
         color: #fff;
-        padding: 2.5rem 2rem 2rem 2rem;
-        border-radius: 1.5rem;
-        margin: 2rem auto 2.5rem auto;
-        max-width: 900px;
-        box-shadow: 0 6px 32px 0 rgba(99,102,241,0.12);
+        padding: 4rem 3rem 3rem 3rem;
+        border-radius: 2rem;
+        margin: 2rem auto 3rem auto;
+        max-width: 1000px;
+        box-shadow: 
+          0 20px 40px rgba(99, 102, 241, 0.15),
+          0 8px 16px rgba(99, 102, 241, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
         text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .live-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+        pointer-events: none;
+      }
+      
+      .live-hero > * {
+        position: relative;
+        z-index: 1;
       }
       .live-hero h2 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        letter-spacing: -0.02em;
       }
+      
       .live-hero p {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        font-weight: 400;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
       }
+      
+      /* Enhanced Button Styles */
       .btn-primary {
-        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
-        color: #fff;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        color: #6366f1;
         border: none;
-        border-radius: 0.7rem;
+        border-radius: 1rem;
         font-size: 1.1rem;
-        padding: 0.7rem 2.2rem;
-        box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
-        transition: background 0.2s, box-shadow 0.2s;
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
       }
+      
+      .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s;
+      }
+      
       .btn-primary:hover {
-        background: #4f46e5;
-        box-shadow: 0 4px 16px 0 rgba(99,102,241,0.18);
+        transform: translateY(-2px);
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.15),
+          0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .btn-primary:hover::before {
+        left: 100%;
+      }
+      
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+      
+      /* Hero Actions */
+      .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 1rem;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.8rem 1.8rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+      
+      .btn-secondary:active {
+        transform: translateY(0);
+      }
+      
+      /* Advanced Features */
+      .advanced-features {
+        padding: 4rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .advanced-features h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 3rem;
+        color: #1f2937;
+        position: relative;
+      }
+      
+      .advanced-features h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #818cf8);
+        border-radius: 2px;
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+      }
+      
+      .feature-card {
+        background: #fff;
+        border-radius: 1.5rem;
+        padding: 3rem 2.5rem;
+        box-shadow: 
+          0 10px 30px rgba(99, 102, 241, 0.08),
+          0 4px 12px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(99, 102, 241, 0.08);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #818cf8, #a78bfa);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 
+          0 20px 40px rgba(99, 102, 241, 0.12),
+          0 8px 16px rgba(0, 0, 0, 0.08);
+      }
+      
+      .feature-card:hover::before {
+        transform: scaleX(1);
+      }
+      
+      .feature-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      }
+      
+      .feature-card h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.2rem;
+        color: #1f2937;
+        letter-spacing: -0.01em;
+      }
+      
+      .feature-card p {
+        color: #6b7280;
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin: 0;
+      }
+      
+      /* AI Features */
+      .ai-features {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f1f5f9 100%);
+        padding: 5rem 2rem;
+        margin: 3rem 0;
+        position: relative;
+      }
+      
+      .ai-features::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ai-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(99,102,241,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23ai-pattern)"/></svg>');
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      
+      .ai-features > * {
+        position: relative;
+        z-index: 1;
+      }
+      
+      .ai-features h2 {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 3rem;
+        color: #1f2937;
+        position: relative;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      
+      .ai-features h2::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 5px;
+        background: linear-gradient(90deg, #6366f1, #818cf8, #a78bfa);
+        border-radius: 3px;
+      }
+      
+      .ai-features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .ai-feature-card {
+        background: #fff;
+        border-radius: 1.5rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 
+          0 8px 25px rgba(99, 102, 241, 0.08),
+          0 4px 12px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(99, 102, 241, 0.08);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .ai-feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #6366f1, #818cf8);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      
+      .ai-feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 
+          0 15px 35px rgba(99, 102, 241, 0.12),
+          0 8px 16px rgba(0, 0, 0, 0.08);
+      }
+      
+      .ai-feature-card:hover::before {
+        transform: scaleX(1);
+      }
+      
+      .ai-feature-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      }
+      
+      .ai-feature-card h3 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1f2937;
+        letter-spacing: -0.01em;
+      }
+      
+      .ai-feature-card p {
+        color: #6b7280;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+      
+      .ai-feature-card .btn-primary {
+        font-size: 0.95rem;
+        padding: 0.8rem 1.8rem;
+        border-radius: 0.8rem;
+      }
+      
+      /* Platform Statistics */
+      .platform-stats {
+        padding: 4rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .platform-stats h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 3rem;
+        color: #1f2937;
+        position: relative;
+      }
+      
+      .platform-stats h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #818cf8);
+        border-radius: 2px;
+      }
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+      }
+      
+      .stat-card {
+        background: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a78bfa 100%);
+        color: #fff;
+        border-radius: 1.5rem;
+        padding: 3rem 2rem;
+        text-align: center;
+        box-shadow: 
+          0 15px 35px rgba(99, 102, 241, 0.2),
+          0 8px 16px rgba(99, 102, 241, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stat-pattern" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23stat-pattern)"/></svg>');
+        opacity: 0.3;
+        pointer-events: none;
+      }
+      
+      .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 
+          0 25px 50px rgba(99, 102, 241, 0.25),
+          0 12px 24px rgba(99, 102, 241, 0.15);
+      }
+      
+      .stat-card > * {
+        position: relative;
+        z-index: 1;
+      }
+      
+      .stat-number {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 0.8rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: block;
+      }
+      
+      .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 0 1rem;
+        }
+        
+        .live-hero {
+          padding: 3rem 1.5rem 2rem 1.5rem;
+          margin: 1rem auto 2rem auto;
+          border-radius: 1.5rem;
+        }
+        
+        .live-hero h2 {
+          font-size: 2.5rem;
+        }
+        
+        .live-hero p {
+          font-size: 1.1rem;
+        }
+        
+        .hero-actions {
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+          width: 100%;
+          max-width: 300px;
+        }
+        
+        .features-grid,
+        .ai-features-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+        }
+        
+        .advanced-features,
+        .ai-features,
+        .platform-stats {
+          padding: 3rem 1rem;
+        }
+        
+        .advanced-features h2,
+        .ai-features h2,
+        .platform-stats h2 {
+          font-size: 2.2rem;
+        }
+        
+        .feature-card,
+        .ai-feature-card {
+          padding: 2rem 1.5rem;
+        }
+        
+        .stat-card {
+          padding: 2rem 1.5rem;
+        }
+        
+        .stat-number {
+          font-size: 3rem;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .live-hero h2 {
+          font-size: 2rem;
+        }
+        
+        .advanced-features h2,
+        .ai-features h2,
+        .platform-stats h2 {
+          font-size: 1.8rem;
+        }
+      }
+      
+      /* Smooth scrolling and animations */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Loading animation for cards */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .feature-card,
+      .ai-feature-card,
+      .stat-card {
+        animation: fadeInUp 0.6s ease-out;
+      }
+      
+      .feature-card:nth-child(1) { animation-delay: 0.1s; }
+      .feature-card:nth-child(2) { animation-delay: 0.2s; }
+      .feature-card:nth-child(3) { animation-delay: 0.3s; }
+      .feature-card:nth-child(4) { animation-delay: 0.4s; }
+      .feature-card:nth-child(5) { animation-delay: 0.5s; }
+      .feature-card:nth-child(6) { animation-delay: 0.6s; }
+      
+      .ai-feature-card:nth-child(1) { animation-delay: 0.1s; }
+      .ai-feature-card:nth-child(2) { animation-delay: 0.2s; }
+      .ai-feature-card:nth-child(3) { animation-delay: 0.3s; }
+      .ai-feature-card:nth-child(4) { animation-delay: 0.4s; }
+      .ai-feature-card:nth-child(5) { animation-delay: 0.5s; }
+      .ai-feature-card:nth-child(6) { animation-delay: 0.6s; }
+      
+      .stat-card:nth-child(1) { animation-delay: 0.1s; }
+      .stat-card:nth-child(2) { animation-delay: 0.2s; }
+      .stat-card:nth-child(3) { animation-delay: 0.3s; }
+      .stat-card:nth-child(4) { animation-delay: 0.4s; }
+      
+      /* Live Controls Section */
+      .live-controls-section {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 900px;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.1);
+      }
+      
+      .live-controls-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .live-status {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+      
+      .live-indicator {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #ef4444;
+      }
+      
+      .control-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .control-btn {
+        background: #f3f4f6;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      
+      .control-btn:hover {
+        background: #e5e7eb;
+      }
+      
+      .control-btn.end-stream {
+        background: #ef4444;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .control-btn.end-stream:hover {
+        background: #dc2626;
+      }
+      
+      .live-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+      }
+      
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .stat-icon {
+        font-size: 1.5rem;
+      }
+      
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: #6b7280;
+      }
+      
+      .revenue-tracking {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f0f9ff;
+        border-radius: 0.5rem;
+        border-left: 4px solid #0ea5e9;
+      }
+      
+      .revenue-tracking h3 {
+        margin-bottom: 1rem;
+        color: #1f2937;
+        font-size: 1.2rem;
+      }
+      
+      .revenue-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .revenue-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e0f2fe;
+      }
+      
+      .revenue-item.total {
+        font-weight: 600;
+        border-bottom: none;
+        border-top: 2px solid #0ea5e9;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+      }
+      
+      .connection-status {
+        padding: 1.5rem;
+        background: #f0fdf4;
+        border-radius: 0.5rem;
+        border-left: 4px solid #22c55e;
+      }
+      
+      .connection-status h3 {
+        margin-bottom: 1rem;
+        color: #1f2937;
+        font-size: 1.2rem;
+      }
+      
+      .connection-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .connection-type {
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .connection-quality {
+        color: #6b7280;
+        font-size: 0.9rem;
       }
       .streams-grid {
         display: grid;
@@ -143,12 +841,12 @@
       }
       /* Header improvements */
       .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         border-bottom: none;
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 20px rgba(99,102,241,0.15);
         padding: 0;
       }
       .header-content {
@@ -174,6 +872,52 @@
         margin: 0;
         font-size: 1.3rem;
         text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        margin-bottom: 0.5rem;
+      }
+      
+      .header-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .search-input {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 1.5rem;
+        padding: 0.5rem 1rem;
+        color: white;
+        font-size: 0.9rem;
+        width: 250px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+      }
+      
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .search-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.25);
+      }
+      
+      .search-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-left: 0.5rem;
+      }
+      
+      .search-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
       }
       .header-actions {
         display: flex;
@@ -241,7 +985,7 @@
         z-index: 99;
       }
       .nav-link {
-        color: #6366f1;
+        color: #1f2937;
         font-weight: 600;
         font-size: 1.08rem;
         padding: 0.5rem 1.2rem;
@@ -270,10 +1014,11 @@
         left: 0;
         width: 100vw;
         background: #fff;
-        box-shadow: 0 -2px 12px rgba(99,102,241,0.08);
+        box-shadow: 0 -4px 20px rgba(99,102,241,0.15);
         z-index: 200;
-        padding: 0.3rem 0 0.2rem 0;
-        border-radius: 1.2rem 1.2rem 0 0;
+        padding: 0.5rem 0 0.3rem 0;
+        border-radius: 1.5rem 1.5rem 0 0;
+        border-top: 1px solid rgba(99,102,241,0.1);
       }
       .tab-item {
         display: flex;
@@ -281,7 +1026,7 @@
         align-items: center;
         justify-content: center;
         flex: 1;
-        color: #6366f1;
+        color: #1f2937;
         font-size: 1.1rem;
         font-weight: 600;
         padding: 0.5rem 0 0.2rem 0;
@@ -467,8 +1212,6 @@
             </div>
             <div class="header-center">
                 <span class="page-title">Live</span>
-            </div>
-            <div class="header-center">
                 <label for="searchInput" class="sr-only">Search posts, users</label>
                 <input type="text" id="searchInput" placeholder="Search posts, users..." class="search-input" aria-label="Search posts, users">
                 <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
@@ -486,17 +1229,136 @@
         </div>
     </header>
 
+    <!-- Desktop Navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="feed.html" class="nav-link">Feed</a>
+        <a href="trending.html" class="nav-link">Trending</a>
+        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
+        <a href="upload.html" class="nav-link">Upload</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="messages.html" class="nav-link">Messages</a>
+        <a href="live.html" class="nav-link active" aria-current="page">Live</a>
+        <a href="music-library.html" class="nav-link">🎵 Music</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+
     <!-- Main Content -->
     <main class="main-content">
         <!-- Hero Banner -->
         <section class="live-hero">
-            <h2>Go Live on Amplifi</h2>
-            <p>Start your own live stream and connect with your audience in real time. Discover trending live streams or be the first to go live!</p>
-            <button id="startLiveBtn" class="btn btn-primary">Start Live Stream</button>
+            <h2>🎥 Go Live with Amplifi</h2>
+            <p>Start streaming to multiple platforms simultaneously with professional tools, real-time analytics, and 24/7 streaming capabilities.</p>
+            <div class="hero-actions">
+                <button id="startLiveBtn" class="btn btn-primary">🚀 Start Live Stream</button>
+                <button id="scheduleStreamBtn" class="btn btn-secondary">📅 Schedule Stream</button>
+                <button id="start247Btn" class="btn btn-secondary">🔄 Start 24/7 Stream</button>
+                <button id="status247Btn" class="btn btn-secondary">📊 24/7 Status</button>
+            </div>
+        </section>
+
+        <!-- Advanced Features Section -->
+        <section class="advanced-features">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Multi-Platform Streaming</h3>
+                    <p>Stream to YouTube, Twitch, Facebook, and TikTok simultaneously with a single click. Reach your audience across all major platforms.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Real-Time Revenue Tracking</h3>
+                    <p>Track Super Chats, memberships, ad revenue, and tips in real-time. See your earnings grow as you stream.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Live Analytics</h3>
+                    <p>Monitor viewer count, engagement, and stream health in real-time. Make data-driven decisions during your stream.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Professional Tools</h3>
+                    <p>Screen sharing, text overlays, guest invitations, and stream recording. Everything you need for professional streaming.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>24/7 Streaming</h3>
+                    <p>Set up continuous streaming with auto-restart, health monitoring, and content scheduling for round-the-clock content.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Live Chat Integration</h3>
+                    <p>YouTube-style live chat with real-time messaging, viewer interactions, and engagement tracking.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI-Powered Features Section -->
+        <section class="ai-features">
+            <h2>🤖 AI-Powered Live Streaming</h2>
+            <div class="ai-features-grid">
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">🎯</div>
+                    <h3>AI Stream Optimization</h3>
+                    <p>AI automatically optimizes stream quality, bitrate, and settings based on your connection and viewer engagement.</p>
+                    <button class="btn btn-primary">Optimize Stream</button>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">🎨</div>
+                    <h3>AI Thumbnail Generator</h3>
+                    <p>Generate eye-catching thumbnails automatically using AI. Perfect for attracting more viewers to your stream.</p>
+                    <button class="btn btn-primary">Generate Thumbnail</button>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">📝</div>
+                    <h3>AI Content Suggestions</h3>
+                    <p>Get AI-powered suggestions for stream topics, titles, and content ideas based on trending topics and your audience.</p>
+                    <button class="btn btn-primary">Get Suggestions</button>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">🎵</div>
+                    <h3>AI Music Selection</h3>
+                    <p>AI recommends the perfect background music for your stream based on content type, mood, and audience preferences.</p>
+                    <button class="btn btn-primary">Select Music</button>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">📊</div>
+                    <h3>AI Analytics Insights</h3>
+                    <p>Advanced AI analytics provide deep insights into viewer behavior, optimal streaming times, and content performance.</p>
+                    <button class="btn btn-primary">View Insights</button>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">🎭</div>
+                    <h3>AI Overlay Generator</h3>
+                    <p>Create professional stream overlays, alerts, and graphics automatically with AI. No design skills required.</p>
+                    <button class="btn btn-primary">Create Overlay</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Statistics -->
+        <section class="platform-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Platforms Supported</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">24/7 Streaming</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Uptime Guarantee</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$0</div>
+                    <div class="stat-label">Setup Cost</div>
+                </div>
+            </div>
         </section>
         <!-- Navigation -->
         <!-- Desktop tab navigation -->
-        <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <nav class="page-nav" role="navigation" aria-label="Main navigation" style="background: #fff; padding: 1rem 2rem; border-radius: 1rem; margin: 1rem auto; max-width: 1200px; box-shadow: 0 2px 10px rgba(99,102,241,0.1);">
             <a href="feed.html" class="nav-link">Feed</a>
             <a href="trending.html" class="nav-link">Trending</a>
             <a href="subscriptions.html" class="nav-link">Subscriptions</a>
@@ -504,6 +1366,7 @@
             <a href="dashboard.html" class="nav-link">Dashboard</a>
             <a href="messages.html" class="nav-link">Messages</a>
             <a href="live.html" class="nav-link active" aria-current="page">Live</a>
+            <a href="music-library.html" class="nav-link">🎵 Music</a>
             <a href="settings.html" class="nav-link">Settings</a>
         </nav>
 
@@ -529,6 +1392,10 @@
                 <div class="tab-icon" aria-hidden="true">📺</div>
                 <span class="tab-label">Live</span>
             </a>
+            <a href="music-library.html" class="tab-item" aria-label="Music">
+                <div class="tab-icon" aria-hidden="true">🎵</div>
+                <span class="tab-label">Music</span>
+            </a>
             <a href="profile.html" class="tab-item" aria-label="Profile">
                 <div class="tab-icon" aria-hidden="true">👤</div>
                 <span class="tab-label">Profile</span>
@@ -540,7 +1407,7 @@
             <!-- Live Header removed, replaced by hero banner above -->
 
             <!-- Live Streams Tabs -->
-            <div class="live-tabs" style="display:flex;gap:1.5rem;margin-bottom:1.5rem;">
+            <div class="live-tabs" style="display:flex;gap:1.5rem;margin-bottom:1.5rem;justify-content:center;background:#fff;padding:1rem;border-radius:1rem;box-shadow:0 2px 10px rgba(99,102,241,0.1);">
                 <button id="tabLiveNow" class="live-tab-btn active">Live Now</button>
                 <button id="tabPastStreams" class="live-tab-btn">Past Streams</button>
             </div>
@@ -571,6 +1438,73 @@
                 .live-tab-btn.active { background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%); color: #fff; }
                 .live-tab-btn:hover { background: #e0e7ff; color: #4f46e5; }
             </style>
+
+            <!-- Live Streaming Controls -->
+            <div class="live-controls-section">
+                <div class="live-controls-header">
+                    <div class="live-status">
+                        <span class="live-indicator">🔴 LIVE</span>
+                        <div class="control-buttons">
+                            <button class="control-btn">🔊</button>
+                            <button class="control-btn">📹</button>
+                            <button class="control-btn">📤</button>
+                            <button class="control-btn end-stream">🔴 End Stream</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="live-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Viewers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⏱️</span>
+                        <span class="stat-value">00:00</span>
+                        <span class="stat-label">Duration</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">💰</span>
+                        <span class="stat-value">$0.00</span>
+                        <span class="stat-label">Revenue</span>
+                    </div>
+                </div>
+                
+                <div class="revenue-tracking">
+                    <h3>💰 Revenue Generated</h3>
+                    <div class="revenue-items">
+                        <div class="revenue-item">
+                            <span>Super Chats:</span>
+                            <span>$0.00</span>
+                        </div>
+                        <div class="revenue-item">
+                            <span>Memberships:</span>
+                            <span>$0.00</span>
+                        </div>
+                        <div class="revenue-item">
+                            <span>Ad Revenue:</span>
+                            <span>$0.00</span>
+                        </div>
+                        <div class="revenue-item">
+                            <span>Tips:</span>
+                            <span>$0.00</span>
+                        </div>
+                        <div class="revenue-item total">
+                            <span>---</span>
+                            <span>Total: $0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="connection-status">
+                    <h3>🌐 Connection Status</h3>
+                    <div class="connection-info">
+                        <span class="connection-type">🏠 Home Internet</span>
+                        <span class="connection-quality">High-speed connection detected</span>
+                    </div>
+                </div>
+            </div>
 
             <!-- Live Stream Player (hidden by default) -->
             <div id="livePlayer" class="live-player" style="display: none;">
@@ -667,12 +1601,46 @@
         </div>
     </div>
 
+    <!-- Mobile Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="live.html" class="tab-item active" aria-label="Live" aria-current="page">
+            <div class="tab-icon" aria-hidden="true">📺</div>
+            <span class="tab-label">Live</span>
+        </a>
+        <a href="music-library.html" class="tab-item" aria-label="Music">
+            <div class="tab-icon" aria-hidden="true">🎵</div>
+            <span class="tab-label">Music</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
     <!-- Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_PUBLISHER_ID" crossorigin="anonymous"></script>
+    <script src="js/adsense-config.js"></script>
     <script src="firebaseConfig.js"></script>
     <script src="js/live.js"></script>
 </body>

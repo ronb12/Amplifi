@@ -10,11 +10,13 @@ class AmplifiApp {
         this.lastPost = null;
         this.postsPerPage = 10;
         
-        // AdMob configuration
-        this.adMobConfig = {
-            bannerAdUnitId: 'ca-pub-YOUR_ADMOB_BANNER_ID',
-            interstitialAdUnitId: 'ca-pub-YOUR_ADMOB_INTERSTITIAL_ID',
-            rewardedAdUnitId: 'ca-pub-YOUR_ADMOB_REWARDED_ID'
+        // AdSense configuration
+        this.adSenseConfig = {
+            publisherId: process.env.ADSENSE_PUBLISHER_ID || 'pub-3565666509316178',
+            customerId: process.env.ADSENSE_CUSTOMER_ID || '4925311126',
+            bannerAdUnitId: process.env.ADSENSE_BANNER_ID || 'ca-pub-3565666509316178/your-banner-ad-unit-id',
+            interstitialAdUnitId: process.env.ADSENSE_INTERSTITIAL_ID || 'ca-pub-3565666509316178/your-interstitial-ad-unit-id',
+            rewardedAdUnitId: process.env.ADSENSE_REWARDED_ID || 'ca-pub-3565666509316178/your-rewarded-ad-unit-id'
         };
         
         // Push notification configuration
@@ -30,13 +32,13 @@ class AmplifiApp {
         this.setupEventListeners();
         this.setupAuthStateListener();
         this.loadPosts();
-        this.initializeAdMob();
+        this.initializeAdSense();
         this.initializePushNotifications();
         this.registerServiceWorker();
     }
 
-    // Initialize AdMob
-    initializeAdMob() {
+    // Initialize AdSense
+    initializeAdSense() {
         if (typeof adsbygoogle !== 'undefined') {
             this.loadBannerAd();
             this.loadInterstitialAd();

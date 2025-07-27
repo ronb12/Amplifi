@@ -7,6 +7,7 @@
     "start": "firebase serve --only hosting",
     "deploy": "firebase deploy --only hosting",
     "deploy-all": "firebase deploy",
+    "auto-deploy": "./auto-deploy.sh",
     "build": "echo 'No build step required for static site'",
     "test": "echo 'No tests specified'"
   },

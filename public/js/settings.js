@@ -163,6 +163,16 @@ class SettingsPage {
             });
         }
 
+        // User avatar click - prevent navigation and show profile options
+        const userAvatarContainer = document.getElementById('userAvatarContainer');
+        if (userAvatarContainer) {
+            userAvatarContainer.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showProfileOptions();
+            });
+        }
+
         // Logout
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -619,6 +629,75 @@ class SettingsPage {
                 }
             }
         }
+    }
+
+    showProfileOptions() {
+        // Create a simple dropdown menu for profile options
+        const options = [
+            { text: 'View Profile', action: () => window.location.href = 'profile.html' },
+            { text: 'Settings', action: () => this.switchTab('profile') },
+            { text: 'Logout', action: () => this.handleLogout() }
+        ];
+
+        // Create dropdown menu
+        const dropdown = document.createElement('div');
+        dropdown.className = 'profile-dropdown';
+        dropdown.style.cssText = `
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 150px;
+            margin-top: 0.5rem;
+        `;
+
+        options.forEach(option => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = option.text;
+            item.style.cssText = `
+                padding: 0.75rem 1rem;
+                cursor: pointer;
+                transition: background 0.2s;
+                border-bottom: 1px solid #f3f4f6;
+            `;
+            item.addEventListener('mouseenter', () => {
+                item.style.background = '#f3f4f6';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.background = 'white';
+            });
+            item.addEventListener('click', () => {
+                option.action();
+                document.body.removeChild(dropdown);
+            });
+            dropdown.appendChild(item);
+        });
+
+        // Remove any existing dropdown
+        const existingDropdown = document.querySelector('.profile-dropdown');
+        if (existingDropdown) {
+            document.body.removeChild(existingDropdown);
+        }
+
+        // Add dropdown to body
+        document.body.appendChild(dropdown);
+
+        // Close dropdown when clicking outside
+        const userAvatarContainer = document.getElementById('userAvatarContainer');
+        const closeDropdown = (e) => {
+            if (!dropdown.contains(e.target) && !userAvatarContainer.contains(e.target)) {
+                document.body.removeChild(dropdown);
+                document.removeEventListener('click', closeDropdown);
+            }
+        };
+
+        setTimeout(() => {
+            document.addEventListener('click', closeDropdown);
+        }, 100);
     }
 
     async handleLogout() {

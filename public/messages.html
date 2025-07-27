@@ -17,6 +17,170 @@
   <link rel="stylesheet" href="base.css?v=13">
   <link rel="stylesheet" href="messages.css?v=13">
   <script src="version.js?v=13"></script>
+  <style>
+    /* iMessage-like Mobile Enhancements */
+    @media (max-width: 768px) {
+      .messages-container {
+        height: calc(100vh - 140px) !important;
+        min-height: auto !important;
+      }
+      
+      .conversations-sidebar {
+        background: #f8f9fa;
+        border-right: none;
+      }
+      
+      .conversation-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+        background: white;
+        margin: 0;
+        border-radius: 0;
+      }
+      
+      .conversation-item:hover {
+        background: #f8f9fa;
+      }
+      
+      .conversation-item.active {
+        background: #e3f2fd;
+        border-left: 4px solid #1877f2;
+      }
+      
+      .messages-area {
+        background: #f0f0f0;
+      }
+      
+      .messages-main {
+        background: #f0f0f0;
+        padding: 8px 12px;
+      }
+      
+      .message {
+        max-width: 85%;
+        margin-bottom: 8px;
+        border-radius: 18px;
+        padding: 8px 12px;
+        position: relative;
+        word-wrap: break-word;
+      }
+      
+      .own-message {
+        background: #007AFF;
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+      }
+      
+      .other-message {
+        background: #e5e5ea;
+        color: #000;
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+      }
+      
+      .message-form {
+        background: white;
+        border-top: 1px solid #e9ecef;
+        padding: 12px 16px;
+        position: sticky;
+        bottom: 0;
+      }
+      
+      .message-input-container {
+        background: #f8f9fa;
+        border-radius: 20px;
+        border: 1px solid #e9ecef;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .message-input {
+        border: none;
+        background: transparent;
+        flex: 1;
+        padding: 8px 0;
+        font-size: 16px;
+        outline: none;
+      }
+      
+      .send-btn {
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      
+      .send-btn:hover {
+        background: #0056b3;
+      }
+      
+      .send-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .messages-header {
+        background: white;
+        border-bottom: 1px solid #e9ecef;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .back-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #007AFF;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: background 0.2s;
+      }
+      
+      .back-btn:hover {
+        background: #f0f0f0;
+      }
+      
+      .conversation-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+      
+      .conversation-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      
+      .conversation-details h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+      }
+      
+      .conversation-status {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -54,8 +218,9 @@
     <a href="subscriptions.html" class="nav-link">Subscriptions</a>
     <a href="upload.html" class="nav-link">Upload</a>
     <a href="dashboard.html" class="nav-link">Dashboard</a>
-    <a href="messages.html" class="nav-link active">Messages</a>
+    <a href="messages.html" class="nav-link active" aria-current="page">Messages</a>
     <a href="live.html" class="nav-link">Live</a>
+    <a href="music-library.html" class="nav-link">🎵 Music</a>
     <a href="settings.html" class="nav-link">Settings</a>
   </nav>
 
