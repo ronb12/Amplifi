@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Amplifi</title>
+    <link rel="stylesheet" href="base.css?v=1">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f1f5f9 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success-container {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .success-title {
+            color: #059669;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            color: #374151;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .payment-details {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        
+        .payment-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .payment-detail:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .detail-value {
+            color: #059669;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5855eb;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .loading {
+            display: none;
+            margin: 1rem 0;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1 class="success-title">Payment Successful!</h1>
+        <p class="success-message">Thank you for your support! Your payment has been processed successfully.</p>
+        
+        <div class="payment-details" id="paymentDetails">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading payment details...</p>
+            </div>
+            <div id="paymentInfo" style="display: none;">
+                <!-- Payment details will be populated here -->
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="feed.html" class="btn btn-primary">Back to Feed</a>
+            <a href="profile.html" class="btn btn-secondary">View Profile</a>
+        </div>
+    </div>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/stripe-frontend-only.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            const recipientId = urlParams.get('recipient');
+            const amount = urlParams.get('amount');
+            const type = urlParams.get('type');
+            
+            const loading = document.getElementById('loading');
+            const paymentInfo = document.getElementById('paymentInfo');
+            
+            if (sessionId) {
+                loading.style.display = 'block';
+                
+                try {
+                    // Wait for Stripe to initialize
+                    await new Promise(resolve => {
+                        const checkStripe = () => {
+                            if (window.stripeFrontend && window.stripeFrontend.stripe) {
+                                resolve();
+                            } else {
+                                setTimeout(checkStripe, 100);
+                            }
+                        };
+                        checkStripe();
+                    });
+                    
+                    // Handle payment success
+                    await stripeFrontend.handlePaymentSuccess(sessionId);
+                    
+                    // Show payment details
+                    const details = `
+                        <h3>Payment Details</h3>
+                        <div class="payment-detail">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value">$${amount || 'N/A'}</span>
+                        </div>
+                        <div class="payment-detail">
+                            <span class="detail-label">Type:</span>
+                            <span class="detail-value">${type === 'subscription' ? 'Subscription' : 'Tip'}</span>
+                        </div>
+                        <div class="payment-detail">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">Completed</span>
+                        </div>
+                        <div class="payment-detail">
+                            <span class="detail-label">Date:</span>
+                            <span class="detail-value">${new Date().toLocaleDateString()}</span>
+                        </div>
+                    `;
+                    
+                    paymentInfo.innerHTML = details;
+                    loading.style.display = 'none';
+                    paymentInfo.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error processing payment success:', error);
+                    loading.style.display = 'none';
+                    paymentInfo.innerHTML = '<p>Payment processed successfully. Thank you for your support!</p>';
+                    paymentInfo.style.display = 'block';
+                }
+            } else {
+                loading.style.display = 'none';
+                paymentInfo.innerHTML = '<p>Payment processed successfully. Thank you for your support!</p>';
+                paymentInfo.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 
