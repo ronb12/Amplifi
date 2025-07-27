@@ -10,9 +10,8 @@ class SettingsPage {
     }
 
     async init() {
-        await this.setupAuthStateListener();
         this.setupEventListeners();
-        this.checkAuthentication();
+        await this.setupAuthStateListener();
     }
 
     async setupAuthStateListener() {
@@ -25,6 +24,8 @@ class SettingsPage {
             } else {
                 this.currentUser = null;
                 this.updateUIForUnauthenticatedUser();
+                // Only show login prompt if user is not authenticated
+                this.showLoginPrompt();
             }
         });
     }
