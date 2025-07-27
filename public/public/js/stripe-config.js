@@ -4,7 +4,7 @@ class StripePaymentProcessor {
         this.stripe = null;
         this.elements = null;
         this.config = {
-            publishableKey: 'pk_live_51RoYuFLozOIn8lA4eD4pmVKUh17pG4T0AjfVf33oVbMFjLpqOUWSOLqps3QDo3Bv9U7HOa8RA19VxC430ILigozi00yErrTYnw',
+            publishableKey: 'pk_live_51RpT30LHe1RTUAGqdJuiy1GWpobWJYGHMUBeiORdbz6OUwlqoaunI2cct8p51kGncr12b5X5axqYNzCELk80MijH00P4VABBtD',
             currency: 'usd',
             minimumTipAmount: 0.50,
             defaultTipAmounts: [1, 5, 10, 25],

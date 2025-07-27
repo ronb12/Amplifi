@@ -2,14 +2,14 @@
 
 ## Your Stripe Live Credentials
 
-**Live Publishable Key:** `pk_live_51RoYuFLozOIn8lA4eD4pmVKUh17pG4T0AjfVf33oVbMFjLpqOUWSOLqps3QDo3Bv9U7HOa8RA19VxC430ILigozi00yErrTYnw`
+**Live Publishable Key:** `pk_live_51RpT30LHe1RTUAGqdJuiy1GWpobWJYGHMUBeiORdbz6OUwlqoaunI2cct8p51kGncr12b5X5axqYNzCELk80MijH00P4VABBtD`
 
 **Live Secret Key:** `[SECURED - Use environment variable STRIPE_SECRET_KEY]`
 
 ## Security Configuration
 
 ### ✅ Client-Side (Safe to Expose)
-- **Publishable Key:** `pk_live_51RoYuFLozOIn8lA4eD4pmVKUh17pG4T0AjfVf33oVbMFjLpqOUWSOLqps3QDo3Bv9U7HOa8RA19VxC430ILigozi00yErrTYnw`
+- **Publishable Key:** `pk_live_51RpT30LHe1RTUAGqdJuiy1GWpobWJYGHMUBeiORdbz6OUwlqoaunI2cct8p51kGncr12b5X5axqYNzCELk80MijH00P4VABBtD`
 - **Location:** `public/js/stripe-config.js`
 - **Status:** ✅ **Configured and Deployed**
 
@@ -29,7 +29,7 @@ The publishable key is already configured in:
 
 #### Environment Variables
 ```bash
-STRIPE_PUBLISHABLE_KEY=pk_live_51RoYuFLozOIn8lA4eD4pmVKUh17pG4T0AjfVf33oVbMFjLpqOUWSOLqps3QDo3Bv9U7HOa8RA19VxC430ILigozi00yErrTYnw
+STRIPE_PUBLISHABLE_KEY=pk_live_51RpT30LHe1RTUAGqdJuiy1GWpobWJYGHMUBeiORdbz6OUwlqoaunI2cct8p51kGncr12b5X5axqYNzCELk80MijH00P4VABBtD
 STRIPE_SECRET_KEY=your_stripe_secret_key_here
 ```
 
