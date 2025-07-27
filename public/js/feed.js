@@ -1384,6 +1384,10 @@ class FeedPage {
         }
     }
 
+    sharePost(postId) {
+        const post = this.posts.find(p => p.id === postId);
+        if (!post) return;
+
         // Create share modal
         const shareModal = document.createElement('div');
         shareModal.className = 'modal';

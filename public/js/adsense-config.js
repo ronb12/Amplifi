@@ -5,25 +5,25 @@
 class AdSenseManager {
     constructor() {
         this.config = {
-            publisherId: process.env.ADSENSE_PUBLISHER_ID || 'pub-3565666509316178',
-            customerId: process.env.ADSENSE_CUSTOMER_ID || '4925311126',
+            publisherId: 'pub-3565666509316178',
+            customerId: '4925311126',
             isInitialized: false,
             adUnits: {
                 banner: {
-                    id: process.env.ADSENSE_BANNER_ID || 'ca-pub-3565666509316178/your-banner-ad-unit-id',
+                    id: 'ca-pub-3565666509316178/your-banner-ad-unit-id',
                     format: 'auto',
                     responsive: true
                 },
                 interstitial: {
-                    id: process.env.ADSENSE_INTERSTITIAL_ID || 'ca-pub-3565666509316178/your-interstitial-ad-unit-id',
+                    id: 'ca-pub-3565666509316178/your-interstitial-ad-unit-id',
                     format: 'auto'
                 },
                 inArticle: {
-                    id: process.env.ADSENSE_IN_ARTICLE_ID || 'ca-pub-3565666509316178/your-in-article-ad-unit-id',
+                    id: 'ca-pub-3565666509316178/your-in-article-ad-unit-id',
                     format: 'auto'
                 },
                 inFeed: {
-                    id: process.env.ADSENSE_IN_FEED_ID || 'ca-pub-3565666509316178/your-in-feed-ad-unit-id',
+                    id: 'ca-pub-3565666509316178/your-in-feed-ad-unit-id',
                     format: 'auto'
                 }
             }
