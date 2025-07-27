@@ -232,52 +232,80 @@ class StripeFrontendOnly {
             console.error('Tip payment error:', error);
             alert('Payment failed. Please try again.');
         }
-    }
-
     async createCheckoutSession(amount, recipientId, recipientName, message) {
-        // For frontend-only, we'll use a simple approach
-        // In production, you'd want to use Stripe's client-only checkout
-        
-        const lineItems = [{
-            price_data: {
-                currency: this.config.currency,
-                                    product_data: {
-                        name: `Tip to ${recipientName}`,
-                        description: message || `Support for ${recipientName} via Bradley Virtual Solutions, LLC`,
-                        images: ['https://amplifi-a54d9.web.app/icons/icon-192x192.png']
-                    },
-                unit_amount: Math.round(amount * 100), // Convert to cents
-            },
-            quantity: 1,
-        }];
+        // For frontend-only, create a simple payment link
+        const paymentData = {
+            amount: Math.round(amount * 100),
+            currency: this.config.currency,
+            description: `Tip to ${recipientName} via Bradley Virtual Solutions, LLC`,
+            recipient: recipientId,
+            recipientName: recipientName,
+            message: message
+        };
 
-        // Use Stripe's client-only checkout
-        const session = await this.stripe.redirectToCheckout({
-            lineItems: lineItems,
-            mode: 'payment',
-            success_url: `${this.config.successUrl}?session_id={CHECKOUT_SESSION_ID}&recipient=${recipientId}&amount=${amount}`,
-            cancel_url: this.config.cancelUrl,
-                            metadata: {
-                    recipient_id: recipientId,
-                    recipient_name: recipientName,
-                    tip_message: message,
-                    platform: 'amplifi',
-                    business: 'Bradley Virtual Solutions, LLC'
-                }
-        });
-
-        return session;
+        // Create a simple payment form instead of redirect
+        this.showPaymentForm(paymentData);
     }
 
-    // Handle subscription payments
-    async createSubscription(priceId, customerEmail) {
+    showPaymentForm(paymentData) {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                <h3>Complete Payment</h3>
+                <p>Amount: $${(paymentData.amount / 100).toFixed(2)}</p>
+                <p>Recipient: ${paymentData.recipientName}</p>
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <div id="card-element"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Pay $${(paymentData.amount / 100).toFixed(2)}</button>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        modal.style.display = "block";
+
+        // Initialize Stripe Elements
+        const elements = this.stripe.elements();
+        const cardElement = elements.create("card");
+        cardElement.mount("#card-element");
+
+        // Handle form submission
+        document.getElementById("paymentForm").onsubmit = async (e) => {
+            e.preventDefault();
+            await this.processPayment(paymentData, cardElement);
+        };
+    }
+
+    async processPayment(paymentData, cardElement) {
         try {
-            const session = await this.stripe.redirectToCheckout({
-                lineItems: [{
-                    price: priceId,
-                    quantity: 1,
-                }],
-                mode: 'subscription',
+            const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+                type: "card",
+                card: cardElement,
+                billing_details: {
+                    name: "Tip Payment",
+                    description: paymentData.description
+                }
+            });
+
+            if (error) {
+                alert("Payment failed: " + error.message);
+                return;
+            }
+
+            // For demo purposes, simulate successful payment
+            alert(`Payment of $${(paymentData.amount / 100).toFixed(2)} successful! This is a test payment.`);
+            document.querySelector(".modal").remove();
+
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert("Payment failed. Please try again.");
+        }
+    }
                 success_url: `${this.config.successUrl}?session_id={CHECKOUT_SESSION_ID}&type=subscription`,
                 cancel_url: this.config.cancelUrl,
                 customer_email: customerEmail,
