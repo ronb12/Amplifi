@@ -308,16 +308,6 @@ class StripeFrontendOnly {
             alert("Payment failed. Please try again.");
         }
     }
-                success_url: `${this.config.successUrl}?session_id={CHECKOUT_SESSION_ID}&type=subscription`,
-                cancel_url: this.config.cancelUrl,
-                customer_email: customerEmail,
-                metadata: {
-                    platform: 'amplifi',
-                    subscription_type: 'premium',
-                    business: 'Bradley Virtual Solutions, LLC'
-                }
-            });
-
             if (session.error) {
                 throw new Error(session.error.message);
             }
