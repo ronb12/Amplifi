@@ -10,12 +10,19 @@ class SettingsPage {
     }
 
     async init() {
+        console.log('Initializing settings page...');
         this.setupEventListeners();
+        
+        // Wait a bit for Firebase to initialize
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         await this.setupAuthStateListener();
     }
 
     async setupAuthStateListener() {
+        console.log('Setting up auth state listener...');
         auth.onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? 'User logged in' : 'No user');
             if (user) {
                 this.currentUser = user;
                 await this.loadUserProfile();
@@ -72,6 +79,13 @@ class SettingsPage {
     }
 
     showLoginPrompt() {
+        // Check if modal already exists to prevent duplicates
+        if (document.querySelector('.login-prompt-modal')) {
+            return;
+        }
+        
+        console.log('Showing login prompt modal');
+        
         // Create a login prompt modal
         const modal = document.createElement('div');
         modal.className = 'login-prompt-modal';
@@ -92,12 +106,23 @@ class SettingsPage {
             <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
                 <h3>Login Required</h3>
                 <p>Please log in to access settings.</p>
-                <button onclick="window.location.href='index.html'" style="background: #6366f1; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Go to Login</button>
-                <button onclick="this.parentElement.parentElement.remove()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+                <button id="goToLoginBtn" style="background: #6366f1; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Go to Login</button>
+                <button id="cancelLoginBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
             </div>
         `;
         
         document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('goToLoginBtn').addEventListener('click', () => {
+            console.log('User clicked Go to Login');
+            window.location.href = 'index.html';
+        });
+        
+        document.getElementById('cancelLoginBtn').addEventListener('click', () => {
+            console.log('User clicked Cancel');
+            document.body.removeChild(modal);
+        });
     }
 
     setupEventListeners() {
