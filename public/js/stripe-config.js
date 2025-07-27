@@ -38,11 +38,20 @@ class StripePaymentProcessor {
         }
 
         try {
-            // Create payment intent on your server
-            const response = await fetch('/api/create-payment-intent', {
+            // Get current user token for authentication
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                throw new Error('User not authenticated');
+            }
+            
+            const idToken = await currentUser.getIdToken();
+
+            // Create payment intent using Firebase Functions
+            const response = await fetch('https://us-central1-amplifi-a54d9.cloudfunctions.net/create_payment_intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
                 body: JSON.stringify({
                     amount: Math.round(amount * 100), // Convert to cents
@@ -51,6 +60,11 @@ class StripePaymentProcessor {
                     recipientName: recipientName
                 })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Payment intent creation failed');
+            }
 
             const { clientSecret } = await response.json();
 
@@ -82,16 +96,30 @@ class StripePaymentProcessor {
         }
 
         try {
-            const response = await fetch('/api/create-subscription', {
+            // Get current user token for authentication
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                throw new Error('User not authenticated');
+            }
+            
+            const idToken = await currentUser.getIdToken();
+
+            const response = await fetch('https://us-central1-amplifi-a54d9.cloudfunctions.net/create_subscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
                 body: JSON.stringify({
                     priceId: priceId,
                     customerId: customerId
                 })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Subscription creation failed');
+            }
 
             const { subscriptionId } = await response.json();
             return subscriptionId;
@@ -108,16 +136,30 @@ class StripePaymentProcessor {
         }
 
         try {
-            const response = await fetch('/api/create-customer', {
+            // Get current user token for authentication
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                throw new Error('User not authenticated');
+            }
+            
+            const idToken = await currentUser.getIdToken();
+
+            const response = await fetch('https://us-central1-amplifi-a54d9.cloudfunctions.net/create_customer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
                 body: JSON.stringify({
                     email: email,
                     name: name
                 })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Customer creation failed');
+            }
 
             const { customerId } = await response.json();
             return customerId;
@@ -134,7 +176,25 @@ class StripePaymentProcessor {
         }
 
         try {
-            const response = await fetch(`/api/payment-methods/${customerId}`);
+            // Get current user token for authentication
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                throw new Error('User not authenticated');
+            }
+            
+            const idToken = await currentUser.getIdToken();
+
+            const response = await fetch(`https://us-central1-amplifi-a54d9.cloudfunctions.net/get_payment_methods?customerId=${customerId}`, {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to fetch payment methods');
+            }
+
             const { paymentMethods } = await response.json();
             return paymentMethods;
         } catch (error) {
@@ -150,15 +210,31 @@ class StripePaymentProcessor {
         }
 
         try {
-            const { setupIntent } = await fetch('/api/create-setup-intent', {
+            // Get current user token for authentication
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                throw new Error('User not authenticated');
+            }
+            
+            const idToken = await currentUser.getIdToken();
+
+            const response = await fetch('https://us-central1-amplifi-a54d9.cloudfunctions.net/create_setup_intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
                 body: JSON.stringify({
                     customerId: customerId
                 })
-            }).then(res => res.json());
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Setup intent creation failed');
+            }
+
+            const { setupIntent } = await response.json();
 
             const result = await this.stripe.confirmCardSetup(setupIntent.client_secret, {
                 payment_method: {
