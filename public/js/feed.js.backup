@@ -1328,61 +1328,46 @@ class FeedPage {
     }
 
     async processTip(creatorId) {
-        const customAmount = document.getElementById("customTipAmount");
+        const customAmount = document.getElementById('customTipAmount');
         if (!customAmount) return;
 
         const amount = parseFloat(customAmount.value);
         
         if (!amount || amount < 0.50) {
-            alert("Minimum tip amount is $0.50");
+            alert('Minimum tip amount is $0.50');
             return;
         }
 
         try {
-            // Check if Stripe is available
-            if (typeof window.paymentProcessor === "undefined") {
-                alert("Payment system not available. Please refresh the page.");
-                return;
-            }
+            const tipData = {
+                senderId: this.currentUser.uid,
+                senderName: this.userProfile?.displayName || 'Anonymous',
+                recipientId: creatorId,
+                amount: amount,
+                createdAt: new Date()
+            };
 
-            // Get recipient info
-            const recipientDoc = await db.collection("users").doc(creatorId).get();
-            const recipientName = recipientDoc.exists ? recipientDoc.data().displayName || "Creator" : "Creator";
+            await db.collection('tips').add(tipData);
 
-            // Process payment through Stripe
-            const paymentResult = await window.paymentProcessor.processTip(amount, creatorId, recipientName);
+            const earningsRef = db.collection('earnings').doc(creatorId);
+            await earningsRef.set({
+                totalTips: firebase.firestore.FieldValue.increment(amount),
+                lastUpdated: new Date()
+            }, { merge: true });
 
-            if (paymentResult.success) {
-                // Save tip data to Firestore after successful payment
-                const tipData = {
-                    senderId: this.currentUser.uid,
-                    senderName: this.userProfile?.displayName || "Anonymous",
-                    recipientId: creatorId,
-                    amount: amount,
-                    paymentId: paymentResult.paymentId,
-                    createdAt: new Date()
-                };
-
-                await db.collection("tips").add(tipData);
-
-                const earningsRef = db.collection("earnings").doc(creatorId);
-                await earningsRef.set({
-                    totalTips: firebase.firestore.FieldValue.increment(amount),
-                    lastUpdated: new Date()
-                }, { merge: true });
-
-                const tipModal = document.getElementById("tipModal");
-                if (tipModal) tipModal.style.display = "none";
-                
-                alert(`Tip of $${amount.toFixed(2)} sent successfully! Payment processed through Stripe.`);
-            } else {
-                alert(`Payment failed: ${paymentResult.error}`);
-            }
+            const tipModal = document.getElementById('tipModal');
+            if (tipModal) tipModal.style.display = 'none';
+            
+            alert(`Tip of $${amount.toFixed(2)} sent successfully!`);
         } catch (error) {
-            console.error("Error processing tip:", error);
-            alert("Failed to send tip. Please try again.");
+            console.error('Error processing tip:', error);
+            alert('Failed to send tip. Please try again.');
         }
     }
+
+    sharePost(postId) {
+        const post = this.posts.find(p => p.id === postId);
+        if (!post) return;
 
         // Create share modal
         const shareModal = document.createElement('div');
@@ -2141,9 +2126,6 @@ class FeedPage {
         }, 90000);
     }
 }
-
-// Initialize payment processor
-window.paymentProcessor = new StripePaymentProcessor();
 
 // Initialize the feed page when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
