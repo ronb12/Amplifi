@@ -198,18 +198,18 @@ class StripeFrontendOnly {
             btn.addEventListener('click', () => {
                 amountButtons.forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
-                modal.querySelector('#customAmount').value = btn.dataset.amount;
+                modal.querySelector('#customTipAmount').value = btn.dataset.amount;
             });
         });
     }
 
     async sendTip(recipientId, recipientName) {
         try {
-            const amountInput = document.querySelector('#customAmount');
-            const messageInput = document.querySelector('#tipMessage');
+            const amountInput = document.querySelector('#customTipAmount');
+            const message = ""; // No message input in current HTML
             
             const amount = parseFloat(amountInput.value);
-            const message = messageInput.value;
+            // Message is already set above
 
             if (!amount || amount < this.config.minimumTipAmount) {
                 alert(`Minimum tip amount is $${this.config.minimumTipAmount}`);

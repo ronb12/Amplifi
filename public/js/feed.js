@@ -1322,12 +1322,12 @@ class FeedPage {
 
             tipForm.onsubmit = async (e) => {
                 e.preventDefault();
-                await this.processTip(creatorId);
+                await this.sendTip(creatorId);
             };
         }
     }
 
-    async processTip(creatorId) {
+    async sendTip(creatorId) {
         const customAmount = document.getElementById("customTipAmount");
         if (!customAmount) return;
 
@@ -1349,35 +1349,14 @@ class FeedPage {
             const recipientDoc = await db.collection("users").doc(creatorId).get();
             const recipientName = recipientDoc.exists ? recipientDoc.data().displayName || "Creator" : "Creator";
 
-            // Process payment through Stripe
-            const paymentResult = await window.paymentProcessor.processTip(amount, creatorId, recipientName);
+            // Use StripeFrontendOnly sendTip method
+            await window.paymentProcessor.sendTip(creatorId, recipientName);
 
-            if (paymentResult.success) {
-                // Save tip data to Firestore after successful payment
-                const tipData = {
-                    senderId: this.currentUser.uid,
-                    senderName: this.userProfile?.displayName || "Anonymous",
-                    recipientId: creatorId,
-                    amount: amount,
-                    paymentId: paymentResult.paymentId,
-                    createdAt: new Date()
-                };
-
-                await db.collection("tips").add(tipData);
-
-                const earningsRef = db.collection("earnings").doc(creatorId);
-                await earningsRef.set({
-                    totalTips: firebase.firestore.FieldValue.increment(amount),
-                    lastUpdated: new Date()
-                }, { merge: true });
-
-                const tipModal = document.getElementById("tipModal");
-                if (tipModal) tipModal.style.display = "none";
-                
-                alert(`Tip of $${amount.toFixed(2)} sent successfully! Payment processed through Stripe.`);
-            } else {
-                alert(`Payment failed: ${paymentResult.error}`);
-            }
+        } catch (error) {
+            console.error("Error processing tip:", error);
+            alert("Failed to send tip. Please try again.");
+        }
+    }
         } catch (error) {
             console.error("Error processing tip:", error);
             alert("Failed to send tip. Please try again.");
@@ -2147,7 +2126,7 @@ class FeedPage {
 }
 
 // Initialize payment processor
-window.paymentProcessor = new StripePaymentProcessor();
+window.paymentProcessor = new StripeFrontendOnly();
 
 // Initialize the feed page when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
