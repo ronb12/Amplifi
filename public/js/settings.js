@@ -1,5 +1,7 @@
 /* global db, auth, firebase, storage */
 // Settings Page JavaScript
+console.log('🔧 SETTINGS.JS LOADED - Starting settings page initialization');
+
 class SettingsPage {
     constructor() {
         this.currentUser = null;
@@ -28,6 +30,9 @@ class SettingsPage {
                 await this.loadUserProfile();
                 this.updateUIForAuthenticatedUser();
                 this.loadSettings();
+                
+                // Check account status for recovery options
+                await this.checkAccountStatus();
             } else {
                 this.currentUser = null;
                 this.updateUIForUnauthenticatedUser();
@@ -641,12 +646,27 @@ class SettingsPage {
     async deactivateAccount() {
         if (confirm('Are you sure you want to deactivate your account? You can reactivate it later by logging in.')) {
             try {
-                await db.collection('users').doc(this.currentUser.uid).update({
+                // Store account data for potential recovery
+                const accountData = {
+                    ...this.userProfile,
                     deactivated: true,
-                    deactivatedAt: new Date()
+                    deactivatedAt: new Date(),
+                    recoveryToken: this.generateRecoveryToken(),
+                    canRecover: true
+                };
+
+                await db.collection('users').doc(this.currentUser.uid).update(accountData);
+
+                // Store recovery info in separate collection
+                await db.collection('accountRecovery').doc(this.currentUser.uid).set({
+                    email: this.currentUser.email,
+                    recoveryToken: accountData.recoveryToken,
+                    deactivatedAt: accountData.deactivatedAt,
+                    canRecover: true,
+                    accountType: 'deactivated'
                 });
 
-                alert('Account deactivated successfully');
+                alert('Account deactivated successfully. You can reactivate it by logging in with your email and password.');
                 await this.handleLogout();
             } catch (error) {
                 console.error('Error deactivating account:', error);
@@ -656,7 +676,7 @@ class SettingsPage {
     }
 
     async deleteAccount() {
-        if (confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) {
+        if (confirm('Are you sure you want to delete your account? You can restore it within 30 days by contacting support.')) {
             const password = prompt('Please enter your password to confirm:');
             if (!password) return;
 
@@ -668,13 +688,37 @@ class SettingsPage {
                 );
                 await this.currentUser.reauthenticateWithCredential(credential);
 
-                // Delete user data
-                await db.collection('users').doc(this.currentUser.uid).delete();
+                // Store account data for potential recovery (30-day grace period)
+                const accountData = {
+                    ...this.userProfile,
+                    deleted: true,
+                    deletedAt: new Date(),
+                    recoveryToken: this.generateRecoveryToken(),
+                    canRecover: true,
+                    recoveryDeadline: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)) // 30 days
+                };
 
-                // Delete user account
-                await this.currentUser.delete();
+                // Move to deleted accounts collection instead of deleting
+                await db.collection('deletedAccounts').doc(this.currentUser.uid).set(accountData);
 
-                alert('Account deleted successfully');
+                // Store recovery info
+                await db.collection('accountRecovery').doc(this.currentUser.uid).set({
+                    email: this.currentUser.email,
+                    recoveryToken: accountData.recoveryToken,
+                    deletedAt: accountData.deletedAt,
+                    canRecover: true,
+                    accountType: 'deleted',
+                    recoveryDeadline: accountData.recoveryDeadline
+                });
+
+                // Mark as deleted in users collection (soft delete)
+                await db.collection('users').doc(this.currentUser.uid).update({
+                    deleted: true,
+                    deletedAt: new Date(),
+                    canRecover: true
+                });
+
+                alert('Account deleted successfully. You can restore it within 30 days by logging in or contacting support.');
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('Error deleting account:', error);
@@ -764,9 +808,188 @@ class SettingsPage {
             console.error('Logout error:', error);
         }
     }
+
+    // Generate recovery token
+    generateRecoveryToken() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
+    // Reactivate account
+    async reactivateAccount() {
+        try {
+            await db.collection('users').doc(this.currentUser.uid).update({
+                deactivated: false,
+                reactivatedAt: new Date(),
+                canRecover: false
+            });
+
+            // Remove from recovery collection
+            await db.collection('accountRecovery').doc(this.currentUser.uid).delete();
+
+            alert('Account reactivated successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error reactivating account:', error);
+            alert('Failed to reactivate account');
+        }
+    }
+
+    // Restore deleted account
+    async restoreDeletedAccount() {
+        try {
+            // Check if account can still be recovered
+            const recoveryDoc = await db.collection('accountRecovery').doc(this.currentUser.uid).get();
+            if (!recoveryDoc.exists) {
+                alert('Account recovery information not found');
+                return;
+            }
+
+            const recoveryData = recoveryDoc.data();
+            if (recoveryData.accountType !== 'deleted') {
+                alert('This account is not deleted');
+                return;
+            }
+
+            // Check if recovery deadline has passed
+            if (recoveryData.recoveryDeadline && new Date() > recoveryData.recoveryDeadline.toDate()) {
+                alert('Account recovery period has expired (30 days). Please contact support.');
+                return;
+            }
+
+            // Restore account data
+            const deletedAccountDoc = await db.collection('deletedAccounts').doc(this.currentUser.uid).get();
+            if (deletedAccountDoc.exists) {
+                const accountData = deletedAccountDoc.data();
+                delete accountData.deleted;
+                delete accountData.deletedAt;
+                delete accountData.canRecover;
+                delete accountData.recoveryDeadline;
+
+                // Restore to users collection
+                await db.collection('users').doc(this.currentUser.uid).set(accountData);
+
+                // Remove from deleted accounts
+                await db.collection('deletedAccounts').doc(this.currentUser.uid).delete();
+            }
+
+            // Update users collection
+            await db.collection('users').doc(this.currentUser.uid).update({
+                deleted: false,
+                restoredAt: new Date(),
+                canRecover: false
+            });
+
+            // Remove from recovery collection
+            await db.collection('accountRecovery').doc(this.currentUser.uid).delete();
+
+            alert('Account restored successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error restoring account:', error);
+            alert('Failed to restore account');
+        }
+    }
+
+    // Check account status and show recovery options
+    async checkAccountStatus() {
+        if (!this.currentUser) return;
+
+        try {
+            const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
+            if (!userDoc.exists) return;
+
+            const userData = userDoc.data();
+            
+            if (userData.deactivated) {
+                this.showReactivatePrompt();
+            } else if (userData.deleted) {
+                this.showRestorePrompt();
+            }
+        } catch (error) {
+            console.error('Error checking account status:', error);
+        }
+    }
+
+    // Show reactivation prompt
+    showReactivatePrompt() {
+        const modal = document.createElement('div');
+        modal.className = 'account-recovery-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Account Deactivated</h3>
+                <p>Your account has been deactivated. Would you like to reactivate it?</p>
+                <button id="reactivateBtn" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Reactivate Account</button>
+                <button id="cancelReactivateBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('reactivateBtn').addEventListener('click', () => {
+            this.reactivateAccount();
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('cancelReactivateBtn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
+
+    // Show restore prompt
+    showRestorePrompt() {
+        const modal = document.createElement('div');
+        modal.className = 'account-recovery-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Account Deleted</h3>
+                <p>Your account has been deleted. You can restore it within 30 days.</p>
+                <button id="restoreBtn" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Restore Account</button>
+                <button id="cancelRestoreBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('restoreBtn').addEventListener('click', () => {
+            this.restoreDeletedAccount();
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('cancelRestoreBtn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
 }
 
 // Initialize the settings page when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔧 DOM CONTENT LOADED - Creating SettingsPage instance');
     window.settingsPage = new SettingsPage();
+    console.log('🔧 SETTINGS PAGE INSTANCE CREATED');
 }); 

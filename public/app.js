@@ -402,6 +402,9 @@ class AmplifiApp {
             const userDoc = await db.collection('users').doc(this.currentUser.uid).get();
             if (userDoc.exists) {
                 this.userProfile = userDoc.data();
+                
+                // Check for account recovery
+                await this.checkAccountRecovery();
             } else {
                 // Create user profile if it doesn't exist
                 this.userProfile = {
@@ -1942,6 +1945,232 @@ class AmplifiApp {
             return `${Math.floor(diffInSeconds / 86400)}d ago`;
         } else {
             return postDate.toLocaleDateString();
+        }
+    }
+
+    // Check for account recovery when user logs in
+    async checkAccountRecovery() {
+        if (!this.currentUser || !this.userProfile) return;
+
+        try {
+            // Check if account is deactivated
+            if (this.userProfile.deactivated) {
+                this.showReactivatePrompt();
+                return;
+            }
+
+            // Check if account is deleted
+            if (this.userProfile.deleted) {
+                this.showRestorePrompt();
+                return;
+            }
+
+            // Check recovery collection for additional info
+            const recoveryDoc = await db.collection('accountRecovery').doc(this.currentUser.uid).get();
+            if (recoveryDoc.exists) {
+                const recoveryData = recoveryDoc.data();
+                
+                if (recoveryData.accountType === 'deleted') {
+                    // Check if recovery deadline has passed
+                    if (recoveryData.recoveryDeadline && new Date() > recoveryData.recoveryDeadline.toDate()) {
+                        this.showRecoveryExpiredPrompt();
+                    } else {
+                        this.showRestorePrompt();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error checking account recovery:', error);
+        }
+    }
+
+    // Show reactivation prompt
+    showReactivatePrompt() {
+        const modal = document.createElement('div');
+        modal.className = 'account-recovery-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Welcome Back!</h3>
+                <p>Your account was deactivated. Would you like to reactivate it?</p>
+                <button id="reactivateBtn" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Reactivate Account</button>
+                <button id="cancelReactivateBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('reactivateBtn').addEventListener('click', () => {
+            this.reactivateAccount();
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('cancelReactivateBtn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
+
+    // Show restore prompt
+    showRestorePrompt() {
+        const modal = document.createElement('div');
+        modal.className = 'account-recovery-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Account Recovery</h3>
+                <p>Your account was deleted. You can restore it within 30 days.</p>
+                <button id="restoreBtn" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Restore Account</button>
+                <button id="cancelRestoreBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('restoreBtn').addEventListener('click', () => {
+            this.restoreDeletedAccount();
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('cancelRestoreBtn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
+
+    // Show recovery expired prompt
+    showRecoveryExpiredPrompt() {
+        const modal = document.createElement('div');
+        modal.className = 'account-recovery-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px;">
+                <h3>Recovery Period Expired</h3>
+                <p>Your account recovery period has expired (30 days). Please contact support for assistance.</p>
+                <button id="contactSupportBtn" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Contact Support</button>
+                <button id="cancelExpiredBtn" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem;">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('contactSupportBtn').addEventListener('click', () => {
+            window.location.href = 'support.html';
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('cancelExpiredBtn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
+
+    // Reactivate account
+    async reactivateAccount() {
+        try {
+            await db.collection('users').doc(this.currentUser.uid).update({
+                deactivated: false,
+                reactivatedAt: new Date(),
+                canRecover: false
+            });
+
+            // Remove from recovery collection
+            await db.collection('accountRecovery').doc(this.currentUser.uid).delete();
+
+            alert('Account reactivated successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error reactivating account:', error);
+            alert('Failed to reactivate account');
+        }
+    }
+
+    // Restore deleted account
+    async restoreDeletedAccount() {
+        try {
+            // Check if account can still be recovered
+            const recoveryDoc = await db.collection('accountRecovery').doc(this.currentUser.uid).get();
+            if (!recoveryDoc.exists) {
+                alert('Account recovery information not found');
+                return;
+            }
+
+            const recoveryData = recoveryDoc.data();
+            if (recoveryData.accountType !== 'deleted') {
+                alert('This account is not deleted');
+                return;
+            }
+
+            // Check if recovery deadline has passed
+            if (recoveryData.recoveryDeadline && new Date() > recoveryData.recoveryDeadline.toDate()) {
+                alert('Account recovery period has expired (30 days). Please contact support.');
+                return;
+            }
+
+            // Restore account data
+            const deletedAccountDoc = await db.collection('deletedAccounts').doc(this.currentUser.uid).get();
+            if (deletedAccountDoc.exists) {
+                const accountData = deletedAccountDoc.data();
+                delete accountData.deleted;
+                delete accountData.deletedAt;
+                delete accountData.canRecover;
+                delete accountData.recoveryDeadline;
+
+                // Restore to users collection
+                await db.collection('users').doc(this.currentUser.uid).set(accountData);
+
+                // Remove from deleted accounts
+                await db.collection('deletedAccounts').doc(this.currentUser.uid).delete();
+            }
+
+            // Update users collection
+            await db.collection('users').doc(this.currentUser.uid).update({
+                deleted: false,
+                restoredAt: new Date(),
+                canRecover: false
+            });
+
+            // Remove from recovery collection
+            await db.collection('accountRecovery').doc(this.currentUser.uid).delete();
+
+            alert('Account restored successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error restoring account:', error);
+            alert('Failed to restore account');
         }
     }
 }
