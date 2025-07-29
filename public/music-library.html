@@ -1587,9 +1587,10 @@
                 <h1 class="logo">Amplifi</h1>
             </div>
             <div class="header-center">
-                <span class="page-title">Music Library</span>
-                <label for="searchInput" class="sr-only">Search music</label>
-                <input type="text" id="searchInput" placeholder="Search music..." class="search-input" aria-label="Search music">
+                <label for="searchInput" class="sr-only">Search posts, users</label>
+                <input type="text" id="searchInput" placeholder="Search..." class="search-input" aria-label="Search posts, users">
+                <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
             </div>
             <div class="header-actions">
                 <button class="notification-btn" aria-label="Notifications" onclick="window.location.href='notifications.html'">
