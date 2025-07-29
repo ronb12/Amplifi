@@ -7,141 +7,118 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
         }
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
         h1 {
-            color: #1f2937;
-            margin-bottom: 20px;
+            margin-bottom: 2rem;
+            font-size: 2rem;
         }
-        .cache-item {
-            background: #f3f4f6;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border-left: 4px solid #3b82f6;
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 1rem;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
         }
         .status {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .success { color: #059669; }
-        .error { color: #dc2626; }
-        button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px 5px;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: #2563eb;
-        }
-        .version-info {
-            background: #dbeafe;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #3b82f6;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔄 Clear Amplifi Cache</h1>
+        <h1>🔄 Clear Cache</h1>
+        <p>This will clear all cached files and force a fresh reload.</p>
         
-        <div class="version-info">
-            <strong>Current Version:</strong> 1.0.47<br>
-            <strong>Last Updated:</strong> <span id="timestamp"></span>
-        </div>
-
-        <div id="results"></div>
-
-        <button onclick="clearAllCaches()">Clear All Caches</button>
-        <button onclick="forceRefresh()">Force Page Refresh</button>
-        <button onclick="goToFeed()">Go to Feed</button>
+        <button class="btn" onclick="clearAllCaches()">Clear All Caches</button>
+        <button class="btn" onclick="reloadMessages()">Reload Messages Page</button>
+        <button class="btn" onclick="goToMessages()">Go to Messages</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
     </div>
 
     <script>
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-
         async function clearAllCaches() {
-            const results = document.getElementById('results');
-            results.innerHTML = '<div class="cache-item"><div class="status">🔄 Clearing caches...</div></div>';
-
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = 'Clearing caches...';
+            
             try {
-                // Clear browser cache
+                // Clear service worker cache
                 if ('caches' in window) {
                     const cacheNames = await caches.keys();
                     await Promise.all(cacheNames.map(name => caches.delete(name)));
-                    addResult('✅ Browser caches cleared', 'success');
                 }
-
-                // Clear service worker
-                if ('serviceWorker' in navigator) {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    await Promise.all(registrations.map(reg => reg.unregister()));
-                    addResult('✅ Service worker unregistered', 'success');
-                }
-
+                
                 // Clear localStorage
                 localStorage.clear();
-                addResult('✅ Local storage cleared', 'success');
-
-                // Clear IndexedDB
-                if ('indexedDB' in window) {
-                    const databases = await indexedDB.databases();
-                    databases.forEach(db => {
-                        indexedDB.deleteDatabase(db.name);
-                    });
-                    addResult('✅ IndexedDB cleared', 'success');
-                }
-
+                
                 // Clear sessionStorage
                 sessionStorage.clear();
-                addResult('✅ Session storage cleared', 'success');
-
-                addResult('🎉 All caches cleared successfully!', 'success');
-
+                
+                // Unregister service worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                }
+                
+                status.innerHTML = '✅ All caches cleared successfully!';
+                status.style.background = 'rgba(40, 167, 69, 0.3)';
+                
+                setTimeout(() => {
+                    location.reload(true);
+                }, 2000);
+                
             } catch (error) {
-                addResult(`❌ Error clearing caches: ${error.message}`, 'error');
+                status.innerHTML = '❌ Error clearing caches: ' + error.message;
+                status.style.background = 'rgba(220, 53, 69, 0.3)';
             }
         }
-
-        function addResult(message, type) {
-            const results = document.getElementById('results');
-            const div = document.createElement('div');
-            div.className = 'cache-item';
-            div.innerHTML = `<div class="status ${type}">${message}</div>`;
-            results.appendChild(div);
+        
+        function reloadMessages() {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = 'Reloading messages page...';
+            
+            // Force reload messages page
+            window.open('/messages.html', '_blank');
+            
+            status.innerHTML = '✅ Messages page opened in new tab!';
+            status.style.background = 'rgba(40, 167, 69, 0.3)';
         }
-
-        function forceRefresh() {
-            // Force reload without cache
-            window.location.reload(true);
+        
+        function goToMessages() {
+            window.location.href = '/messages.html';
         }
-
-        function goToFeed() {
-            window.location.href = '/feed.html?v=' + Date.now();
-        }
-
-        // Auto-clear on page load
-        window.addEventListener('load', () => {
-            setTimeout(clearAllCaches, 1000);
-        });
     </script>
 </body>
-</html> 
 </html> 

@@ -1,7 +1,7 @@
 // Enhanced Service Worker for Seamless PWA Experience
-const CACHE_NAME = 'amplifi-v1.0.132'; // Incremented version for full cache refresh
-const STATIC_CACHE = 'amplifi-static-v2.2';
-const DYNAMIC_CACHE = 'amplifi-dynamic-v2.2';
+const CACHE_NAME = 'amplifi-v1.0.133'; // Incremented version for full cache refresh
+const STATIC_CACHE = 'amplifi-static-v2.3';
+const DYNAMIC_CACHE = 'amplifi-dynamic-v2.3';
 
 // Files to cache immediately
 const STATIC_FILES = [
