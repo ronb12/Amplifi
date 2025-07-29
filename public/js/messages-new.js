@@ -2549,6 +2549,23 @@ class MessagesApp {
         if (moneyModal) {
             console.log('✅ Using existing money modal');
             moneyModal.style.display = 'flex';
+            
+            // Ensure inputs are accessible
+            const amountInput = document.getElementById('moneyAmount');
+            const messageInput = document.getElementById('moneyMessage');
+            
+            console.log('📊 Modal inputs:');
+            console.log('  - amountInput:', amountInput);
+            console.log('  - messageInput:', messageInput);
+            console.log('  - Modal display:', moneyModal.style.display);
+            console.log('  - Modal visibility:', moneyModal.style.visibility);
+            
+            // Focus on amount input for better UX
+            if (amountInput) {
+                amountInput.focus();
+                console.log('✅ Amount input focused');
+            }
+            
             this.setupMoneyModalListeners();
         } else {
             console.error('❌ Money modal not found in HTML');
@@ -2575,21 +2592,75 @@ class MessagesApp {
     }
 
     setupMoneyModalListeners() {
+        console.log('💰 Setting up money modal listeners...');
+        
         const amountInput = document.getElementById('moneyAmount');
         const messageInput = document.getElementById('moneyMessage');
+        const previewAmount = document.getElementById('previewAmount');
+        const previewMessage = document.getElementById('previewMessage');
+        
+        console.log('📊 Money modal elements found:');
+        console.log('  - amountInput:', amountInput);
+        console.log('  - messageInput:', messageInput);
+        console.log('  - previewAmount:', previewAmount);
+        console.log('  - previewMessage:', previewMessage);
         
         if (amountInput) {
-            amountInput.addEventListener('input', () => {
-                const amount = parseFloat(amountInput.value) || 0;
-                document.getElementById('previewAmount').textContent = amount.toFixed(2);
-            });
+            // Remove any existing listeners to prevent duplicates
+            amountInput.removeEventListener('input', this.handleAmountInput);
+            amountInput.removeEventListener('change', this.handleAmountInput);
+            
+            // Add new listener
+            amountInput.addEventListener('input', this.handleAmountInput.bind(this));
+            amountInput.addEventListener('change', this.handleAmountInput.bind(this));
+            
+            console.log('✅ Amount input listener added');
+        } else {
+            console.error('❌ Amount input not found');
         }
         
         if (messageInput) {
-            messageInput.addEventListener('input', () => {
-                const message = messageInput.value;
-                document.getElementById('previewMessage').textContent = message || 'No message';
-            });
+            // Remove any existing listeners to prevent duplicates
+            messageInput.removeEventListener('input', this.handleMessageInput);
+            
+            // Add new listener
+            messageInput.addEventListener('input', this.handleMessageInput.bind(this));
+            
+            console.log('✅ Message input listener added');
+        } else {
+            console.error('❌ Message input not found');
+        }
+        
+        // Initialize preview
+        this.updateMoneyPreview();
+    }
+
+    handleAmountInput(event) {
+        console.log('💰 Amount input changed:', event.target.value);
+        this.updateMoneyPreview();
+    }
+
+    handleMessageInput(event) {
+        console.log('💰 Message input changed:', event.target.value);
+        this.updateMoneyPreview();
+    }
+
+    updateMoneyPreview() {
+        const amountInput = document.getElementById('moneyAmount');
+        const messageInput = document.getElementById('moneyMessage');
+        const previewAmount = document.getElementById('previewAmount');
+        const previewMessage = document.getElementById('previewMessage');
+        
+        if (amountInput && previewAmount) {
+            const amount = parseFloat(amountInput.value) || 0;
+            console.log('💰 Updating amount preview:', amount);
+            previewAmount.textContent = amount.toFixed(2);
+        }
+        
+        if (messageInput && previewMessage) {
+            const message = messageInput.value;
+            console.log('💰 Updating message preview:', message);
+            previewMessage.textContent = message || 'No message';
         }
     }
 
@@ -2881,6 +2952,49 @@ class MessagesApp {
             return { allowed: true };
         }
     }
+
+    // Test money modal functionality
+    testMoneyModal() {
+        console.log('🧪 Testing money modal...');
+        
+        const moneyModal = document.getElementById('moneyModal');
+        const amountInput = document.getElementById('moneyAmount');
+        const messageInput = document.getElementById('moneyMessage');
+        const previewAmount = document.getElementById('previewAmount');
+        const previewMessage = document.getElementById('previewMessage');
+        
+        console.log('📊 Money modal elements:');
+        console.log('  - moneyModal:', moneyModal);
+        console.log('  - amountInput:', amountInput);
+        console.log('  - messageInput:', messageInput);
+        console.log('  - previewAmount:', previewAmount);
+        console.log('  - previewMessage:', previewMessage);
+        
+        if (moneyModal && amountInput && messageInput) {
+            console.log('✅ All money modal elements found');
+            
+            // Test showing modal
+            this.showMoneyModal();
+            
+            // Test input functionality
+            setTimeout(() => {
+                console.log('🧪 Testing amount input...');
+                amountInput.value = '10.50';
+                amountInput.dispatchEvent(new Event('input'));
+                
+                console.log('🧪 Testing message input...');
+                messageInput.value = 'Test message';
+                messageInput.dispatchEvent(new Event('input'));
+                
+                console.log('✅ Money modal test completed');
+            }, 100);
+            
+            return true;
+        } else {
+            console.error('❌ Money modal elements not found');
+            return false;
+        }
+    }
 }
 
 // Global functions for testing
@@ -2905,6 +3019,15 @@ window.checkMobileBackButtonStatus = function() {
 window.showConversationsList = function() {
     if (window.messagesApp) {
         return window.messagesApp.showConversationsList();
+    } else {
+        console.error('❌ MessagesApp not available');
+        return false;
+    }
+};
+
+window.testMoneyModal = function() {
+    if (window.messagesApp) {
+        return window.messagesApp.testMoneyModal();
     } else {
         console.error('❌ MessagesApp not available');
         return false;
