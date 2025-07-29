@@ -1224,6 +1224,85 @@ function addIOSCompatibility() {
                 position: sticky;
             }
         }
+        
+        /* Messages page specific fixes */
+        body:has(.messages-main) .chat-area {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
+        body:has(.messages-main) .chat-header .chat-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        body:has(.messages-main) .chat-header .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: rgba(255,255,255,0.2) !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        body:has(.messages-main) .message-bubble {
+            background: #667eea !important;
+            color: white !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 18px !important;
+            max-width: 70% !important;
+            word-wrap: break-word !important;
+        }
+        
+        body:has(.messages-main) .message-text {
+            color: white !important;
+            font-size: 0.9rem !important;
+            line-height: 1.4 !important;
+        }
+        
+        body:has(.messages-main) .message-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+        
+        body:has(.messages-main) .conversations-sidebar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body:has(.messages-main) .messages-main {
+            display: flex !important;
+            flex-direction: row !important;
+            height: calc(100vh - 70px - 60px) !important;
+            margin-top: 70px !important;
+        }
+        
+        body:has(.messages-main) .mobile-tab-nav {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
     `;
     
     document.head.appendChild(style);
