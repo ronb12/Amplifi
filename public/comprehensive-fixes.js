@@ -660,6 +660,7 @@ function enhanceMobileHeaders() {
                 width: 100% !important;
                 position: relative !important;
                 z-index: 1000 !important;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
             }
             
             /* Better header content spacing - Override feed.css */
@@ -674,6 +675,7 @@ function enhanceMobileHeaders() {
                 justify-content: space-between !important;
                 flex-wrap: nowrap !important;
                 overflow: hidden !important;
+                box-sizing: border-box !important;
             }
             
             /* Larger logo for better visibility */
@@ -682,6 +684,8 @@ function enhanceMobileHeaders() {
                 font-weight: 800 !important;
                 margin-right: 0 !important;
                 flex-shrink: 0 !important;
+                color: white !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
             }
             
             /* Better touch targets for mobile */
@@ -703,6 +707,7 @@ function enhanceMobileHeaders() {
                 min-width: 0 !important;
                 max-width: none !important;
                 margin: 0 0.5rem !important;
+                position: relative !important;
             }
             
             .header .header-center .search-input {
@@ -711,8 +716,8 @@ function enhanceMobileHeaders() {
                 border-radius: 24px !important;
                 padding: 0.6rem 1rem !important;
                 font-size: 0.95rem !important;
-                min-width: 180px !important;
-                max-width: 260px !important;
+                min-width: 160px !important;
+                max-width: 240px !important;
                 width: 100% !important;
                 height: 40px !important;
                 border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
@@ -722,6 +727,8 @@ function enhanceMobileHeaders() {
                 transition: all 0.3s ease !important;
                 flex-shrink: 1 !important;
                 box-sizing: border-box !important;
+                position: relative !important;
+                z-index: 1 !important;
             }
             
             .header .header-center .search-input::placeholder {
@@ -751,6 +758,8 @@ function enhanceMobileHeaders() {
                 transition: all 0.3s ease !important;
                 backdrop-filter: blur(10px) !important;
                 flex-shrink: 0 !important;
+                position: relative !important;
+                z-index: 1 !important;
             }
             
             .header .header-center .search-btn:hover {
@@ -770,6 +779,8 @@ function enhanceMobileHeaders() {
                 backdrop-filter: blur(10px) !important;
                 transition: all 0.3s ease !important;
                 flex-shrink: 0 !important;
+                position: relative !important;
+                z-index: 1 !important;
             }
             
             .header .header-actions .notification-btn:hover {
@@ -785,6 +796,8 @@ function enhanceMobileHeaders() {
                 border-radius: 50% !important;
                 transition: all 0.3s ease !important;
                 flex-shrink: 0 !important;
+                position: relative !important;
+                z-index: 1 !important;
             }
             
             .header .header-actions .user-avatar:hover {
@@ -807,6 +820,38 @@ function enhanceMobileHeaders() {
                 gap: 0.8rem !important;
                 flex-shrink: 0 !important;
                 min-width: auto !important;
+                position: relative !important;
+                z-index: 1 !important;
+            }
+            
+            /* Override any conflicting styles from feed.css */
+            .header .header-content * {
+                box-sizing: border-box !important;
+            }
+            
+            /* Force proper layout */
+            .header .header-left {
+                flex: 0 0 auto !important;
+                display: flex !important;
+                align-items: center !important;
+                min-width: auto !important;
+            }
+            
+            .header .header-center {
+                flex: 1 1 auto !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-width: 0 !important;
+                max-width: none !important;
+            }
+            
+            .header .header-actions {
+                flex: 0 0 auto !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.8rem !important;
+                min-width: auto !important;
             }
         }
         
@@ -823,8 +868,8 @@ function enhanceMobileHeaders() {
             }
             
             .header .header-center .search-input {
-                min-width: 140px !important;
-                max-width: 200px !important;
+                min-width: 120px !important;
+                max-width: 180px !important;
                 padding: 0.5rem 0.8rem !important;
                 font-size: 0.9rem !important;
                 height: 36px !important;
@@ -861,8 +906,8 @@ function enhanceMobileHeaders() {
             }
             
             .header .header-center .search-input {
-                min-width: 120px !important;
-                max-width: 160px !important;
+                min-width: 100px !important;
+                max-width: 140px !important;
                 padding: 0.4rem 0.7rem !important;
                 font-size: 0.85rem !important;
                 height: 32px !important;
@@ -898,8 +943,8 @@ function enhanceMobileHeaders() {
             }
             
             .header .header-center .search-input {
-                max-width: 220px !important;
-                min-width: 160px !important;
+                max-width: 200px !important;
+                min-width: 140px !important;
             }
         }
         
