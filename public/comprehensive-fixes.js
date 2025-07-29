@@ -1391,6 +1391,15 @@ function addIOSCompatibility() {
             transform: scale(1.05) !important;
         }
         
+        /* CRITICAL FIX: Override chat-area display: none from messages-new.css */
+        body:has(.messages-main) .chat-area {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
             bottom: 0 !important;
