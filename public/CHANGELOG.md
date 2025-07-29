@@ -2,6 +2,8 @@
 
 All notable changes to the Amplifi project will be documented in this file.
 
+**A Product of Bradley Virtual Solutions, LLC**
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -12,11 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project organization and structure improvements
 - Contributing guidelines
 - Security test suite enhancements
+- Company branding and attribution
 
 ### Changed
 - Reorganized project folder structure
 - Updated documentation structure
 - Improved security monitoring
+- Added Bradley Virtual Solutions, LLC attribution
 
 ### Fixed
 - Security vulnerabilities
@@ -256,6 +260,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Live Application**: https://amplifi-a54d9.web.app
 - **GitHub Repository**: https://github.com/ronb12/Amplifi
+- **Company Website**: https://bradleyvirtualsolutions.com
 - **Security Documentation**: [docs/security/](docs/security/)
 - **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
 
@@ -301,4 +306,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-**For detailed information about each version, see the corresponding release notes and documentation.** 
+**For detailed information about each version, see the corresponding release notes and documentation.**
+
+---
+
+**© 2024 Bradley Virtual Solutions, LLC. All rights reserved.** 

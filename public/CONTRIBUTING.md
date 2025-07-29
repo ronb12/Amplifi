@@ -1,5 +1,7 @@
 # 🤝 Contributing to Amplifi
 
+**A Product of Bradley Virtual Solutions, LLC**
+
 Thank you for your interest in contributing to Amplifi! This document provides guidelines and information for contributors.
 
 ## 📋 Table of Contents
@@ -494,6 +496,7 @@ We recognize contributors in several ways:
 - **GitHub Discussions**: For questions and discussions
 - **Email**: support@amplifi.com for general support
 - **Security Email**: security@amplifi.com for security issues
+- **Company Website**: https://bradleyvirtualsolutions.com
 
 ### Community Guidelines
 
@@ -505,4 +508,8 @@ We recognize contributors in several ways:
 
 ---
 
-**Thank you for contributing to Amplifi! Your contributions help make the platform better for everyone.** 🎵 
+**Thank you for contributing to Amplifi! Your contributions help make the platform better for everyone.** 🎵
+
+---
+
+**© 2024 Bradley Virtual Solutions, LLC. All rights reserved.** 

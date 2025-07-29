@@ -1,9 +1,12 @@
 # 🎵 Amplifi - Social Media Platform
 
+**A Product of Bradley Virtual Solutions, LLC**
+
 [![Security](https://img.shields.io/badge/Security-Maximum%20Protection-brightgreen)](https://github.com/ronb12/Amplifi/tree/main/docs/security)
 [![Firebase](https://img.shields.io/badge/Firebase-Hosted-blue)](https://amplifi-a54d9.web.app)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](https://amplifi-a54d9.web.app)
+[![Company](https://img.shields.io/badge/Company-Bradley%20Virtual%20Solutions-blue)](https://bradleyvirtualsolutions.com)
 
 ## 🌟 Overview
 
@@ -319,9 +322,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Security Issues**: security@amplifi.com
 - **Bug Reports**: bugs@amplifi.com
 - **Feature Requests**: features@amplifi.com
+- **Company Website**: https://bradleyvirtualsolutions.com
+- **Business Inquiries**: business@bradleyvirtualsolutions.com
 
 ---
 
 **🔒 Security is our top priority. We are committed to protecting our users and their data.**
 
-**🎵 Amplifi - Where Music Meets Social Media** 
+**🎵 Amplifi - Where Music Meets Social Media**
+
+---
+
+**© 2024 Bradley Virtual Solutions, LLC. All rights reserved.** 

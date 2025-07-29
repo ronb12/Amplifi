@@ -1,4 +1,6 @@
-# 🔒 Amplifi Security
+# �� Amplifi Security
+
+**A Product of Bradley Virtual Solutions, LLC**
 
 ## Security Overview
 
@@ -61,6 +63,11 @@ Amplifi is a secure social media application with comprehensive security measure
    firebase deploy --only hosting
    ```
 
+6. **Access the application**
+   ```
+   https://amplifi-a54d9.web.app
+   ```
+
 ## 🔐 Security Configuration
 
 ### Environment Variables
@@ -114,10 +121,10 @@ const SECURITY_CONFIG = {
 
 ```bash
 # Run comprehensive security test suite
-node test-security.js
+node tests/security/test-security.js
 
 # Or open in browser
-open test-security.html
+open tests/security/test-security.html
 ```
 
 ### Test Categories
@@ -278,7 +285,7 @@ const csp = {
 
 ### Documentation Files
 
-- **`SECURITY_DOCUMENTATION.md`**: Comprehensive security documentation
+- **`SECURITY_DOCUMENTATION.md`**: Complete security documentation
 - **`SECURITY_IMPLEMENTATION_GUIDE.md`**: Developer implementation guide
 - **`SECURITY_THREAT_MODEL.md`**: Threat model and risk assessment
 - **`README_SECURITY.md`**: This security overview
@@ -297,6 +304,7 @@ const csp = {
 - **Security Team**: security@amplifi.com
 - **Emergency Contact**: security-emergency@amplifi.com
 - **Bug Reports**: security-bugs@amplifi.com
+- **Company Website**: https://bradleyvirtualsolutions.com
 
 ### Incident Response Process
 
@@ -375,17 +383,31 @@ Before submitting changes:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- [OWASP](https://owasp.org/) for security guidelines
 - [Firebase](https://firebase.google.com/) for security infrastructure
 - [Stripe](https://stripe.com/) for secure payment processing
+- [OWASP](https://owasp.org/) for security guidelines
+- [Vercel](https://vercel.com/) for backend hosting
 - Security community for best practices and guidance
+
+## 📞 Support
+
+- **General Support**: support@amplifi.com
+- **Security Issues**: security@amplifi.com
+- **Bug Reports**: bugs@amplifi.com
+- **Feature Requests**: features@amplifi.com
+- **Company Website**: https://bradleyvirtualsolutions.com
+- **Business Inquiries**: business@bradleyvirtualsolutions.com
 
 ---
 
-*For security-related issues, please contact the security team at security@amplifi.com*
+**🔒 Security is our top priority. We are committed to protecting our users and their data.**
 
-**🔒 Security is our top priority. We are committed to protecting our users and their data.** 
+**🎵 Amplifi - Where Music Meets Social Media**
+
+---
+
+**© 2024 Bradley Virtual Solutions, LLC. All rights reserved.** 
