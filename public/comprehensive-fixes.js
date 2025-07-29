@@ -1464,9 +1464,9 @@ function addIOSCompatibility() {
             flex: 1 !important;
             overflow-y: auto !important;
             padding: 1rem !important;
-            padding-bottom: 0 !important;  /* Back to 0 since input is at bottom */
+            padding-bottom: 20px !important;  /* Account for raised input */
             min-height: 0 !important;
-            max-height: calc(100vh - 70px - 60px - 80px) !important;  /* Back to original */
+            max-height: calc(100vh - 70px - 60px - 100px) !important;  /* Adjusted for raised input */
         }
         
         /* FIX: Chat area layout */
@@ -1560,10 +1560,10 @@ function addIOSCompatibility() {
             line-height: 1 !important;
         }
         
-        /* FIX: Message input area positioning - ensure it's on screen */
+        /* FIX: Message input area positioning - raise it up */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
-            bottom: 0 !important;  /* Back to 0 to ensure it's on screen */
+            bottom: 10px !important;  /* Raised from 0 to 10px */
             background: white !important;
             border-top: 1px solid #e5e7eb !important;
             padding: 1rem !important;
@@ -1575,8 +1575,11 @@ function addIOSCompatibility() {
             opacity: 1 !important;
             width: 100% !important;
             box-sizing: border-box !important;
-            border-radius: 0 !important;  /* Remove border radius */
+            border-radius: 8px !important;  /* Add slight border radius */
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+            margin-left: 10px !important;  /* Add left margin */
+            margin-right: 10px !important;  /* Add right margin */
+            width: calc(100% - 20px) !important;  /* Adjust width for margins */
         }
         
         /* Ensure message input container is properly laid out */
