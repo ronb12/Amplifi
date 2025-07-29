@@ -21,6 +21,9 @@ class FeedPage {
             window.ErrorUtils.setupGlobalErrorHandler();
         }
         
+        // Initialize payment processor
+        this.initializePaymentProcessor();
+        
         await this.setupAuthStateListener();
         this.setupEventListeners();
         this.initializeAdMob();
@@ -39,6 +42,20 @@ class FeedPage {
         this.loadBookmarks();
         this.initializeNotifications();
         this.startNewPostsBannerSimulation(); // Start banner simulation
+    }
+
+    initializePaymentProcessor() {
+        try {
+            // Initialize Stripe payment processor
+            if (typeof StripeVercelBackend !== 'undefined') {
+                window.paymentProcessor = new StripeVercelBackend();
+                console.log('✅ Payment processor initialized successfully');
+            } else {
+                console.warn('⚠️ StripeVercelBackend not available');
+            }
+        } catch (error) {
+            console.error('❌ Error initializing payment processor:', error);
+        }
     }
 
     async setupAuthStateListener() {
