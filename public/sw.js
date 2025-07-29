@@ -1,5 +1,5 @@
 // Enhanced Service Worker for Seamless PWA Experience
-const CACHE_NAME = 'amplifi-cache-v1.0.48'; // Incremented version for full cache refresh
+const CACHE_NAME = 'amplifi-v1.0.132'; // Incremented version for full cache refresh
 const STATIC_CACHE = 'amplifi-static-v2.2';
 const DYNAMIC_CACHE = 'amplifi-dynamic-v2.2';
 
@@ -48,6 +48,22 @@ self.addEventListener('activate', event => {
                 keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
             )
         ).then(() => self.clients.claim())
+    );
+});
+
+// Clear old caches on service worker update
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
     );
 });
 

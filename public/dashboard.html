@@ -63,7 +63,7 @@
         <div id="searchResults" class="search-results" style="display: none;"></div>
       </div>
       <div class="header-actions">
-        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications" onclick="window.location.href='notifications.html'">
           <span class="notification-icon" aria-label="Notification bell">🔔</span>
           <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
         </button>
@@ -74,16 +74,16 @@
     </div>
   </header>
   <nav class="page-nav" role="navigation" aria-label="Main navigation">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="feed.html" class="nav-link">Feed</a>
-    <a href="trending.html" class="nav-link">Trending</a>
-    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
-    <a href="upload.html" class="nav-link">Upload</a>
-    <a href="dashboard.html" class="nav-link active" aria-current="page">Dashboard</a>
-    <a href="messages.html" class="nav-link">Messages</a>
-    <a href="live.html" class="nav-link">Live</a>
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="feed.html" class="nav-link">📱 Feed</a>
+    <a href="trending.html" class="nav-link">🔥 Trending</a>
+    <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+    <a href="upload.html" class="nav-link">➕ Upload</a>
+    <a href="dashboard.html" class="nav-link active" aria-current="page">📊 Dashboard</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="live.html" class="nav-link">📺 Live</a>
     <a href="music-library.html" class="nav-link">🎵 Music</a>
-    <a href="settings.html" class="nav-link">Settings</a>
+    <a href="settings.html" class="nav-link">⚙️ Settings</a>
   </nav>
   <div class="main-layout">
     <main class="main-content" id="mainContent" tabindex="-1" role="main">
@@ -99,16 +99,13 @@
                 <span class="refresh-icon">🔄</span>
                 <span>Refresh</span>
               </button>
-              <button onclick="if(window.dashboardPage) { dashboardPage.cleanupManualTips(); } else { console.error('Dashboard not initialized'); }" class="cleanup-btn" title="Clean Up Manual Tips" aria-label="Clean Up Manual Tips" style="margin-left: 10px; background: #dc2626; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer;">
-                <span>🧹 Fix Earnings</span>
-              </button>
               <button onclick="if(window.stripeConnect) { stripeConnect.showCreatorOnboarding(); } else { console.error('Stripe Connect not initialized'); }" class="stripe-connect-btn" title="Set Up Stripe Connect" aria-label="Set Up Stripe Connect" style="margin-left: 10px; background: #6366f1; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer;">
                 <span>💳 Set Up Payments</span>
               </button>
               <button onclick="if(window.stripeConnect) { stripeConnect.showPayoutManagement(); } else { console.error('Stripe Connect not initialized'); }" class="payout-management-btn" title="Manage Payouts" aria-label="Manage Payouts" style="margin-left: 10px; background: #059669; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer;">
                 <span>⚙️ Manage Payouts</span>
               </button>
-              <button onclick="if(window.stripeConnect) { stripeConnect.showTaxInformation(); } else { console.error('Stripe Connect not initialized'); }" class="tax-docs-btn" title="Tax Documents" aria-label="Tax Documents" style="margin-left: 10px; background: #dc2626; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer;">
+              <button onclick="if(window.stripeConnect) { stripeConnect.showTaxInformation(); } else { console.error('Stripe Connect not initialized'); }" class="tax-docs-btn" title="Tax Documents" aria-label="Tax Documents" style="margin-left: 10px; background: #7c3aed; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer;">
                 <span>📊 Tax Documents</span>
               </button>
             </div>
@@ -236,54 +233,95 @@
           <!-- Analytics Tab -->
           <div id="analyticsTab" class="dashboard-tab-content" role="tabpanel" aria-labelledby="tab-analytics">
             <h3 class="section-heading">Analytics</h3>
-            <div class="analytics-grid flex gap-5 flex-wrap">
-              <div class="analytics-card flex-1 min-w-[260px]">
+            <div class="analytics-grid">
+              <div class="analytics-card">
                 <h3 class="font-lg font-semibold mb-2">Views Over Time</h3>
                 <div id="viewsChart" class="chart-container">
                   <canvas id="viewsCanvas"></canvas>
                 </div>
               </div>
-              <div class="analytics-card flex-1 min-w-[260px]">
+              <div class="analytics-card">
                 <h3 class="font-lg font-semibold mb-2">Engagement Rate</h3>
                 <div id="engagementChart" class="chart-container">
                   <canvas id="engagementCanvas"></canvas>
                 </div>
               </div>
-              <div class="analytics-card flex-1 min-w-[260px]">
+              <div class="analytics-card">
                 <h3 class="font-lg font-semibold mb-2">Top Performing Posts</h3>
-                <div id="topPosts" class="top-posts-list"></div>
+                <div id="topPosts" class="top-posts-list">
+                  <div class="top-post-item">
+                    <div class="post-rank">#1</div>
+                    <div class="post-info">
+                      <h4 class="post-title">Amazing Sunset</h4>
+                      <p class="post-stats">1.2K views • 45 likes • 12 comments</p>
+                    </div>
+                    <div class="post-performance">
+                      <span class="performance-badge">🔥 Trending</span>
+                    </div>
+                  </div>
+                  <div class="top-post-item">
+                    <div class="post-rank">#2</div>
+                    <div class="post-info">
+                      <h4 class="post-title">Travel Adventures</h4>
+                      <p class="post-stats">856 views • 32 likes • 8 comments</p>
+                    </div>
+                    <div class="post-performance">
+                      <span class="performance-badge">📈 Growing</span>
+                    </div>
+                  </div>
+                  <div class="top-post-item">
+                    <div class="post-rank">#3</div>
+                    <div class="post-info">
+                      <h4 class="post-title">Tech Tips Daily</h4>
+                      <p class="post-stats">654 views • 28 likes • 5 comments</p>
+                    </div>
+                    <div class="post-performance">
+                      <span class="performance-badge">💡 Popular</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="analytics-card flex-1 min-w-[260px]">
+              <div class="analytics-card">
                 <h3 class="font-lg font-semibold mb-2">Audience Demographics</h3>
                 <div id="demographicsChart" class="chart-container">
                   <canvas id="demographicsCanvas"></canvas>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Earnings Tab -->
-          <div id="earningsTab" class="dashboard-tab-content" role="tabpanel" aria-labelledby="tab-earnings">
-            <h3 class="section-heading">Earnings</h3>
-            <div class="earnings-overview flex gap-5 flex-wrap mb-5">
-              <div class="earnings-card flex-1 min-w-[220px]">
-                <h3>This Month</h3>
-                <p class="earnings-amount" id="monthlyEarnings">$0.00</p>
-                <span class="earnings-change positive">+0% from last month</span>
+            
+            <!-- Earnings Section -->
+            <div class="earnings-section">
+              <h3 class="section-heading">Earnings Overview</h3>
+              <div class="earnings-grid">
+                <div class="earnings-card">
+                  <div class="earnings-icon">💰</div>
+                  <div class="earnings-content">
+                    <h4>This Month</h4>
+                    <p class="earnings-amount" id="monthlyEarnings">$0.00</p>
+                    <span class="earnings-change positive">+0% from last month</span>
+                  </div>
+                </div>
+                <div class="earnings-card">
+                  <div class="earnings-icon">📈</div>
+                  <div class="earnings-content">
+                    <h4>Total Lifetime</h4>
+                    <p class="earnings-amount" id="lifetimeEarnings">$0.00</p>
+                    <span class="earnings-change positive">Growing steadily</span>
+                  </div>
+                </div>
+                <div class="earnings-card">
+                  <div class="earnings-icon">💳</div>
+                  <div class="earnings-content">
+                    <h4>Payout Status</h4>
+                    <p class="payout-status" id="payoutStatus">Not eligible</p>
+                    <span class="payout-info">Minimum $50 to withdraw</span>
+                  </div>
+                </div>
               </div>
-              <div class="earnings-card flex-1 min-w-[220px]">
-                <h3>Total Lifetime</h3>
-                <p class="earnings-amount" id="lifetimeEarnings">$0.00</p>
-                <span class="earnings-change positive">Growing steadily</span>
+              <div class="earnings-breakdown">
+                <h4 class="breakdown-title">Earnings Breakdown</h4>
+                <div id="earningsBreakdown" class="breakdown-list"></div>
               </div>
-              <div class="earnings-card flex-1 min-w-[220px]">
-                <h3>Payout Status</h3>
-                <p class="payout-status" id="payoutStatus">Not eligible</p>
-                <span class="payout-info">Minimum $50 to withdraw</span>
-              </div>
-            </div>
-            <div class="earnings-breakdown">
-              <h3 class="font-lg font-semibold mb-2">Earnings Breakdown</h3>
-              <div id="earningsBreakdown" class="breakdown-list"></div>
             </div>
           </div>
         </div>
@@ -327,6 +365,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="firebaseConfig.js"></script>
   <script src="js/utils.js"></script>
+  <script src="comprehensive-fixes.js"></script>
   <script src="js/dashboard.js?v=1.0.48"></script>
   <script src="js/stripe-connect.js?v=1.0.48"></script>
   <script>

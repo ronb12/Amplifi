@@ -10,10 +10,16 @@ class MusicLibraryPage {
     }
 
     async init() {
-        await this.setupAuthStateListener();
-        this.setupEventListeners();
-        this.loadMusicLibrary();
-        this.showCopyrightSources(); // Display copyright sources and attribution info
+        console.log('🎵 MUSIC LIBRARY - Initializing...');
+        try {
+            await this.setupAuthStateListener();
+            this.setupEventListeners();
+            this.loadMusicLibrary();
+            this.showCopyrightSources(); // Display copyright sources and attribution info
+            console.log('🎵 MUSIC LIBRARY - Initialized successfully');
+        } catch (error) {
+            console.error('🎵 MUSIC LIBRARY - Error during initialization:', error);
+        }
     }
 
     async setupAuthStateListener() {
@@ -72,6 +78,15 @@ class MusicLibraryPage {
             });
         }
 
+        // Notification button functionality
+        const notificationBtn = document.querySelector('.notification-btn');
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', () => {
+                console.log('🔔 NOTIFICATION - Navigating to notifications page');
+                window.location.href = 'notifications.html';
+            });
+        }
+
         // Music category navigation
         document.querySelectorAll('.music-category a').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -83,6 +98,15 @@ class MusicLibraryPage {
 
         // Music action buttons
         document.querySelectorAll('.music-actions a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const action = e.target.getAttribute('href').substring(1);
+                this.handleMusicAction(action);
+            });
+        });
+
+        // Feature card buttons
+        document.querySelectorAll('.feature-card a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const action = e.target.getAttribute('href').substring(1);
@@ -109,8 +133,13 @@ class MusicLibraryPage {
             
             this.renderMusicCategories();
             this.updateMusicStats();
+            
+            // Show success message
+            console.log(`Successfully loaded ${this.musicData.length} tracks`);
         } catch (error) {
             console.error('Error loading music library:', error);
+            // Show user-friendly error message
+            this.showErrorMessage('Failed to load music library. Please try refreshing the page.');
         }
     }
 
@@ -189,73 +218,394 @@ class MusicLibraryPage {
     }
 
     navigateToSection(section) {
+        console.log('🎵 NAVIGATION - Navigating to section:', section);
         // Handle navigation to different music sections
         switch (section) {
             case 'browse':
+                console.log('🎵 NAVIGATION - Showing browse section');
                 this.showBrowseSection();
                 break;
             case 'genres':
+                console.log('🎵 NAVIGATION - Showing genres section');
                 this.showGenresSection();
                 break;
             case 'royalty-free':
+                console.log('🎵 NAVIGATION - Showing royalty-free section');
                 this.showRoyaltyFreeSection();
                 break;
             case 'playlists':
+                console.log('🎵 NAVIGATION - Showing playlists section');
                 this.showPlaylistsSection();
                 break;
             case 'upload':
+                console.log('🎵 NAVIGATION - Showing upload section');
                 this.showUploadSection();
                 break;
             default:
-                console.log('Unknown section:', section);
+                console.log('🎵 NAVIGATION - Unknown section:', section);
+                this.showBrowseSection(); // Default to browse
         }
     }
 
     handleMusicAction(action) {
+        console.log('🎵 MUSIC ACTION - Handling action:', action);
         // Handle music action buttons
         switch (action) {
             case 'browse':
+                console.log('🎵 MUSIC ACTION - Showing browse section');
                 this.showBrowseSection();
                 break;
             case 'upload':
+                console.log('🎵 MUSIC ACTION - Showing upload section');
                 this.showUploadSection();
                 break;
             case 'playlists':
+                console.log('🎵 MUSIC ACTION - Showing playlists section');
                 this.showPlaylistsSection();
                 break;
+            case 'royalty-free':
+                console.log('🎵 MUSIC ACTION - Showing royalty-free section');
+                this.showRoyaltyFreeSection();
+                break;
             default:
-                console.log('Unknown action:', action);
+                console.log('🎵 MUSIC ACTION - Unknown action:', action);
+                this.showBrowseSection(); // Default to browse
         }
     }
 
     showBrowseSection() {
-        // Show music browse section
-        console.log('Showing browse section');
-        // This would update the UI to show the browse section
+        console.log('🎵 BROWSE - Showing browse section');
+        console.log('🎵 BROWSE - Music data length:', this.musicData.length);
+        
+        // Show music browse section with actual functionality
+        const browseHTML = `
+            <div class="music-browse-section">
+                <h2>🎵 Browse Music Library</h2>
+                <div class="search-filters">
+                    <input type="text" placeholder="Search tracks..." class="search-filter" id="trackSearch">
+                    <select class="genre-filter" id="genreFilter">
+                        <option value="">All Genres</option>
+                        <option value="Lo-Fi">Lo-Fi</option>
+                        <option value="Electronic">Electronic</option>
+                        <option value="Classical">Classical</option>
+                        <option value="Jazz">Jazz</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Hip-Hop">Hip-Hop</option>
+                        <option value="World">World</option>
+                        <option value="Ambient">Ambient</option>
+                        <option value="Pop">Pop</option>
+                        <option value="Country">Country</option>
+                    </select>
+                </div>
+                <div class="music-grid" id="musicGrid">
+                    ${this.renderMusicGrid(this.musicData.slice(0, 12))}
+                </div>
+                <div class="load-more">
+                    <button class="btn-primary" onclick="musicLibraryPage.loadMoreTracks()">Load More Tracks</button>
+                </div>
+            </div>
+        `;
+        
+        console.log('🎵 BROWSE - Generated HTML length:', browseHTML.length);
+        this.updateMainContent(browseHTML);
+        
+        // Add event listeners for search and filter
+        this.setupBrowseEventListeners();
+        console.log('🎵 BROWSE - Browse section displayed successfully');
     }
 
     showGenresSection() {
-        // Show genres section
-        console.log('Showing genres section');
-        // This would update the UI to show genres
+        // Show genres section with actual functionality
+        const genres = this.getUniqueGenres();
+        this.updateMainContent(`
+            <div class="music-genres-section">
+                <h2>🎼 Music Genres</h2>
+                <div class="genres-grid">
+                    ${genres.map(genre => `
+                        <div class="genre-card" onclick="musicLibraryPage.browseGenre('${genre}')">
+                            <h3>${genre}</h3>
+                            <p>${this.getTracksByGenre(genre).length} tracks</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `);
     }
 
     showRoyaltyFreeSection() {
         // Show royalty-free music section
-        console.log('Showing royalty-free section');
-        // This would update the UI to show royalty-free tracks
+        const royaltyFreeTracks = this.musicData.filter(track => track.copyrightFree);
+        this.updateMainContent(`
+            <div class="royalty-free-section">
+                <h2>🎼 Royalty-Free Music</h2>
+                <div class="royalty-free-info">
+                    <p>All tracks are copyright-free and safe for commercial use. No licensing fees or restrictions.</p>
+                </div>
+                <div class="music-grid" id="royaltyFreeGrid">
+                    ${this.renderMusicGrid(royaltyFreeTracks.slice(0, 12))}
+                </div>
+            </div>
+        `);
     }
 
     showPlaylistsSection() {
         // Show playlists section
-        console.log('Showing playlists section');
-        // This would update the UI to show user playlists
+        if (!this.currentUser) {
+            this.updateMainContent(`
+                <div class="playlists-section">
+                    <h2>📋 My Playlists</h2>
+                    <div class="login-prompt">
+                        <p>Please login to access your playlists</p>
+                        <button class="btn-primary" onclick="musicLibraryPage.promptLogin()">Login</button>
+                    </div>
+                </div>
+            `);
+        } else {
+            this.updateMainContent(`
+                <div class="playlists-section">
+                    <h2>📋 My Playlists</h2>
+                    <div class="playlist-actions">
+                        <button class="btn-primary" onclick="musicLibraryPage.createNewPlaylist()">Create New Playlist</button>
+                    </div>
+                    <div class="playlists-grid" id="playlistsGrid">
+                        <div class="playlist-card">
+                            <h3>My Favorites</h3>
+                            <p>0 tracks</p>
+                        </div>
+                        <div class="playlist-card">
+                            <h3>Recently Added</h3>
+                            <p>0 tracks</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
     }
 
     showUploadSection() {
         // Show music upload section
-        console.log('Showing upload section');
-        // This would update the UI to show upload form
+        if (!this.currentUser) {
+            this.updateMainContent(`
+                <div class="upload-section">
+                    <h2>🎤 Upload Music</h2>
+                    <div class="login-prompt">
+                        <p>Please login to upload your music</p>
+                        <button class="btn-primary" onclick="musicLibraryPage.promptLogin()">Login</button>
+                    </div>
+                </div>
+            `);
+        } else {
+            this.updateMainContent(`
+                <div class="upload-section">
+                    <h2>🎤 Upload Music</h2>
+                    <form class="upload-form" id="uploadForm">
+                        <div class="form-group">
+                            <label for="trackTitle">Track Title</label>
+                            <input type="text" id="trackTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="trackArtist">Artist Name</label>
+                            <input type="text" id="trackArtist" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="trackGenre">Genre</label>
+                            <select id="trackGenre" required>
+                                <option value="">Select Genre</option>
+                                <option value="Lo-Fi">Lo-Fi</option>
+                                <option value="Electronic">Electronic</option>
+                                <option value="Classical">Classical</option>
+                                <option value="Jazz">Jazz</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Hip-Hop">Hip-Hop</option>
+                                <option value="World">World</option>
+                                <option value="Ambient">Ambient</option>
+                                <option value="Pop">Pop</option>
+                                <option value="Country">Country</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trackFile">Audio File</label>
+                            <input type="file" id="trackFile" accept="audio/*" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="trackDescription">Description</label>
+                            <textarea id="trackDescription" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Upload Track</button>
+                    </form>
+                </div>
+            `);
+            
+            // Add form submission handler
+            this.setupUploadForm();
+        }
+    }
+
+    updateMainContent(html) {
+        const mainContent = document.getElementById('mainContent');
+        if (mainContent) {
+            // Create a temporary container to parse the HTML
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = html;
+            const newContent = tempContainer.firstElementChild;
+            
+            // Find the music-stats section to insert content before it
+            const musicStats = mainContent.querySelector('.music-stats');
+            
+            if (musicStats && newContent) {
+                // Insert the new content before the music-stats section
+                mainContent.insertBefore(newContent, musicStats);
+            } else if (newContent) {
+                // If no music-stats section, append to the end
+                mainContent.appendChild(newContent);
+            }
+            
+            console.log('🎵 CONTENT - Updated main content with:', newContent?.tagName || 'unknown element');
+        } else {
+            console.error('🎵 ERROR - Main content element not found');
+        }
+    }
+
+    renderMusicGrid(tracks) {
+        return tracks.map(track => `
+            <div class="music-track-card">
+                <div class="track-cover">
+                    <img src="${track.coverArt}" alt="${track.title}">
+                    <div class="track-overlay">
+                        <button class="play-btn" onclick="musicLibraryPage.playMusic('${track.id}')">▶️</button>
+                        <button class="download-btn" onclick="musicLibraryPage.downloadMusic('${track.id}')">⬇️</button>
+                    </div>
+                </div>
+                <div class="track-info">
+                    <h4>${track.title}</h4>
+                    <p class="artist">${track.artist}</p>
+                    <p class="genre">${track.genre}</p>
+                    <div class="track-stats">
+                        <span class="rating">⭐ ${track.rating}</span>
+                        <span class="downloads">⬇️ ${track.downloads.toLocaleString()}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    setupBrowseEventListeners() {
+        const trackSearch = document.getElementById('trackSearch');
+        const genreFilter = document.getElementById('genreFilter');
+        
+        if (trackSearch) {
+            trackSearch.addEventListener('input', (e) => {
+                this.filterTracks(e.target.value, genreFilter?.value || '');
+            });
+        }
+        
+        if (genreFilter) {
+            genreFilter.addEventListener('change', (e) => {
+                this.filterTracks(trackSearch?.value || '', e.target.value);
+            });
+        }
+    }
+
+    filterTracks(searchTerm, genre) {
+        let filteredTracks = this.musicData;
+        
+        if (searchTerm) {
+            filteredTracks = filteredTracks.filter(track => 
+                track.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                track.artist.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+        
+        if (genre) {
+            filteredTracks = filteredTracks.filter(track => track.genre === genre);
+        }
+        
+        const musicGrid = document.getElementById('musicGrid');
+        if (musicGrid) {
+            musicGrid.innerHTML = this.renderMusicGrid(filteredTracks.slice(0, 12));
+        }
+    }
+
+    getTracksByGenre(genre) {
+        return this.musicData.filter(track => track.genre === genre);
+    }
+
+    browseGenre(genre) {
+        const tracks = this.getTracksByGenre(genre);
+        this.updateMainContent(`
+            <div class="genre-browse-section">
+                <h2>🎼 ${genre} Music</h2>
+                <div class="music-grid" id="genreGrid">
+                    ${this.renderMusicGrid(tracks.slice(0, 12))}
+                </div>
+            </div>
+        `);
+    }
+
+    loadMoreTracks() {
+        // Implementation for loading more tracks
+        console.log('Loading more tracks...');
+    }
+
+    promptLogin() {
+        alert('Please login to access this feature');
+    }
+
+    setupUploadForm() {
+        const uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleUpload();
+            });
+        }
+    }
+
+    async handleUpload() {
+        const title = document.getElementById('trackTitle').value;
+        const artist = document.getElementById('trackArtist').value;
+        const genre = document.getElementById('trackGenre').value;
+        const file = document.getElementById('trackFile').files[0];
+        const description = document.getElementById('trackDescription').value;
+        
+        if (!title || !artist || !genre || !file) {
+            alert('Please fill in all required fields');
+            return;
+        }
+        
+        try {
+            // Simulate upload process
+            alert('Upload feature coming soon! This would upload to Firebase Storage and Firestore.');
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Upload failed. Please try again.');
+        }
+    }
+
+    showErrorMessage(message) {
+        // Create and show error message to user
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        errorDiv.textContent = message;
+        document.body.appendChild(errorDiv);
+        
+        // Remove error message after 5 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 5000);
     }
 
     showCopyrightSources() {
@@ -318,10 +668,73 @@ class MusicLibraryPage {
 
     // Music playback functionality
     playMusic(trackId) {
+        console.log('🎵 Playing music track:', trackId);
+        
         const track = this.musicData.find(t => t.id === trackId);
         if (track) {
-            console.log('Playing track:', track.title);
-            // Implement music playback logic
+            console.log('🎵 Playing:', track.title, 'by', track.artist);
+            
+            // Create audio element for playback
+            const audio = new Audio();
+            
+            // For demo purposes, use a sample audio URL
+            // In production, this would be the actual track URL from Firebase Storage
+            audio.src = track.audioUrl || 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+            
+            // Set up audio event listeners
+            audio.addEventListener('loadstart', () => {
+                console.log('🎵 Loading audio...');
+            });
+            
+            audio.addEventListener('canplay', () => {
+                console.log('🎵 Audio ready to play');
+                audio.play().catch(e => {
+                    console.error('🎵 Error playing audio:', e);
+                    alert('Unable to play audio. Please try again.');
+                });
+            });
+            
+            audio.addEventListener('error', (e) => {
+                console.error('🎵 Audio error:', e);
+                alert('Unable to load audio file. Please try again later.');
+            });
+            
+            // Update UI to show playing state
+            const playBtn = document.querySelector(`[onclick*="playMusic('${trackId}')"]`);
+            if (playBtn) {
+                playBtn.textContent = '⏸️';
+                playBtn.style.background = '#ef4444';
+                
+                // Reset button after audio ends
+                audio.addEventListener('ended', () => {
+                    playBtn.textContent = '▶️';
+                    playBtn.style.background = '#6366f1';
+                });
+            }
+            
+            // Show user feedback
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #6366f1;
+                color: white;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+            `;
+            notification.textContent = `🎵 Now playing: ${track.title}`;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        } else {
+            console.error('🎵 Track not found:', trackId);
+            alert('Track not found. Please try again.');
         }
     }
 
@@ -364,6 +777,83 @@ class MusicLibraryPage {
             console.log('Playlist created:', name);
         } catch (error) {
             console.error('Error creating playlist:', error);
+        }
+    }
+
+    createNewPlaylist() {
+        console.log('🎵 PLAYLIST - Creating new playlist');
+        
+        // Show playlist creation modal
+        const modalHTML = `
+            <div class="playlist-modal" id="playlistModal">
+                <div class="playlist-modal-content">
+                    <h3>📋 Create New Playlist</h3>
+                    <form id="playlistForm">
+                        <div class="form-group">
+                            <label for="playlistName">Playlist Name</label>
+                            <input type="text" id="playlistName" placeholder="Enter playlist name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="playlistDescription">Description (Optional)</label>
+                            <textarea id="playlistDescription" placeholder="Describe your playlist" rows="3"></textarea>
+                        </div>
+                        <div class="playlist-actions">
+                            <button type="submit" class="btn-primary">Create Playlist</button>
+                            <button type="button" class="btn-secondary" onclick="musicLibraryPage.closePlaylistModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add form submission handler
+        const playlistForm = document.getElementById('playlistForm');
+        if (playlistForm) {
+            playlistForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleCreatePlaylist();
+            });
+        }
+        
+        console.log('🎵 PLAYLIST - Playlist creation modal displayed');
+    }
+
+    async handleCreatePlaylist() {
+        try {
+            const playlistName = document.getElementById('playlistName').value;
+            const playlistDescription = document.getElementById('playlistDescription').value;
+            
+            if (!playlistName.trim()) {
+                alert('Please enter a playlist name');
+                return;
+            }
+            
+            console.log('🎵 PLAYLIST - Creating playlist:', playlistName);
+            
+            await this.createPlaylist(playlistName, playlistDescription);
+            
+            // Close modal
+            this.closePlaylistModal();
+            
+            // Show success message
+            alert(`Playlist "${playlistName}" created successfully!`);
+            
+            // Refresh playlists section
+            this.showPlaylistsSection();
+            
+        } catch (error) {
+            console.error('🎵 PLAYLIST - Error creating playlist:', error);
+            alert('Failed to create playlist. Please try again.');
+        }
+    }
+
+    closePlaylistModal() {
+        const modal = document.getElementById('playlistModal');
+        if (modal) {
+            modal.remove();
         }
     }
 

@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Library - Amplifi</title>
     <meta name="description" content="Discover and manage your music library on Amplifi - 10,000+ Copyright-Free Tracks Available">
+    <meta name="keywords" content="music library, copyright-free music, royalty-free tracks, music streaming, playlists, music upload">
+    <meta name="author" content="Amplifi">
+    <meta property="og:title" content="Music Library - Amplifi">
+    <meta property="og:description" content="Discover and manage your music library on Amplifi - 10,000+ Copyright-Free Tracks Available">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://amplifi-a54d9.web.app/music-library.html">
+    <meta property="og:image" content="https://amplifi-a54d9.web.app/icons/icon-512x512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Music Library - Amplifi">
+    <meta name="twitter:description" content="Discover and manage your music library on Amplifi - 10,000+ Copyright-Free Tracks Available">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Music Library - Amplifi",
+        "description": "Discover and manage your music library on Amplifi - 10,000+ Copyright-Free Tracks Available",
+        "url": "https://amplifi-a54d9.web.app/music-library.html",
+        "mainEntity": {
+            "@type": "MusicPlaylist",
+            "name": "Amplifi Music Library",
+            "description": "10,000+ Copyright-Free Tracks Available",
+            "numberOfItems": 10000,
+            "genre": ["Lo-Fi", "Electronic", "Classical", "Jazz", "Rock", "Hip-Hop", "World", "Ambient", "Pop", "Country"],
+            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "provider": {
+                "@type": "Organization",
+                "name": "Amplifi",
+                "url": "https://amplifi-a54d9.web.app"
+            }
+        }
+    }
+    </script>
     
     <!-- Favicon and PWA -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -60,7 +94,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 2rem;
-            height: 70px;
+            height: 70px; /* Back to 70px but with better layout */
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -76,21 +110,32 @@
         
         .header-center {
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Changed to horizontal layout */
             align-items: center;
-            gap: 0.5rem;
+            gap: 1rem; /* Horizontal gap */
+            max-height: 100%;
+        }
+        
+        .page-title {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            font-weight: 500;
+            white-space: nowrap; /* Prevent wrapping */
         }
         
         .search-input {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 1.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             color: white;
-            font-size: 0.9rem;
-            width: 250px;
+            font-size: 0.85rem;
+            width: 200px; /* Smaller width */
             backdrop-filter: blur(10px);
             transition: all 0.3s;
+            height: 32px;
+            box-sizing: border-box;
         }
         
         .search-input::placeholder {
@@ -128,12 +173,14 @@
         .notification-btn {
             background: rgba(255,255,255,0.2);
             border: none;
-            padding: 10px;
+            padding: 8px;
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
             backdrop-filter: blur(10px);
+            width: 36px;
+            height: 36px;
         }
         
         .notification-btn:hover {
@@ -142,7 +189,7 @@
         }
         
         .notification-icon {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: white;
         }
         
@@ -163,8 +210,8 @@
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.3);
             cursor: pointer;
@@ -180,37 +227,58 @@
         .page-nav {
             display: flex;
             justify-content: center;
-            gap: 2.2rem;
+            gap: 0.8rem; /* Reduced gap to fit more tabs */
             background: #fff;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.06);
-            border-radius: 0 0 1.2rem 1.2rem;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.08);
+            border-radius: 0 0 1.5rem 1.5rem;
             margin-bottom: 2rem;
-            padding: 0.7rem 0 0.3rem 0;
+            padding: 0.8rem 1.5rem; /* Reduced padding */
             position: sticky;
-            top: 70px;
+            top: 90px; /* Moved down from 70px to create more space */
             z-index: 99;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            border-top: 1px solid rgba(99,102,241,0.1);
+            backdrop-filter: blur(10px);
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .page-nav::-webkit-scrollbar {
+            display: none;
         }
         
         .nav-link {
-            color: #1f2937;
+            color: #6b7280;
             font-weight: 600;
-            font-size: 1.08rem;
-            padding: 0.5rem 1.2rem;
-            border-radius: 0.7rem;
-            transition: background 0.18s, color 0.18s;
+            font-size: 0.95rem; /* Slightly smaller font */
+            padding: 0.6rem 1rem; /* Reduced padding */
+            border-radius: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             position: relative;
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem; /* Reduced gap between icon and text */
         }
         
         .nav-link.active, .nav-link[aria-current="page"] {
-            background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
             color: #fff;
-            box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+            transform: translateY(-1px);
         }
         
         .nav-link:hover {
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             color: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.1);
         }
         
         /* Mobile Navigation */
@@ -225,7 +293,7 @@
             background: #fff;
             box-shadow: 0 -4px 20px rgba(99,102,241,0.15);
             z-index: 200;
-            padding: 0.5rem 0 0.3rem 0;
+            padding: 0.4rem 0 0.2rem 0;
             border-radius: 1.5rem 1.5rem 0 0;
             border-top: 1px solid rgba(99,102,241,0.1);
         }
@@ -237,12 +305,13 @@
             justify-content: center;
             flex: 1;
             color: #1f2937;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            padding: 0.5rem 0 0.2rem 0;
+            padding: 0.3rem 0 0.1rem 0;
             border-radius: 0.7rem;
             transition: background 0.18s, color 0.18s;
             text-decoration: none;
+            min-width: 0;
         }
         
         .tab-item.active, .tab-item[aria-current="page"] {
@@ -256,23 +325,365 @@
         }
         
         .tab-icon {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 0.1rem;
         }
         
         .tab-label {
-            font-size: 0.95rem;
+            font-size: 0.8rem;
+            line-height: 1;
         }
         
         @media (min-width: 769px) {
             .mobile-tab-nav { display: none; }
         }
         
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .page-nav {
+                gap: 0.6rem;
+                padding: 0.6rem 1rem;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .nav-link {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.8rem;
+            }
+        }
+        
+        @media (max-width: 1400px) {
+            .page-nav {
+                gap: 0.8rem;
+                margin-left: 2rem;
+                margin-right: 2rem;
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            .page-nav {
+                gap: 0.4rem;
+                padding: 0.5rem 0.8rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.6rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .page-nav { display: none; }
-            .header-content { padding: 0 1rem; height: 56px; }
+            .header-content { 
+                padding: 0 1rem; 
+                height: 70px; /* Smaller height on mobile */
+            }
             .header-left .logo { font-size: 1.2rem; }
-            .search-input { width: 200px; }
+            .search-input { 
+                width: 180px; /* Smaller on mobile */
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+            .header-center {
+                gap: 0.2rem; /* Even smaller gap on mobile */
+            }
+            .page-title {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                height: 65px; /* Even smaller on very small screens */
+            }
+            .search-input {
+                width: 150px;
+            }
+        }
+        
+        /* Music Browse Section Styles */
+        .music-browse-section {
+            background: #fff;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.08);
+        }
+        
+        .music-browse-section h2 {
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .search-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .search-filter {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-filter:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .genre-filter {
+            min-width: 150px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: #fff;
+            cursor: pointer;
+        }
+        
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .music-track-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .music-track-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .track-cover {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .track-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .track-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .music-track-card:hover .track-overlay {
+            opacity: 1;
+        }
+        
+        .play-btn, .download-btn {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .play-btn:hover, .download-btn:hover {
+            background: #4f46e5;
+        }
+        
+        .track-info {
+            padding: 1rem;
+        }
+        
+        .track-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .track-info .artist {
+            color: #6b7280;
+            margin: 0 0 0.25rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .track-info .genre {
+            color: #6366f1;
+            margin: 0 0 0.5rem 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .track-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .load-more .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .load-more .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .search-filters {
+                flex-direction: column;
+            }
+            
+            .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .music-browse-section {
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+        }
+        
+        /* Playlist Modal Styles */
+        .playlist-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .playlist-modal-content {
+            background: #fff;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .playlist-modal-content h3 {
+            margin: 0 0 1.5rem 0;
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .playlist-modal-content .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .playlist-modal-content label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .playlist-modal-content input,
+        .playlist-modal-content textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .playlist-modal-content input:focus,
+        .playlist-modal-content textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .playlist-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+        
+        .playlist-actions .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .playlist-actions .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+        }
+        
+        .playlist-actions .btn-secondary {
+            background: #6b7280;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .playlist-actions .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        @media (max-width: 480px) {
+            .header-left .logo {
+                font-size: 1.1rem;
+            }
         }
         
         /* Main Content */
@@ -280,6 +691,7 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem 2rem 2rem;
+            margin-top: 170px; /* Updated to account for header (70px) + navigation (moved down) + spacing */
         }
         
         /* Music Library Specific Styles */
@@ -381,6 +793,43 @@
             transform: translateY(-2px);
         }
         
+        /* Music Statistics - FIXED */
+        .music-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(99,102,241,0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #6366f1;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Music Categories - FIXED */
         .music-categories {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -418,41 +867,7 @@
             line-height: 1.6;
         }
         
-        .music-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .music-stat {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            border: 1px solid rgba(99,102,241,0.1);
-        }
-        
-        .music-stat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-        
-        .music-stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #6366f1;
-            margin: 0 0 0.5rem 0;
-        }
-        
-        .music-stat-label {
-            font-size: 1rem;
-            color: #6b7280;
-            font-weight: 500;
-        }
-        
+        /* Music Features - FIXED */
         .music-features {
             background: white;
             border-radius: 1.2rem;
@@ -479,7 +894,7 @@
             gap: 1.5rem;
         }
         
-        .feature-item {
+        .feature-card {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -489,7 +904,7 @@
             transition: all 0.3s;
         }
         
-        .feature-item:hover {
+        .feature-card:hover {
             background: #f1f5f9;
             transform: translateX(4px);
         }
@@ -522,10 +937,28 @@
             color: #6b7280;
         }
         
+        .feature-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: inherit;
+        }
+        
+        .feature-link:hover {
+            color: #4f46e5;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .main-content {
                 padding: 0 1rem 2rem 1rem;
+                margin-top: 160px; /* Account for banner + smaller header on mobile */
+                padding-bottom: 100px; /* Account for mobile navigation */
             }
             
             .music-hero {
@@ -595,23 +1028,346 @@
         html {
             scroll-behavior: smooth;
         }
-        
-        /* Copyright Notice Banner */
-        .copyright-notice-banner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 1rem 0;
-            border-bottom: 2px solid #047857;
+
+        /* Music Browse Section Styles */
+        .music-browse-section {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
-        
-        .copyright-notice-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+
+        .search-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-filter, .genre-filter {
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .search-filter {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .genre-filter {
+            min-width: 150px;
+        }
+
+        .search-filter:focus, .genre-filter:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .music-track-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(99,102,241,0.1);
+        }
+
+        .music-track-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .track-cover {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .track-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .track-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .music-track-card:hover .track-overlay {
+            opacity: 1;
+        }
+
+        .play-btn, .download-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover, .download-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .track-info {
+            padding: 1rem;
+        }
+
+        .track-info h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .track-info .artist {
+            color: #6366f1;
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .track-info .genre {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .track-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* Genres Section Styles */
+        .music-genres-section {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .genres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .genre-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .genre-card:hover {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .genre-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .genre-card p {
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        /* Royalty Free Section */
+        .royalty-free-section {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .royalty-free-info {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Playlists Section */
+        .playlists-section {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .login-prompt {
+            text-align: center;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            border: 2px dashed #e2e8f0;
+        }
+
+        .playlist-actions {
+            margin-bottom: 1.5rem;
+        }
+
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .playlist-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .playlist-card:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .playlist-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+        }
+
+        .playlist-card p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .upload-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design for New Sections */
+        @media (max-width: 768px) {
+            .search-filters {
+                flex-direction: column;
+            }
+            
+            .search-filter, .genre-filter {
+                width: 100%;
+            }
+            
+            .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .genres-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .playlists-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Copyright Notice Content Section */
+        .copyright-notice-content {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border: 2px solid #047857;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
         
         .copyright-icon {
@@ -791,26 +1547,39 @@
             color: #059669;
             font-weight: bold;
         }
+
+        /* AdSense Ad Containers */
+        .adsense-banner-container,
+        .adsense-in-article-container {
+            margin: 2rem 0;
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .adsense-banner-container {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .adsense-in-article-container {
+            max-width: 100%;
+            margin: 2rem auto;
+        }
+
+        /* Responsive AdSense */
+        @media (max-width: 768px) {
+            .adsense-banner-container,
+            .adsense-in-article-container {
+                margin: 1rem 0;
+                padding: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Copyright-Free Notice Banner -->
-    <div class="copyright-notice-banner">
-        <div class="copyright-notice-content">
-            <div class="copyright-icon">🎵</div>
-            <div class="copyright-text">
-                <strong>10,000+ Copyright-Free Tracks Available!</strong>
-                <span>All music is licensed under Creative Commons or Public Domain - Safe for streaming, videos, and commercial use</span>
-            </div>
-            <div class="copyright-sources">
-                <span class="source-badge">Free Music Archive</span>
-                <span class="source-badge">CCMixter</span>
-                <span class="source-badge">Musopen</span>
-                <span class="source-badge">Public Domain</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -823,7 +1592,7 @@
                 <input type="text" id="searchInput" placeholder="Search music..." class="search-input" aria-label="Search music">
             </div>
             <div class="header-actions">
-                <button class="notification-btn" aria-label="Notifications">
+                <button class="notification-btn" aria-label="Notifications" onclick="window.location.href='notifications.html'">
                     <span class="notification-icon">🔔</span>
                     <span class="notification-badge">3</span>
                 </button>
@@ -848,90 +1617,131 @@
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent" tabindex="-1" role="main">
+        <!-- Copyright-Free Notice -->
+        <div class="copyright-notice-content">
+            <div class="copyright-icon">🎵</div>
+            <div class="copyright-text">
+                <strong>10,000+ Copyright-Free Tracks Available!</strong>
+                <span>All music is licensed under Creative Commons or Public Domain - Safe for streaming, videos, and commercial use</span>
+            </div>
+            <div class="copyright-sources">
+                <span class="source-badge">Free Music Archive</span>
+                <span class="source-badge">CCMixter</span>
+                <span class="source-badge">Musopen</span>
+                <span class="source-badge">Public Domain</span>
+            </div>
+        </div>
+
         <!-- Music Hero Section -->
         <section class="music-hero">
             <h1>🎵 Music Library</h1>
             <p>Discover, create, and manage your music collection. Access royalty-free music, create playlists, and enhance your content with professional audio.</p>
             <div class="music-actions">
-                <a href="#browse" class="btn-primary">🎵 Browse Music</a>
-                <a href="#upload" class="btn-secondary">📤 Upload Music</a>
-                <a href="#playlists" class="btn-secondary">📋 My Playlists</a>
+                <button onclick="musicLibraryPage.handleMusicAction('browse')" class="btn-primary">🎵 Browse Music</button>
+                <button onclick="musicLibraryPage.handleMusicAction('upload')" class="btn-secondary">📤 Upload Music</button>
+                <button onclick="musicLibraryPage.handleMusicAction('playlists')" class="btn-secondary">📋 My Playlists</button>
             </div>
         </section>
 
         <!-- Music Statistics -->
         <section class="music-stats">
-            <div class="music-stat">
-                <div class="music-stat-number">10,000+</div>
-                <div class="music-stat-label">Copyright-Free Tracks</div>
+            <div class="stat-card">
+                <div class="stat-number">10,000+</div>
+                <div class="stat-label">Copyright-Free Tracks</div>
             </div>
-            <div class="music-stat">
-                <div class="music-stat-number">10</div>
-                <div class="music-stat-label">Major Genres</div>
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">Major Genres</div>
             </div>
-            <div class="music-stat">
-                <div class="music-stat-number">15.8M</div>
-                <div class="music-stat-label">Total Downloads</div>
+            <div class="stat-card">
+                <div class="stat-number">15.8M</div>
+                <div class="stat-label">Total Downloads</div>
             </div>
-            <div class="music-stat">
-                <div class="music-stat-number">4.9</div>
-                <div class="music-stat-label">Average Rating</div>
+            <div class="stat-card">
+                <div class="stat-number">4.9</div>
+                <div class="stat-label">Average Rating</div>
             </div>
         </section>
+
+        <!-- AdSense Banner Ad -->
+        <div class="adsense-banner-container">
+            <ins class="adsbygoogle adsense-banner"
+                 style="display:block"
+                 data-ad-client="ca-pub-3565666509316178"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
 
         <!-- Music Categories -->
         <section class="music-categories">
             <div class="music-category">
                 <h3>🎵 Popular Genres</h3>
                 <p>Explore trending music across all genres. From hip-hop to classical, find the perfect soundtrack for your content.</p>
-                <a href="#genres" class="btn-primary">Browse Genres</a>
+                <button onclick="musicLibraryPage.navigateToSection('genres')" class="btn-primary">Browse Genres</button>
             </div>
             <div class="music-category">
                 <h3>🎼 Royalty-Free</h3>
                 <p>Access thousands of royalty-free tracks perfect for creators. No copyright issues, unlimited usage.</p>
-                <a href="#royalty-free" class="btn-primary">Explore Tracks</a>
+                <button onclick="musicLibraryPage.navigateToSection('royalty-free')" class="btn-primary">Explore Tracks</button>
             </div>
             <div class="music-category">
                 <h3>🎧 Playlists</h3>
                 <p>Create and share custom playlists. Organize your favorite tracks and discover curated collections.</p>
-                <a href="#playlists" class="btn-primary">My Playlists</a>
+                <button onclick="musicLibraryPage.navigateToSection('playlists')" class="btn-primary">My Playlists</button>
             </div>
             <div class="music-category">
                 <h3>🎤 Original Music</h3>
                 <p>Upload and share your original music. Get discovered by creators and build your audience.</p>
-                <a href="#upload" class="btn-primary">Upload Music</a>
+                <button onclick="musicLibraryPage.navigateToSection('upload')" class="btn-primary">Upload Music</button>
             </div>
         </section>
 
         <!-- Music Features -->
         <section class="music-features">
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🎵</div>
-                    <h3>Browse Music</h3>
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-text">
+                    <h4>Browse Music</h4>
                     <p>Explore thousands of tracks across all genres. Find the perfect soundtrack for your content.</p>
-                    <a href="#browse" class="btn-primary">Start Browsing</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎼</div>
-                    <h3>Royalty-Free</h3>
+                <button onclick="musicLibraryPage.handleMusicAction('browse')" class="feature-link">Start Browsing</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎼</div>
+                <div class="feature-text">
+                    <h4>Royalty-Free</h4>
                     <p>All music is copyright-free and safe for commercial use. No licensing fees or restrictions.</p>
-                    <a href="#royalty-free" class="btn-primary">Learn More</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎧</div>
-                    <h3>Create Playlists</h3>
+                <button onclick="musicLibraryPage.handleMusicAction('royalty-free')" class="feature-link">Learn More</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎧</div>
+                <div class="feature-text">
+                    <h4>Create Playlists</h4>
                     <p>Organize your favorite tracks into custom playlists. Share with your community.</p>
-                    <a href="#playlists" class="btn-primary">Create Playlist</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎤</div>
-                    <h3>Upload Music</h3>
+                <button onclick="musicLibraryPage.handleMusicAction('playlists')" class="feature-link">Create Playlist</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎤</div>
+                <div class="feature-text">
+                    <h4>Upload Music</h4>
                     <p>Share your original music with the community. Get discovered by creators worldwide.</p>
-                    <a href="#upload" class="btn-primary">Upload Now</a>
                 </div>
+                <button onclick="musicLibraryPage.handleMusicAction('upload')" class="feature-link">Upload Now</button>
             </div>
         </section>
+
+        <!-- AdSense In-Article Ad -->
+        <div class="adsense-in-article-container">
+            <ins class="adsbygoogle adsense-in-article"
+                 style="display:block"
+                 data-ad-client="ca-pub-3565666509316178"
+                 data-ad-slot="0987654321"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
 
         <!-- Copyright Sources Section -->
         <section id="copyrightSources" class="copyright-sources-section">
@@ -957,10 +1767,6 @@
             <div class="tab-icon" aria-hidden="true">💬</div>
             <span class="tab-label">Messages</span>
         </a>
-        <a href="live.html" class="tab-item" aria-label="Live">
-            <div class="tab-icon" aria-hidden="true">📺</div>
-            <span class="tab-label">Live</span>
-        </a>
         <a href="music-library.html" class="tab-item active" aria-label="Music" aria-current="page">
             <div class="tab-icon" aria-hidden="true">🎵</div>
             <span class="tab-label">Music</span>
@@ -977,10 +1783,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3565666509316178" crossorigin="anonymous"></script>
     <script src="js/adsense-config.js"></script>
     <script src="firebaseConfig.js"></script>
     <script src="js/utils.js"></script>
+    <script src="comprehensive-fixes.js"></script>
     <script src="js/music-library.js"></script>
 </body>
 </html> 

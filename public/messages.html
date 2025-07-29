@@ -1,317 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Messages - Amplifi</title>
-  <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-  <link rel="manifest" href="manifest.json" onerror="console.warn('Manifest failed to load, but app will continue to work normally')">
-  <meta name="theme-color" content="#1877f2">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Amplifi">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="base.css?v=13">
-  <link rel="stylesheet" href="messages.css?v=13">
-  <script src="version.js?v=13"></script>
-  <style>
-    /* iMessage-like Mobile Enhancements */
-    @media (max-width: 768px) {
-      .messages-container {
-        height: calc(100vh - 140px) !important;
-        min-height: auto !important;
-      }
-      
-      .conversations-sidebar {
-        background: #f8f9fa;
-        border-right: none;
-      }
-      
-      .conversation-item {
-        padding: 12px 16px;
-        border-bottom: 1px solid #e9ecef;
-        background: white;
-        margin: 0;
-        border-radius: 0;
-      }
-      
-      .conversation-item:hover {
-        background: #f8f9fa;
-      }
-      
-      .conversation-item.active {
-        background: #e3f2fd;
-        border-left: 4px solid #1877f2;
-      }
-      
-      .messages-area {
-        background: #f0f0f0;
-      }
-      
-      .messages-main {
-        background: #f0f0f0;
-        padding: 8px 12px;
-      }
-      
-      .message {
-        max-width: 85%;
-        margin-bottom: 8px;
-        border-radius: 18px;
-        padding: 8px 12px;
-        position: relative;
-        word-wrap: break-word;
-      }
-      
-      .own-message {
-        background: #007AFF;
-        color: white;
-        margin-left: auto;
-        border-bottom-right-radius: 4px;
-      }
-      
-      .other-message {
-        background: #e5e5ea;
-        color: #000;
-        margin-right: auto;
-        border-bottom-left-radius: 4px;
-      }
-      
-      .message-form {
-        background: white;
-        border-top: 1px solid #e9ecef;
-        padding: 12px 16px;
-        position: sticky;
-        bottom: 0;
-      }
-      
-      .message-input-container {
-        background: #f8f9fa;
-        border-radius: 20px;
-        border: 1px solid #e9ecef;
-        padding: 8px 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .message-input {
-        border: none;
-        background: transparent;
-        flex: 1;
-        padding: 8px 0;
-        font-size: 16px;
-        outline: none;
-      }
-      
-      .send-btn {
-        background: #007AFF;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      
-      .send-btn:hover {
-        background: #0056b3;
-      }
-      
-      .send-btn:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-      }
-      
-      .messages-header {
-        background: white;
-        border-bottom: 1px solid #e9ecef;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      
-      .back-btn {
-        background: none;
-        border: none;
-        font-size: 18px;
-        color: #007AFF;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 50%;
-        transition: background 0.2s;
-      }
-      
-      .back-btn:hover {
-        background: #f0f0f0;
-      }
-      
-      .conversation-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex: 1;
-      }
-      
-      .conversation-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-      
-      .conversation-details h4 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #000;
-      }
-      
-      .conversation-status {
-        font-size: 12px;
-        color: #666;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Amplifi</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="messages-new.css">
+    <script src="version.js"></script>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header" role="banner">
-    <div class="header-content">
-      <div class="header-left">
-        <h1 class="logo">Amplifi</h1>
-      </div>
-      <div class="header-center">
-        <h2 class="page-title">Messages</h2>
-      </div>
-      <div class="header-actions">
-        <button id="notificationBtn" class="btn btn-icon notification-btn" aria-label="Notifications" onclick="messagesPage.toggleNotificationDropdown()">
-          <span class="notification-icon">🔔</span>
-          <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
-        </button>
-        <div id="userMenu" class="user-menu" style="display: none;">
-          <a href="profile.html" id="userAvatarLink" aria-label="Profile">
-            <img id="userAvatar" src="default-avatar.svg" alt="User Avatar" class="user-avatar">
-          </a>
-          <div class="user-dropdown">
-            <a href="settings.html">Settings</a>
-            <a href="profile.html">Profile</a>
-            <button onclick="messagesPage.handleLogout()">Logout</button>
-          </div>
+    <!-- Header -->
+    <header class="messages-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="app-title">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <h2 class="page-title">Messages</h2>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" onclick="window.location.href='notifications.html'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="user-menu">
+                    <img id="userAvatar" src="default-avatar.svg" alt="User" class="user-avatar">
+                    <div class="user-dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="settings.html">Settings</a>
+                        <button onclick="messagesApp.logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Navigation Tabs -->
-  <nav class="page-nav" role="navigation" aria-label="Main navigation">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="feed.html" class="nav-link">Feed</a>
-    <a href="trending.html" class="nav-link">Trending</a>
-    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
-    <a href="upload.html" class="nav-link">Upload</a>
-    <a href="dashboard.html" class="nav-link">Dashboard</a>
-    <a href="messages.html" class="nav-link active" aria-current="page">Messages</a>
-    <a href="live.html" class="nav-link">Live</a>
+    <!-- Navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="feed.html" class="nav-link">📱 Feed</a>
+    <a href="trending.html" class="nav-link">🔥 Trending</a>
+    <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+    <a href="upload.html" class="nav-link">➕ Upload</a>
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="messages.html" class="nav-link active" aria-current="page">💬 Messages</a>
+    <a href="live.html" class="nav-link">📺 Live</a>
     <a href="music-library.html" class="nav-link">🎵 Music</a>
-    <a href="settings.html" class="nav-link">Settings</a>
-  </nav>
+    <a href="settings.html" class="nav-link">⚙️ Settings</a>
+    </nav>
 
-  <!-- Messenger Layout -->
-  <div class="main-layout">
-    <main class="main-content" id="mainContent" tabindex="-1" role="main">
-      <div class="messages-container" style="display: flex; height: 80vh; min-height: 500px;">
-        <!-- Sidebar: People who sent you messages -->
-        <aside class="conversations-sidebar show-mobile" aria-label="Conversations">
-          <div class="conversations-header">
-            <span class="sidebar-title">Conversations</span>
-            <div class="conversations-actions">
-              <button id="newConversationBtn" class="new-conversation-btn btn-icon" title="New Conversation" aria-label="New Conversation" onclick="messagesPage.showNewConversationModal()">＋</button>
-              <!-- Removed hardcoded New Group button to prevent duplicate -->
+    <!-- Main Content -->
+    <main class="messages-main">
+        <!-- Conversations Sidebar -->
+        <aside class="conversations-sidebar" id="conversationsSidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">Conversations</h3>
+                <div class="conversation-buttons">
+                    <button class="new-conversation-btn" onclick="messagesApp.showNewConversationModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        New Chat
+                    </button>
+                    <button class="group-chat-btn" onclick="messagesApp.showGroupChatModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Group Chat
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="conversations-search">
-            <div class="search-input-wrapper" style="position: relative;">
-              <span class="search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%);">🔍</span>
-              <input type="text" id="conversationsSearch" placeholder="Search conversations..." autocomplete="off" style="padding-left: 2.2rem;" oninput="messagesPage.filterConversations(this.value)">
-              <button class="clear-search" onclick="messagesPage.clearSearch()" style="display: none;">×</button>
+            
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="conversationSearch" placeholder="Search conversations..." class="search-input">
+                </div>
             </div>
-          </div>
-          <div id="conversationsList" class="conversations-list" tabindex="0">
-            <!-- Conversations will be loaded here -->
-          </div>
+            
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be populated here -->
+            </div>
         </aside>
 
-        <!-- Draggable divider for resizing -->
-        <div id="sidebar-resizer" class="sidebar-resizer" aria-label="Resize conversations sidebar" tabindex="0"></div>
-
-        <!-- Main Chat Area: Conversation and chat box -->
-        <section class="messages-area hide-mobile" aria-label="Chat">
-          <!-- Chat Header with Back Button for Mobile -->
-          <div class="messages-header" id="messagesHeader">
-            <button class="back-btn" onclick="messagesPage.showSidebarMobile()" aria-label="Back">←</button>
-            <div class="conversation-info">
-              <img id="conversationAvatar" src="default-avatar.svg" alt="Conversation" class="conversation-avatar">
-              <div class="conversation-details">
-                <h4 id="conversationName">Conversation Name</h4>
-                <span id="conversationStatus" class="conversation-status">Online</span>
-              </div>
+        <!-- Chat Area -->
+        <section class="chat-area" id="chatArea">
+            <!-- Chat Header -->
+            <div class="chat-header" id="chatHeader">
+                <div class="chat-info">
+                    <button class="mobile-back-btn" onclick="messagesApp.showConversationsList()" title="Back to conversations">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <img id="chatAvatar" src="default-avatar.svg" alt="Chat" class="chat-avatar">
+                    <div class="chat-details">
+                        <h4 id="chatName">Select a conversation</h4>
+                        <span id="chatStatus" class="chat-status">Choose from the sidebar</span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" onclick="messagesApp.startVoiceCall()" title="Voice Call">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" onclick="messagesApp.startVideoCall()" title="Video Call">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 7a16 16 0 0 0-16 16"/>
+                            <path d="M16 7a8 8 0 0 0-8 8"/>
+                            <path d="M8 7a4 4 0 0 0-4 4"/>
+                            <path d="M4 7a2 2 0 0 0-2 2"/>
+                            <path d="M23 7v6l-6-3"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" onclick="messagesApp.showMoneyModal()" title="Send Money">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6"/>
+                            <path d="M15.5 3.5a5 5 0 0 1 0 7m-7 0a5 5 0 0 1 0-7"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <div class="conversation-actions">
-              <button class="btn-icon call-btn" onclick="messagesPage.startVoiceCall()" aria-label="Voice call" title="Voice call">📞</button>
-              <button class="btn-icon call-btn" onclick="messagesPage.startVideoCall()" aria-label="Video call" title="Video call">
-                <!-- Modern camera SVG -->
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="15" height="10" rx="2"/><polygon points="17 11 22 7 22 17 17 13"/></svg>
-              </button>
-              <button class="btn-icon" onclick="messagesPage.showConversationOptions()" aria-label="More options">⋯</button>
-            </div>
-          </div>
 
-          <!-- Only one main chat search box -->
-          <div class="search-input-wrapper" style="position: relative; margin: 1.2rem 0 0.5rem 0;">
-            <span class="search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%);">🔍</span>
-            <input type="text" class="search-messages-input" placeholder="Search messages..." style="padding-left: 2.2rem;">
-          </div>
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Welcome State -->
+                <div class="welcome-state" id="welcomeState">
+                    <div class="welcome-icon">💬</div>
+                    <h3>Welcome to Messages</h3>
+                    <p>Select a conversation from the sidebar to start messaging, or create a new conversation to connect with other creators.</p>
+                    <div class="welcome-actions">
+                        <button class="primary-btn" onclick="messagesApp.showNewConversationModal()">
+                            Start New Conversation
+                        </button>
+                        <button class="secondary-btn" onclick="messagesApp.loadSampleConversations()">
+                            View Sample Conversations
+                        </button>
+                    </div>
+                </div>
 
-          <!-- Messages Scrollable Area -->
-          <div class="messages-main" id="messagesMain">
-            <div class="select-conversation-prompt">
-              <div class="prompt-icon">💬</div>
-              <h3>Select a conversation</h3>
-              <p>Choose a conversation from the sidebar to start messaging</p>
-            </div>
-          </div>
+                <!-- Messages List -->
+                <div class="messages-list" id="messagesList" style="display: none;">
+                    <!-- Messages will be populated here -->
+                </div>
 
-          <!-- Input Bar: Only one set of icons, emoji picker placeholder -->
-          <form id="messageForm" class="message-form">
-            <div class="message-input-container">
-              <!-- Removed hardcoded media, voice, and emoji buttons. Only input and send button remain. -->
-              <div id="emoji-picker" style="display:none; position:absolute; bottom:60px; right:20px; z-index:1000;"></div>
-              <input type="text" id="messageInput" placeholder="Type a message..." class="message-input" disabled>
-              <button type="submit" class="send-btn" aria-label="Send message" disabled>➤</button>
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="typing-avatar">
+                        <img id="typingAvatar" src="default-avatar.svg" alt="Typing">
+                    </div>
+                    <div class="typing-bubble">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                </div>
             </div>
-          </form>
+
+            <!-- Message Input -->
+            <div class="message-input-area">
+                <div class="message-input-container">
+                    <button class="emoji-btn" onclick="messagesApp.toggleEmojiPicker()" title="Emoji">
+                        😊
+                    </button>
+                    <button class="voice-btn" onclick="messagesApp.toggleVoiceRecording()" title="Voice Message">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </button>
+                    <button class="attach-btn" onclick="messagesApp.showAttachmentOptions()" title="Attach File">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
+                    </button>
+                    <button class="money-btn" onclick="messagesApp.showMoneyModal()" title="Send Money">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1v22"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            class="message-input" 
+                            placeholder="Type a message..." 
+                            rows="1"
+                            disabled
+                        ></textarea>
+                        
+                        <!-- Reply Preview -->
+                        <div class="reply-preview" id="replyPreview" style="display: none;">
+                            <div class="reply-content">
+                                <div class="reply-header">
+                                    <span class="reply-author" id="replyAuthor"></span>
+                                    <button class="reply-close" onclick="messagesApp.cancelReply()">×</button>
+                                </div>
+                                <div class="reply-text" id="replyText"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="send-btn" onclick="messagesApp.sendMessage()" title="Send message" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Emoji Picker -->
+                <div id="emojiPicker" class="emoji-picker">
+                    <div class="emoji-picker-content">
+                        <div class="emoji-categories">
+                            <button class="emoji-category active" data-category="smileys">😊</button>
+                            <button class="emoji-category" data-category="hearts">❤️</button>
+                            <button class="emoji-category" data-category="animals">🐶</button>
+                            <button class="emoji-category" data-category="food">🍕</button>
+                            <button class="emoji-category" data-category="activities">⚽</button>
+                        </div>
+                        <div class="emoji-grid" id="emojiGrid">
+                            <!-- Emojis will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-      </div>
     </main>
-  </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
-  <script src="firebaseConfig.js?v=13"></script>
-  <script src="js/utils.js?v=13"></script>
-  <script src="js/messages.js?v=13"></script>
-  <script src="app.js?v=13"></script>
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal" id="modal">
+            <!-- Modal content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Money Sending Modal -->
+    <div id="moneyModal" class="modal-overlay" style="display: none;">
+        <div class="modal money-modal">
+            <div class="modal-header">
+                <h3>Send Money</h3>
+                <button class="close-btn" onclick="messagesApp.hideMoneyModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="money-form">
+                    <div class="form-group">
+                        <label for="moneyAmount" class="form-label">Amount ($)</label>
+                        <input type="number" id="moneyAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="moneyMessage" class="form-label">Message (Optional)</label>
+                        <textarea id="moneyMessage" class="form-textarea" placeholder="Add a message..."></textarea>
+                    </div>
+                    <div class="money-preview">
+                        <div class="preview-amount">$<span id="previewAmount">0.00</span></div>
+                        <div class="preview-message" id="previewMessage"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" onclick="messagesApp.hideMoneyModal()">Cancel</button>
+                <button class="primary-btn" onclick="messagesApp.sendMoney()">Send Money</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Upload Area with Drag & Drop -->
+    <div id="fileUploadArea" class="file-upload-area" style="display: none;">
+        <div class="file-upload-content">
+            <div class="upload-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </div>
+            <h3>Attach or Drag File Here</h3>
+            <p>Drop your file here or click to browse</p>
+            <input type="file" id="fileInput" style="display: none;" multiple>
+            <button class="browse-btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+        </div>
+        <div id="filePreview" class="file-preview" style="display: none;"></div>
+        <div class="upload-actions">
+            <button class="secondary-btn" onclick="messagesApp.cancelFileUpload()">Cancel</button>
+            <button class="primary-btn" onclick="messagesApp.sendFile()">Send File</button>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Tabs -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="index.html" class="tab-item">
+            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="feed.html" class="tab-item">
+            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="tab-label">Feed</span>
+        </a>
+        <a href="dashboard.html" class="tab-item">
+            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <span class="tab-label">Dashboard</span>
+        </a>
+        <a href="messages.html" class="tab-item active">
+            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span class="tab-label">Settings</span>
+        </a>
+    </nav>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Firebase SDK - Load First -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config - Load After SDK -->
+    <script src="firebaseConfig.js"></script>
+    
+    <!-- App Scripts - Load Last -->
+    <script src="comprehensive-fixes.js"></script>
+    <script src="js/messages-new.js"></script>
+    <script src="app.js"></script>
 </body>
 </html> 

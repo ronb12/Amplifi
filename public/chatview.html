@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Amplifi</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="chatview.css">
+    <link rel="icon" href="favicon.ico">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- Header -->
+    <header class="chat-header">
+        <div class="header-content">
+            <button class="back-btn" onclick="chatView.goBack()" aria-label="Back to messages">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            
+            <div class="conversation-info">
+                <img id="conversationAvatar" src="default-avatar.svg" alt="Conversation" class="conversation-avatar">
+                <div class="conversation-details">
+                    <h4 id="conversationName">Loading...</h4>
+                    <span id="conversationStatus" class="conversation-status">Connecting...</span>
+                </div>
+            </div>
+            
+            <div class="conversation-actions">
+                <button class="btn-icon" onclick="chatView.startVoiceCall()" aria-label="Voice call" title="Voice call">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" onclick="chatView.startVideoCall()" aria-label="Video call" title="Video call">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="15" height="10" rx="2"/>
+                        <polygon points="17 11 22 7 22 17 17 13"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" onclick="chatView.showConversationOptions()" aria-label="More options">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="19" cy="12" r="1"/>
+                        <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Chat Area -->
+    <main class="chat-main">
+        <!-- Messages Container -->
+        <div class="messages-container" id="messagesContainer">
+            <!-- Loading indicator -->
+            <div class="loading-messages" id="loadingMessages">
+                <div class="loading-spinner"></div>
+                <p>Loading messages...</p>
+            </div>
+            
+            <!-- Empty state -->
+            <div class="empty-chat" id="emptyChat" style="display: none;">
+                <div class="empty-chat-icon">💬</div>
+                <h3>Start the conversation</h3>
+                <p>Send a message to begin chatting!</p>
+            </div>
+            
+            <!-- Messages will be populated here -->
+            <div class="messages-list" id="messagesList"></div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+            <div class="typing-avatar">
+                <img id="typingAvatar" src="default-avatar.svg" alt="Typing">
+            </div>
+            <div class="typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        </div>
+
+        <!-- Message Input Area -->
+        <div class="message-input-area">
+            <div class="message-input-container">
+                <button type="button" class="emoji-btn" onclick="chatView.toggleEmojiPicker()" aria-label="Add emoji">
+                    😊
+                </button>
+                
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type a message..." 
+                        rows="1"
+                        disabled
+                    ></textarea>
+                    
+                    <!-- Reply Preview -->
+                    <div class="reply-preview" id="replyPreview" style="display: none;">
+                        <div class="reply-content">
+                            <div class="reply-header">
+                                <span class="reply-author" id="replyAuthor"></span>
+                                <button class="reply-close" onclick="chatView.cancelReply()">×</button>
+                            </div>
+                            <div class="reply-text" id="replyText"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="attach-btn" onclick="chatView.showAttachmentOptions()" aria-label="Attach file">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+                
+                <button type="button" class="send-btn" onclick="chatView.sendMessage()" aria-label="Send message" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Emoji Picker -->
+            <div id="emoji-picker" class="emoji-picker">
+                <div class="emoji-picker-content">
+                    <div class="emoji-categories">
+                        <button class="emoji-category active" data-category="smileys">😊</button>
+                        <button class="emoji-category" data-category="hearts">❤️</button>
+                        <button class="emoji-category" data-category="animals">🐶</button>
+                        <button class="emoji-category" data-category="food">🍕</button>
+                        <button class="emoji-category" data-category="activities">⚽</button>
+                    </div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <!-- Emojis will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Attachment Options Modal -->
+    <div class="attachment-modal" id="attachmentModal" style="display: none;">
+        <div class="attachment-content">
+            <div class="attachment-header">
+                <h3>Add to message</h3>
+                <button class="close-btn" onclick="chatView.closeAttachmentModal()">×</button>
+            </div>
+            <div class="attachment-options">
+                <button class="attachment-option" onclick="chatView.attachPhoto()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21,15 16,10 5,21"/>
+                    </svg>
+                    <span>Photo</span>
+                </button>
+                <button class="attachment-option" onclick="chatView.attachVideo()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="23 7 16 12 23 17 23 7"/>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                    </svg>
+                    <span>Video</span>
+                </button>
+                <button class="attachment-option" onclick="chatView.attachDocument()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Document</span>
+                </button>
+                <button class="attachment-option" onclick="chatView.attachLocation()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Location</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="firebaseConfig.js"></script>
+    <script src="js/chatview.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 

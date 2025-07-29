@@ -38,7 +38,7 @@
         
         <!-- User menu for authenticated users -->
         <div class="user-menu" style="display: none;">
-        <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+        <button id="notificationBtn" class="notification-btn" aria-label="Notifications" onclick="window.location.href='notifications.html'">
           <span class="notification-icon" aria-label="Notification bell">🔔</span>
           <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
         </button>
@@ -50,15 +50,16 @@
     </div>
   </header>
   <nav class="page-nav" role="navigation" aria-label="Main navigation">
-    <a href="index.html" class="nav-link active" aria-current="page">Home</a>
-    <a href="feed.html" class="nav-link">Feed</a>
-    <a href="trending.html" class="nav-link">Trending</a>
-    <a href="subscriptions.html" class="nav-link">Subscriptions</a>
-    <a href="upload.html" class="nav-link">Upload</a>
-    <a href="dashboard.html" class="nav-link">Dashboard</a>
-    <a href="messages.html" class="nav-link">Messages</a>
-    <a href="live.html" class="nav-link">Live</a>
-    <a href="settings.html" class="nav-link">Settings</a>
+    <a href="index.html" class="nav-link active" aria-current="page">🏠 Home</a>
+    <a href="feed.html" class="nav-link">📱 Feed</a>
+    <a href="trending.html" class="nav-link">🔥 Trending</a>
+    <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+    <a href="upload.html" class="nav-link">➕ Upload</a>
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="live.html" class="nav-link">📺 Live</a>
+    <a href="music-library.html" class="nav-link">🎵 Music</a>
+    <a href="settings.html" class="nav-link">⚙️ Settings</a>
   </nav>
   <div class="main-layout">
     <main class="main-content" id="mainContent" tabindex="-1" role="main">
@@ -179,6 +180,10 @@
       <div class="tab-icon" aria-hidden="true">💬</div>
       <span class="tab-label">Messages</span>
     </a>
+    <a href="music-library.html" class="tab-item" aria-label="Music">
+      <div class="tab-icon" aria-hidden="true">🎵</div>
+      <span class="tab-label">Music</span>
+    </a>
     <a href="profile.html" class="tab-item" aria-label="Profile">
       <div class="tab-icon" aria-hidden="true">👤</div>
       <span class="tab-label">Profile</span>
@@ -258,9 +263,102 @@
   <script src="firebaseConfig.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/pwa-manager.js"></script>
+  <script src="comprehensive-fixes.js"></script>
   <script src="js/landing.js"></script>
   
   <style>
+    /* Desktop Navigation Styles */
+    .page-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem; /* Reduced gap to fit more tabs */
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.08);
+      border-radius: 0 0 1.5rem 1.5rem;
+      margin-bottom: 2rem;
+      padding: 0.8rem 1.5rem; /* Reduced padding */
+      position: sticky;
+      top: 80px;
+      z-index: 99;
+      border-top: 1px solid rgba(99,102,241,0.1);
+      backdrop-filter: blur(10px);
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .page-nav::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .nav-link {
+      color: #6b7280;
+      font-weight: 600;
+      font-size: 0.95rem; /* Slightly smaller font */
+      padding: 0.6rem 1rem; /* Reduced padding */
+      border-radius: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem; /* Reduced gap between icon and text */
+      white-space: nowrap;
+    }
+    
+    .nav-link.active, .nav-link[aria-current="page"] {
+      background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+      transform: translateY(-1px);
+    }
+    
+    .nav-link:hover {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      color: #4f46e5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(99,102,241,0.1);
+    }
+    
+    @media (max-width: 1200px) {
+      .page-nav {
+        gap: 0.6rem;
+        padding: 0.6rem 1rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+      .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+      }
+    }
+    
+    @media (max-width: 1400px) {
+      .page-nav {
+        gap: 0.8rem;
+        margin-left: 2rem;
+        margin-right: 2rem;
+      }
+    }
+    
+    @media (max-width: 1000px) {
+      .page-nav {
+        gap: 0.4rem;
+        padding: 0.5rem 0.8rem;
+      }
+      .nav-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-nav { display: none; }
+    }
+    
     /* Hover effects for feature cards */
     .feature-card:hover {
       transform: translateY(-4px);

@@ -102,7 +102,7 @@
                 <div id="searchResults" class="search-results" style="display: none;"></div>
             </div>
             <div class="header-actions">
-                <button id="notificationBtn" class="notification-btn" aria-label="Notifications">
+                <button id="notificationBtn" class="notification-btn" aria-label="Notifications" onclick="window.location.href='notifications.html'">
                     <span class="notification-icon" aria-label="Notification bell">🔔</span>
                     <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
                 </button>
@@ -114,15 +114,16 @@
     </header>
     <!-- Desktop tab navigation -->
     <nav class="page-nav" role="navigation" aria-label="Main navigation">
-        <a href="index.html" class="nav-link">Home</a>
-    <a href="feed.html" class="nav-link">Feed</a>
-        <a href="trending.html" class="nav-link">Trending</a>
-        <a href="subscriptions.html" class="nav-link">Subscriptions</a>
-        <a href="upload.html" class="nav-link">Upload</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="messages.html" class="nav-link">Messages</a>
-        <a href="live.html" class="nav-link">Live</a>
-        <a href="settings.html" class="nav-link">Settings</a>
+        <a href="index.html" class="nav-link">🏠 Home</a>
+        <a href="feed.html" class="nav-link">📱 Feed</a>
+        <a href="trending.html" class="nav-link">🔥 Trending</a>
+        <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+        <a href="upload.html" class="nav-link">➕ Upload</a>
+        <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+        <a href="messages.html" class="nav-link">💬 Messages</a>
+        <a href="live.html" class="nav-link">📺 Live</a>
+        <a href="music-library.html" class="nav-link">🎵 Music</a>
+        <a href="settings.html" class="nav-link">⚙️ Settings</a>
     </nav>
     <!-- Mobile Tab Navigation -->
     <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
@@ -357,5 +358,7 @@
             }
         });
     </script>
+    <script src="comprehensive-fixes.js"></script>
+    <script src="js/contact.js"></script>
 </body>
 </html> 

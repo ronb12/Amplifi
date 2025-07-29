@@ -499,3 +499,304 @@
     background: rgba(255, 255, 255, 0.1);
   }
 } 
+
+/* Analytics Grid Layout */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  max-width: 320px;
+  min-height: 200px;
+}
+
+.analytics-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.chart-container {
+  height: 150px;
+  width: 100%;
+  position: relative;
+}
+
+.chart-container canvas {
+  max-height: 150px !important;
+  width: 100% !important;
+}
+
+.top-posts-list {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 0.875rem;
+}
+
+.top-posts-list .post-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.top-posts-list .post-item:last-child {
+  border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .analytics-card {
+    max-width: 100%;
+    min-height: 180px;
+  }
+  
+  .chart-container {
+    height: 120px;
+  }
+  
+  .chart-container canvas {
+    max-height: 120px !important;
+  }
+} 
+
+/* Earnings Section */
+.earnings-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.earnings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.earnings-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.earnings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.earnings-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 12px;
+  color: white;
+}
+
+.earnings-content {
+  flex: 1;
+}
+
+.earnings-content h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.earnings-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.earnings-change {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.earnings-change.positive {
+  color: #10b981;
+}
+
+.earnings-change.negative {
+  color: #ef4444;
+}
+
+.payout-status {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.payout-info {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.earnings-breakdown {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.breakdown-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.breakdown-list {
+  font-size: 0.875rem;
+}
+
+.breakdown-list .breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.breakdown-list .breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.breakdown-list .breakdown-item .item-label {
+  color: #6b7280;
+}
+
+.breakdown-list .breakdown-item .item-amount {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .earnings-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .earnings-card {
+    padding: 1rem;
+  }
+  
+  .earnings-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .earnings-amount {
+    font-size: 1.25rem;
+  }
+} 
+
+/* Top Performing Posts */
+.top-posts-list {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.875rem;
+}
+
+.top-post-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.top-post-item:hover {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.top-post-item:last-child {
+  border-bottom: none;
+}
+
+.post-rank {
+  font-weight: 700;
+  color: #6366f1;
+  font-size: 0.875rem;
+  min-width: 30px;
+}
+
+.post-info {
+  flex: 1;
+}
+
+.post-title {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.post-stats {
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.post-performance {
+  display: flex;
+  align-items: center;
+}
+
+.performance-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.performance-badge.trending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.performance-badge.growing {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.performance-badge.popular {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+} 

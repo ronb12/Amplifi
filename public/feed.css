@@ -915,38 +915,89 @@
 /* --- Desktop Tab Navigation --- */
 .page-nav {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 1.2rem;
+  gap: 0.8rem; /* Reduced gap to fit more tabs */
   background: #fff;
-  border-bottom: 1.5px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgb(99 102 241 / 3%);
-  padding: 0.5rem 0;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.08);
+  border-radius: 0 0 1.5rem 1.5rem;
+  margin-bottom: 2rem;
+  padding: 0.8rem 1.5rem; /* Reduced padding */
   position: sticky;
-  top: 64px;
-  z-index: 19;
+  top: 80px;
+  z-index: 99;
+  border-top: 1px solid rgba(99,102,241,0.1);
+  backdrop-filter: blur(10px);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.page-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-link {
   color: #6b7280;
-  font-size: 1.08rem;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem; /* Slightly smaller font */
+  padding: 0.6rem 1rem; /* Reduced padding */
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
-  padding: 0.45em 1.2em;
-  border-radius: 999px;
-  transition: background 0.15s, color 0.15s;
-  background: none;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; /* Reduced gap between icon and text */
+  white-space: nowrap;
 }
 
-.nav-link.active, .nav-link:focus {
-  background: #6366f1;
+.nav-link.active, .nav-link[aria-current="page"] {
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+  transform: translateY(-1px);
 }
 
 .nav-link:hover {
-  background: #f3f4f6;
-  color: #6366f1;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.1);
+}
+
+@media (max-width: 1200px) {
+  .page-nav {
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .nav-link {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+@media (max-width: 1400px) {
+  .page-nav {
+    gap: 0.8rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+}
+
+@media (max-width: 1000px) {
+  .page-nav {
+    gap: 0.4rem;
+    padding: 0.5rem 0.8rem;
+  }
+  .nav-link {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
 }
 
 @media (width <= 800px) {

@@ -13,12 +13,19 @@ class SettingsPage {
 
     async init() {
         console.log('Initializing settings page...');
-        this.setupEventListeners();
         
-        // Wait a bit for Firebase to initialize
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        await this.setupAuthStateListener();
+        try {
+            this.setupEventListeners();
+            
+            // Wait a bit for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            await this.setupAuthStateListener();
+            
+            console.log('Settings page initialized successfully');
+        } catch (error) {
+            console.error('Error initializing settings page:', error);
+        }
     }
 
     async setupAuthStateListener() {
@@ -131,128 +138,138 @@ class SettingsPage {
     }
 
     setupEventListeners() {
-        // Settings navigation
-        document.querySelectorAll('.settings-nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+        try {
+            console.log('Setting up event listeners...');
+            
+            // Settings navigation
+            const navButtons = document.querySelectorAll('.settings-nav-btn');
+            console.log('Found navigation buttons:', navButtons.length);
+            
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabName = e.currentTarget.dataset.tab;
+                    console.log('Tab button clicked:', tabName);
+                    this.switchTab(tabName);
+                });
             });
-        });
 
-        // Profile form
-        const profileForm = document.getElementById('profileSettingsForm');
-        if (profileForm) {
-            profileForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.saveProfileSettings();
-            });
-        }
+            // Profile form
+            const profileForm = document.getElementById('profileSettingsForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveProfileSettings();
+                });
+                console.log('Profile form event listener attached');
+            }
 
-        // Bio character count
-        const profileBio = document.getElementById('profileBio');
-        if (profileBio) {
-            profileBio.addEventListener('input', (e) => {
-                this.updateBioCharCount(e.target.value.length);
-            });
-        }
+            // Bio character count
+            const profileBio = document.getElementById('profileBio');
+            if (profileBio) {
+                profileBio.addEventListener('input', (e) => {
+                    this.updateBioCharCount(e.target.value.length);
+                });
+                console.log('Bio character count listener attached');
+            }
 
-        // Privacy settings
-        const savePrivacyBtn = document.getElementById('savePrivacyBtn');
-        if (savePrivacyBtn) {
-            savePrivacyBtn.addEventListener('click', () => {
-                this.savePrivacySettings();
-            });
-        }
+            // Privacy settings
+            const savePrivacyBtn = document.getElementById('savePrivacyBtn');
+            if (savePrivacyBtn) {
+                savePrivacyBtn.addEventListener('click', () => {
+                    this.savePrivacySettings();
+                });
+                console.log('Privacy save button listener attached');
+            }
 
-        // Notification settings
-        const saveNotificationBtn = document.getElementById('saveNotificationBtn');
-        if (saveNotificationBtn) {
-            saveNotificationBtn.addEventListener('click', () => {
-                this.saveNotificationSettings();
-            });
-        }
+            // Notification settings
+            const saveNotificationBtn = document.getElementById('saveNotificationBtn');
+            if (saveNotificationBtn) {
+                saveNotificationBtn.addEventListener('click', () => {
+                    this.saveNotificationSettings();
+                });
+                console.log('Notification save button listener attached');
+            }
 
-        // Security settings
-        const changePasswordBtn = document.getElementById('changePasswordBtn');
-        if (changePasswordBtn) {
-            changePasswordBtn.addEventListener('click', () => {
-                this.changePassword();
-            });
-        }
+            // Security settings
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            if (changePasswordBtn) {
+                changePasswordBtn.addEventListener('click', () => {
+                    this.changePassword();
+                });
+                console.log('Change password button listener attached');
+            }
 
-        const setup2FABtn = document.getElementById('setup2FABtn');
-        if (setup2FABtn) {
-            setup2FABtn.addEventListener('click', () => {
-                this.setupTwoFactorAuth();
-            });
-        }
+            const setup2FABtn = document.getElementById('setup2FABtn');
+            if (setup2FABtn) {
+                setup2FABtn.addEventListener('click', () => {
+                    this.setupTwoFactorAuth();
+                });
+                console.log('2FA setup button listener attached');
+            }
 
-        // Monetization settings
-        const saveMonetizationBtn = document.getElementById('saveMonetizationBtn');
-        if (saveMonetizationBtn) {
-            saveMonetizationBtn.addEventListener('click', () => {
-                this.saveMonetizationSettings();
-            });
-        }
+            // Monetization settings
+            const saveMonetizationBtn = document.getElementById('saveMonetizationBtn');
+            if (saveMonetizationBtn) {
+                saveMonetizationBtn.addEventListener('click', () => {
+                    this.saveMonetizationSettings();
+                });
+                console.log('Monetization save button listener attached');
+            }
 
-        // Account actions
-        const deactivateAccountBtn = document.getElementById('deactivateAccountBtn');
-        if (deactivateAccountBtn) {
-            deactivateAccountBtn.addEventListener('click', () => {
-                this.deactivateAccount();
-            });
-        }
+            // Account actions
+            const deactivateAccountBtn = document.getElementById('deactivateAccountBtn');
+            if (deactivateAccountBtn) {
+                deactivateAccountBtn.addEventListener('click', () => {
+                    this.deactivateAccount();
+                });
+                console.log('Deactivate account button listener attached');
+            }
 
-        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
-        if (deleteAccountBtn) {
-            deleteAccountBtn.addEventListener('click', () => {
-                this.deleteAccount();
-            });
-        }
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            if (deleteAccountBtn) {
+                deleteAccountBtn.addEventListener('click', () => {
+                    this.deleteAccount();
+                });
+                console.log('Delete account button listener attached');
+            }
 
-        // File uploads
-        const profilePic = document.getElementById('profilePic');
-        if (profilePic) {
-            profilePic.addEventListener('change', (e) => {
-                this.handleProfilePicUpload(e.target.files[0]);
-            });
-        }
+            // File uploads
+            const profilePic = document.getElementById('profilePic');
+            if (profilePic) {
+                profilePic.addEventListener('change', (e) => {
+                    this.handleProfilePicUpload(e.target.files[0]);
+                });
+                console.log('Profile pic upload listener attached');
+            }
 
-        const profileBanner = document.getElementById('profileBanner');
-        if (profileBanner) {
-            profileBanner.addEventListener('change', (e) => {
-                this.handleBannerUpload(e.target.files[0]);
-            });
-        }
+            const profileBanner = document.getElementById('profileBanner');
+            if (profileBanner) {
+                profileBanner.addEventListener('change', (e) => {
+                    this.handleBannerUpload(e.target.files[0]);
+                });
+                console.log('Profile banner upload listener attached');
+            }
 
-        // User avatar click - prevent navigation and show profile options
-        const userAvatarContainer = document.getElementById('userAvatarContainer');
-        if (userAvatarContainer) {
-            userAvatarContainer.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.showProfileOptions();
-            });
-        }
-
-        // Logout
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleLogout();
-            });
+            console.log('All event listeners set up successfully');
+        } catch (error) {
+            console.error('Error setting up event listeners:', error);
         }
     }
 
     switchTab(tabName) {
+        console.log('Switching to tab:', tabName);
+        
         // Hide all tab contents
         document.querySelectorAll('.settings-tab-content').forEach(tab => {
             tab.classList.remove('active');
+            tab.setAttribute('aria-hidden', 'true');
         });
 
-        // Remove active class from all nav buttons
+        // Remove active class and aria-selected from all nav buttons
         document.querySelectorAll('.settings-nav-btn').forEach(btn => {
             btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
         });
 
         // Show selected tab content
@@ -261,13 +278,23 @@ class SettingsPage {
         
         if (selectedTab) {
             selectedTab.classList.add('active');
+            selectedTab.setAttribute('aria-hidden', 'false');
+            console.log('Activated tab content:', selectedTab.id);
         }
         
         if (selectedBtn) {
             selectedBtn.classList.add('active');
+            selectedBtn.setAttribute('aria-selected', 'true');
+            console.log('Activated tab button:', selectedBtn.textContent);
         }
 
         this.currentTab = tabName;
+        
+        // Scroll to top of settings container
+        const settingsContainer = document.querySelector('.settings-container');
+        if (settingsContainer) {
+            settingsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     loadSettings() {

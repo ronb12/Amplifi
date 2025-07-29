@@ -87,10 +87,19 @@ class MessagesPage {
     }
 
     setupMessageReactions() {
+        // Remove any existing reaction picker
+        const existingPicker = document.getElementById('reactionPicker');
+        if (existingPicker) {
+            existingPicker.remove();
+        }
+        
         // Add reaction picker to DOM
         const reactionPicker = document.createElement('div');
         reactionPicker.id = 'reactionPicker';
         reactionPicker.className = 'reaction-picker';
+        reactionPicker.style.display = 'none';
+        reactionPicker.style.position = 'absolute';
+        reactionPicker.style.zIndex = '1000';
         reactionPicker.innerHTML = `
             <div class="reaction-options">
                 <span class="reaction" data-reaction="👍">👍</span>
@@ -409,9 +418,72 @@ class MessagesPage {
         const sendBtn = document.querySelector('.send-btn');
         const newConversationBtn = document.querySelector('.new-conversation-btn');
         
-        if (messageInput) messageInput.disabled = false;
-        if (sendBtn) sendBtn.disabled = false;
+        // Enable input for authenticated users (will be disabled again if no conversation selected)
+        if (messageInput) {
+            messageInput.disabled = false;
+            console.log('Message input enabled for authenticated user');
+        }
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            console.log('Send button enabled for authenticated user');
+        }
         if (newConversationBtn) newConversationBtn.style.display = 'block';
+        
+        // Load conversations and create a test conversation if none exist
+        this.loadConversations().then(() => {
+            if (this.conversations.length === 0) {
+                console.log('No conversations found, creating test conversation...');
+                this.createTestConversation();
+            } else {
+                // Auto-select the first conversation if none is currently selected
+                if (!this.currentConversation && this.conversations.length > 0) {
+                    console.log('Auto-selecting first conversation:', this.conversations[0].id);
+                    this.selectConversation(this.conversations[0].id);
+                }
+            }
+        });
+    }
+
+    async createTestConversation() {
+        if (!this.currentUser) return;
+        
+        try {
+            console.log('Creating test conversation...');
+            
+            // Create a test conversation with the user themselves (for testing)
+            const conversationData = {
+                participants: [this.currentUser.uid],
+                participantNames: [this.userProfile?.displayName || 'You'],
+                participantPics: [this.userProfile?.profilePic || 'default-avatar.svg'],
+                createdAt: new Date(),
+                lastMessage: 'Test conversation created',
+                lastMessageAt: new Date(),
+                type: 'test'
+            };
+            
+            const conversationRef = await db.collection('conversations').add(conversationData);
+            console.log('Test conversation created with ID:', conversationRef.id);
+            
+            // Add a test message
+            const messageData = {
+                conversationId: conversationRef.id,
+                senderId: this.currentUser.uid,
+                senderName: this.userProfile?.displayName || 'You',
+                senderPic: this.userProfile?.profilePic || 'default-avatar.svg',
+                text: 'Welcome to your test conversation! You can send messages here.',
+                createdAt: new Date(),
+                readBy: [this.currentUser.uid]
+            };
+            
+            await db.collection('messages').add(messageData);
+            console.log('Test message added');
+            
+            // Reload conversations to show the new one
+            await this.loadConversations();
+            
+        } catch (error) {
+            console.error('Error creating test conversation:', error);
+        }
     }
 
     updateUIForUnauthenticatedUser() {
@@ -464,11 +536,22 @@ class MessagesPage {
                 e.preventDefault();
                 const messageInput = document.getElementById('messageInput');
                 const text = messageInput.value.trim();
-                if (text && this.currentConversation) {
-                    this.sendMessage(this.currentConversation, text);
-                    messageInput.value = '';
-                    this.stopTyping();
+                console.log('Form submitted with text:', text, 'currentConversation:', this.currentConversation);
+                
+                if (!text) {
+                    console.log('No text to send');
+                    return;
                 }
+                
+                if (!this.currentConversation) {
+                    console.log('No conversation selected, showing alert');
+                    alert('Please select a conversation first to send a message.');
+                    return;
+                }
+                
+                this.sendMessage(this.currentConversation, text);
+                messageInput.value = '';
+                this.stopTyping();
             });
         }
 
@@ -486,11 +569,22 @@ class MessagesPage {
             sendBtn.addEventListener('click', () => {
                 const messageInput = document.getElementById('messageInput');
                 const text = messageInput.value.trim();
-                if (text && this.currentConversation) {
-                    this.sendMessage(this.currentConversation, text);
-                    messageInput.value = '';
-                    this.stopTyping();
+                console.log('Send button clicked with text:', text, 'currentConversation:', this.currentConversation);
+                
+                if (!text) {
+                    console.log('No text to send');
+                    return;
                 }
+                
+                if (!this.currentConversation) {
+                    console.log('No conversation selected, showing alert');
+                    alert('Please select a conversation first to send a message.');
+                    return;
+                }
+                
+                this.sendMessage(this.currentConversation, text);
+                messageInput.value = '';
+                this.stopTyping();
             });
         }
 
@@ -576,21 +670,283 @@ class MessagesPage {
         }
     }
 
+    // Show sample conversations for demonstration
+    showSampleConversations() {
+        const sampleConversations = [
+            {
+                id: 'sample1',
+                name: 'Sarah Johnson',
+                avatar: 'default-avatar.svg',
+                lastMessage: 'Thanks for the collaboration!',
+                time: '2 hours ago',
+                unread: 1,
+                status: 'online'
+            },
+            {
+                id: 'sample2',
+                name: 'Mike Chen',
+                avatar: 'default-avatar.svg',
+                lastMessage: 'Great content as always!',
+                time: '1 day ago',
+                unread: 0,
+                status: 'offline'
+            },
+            {
+                id: 'sample3',
+                name: 'Emma Davis',
+                avatar: 'default-avatar.svg',
+                lastMessage: 'Looking forward to working together',
+                time: '3 days ago',
+                unread: 2,
+                status: 'online'
+            }
+        ];
+
+        this.conversations = sampleConversations;
+        this.renderConversations();
+        
+        // Hide empty state
+        const emptyState = document.getElementById('emptyConversationsState');
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
+
+        // Show success message
+        this.showToast('Sample conversations loaded!', 'success');
+    }
+
+    // Enhanced conversation rendering with better styling
     renderConversations() {
         const conversationsList = document.getElementById('conversationsList');
+        const emptyState = document.getElementById('emptyConversationsState');
+        
         if (!conversationsList) return;
 
-        conversationsList.innerHTML = '';
-
-        if (this.conversations.length === 0) {
-            conversationsList.innerHTML = '<p class="no-conversations">No conversations yet</p>';
+        if (!this.conversations || this.conversations.length === 0) {
+            // Show empty state
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+            }
             return;
         }
 
-        this.conversations.forEach(conversation => {
-            const conversationElement = this.createConversationElement(conversation);
-            conversationsList.appendChild(conversationElement);
+        // Hide empty state
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
+
+        conversationsList.innerHTML = this.conversations.map(conversation => {
+            // Handle different data structures (Firestore vs sample data)
+            const name = conversation.name || 
+                        (conversation.participantNames && conversation.participantNames.length > 0 ? 
+                         conversation.participantNames[0] : 'Unknown User');
+            const avatar = conversation.avatar || 
+                          (conversation.participantPics && conversation.participantPics.length > 0 ? 
+                           conversation.participantPics[0] : 'default-avatar.svg');
+            const lastMessage = conversation.lastMessage || 'No messages yet';
+            const time = conversation.time || 
+                        (conversation.lastMessageAt ? 
+                         this.formatTimestamp(conversation.lastMessageAt) : 'Just now');
+            const unread = conversation.unread || 0;
+            const status = conversation.status || 'offline';
+
+            return `
+                <div class="conversation-item ${conversation.id === this.activeConversationId ? 'active' : ''}" 
+                     onclick="messagesPage.selectConversation('${conversation.id}')" 
+                     data-conversation-id="${conversation.id}">
+                    <img src="${avatar}" alt="${name}" class="conversation-avatar">
+                    <div class="conversation-info">
+                        <div class="conversation-header">
+                            <span class="conversation-name">${name}</span>
+                            <span class="conversation-time">${time}</span>
+                        </div>
+                        <div class="conversation-preview">
+                            <span class="preview-text">${lastMessage}</span>
+                            ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="conversation-status-indicator ${status}"></div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Enhanced conversation selection
+    selectConversation(conversationId) {
+        this.activeConversationId = conversationId;
+        this.currentConversation = conversationId; // Set currentConversation for message sending
+        const conversation = this.conversations.find(c => c.id === conversationId);
+        
+        if (!conversation) return;
+
+        // Update conversation header
+        document.getElementById('conversationName').textContent = conversation.name;
+        document.getElementById('conversationAvatar').src = conversation.avatar;
+        document.getElementById('conversationStatus').textContent = conversation.status === 'online' ? 'Online' : 'Offline';
+        
+        // Show conversation actions
+        const conversationActions = document.querySelectorAll('.conversation-actions .btn-icon');
+        conversationActions.forEach(btn => btn.style.display = 'block');
+
+        // Enable message input
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.querySelector('.send-btn');
+        if (messageInput && sendBtn) {
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+        }
+
+        // Update conversation list active state
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
         });
+        document.querySelector(`[data-conversation-id="${conversationId}"]`)?.classList.add('active');
+
+        // Show conversation messages
+        this.showConversationMessages(conversationId);
+        
+        // Hide empty state
+        const selectPrompt = document.querySelector('.select-conversation-prompt');
+        if (selectPrompt) {
+            selectPrompt.style.display = 'none';
+        }
+    }
+
+    // Show conversation messages
+    showConversationMessages(conversationId) {
+        const messagesMain = document.getElementById('messagesMain');
+        const conversation = this.conversations.find(c => c.id === conversationId);
+        
+        if (!conversation) return;
+
+        // Sample messages for demonstration
+        const sampleMessages = [
+            {
+                id: 1,
+                text: `Hi ${conversation.name}! Thanks for connecting.`,
+                sender: 'other',
+                time: '10:30 AM',
+                status: 'read'
+            },
+            {
+                id: 2,
+                text: 'Hey! I really enjoyed your latest content.',
+                sender: 'own',
+                time: '10:32 AM',
+                status: 'read'
+            },
+            {
+                id: 3,
+                text: conversation.lastMessage,
+                sender: 'other',
+                time: conversation.time,
+                status: 'read'
+            }
+        ];
+
+        messagesMain.innerHTML = `
+            <div class="messages-container-inner">
+                ${sampleMessages.map(message => `
+                    <div class="message ${message.sender}-message" data-message-id="${message.id}">
+                        <div class="message-header">
+                            <span class="message-author">${message.sender === 'own' ? 'You' : conversation.name}</span>
+                            <span class="message-time">${message.time}</span>
+                        </div>
+                        <div class="message-text">${message.text}</div>
+                        ${message.sender === 'own' ? `<div class="message-status">${message.status}</div>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // Scroll to bottom
+        messagesMain.scrollTop = messagesMain.scrollHeight;
+    }
+
+    // Enhanced toast notifications
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span class="toast-message">${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
+    // Enhanced search functionality
+    filterConversations(searchTerm) {
+        const conversationsList = document.getElementById('conversationsList');
+        const emptyState = document.getElementById('emptyConversationsState');
+        
+        if (!searchTerm.trim()) {
+            this.renderConversations();
+            return;
+        }
+
+        const filteredConversations = this.conversations.filter(conversation =>
+            conversation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            conversation.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        if (filteredConversations.length === 0) {
+            conversationsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h3>No conversations found</h3>
+                    <p>Try adjusting your search terms</p>
+                </div>
+            `;
+        } else {
+            // Hide empty state
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            conversationsList.innerHTML = filteredConversations.map(conversation => `
+                <div class="conversation-item ${conversation.id === this.activeConversationId ? 'active' : ''}" 
+                     onclick="messagesPage.selectConversation('${conversation.id}')" 
+                     data-conversation-id="${conversation.id}">
+                    <img src="${conversation.avatar}" alt="${conversation.name}" class="conversation-avatar">
+                    <div class="conversation-info">
+                        <div class="conversation-header">
+                            <span class="conversation-name">${conversation.name}</span>
+                            <span class="conversation-time">${conversation.time}</span>
+                        </div>
+                        <div class="conversation-preview">
+                            <span class="preview-text">${conversation.lastMessage}</span>
+                            ${conversation.unread > 0 ? `<span class="unread-badge">${conversation.unread}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="conversation-status-indicator ${conversation.status}"></div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Clear search functionality
+    clearSearch() {
+        const searchInput = document.getElementById('conversationsSearch');
+        if (searchInput) {
+            searchInput.value = '';
+            this.filterConversations('');
+        }
     }
 
     createConversationElement(conversation) {
@@ -891,12 +1247,22 @@ class MessagesPage {
     }
 
     async sendMessage(conversationId, text, media = null) {
+        console.log('sendMessage called with:', { conversationId, text, media });
+        
         if (this.editingMessageId) {
             await this.saveEditedMessage(this.editingMessageId);
             return;
         }
-        if (!this.currentUser || !conversationId) {
-            console.error('Cannot send message: missing user or conversation');
+        
+        if (!this.currentUser) {
+            console.error('Cannot send message: user not authenticated');
+            alert('Please log in to send messages.');
+            return;
+        }
+        
+        if (!conversationId) {
+            console.error('Cannot send message: no conversation selected');
+            alert('Please select a conversation first.');
             return;
         }
 
@@ -921,7 +1287,8 @@ class MessagesPage {
             console.log('Message data:', messageData);
 
             // Add message to Firestore
-            await db.collection('messages').add(messageData);
+            const messageRef = await db.collection('messages').add(messageData);
+            console.log('Message sent successfully with ID:', messageRef.id);
 
             // Update conversation's last message
             const lastMessageText = media ? `Sent ${media.type}` : text.trim();
@@ -930,7 +1297,7 @@ class MessagesPage {
                 lastMessageAt: new Date()
             });
 
-            console.log('Message sent successfully!');
+            console.log('Conversation updated successfully!');
             this.cancelReply(); // Clear reply preview after sending
 
         } catch (error) {
@@ -1097,7 +1464,7 @@ class MessagesPage {
         conversationsList.innerHTML = '';
         
         if (conversations.length === 0) {
-            conversationsList.innerHTML = '<p>No conversations found</p>';
+            conversationsList.innerHTML = '<p class="no-conversations">No conversations yet</p>';
             return;
         }
         
@@ -1132,141 +1499,303 @@ class MessagesPage {
         return date.toLocaleDateString();
     }
 
+    // Missing methods that are called from HTML
+    toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    handleLogout() {
+        if (auth.currentUser) {
+            auth.signOut().then(() => {
+                console.log('User signed out');
+                this.showToast('Logged out successfully', 'success');
+                // Redirect to home page
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+                this.showToast('Error logging out', 'error');
+            });
+        }
+    }
+
+    startVoiceCall() {
+        this.showToast('Voice call feature coming soon!', 'info');
+    }
+
+    startVideoCall() {
+        this.showToast('Video call feature coming soon!', 'info');
+    }
+
+    showConversationOptions() {
+        this.showToast('Conversation options coming soon!', 'info');
+    }
+
+    // Enhanced mobile navigation methods
     showSidebarMobile() {
-        document.querySelector('.conversations-sidebar').classList.add('show-mobile');
-        document.querySelector('.messages-container').classList.add('hide-mobile');
+        const sidebar = document.querySelector('.conversations-sidebar');
+        const messagesArea = document.querySelector('.messages-area');
+        
+        if (sidebar && messagesArea) {
+            sidebar.classList.remove('hide-mobile');
+            sidebar.classList.add('show-mobile');
+            messagesArea.classList.remove('show-mobile');
+            messagesArea.classList.add('hide-mobile');
+        }
     }
 
     showChatMobile() {
-        document.querySelector('.conversations-sidebar').classList.remove('show-mobile');
-        document.querySelector('.messages-container').classList.remove('hide-mobile');
-    }
-
+        const sidebar = document.querySelector('.conversations-sidebar');
+        const messagesArea = document.querySelector('.messages-area');
         
-
-    showGroupChatModal() {
-        // Remove any existing modal
-        document.querySelectorAll('.modal-overlay').forEach(el => el.remove());
-        
-        // Create modal
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.innerHTML = `
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>New Group Chat</h3>
-                    <button class="close-btn" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="groupNameInput" placeholder="Group name..." class="search-input">
-                    <input type="file" id="groupAvatarInput" accept="image/*" style="margin-bottom: 12px;">
-                    <input type="text" id="groupUserSearch" placeholder="Search users..." class="search-input">
-                    <div id="groupUsersList" class="users-list"></div>
-                    <button id="createGroupBtn" class="send-btn" style="margin-top: 16px;">Create Group</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(overlay);
-        this.loadUsersForGroup();
-        
-        // Close on outside click
-        overlay.onclick = (e) => {
-            if (e.target === overlay) overlay.remove();
-        };
-        
-        // User search
-        overlay.querySelector('#groupUserSearch').oninput = (e) => this.searchUsersForGroup(e.target.value);
-        
-        // Create group button
-        overlay.querySelector('#createGroupBtn').onclick = () => this.createGroupChat();
-    }
-
-    async loadUsersForGroup() {
-        if (!this.currentUser) return;
-        try {
-            const usersSnapshot = await db.collection('users')
-                .where('uid', '!=', this.currentUser.uid)
-                .limit(50)
-                .get();
-            const users = [];
-            usersSnapshot.forEach(doc => {
-                users.push({ uid: doc.id, ...doc.data() });
-            });
-            this.renderUsersForGroup(users);
-        } catch (error) {
-            console.error('Error loading users for group:', error);
+        if (sidebar && messagesArea) {
+            sidebar.classList.remove('show-mobile');
+            sidebar.classList.add('hide-mobile');
+            messagesArea.classList.remove('hide-mobile');
+            messagesArea.classList.add('show-mobile');
         }
     }
 
-    renderUsersForGroup(users) {
-        const usersList = document.getElementById('groupUsersList');
-        if (!usersList) return;
-        usersList.innerHTML = '';
-        users.forEach(user => {
-            const userElement = document.createElement('div');
-            userElement.className = 'user-item';
-            userElement.innerHTML = `
-                <input type="checkbox" class="group-user-checkbox" value="${user.uid}">
-                <img src="${user.profilePic || 'default-avatar.svg'}" alt="User" class="user-avatar">
-                <div class="user-info">
-                    <h4>${user.displayName || 'Unknown User'}</h4>
-                    <p>@${user.username || 'unknown'}</p>
-                </div>
-            `;
-            usersList.appendChild(userElement);
+    // Enhanced conversation selection for mobile
+    selectConversation(conversationId) {
+        this.activeConversationId = conversationId;
+        const conversation = this.conversations.find(c => c.id === conversationId);
+        
+        if (!conversation) return;
+
+        // Update conversation header
+        document.getElementById('conversationName').textContent = conversation.name;
+        document.getElementById('conversationAvatar').src = conversation.avatar;
+        document.getElementById('conversationStatus').textContent = conversation.status === 'online' ? 'Online' : 'Offline';
+        
+        // Show conversation actions on mobile
+        const conversationActions = document.querySelectorAll('.conversation-actions .btn-icon');
+        conversationActions.forEach(btn => btn.style.display = 'block');
+
+        // Enable message input
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.querySelector('.send-btn');
+        if (messageInput && sendBtn) {
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+        }
+
+        // Update conversation list active state
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`[data-conversation-id="${conversationId}"]`)?.classList.add('active');
+
+        // Show conversation messages
+        this.showConversationMessages(conversationId);
+        
+        // Hide empty state
+        const selectPrompt = document.querySelector('.select-conversation-prompt');
+        if (selectPrompt) {
+            selectPrompt.style.display = 'none';
+        }
+
+        // On mobile, switch to chat view
+        if (window.innerWidth <= 768) {
+            this.showChatMobile();
+        }
+    }
+
+    // Emoji picker functionality
+    toggleEmojiPicker() {
+        const picker = document.getElementById('emoji-picker');
+        if (picker) {
+            const isVisible = picker.classList.contains('show');
+            if (isVisible) {
+                picker.classList.remove('show');
+                picker.style.display = 'none';
+            } else {
+                picker.classList.add('show');
+                picker.style.display = 'block';
+                this.loadEmojis();
+            }
+        }
+    }
+
+    loadEmojis() {
+        const emojiGrid = document.getElementById('emojiGrid');
+        if (!emojiGrid) return;
+
+        const emojis = {
+            smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕'],
+            hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟'],
+            animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🐣', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦙', '🦒', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐁', '🐀', '🐿️', '🦔'],
+            food: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🧂', '🥨', '🥯', '🥖', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🧂'],
+            activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🎯', '🪁', '🥅', '⛳', '🪃', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸️', '🥌', '🎿', '⛷️', '🏂', '🪂', '🏋️‍♀️', '🏋️', '🏋️‍♂️', '🤼‍♀️', '🤼', '🤼‍♂️', '🤸‍♀️', '🤸', '🤸‍♂️', '⛹️‍♀️', '⛹️', '⛹️‍♂️', '🤺', '🤾‍♀️', '🤾', '🤾‍♂️', '🏊‍♀️', '🏊', '🏊‍♂️', '🤽‍♀️', '🤽', '🤽‍♂️', '🚣‍♀️', '🚣', '🚣‍♂️', '🧗‍♀️', '🧗', '🧗‍♂️', '🚵‍♀️', '🚵', '🚵‍♂️', '🚴‍♀️', '🚴', '🚴‍♂️', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🤹‍♀️', '🤹', '🤹‍♂️', '🎭', '🩰', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🪘', '🎷', '🎺', '🎸', '🪕', '🎻', '🎲', '♟️', '🎯', '🎳', '🎮', '🎰', '🧩', '🎨', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '💽', '💾', '💿', '📀', '🧮', '🎥', '🎞️', '📽️', '🎬', '📺', '📻', '📷', '📸', '📹', '📼', '📟', '📠', '📺', '📻', '🎙️', '🎚️', '🎛️', '🧭', '⏱️', '⏲️', '⏰', '🕰️', '⌚', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '💽', '💾', '💿', '📀', '🧮', '🎥', '🎞️', '📽️', '🎬', '📺', '📻', '📷', '📸', '📹', '📼', '📟', '📠', '📺', '📻', '🎙️', '🎚️', '🎛️', '🧭', '⏱️', '⏲️', '⏰', '🕰️', '⌚']
+        };
+
+        let currentCategory = 'smileys';
+        emojiGrid.innerHTML = emojis[currentCategory].map(emoji => 
+            `<button class="emoji-item" onclick="messagesPage.insertEmoji('${emoji}')">${emoji}</button>`
+        ).join('');
+
+        // Add category switching
+        document.querySelectorAll('.emoji-category').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const category = e.target.dataset.category;
+                if (category && emojis[category]) {
+                    currentCategory = category;
+                    emojiGrid.innerHTML = emojis[category].map(emoji => 
+                        `<button class="emoji-item" onclick="messagesPage.insertEmoji('${emoji}')">${emoji}</button>`
+                    ).join('');
+                    
+                    // Update active category
+                    document.querySelectorAll('.emoji-category').forEach(cat => cat.classList.remove('active'));
+                    e.target.classList.add('active');
+                }
+            });
         });
     }
 
-    async createGroupChat() {
-        const groupName = document.getElementById('groupNameInput').value.trim();
-        const groupAvatarInput = document.getElementById('groupAvatarInput');
-        const checkboxes = document.querySelectorAll('.group-user-checkbox:checked');
-        if (!groupName || checkboxes.length === 0) {
-            return;
+    insertEmoji(emoji) {
+        const messageInput = document.getElementById('messageInput');
+        if (messageInput) {
+            const cursorPos = messageInput.selectionStart;
+            const textBefore = messageInput.value.substring(0, cursorPos);
+            const textAfter = messageInput.value.substring(cursorPos);
+            messageInput.value = textBefore + emoji + textAfter;
+            
+            // Set cursor position after emoji
+            messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
+            messageInput.focus();
         }
-        const participantIds = [this.currentUser.uid, ...Array.from(checkboxes).map(cb => cb.value)];
-        let groupAvatarUrl = '';
-        if (groupAvatarInput.files && groupAvatarInput.files[0]) {
-            // Upload group avatar to storage
-            const file = groupAvatarInput.files[0];
-            const storageRef = storage.ref();
-            const fileRef = storageRef.child(`group_avatars/${Date.now()}_${file.name}`);
-            const snapshot = await fileRef.put(file);
-            groupAvatarUrl = await snapshot.ref.getDownloadURL();
-        }
-        // Fetch user data for participantsData
-        const participantsData = [];
-        for (const uid of participantIds) {
-            const userDoc = await db.collection('users').doc(uid).get();
-            if (userDoc.exists) {
-                const data = userDoc.data();
-                participantsData.push({
-                    uid,
-                    displayName: data.displayName || 'Unknown User',
-                    profilePic: data.profilePic || ''
-                });
+        
+        // Close emoji picker
+        this.toggleEmojiPicker();
+    }
+
+    // Close emoji picker when clicking outside
+    setupEmojiPickerClose() {
+        document.addEventListener('click', (e) => {
+            const picker = document.getElementById('emoji-picker');
+            const emojiBtn = document.querySelector('.emoji-btn');
+            
+            if (picker && picker.style.display === 'block') {
+                if (!picker.contains(e.target) && !emojiBtn.contains(e.target)) {
+                    picker.style.display = 'none';
+                }
             }
-        }
-        // Create group conversation
-        const conversationData = {
-            participants: participantIds,
-            participantsData,
-            groupName,
-            groupAvatar: groupAvatarUrl,
-            isGroup: true,
-            createdAt: new Date(),
-            lastMessageAt: new Date()
-        };
-        const conversationRef = await db.collection('conversations').add(conversationData);
-        this.conversations.unshift({ id: conversationRef.id, ...conversationData });
-        this.renderConversations();
-        this.selectConversation(conversationRef.id, null);
-        this.closeModals();
+        });
     }
 }
 
-// Initialize when DOM is loaded
+// Initialize MessagesPage globally
+let messagesPage;
+
+// Create MessagesPage instance immediately
+if (typeof MessagesPage !== 'undefined') {
+    messagesPage = new MessagesPage();
+    window.messagesPage = messagesPage;
+}
+
+// Also initialize on DOMContentLoaded as backup
 document.addEventListener('DOMContentLoaded', () => {
-    window.messagesPage = new MessagesPage();
+    if (!messagesPage) {
+        messagesPage = new MessagesPage();
+        window.messagesPage = messagesPage;
+    }
 }); 
+
+// Fallback functions for when messagesPage is not yet available
+window.toggleEmojiPicker = function() {
+    if (window.messagesPage) {
+        window.messagesPage.toggleEmojiPicker();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.insertEmoji = function(emoji) {
+    if (window.messagesPage) {
+        window.messagesPage.insertEmoji(emoji);
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.showNewConversationModal = function() {
+    if (window.messagesPage) {
+        window.messagesPage.showNewConversationModal();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.filterConversations = function(value) {
+    if (window.messagesPage) {
+        window.messagesPage.filterConversations(value);
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.clearSearch = function() {
+    if (window.messagesPage) {
+        window.messagesPage.clearSearch();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.showSidebarMobile = function() {
+    if (window.messagesPage) {
+        window.messagesPage.showSidebarMobile();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.startVoiceCall = function() {
+    if (window.messagesPage) {
+        window.messagesPage.startVoiceCall();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.startVideoCall = function() {
+    if (window.messagesPage) {
+        window.messagesPage.startVideoCall();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.showConversationOptions = function() {
+    if (window.messagesPage) {
+        window.messagesPage.showConversationOptions();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.showSampleConversations = function() {
+    if (window.messagesPage) {
+        window.messagesPage.showSampleConversations();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.toggleNotificationDropdown = function() {
+    if (window.messagesPage) {
+        window.messagesPage.toggleNotificationDropdown();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+};
+
+window.handleLogout = function() {
+    if (window.messagesPage) {
+        window.messagesPage.handleLogout();
+    } else {
+        console.log('MessagesPage not ready yet');
+    }
+}; 
