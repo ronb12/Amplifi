@@ -1303,6 +1303,24 @@ function addIOSCompatibility() {
             visibility: visible !important;
             opacity: 1 !important;
         }
+        
+        /* Hide mobile tabs on desktop */
+        @media (min-width: 769px) {
+            .mobile-tab-nav {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+        }
+        
+        /* Show mobile tabs only on mobile */
+        @media (max-width: 768px) {
+            .mobile-tab-nav {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        }
     `;
     
     document.head.appendChild(style);
