@@ -1400,6 +1400,65 @@ function addIOSCompatibility() {
             z-index: 1 !important;
         }
         
+        /* Ensure message input area buttons are visible */
+        body:has(.messages-main) .message-input-container .emoji-btn,
+        body:has(.messages-main) .message-input-container .voice-btn,
+        body:has(.messages-main) .message-input-container .attach-btn,
+        body:has(.messages-main) .message-input-container .money-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            background: rgba(102, 126, 234, 0.1) !important;
+            border: 1px solid rgba(102, 126, 234, 0.2) !important;
+            color: #667eea !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* Hover effects for input buttons */
+        body:has(.messages-main) .message-input-container .emoji-btn:hover,
+        body:has(.messages-main) .message-input-container .voice-btn:hover,
+        body:has(.messages-main) .message-input-container .attach-btn:hover,
+        body:has(.messages-main) .message-input-container .money-btn:hover {
+            background: rgba(102, 126, 234, 0.2) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Ensure send button is visible */
+        body:has(.messages-main) .message-input-container .send-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* Send button hover effect */
+        body:has(.messages-main) .message-input-container .send-btn:hover:not(:disabled) {
+            transform: scale(1.05) !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+        }
+        
+        /* Ensure message input area is properly positioned */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
             bottom: 0 !important;
@@ -1409,6 +1468,37 @@ function addIOSCompatibility() {
             z-index: 100 !important;
             margin-bottom: 0 !important;
             transform: none !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Ensure message input container is properly laid out */
+        body:has(.messages-main) .message-input-container {
+            display: flex !important;
+            align-items: flex-end !important;
+            gap: 0.5rem !important;
+            background: white !important;
+            border-radius: 20px !important;
+            padding: 0.5rem !important;
+            border: 1px solid #e5e7eb !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Ensure message input is properly styled */
+        body:has(.messages-main) .message-input {
+            flex: 1 !important;
+            border: none !important;
+            outline: none !important;
+            resize: none !important;
+            font-family: inherit !important;
+            font-size: 0.9rem !important;
+            line-height: 1.4 !important;
+            padding: 0.5rem !important;
+            background: transparent !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         /* Ensure chat area has proper layout */
