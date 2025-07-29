@@ -97,7 +97,7 @@ class MessagesApp {
             
             if (userDoc.exists) {
                 const userData = userDoc.data();
-                document.getElementById('userAvatar').src = userData.profilePic || 'assets/images/assets/images/default-avatar.svg';
+                document.getElementById('userAvatar').src = userData.profilePic || 'assets/images/default-avatar.svg';
             }
         } catch (error) {
             console.error('Error loading user profile:', error);

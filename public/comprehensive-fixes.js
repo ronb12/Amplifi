@@ -88,10 +88,10 @@ function fixDesktopNavigation() {
             width: calc(100% - 2rem) !important;
         }
         
-        /* Ensure messages page main content doesn't interfere with navigation */
-        .messages-main {
+        /* Remove conflicting margin-top override for messages page */
+        /* .messages-main {
             margin-top: 120px !important;
-        }
+        } */
         
         /* Additional messages page specific fixes */
         body:has(.messages-main) {
@@ -120,6 +120,82 @@ function fixDesktopNavigation() {
         /* Override any parent container styles */
         body:has(.messages-main) > * {
             max-width: none !important;
+        }
+        
+        /* Fix avatar display in messages page */
+        body:has(.messages-main) .user-avatar,
+        body:has(.messages-main) .chat-avatar,
+        body:has(.messages-main) .conversation-avatar,
+        body:has(.messages-main) .message-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+        
+        /* Ensure chat actions are visible */
+        body:has(.messages-main) .chat-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+        }
+        
+        body:has(.messages-main) .chat-actions .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: rgba(255,255,255,0.2) !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+        
+        body:has(.messages-main) .chat-actions .action-btn:hover {
+            background: rgba(255,255,255,0.3) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Mobile-specific fixes for messages page */
+        @media (max-width: 768px) {
+            body:has(.messages-main) .messages-main {
+                margin-top: 70px !important;
+                height: calc(100vh - 70px - 60px) !important;
+            }
+            
+            body:has(.messages-main) .conversations-sidebar {
+                position: fixed !important;
+                left: 0 !important;
+                top: 70px !important;
+                width: 100% !important;
+                height: calc(100vh - 70px - 60px) !important;
+                z-index: 1000 !important;
+                transform: translateX(-100%) !important;
+                transition: transform 0.3s ease !important;
+            }
+            
+            body:has(.messages-main) .conversations-sidebar.show {
+                transform: translateX(0) !important;
+            }
+            
+            body:has(.messages-main) .chat-area {
+                position: fixed !important;
+                left: 0 !important;
+                top: 70px !important;
+                width: 100% !important;
+                height: calc(100vh - 70px - 60px) !important;
+                z-index: 999 !important;
+                transform: translateX(100%) !important;
+                transition: transform 0.3s ease !important;
+            }
+            
+            body:has(.messages-main) .chat-area.active {
+                transform: translateX(0) !important;
+            }
         }
         
         /* Ensure navigation links have consistent sizing */
