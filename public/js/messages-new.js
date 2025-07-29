@@ -745,7 +745,7 @@ class MessagesApp {
 
         try {
             // Check creator protection for the conversation
-            const otherParticipantId = this.currentConversation.participantIds.find(id => id !== this.currentUser.uid);
+            const otherParticipantId = this.currentConversation.participants.find(id => id !== this.currentUser.uid);
             if (otherParticipantId) {
                 const protectionCheck = await this.checkCreatorProtection(otherParticipantId);
                 if (!protectionCheck.allowed) {
