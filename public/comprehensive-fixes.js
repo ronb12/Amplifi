@@ -657,66 +657,86 @@ function enhanceMobileHeaders() {
                 backdrop-filter: blur(10px) !important;
                 -webkit-backdrop-filter: blur(10px) !important;
                 min-height: 60px !important;
+                width: 100% !important;
+                position: relative !important;
+                z-index: 1000 !important;
             }
             
-            /* Better header content spacing */
-            .header-content {
+            /* Better header content spacing - Override feed.css */
+            .header .header-content {
                 padding: 0.8rem 1rem !important;
                 gap: 0.8rem !important;
                 min-height: 60px !important;
                 align-items: center !important;
+                max-width: 100vw !important;
+                margin: 0 auto !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                flex-wrap: nowrap !important;
+                overflow: hidden !important;
             }
             
             /* Larger logo for better visibility */
-            .header-left .logo {
+            .header .header-left .logo {
                 font-size: 1.3rem !important;
                 font-weight: 800 !important;
+                margin-right: 0 !important;
+                flex-shrink: 0 !important;
             }
             
             /* Better touch targets for mobile */
-            .notification-btn, .user-avatar, .search-btn {
+            .header .notification-btn, 
+            .header .user-avatar, 
+            .header .search-btn {
                 min-width: 48px !important;
                 min-height: 48px !important;
+                flex-shrink: 0 !important;
             }
             
             /* Improve search input on mobile - Less Compact */
-            .header-center {
+            .header .header-center {
                 flex: 1 !important;
                 display: flex !important;
                 align-items: center !important;
                 gap: 0.6rem !important;
                 justify-content: center !important;
+                min-width: 0 !important;
+                max-width: none !important;
+                margin: 0 0.5rem !important;
             }
             
-            .header-center .search-input {
+            .header .header-center .search-input {
                 -webkit-appearance: none !important;
                 appearance: none !important;
                 border-radius: 24px !important;
                 padding: 0.6rem 1rem !important;
                 font-size: 0.95rem !important;
-                min-width: 200px !important;
-                max-width: 280px !important;
+                min-width: 180px !important;
+                max-width: 260px !important;
+                width: 100% !important;
                 height: 40px !important;
                 border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
                 background: rgba(255, 255, 255, 0.15) !important;
                 color: white !important;
                 backdrop-filter: blur(10px) !important;
                 transition: all 0.3s ease !important;
+                flex-shrink: 1 !important;
+                box-sizing: border-box !important;
             }
             
-            .header-center .search-input::placeholder {
+            .header .header-center .search-input::placeholder {
                 color: rgba(255, 255, 255, 0.7) !important;
                 font-size: 0.9rem !important;
             }
             
-            .header-center .search-input:focus {
+            .header .header-center .search-input:focus {
                 outline: none !important;
                 border-color: rgba(255, 255, 255, 0.6) !important;
                 background: rgba(255, 255, 255, 0.25) !important;
                 box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
             }
             
-            .header-center .search-btn {
+            .header .header-center .search-btn {
                 width: 40px !important;
                 height: 40px !important;
                 border-radius: 50% !important;
@@ -730,15 +750,16 @@ function enhanceMobileHeaders() {
                 cursor: pointer !important;
                 transition: all 0.3s ease !important;
                 backdrop-filter: blur(10px) !important;
+                flex-shrink: 0 !important;
             }
             
-            .header-center .search-btn:hover {
+            .header .header-center .search-btn:hover {
                 background: rgba(255, 255, 255, 0.3) !important;
                 transform: scale(1.05) !important;
             }
             
             /* Better notification button */
-            .notification-btn {
+            .header .header-actions .notification-btn {
                 width: 44px !important;
                 height: 44px !important;
                 background: rgba(255, 255, 255, 0.15) !important;
@@ -748,69 +769,80 @@ function enhanceMobileHeaders() {
                 font-size: 1.1rem !important;
                 backdrop-filter: blur(10px) !important;
                 transition: all 0.3s ease !important;
+                flex-shrink: 0 !important;
             }
             
-            .notification-btn:hover {
+            .header .header-actions .notification-btn:hover {
                 background: rgba(255, 255, 255, 0.25) !important;
                 transform: scale(1.05) !important;
             }
             
             /* Better user avatar */
-            .user-avatar {
+            .header .header-actions .user-avatar {
                 width: 40px !important;
                 height: 40px !important;
                 border: 2px solid rgba(255, 255, 255, 0.4) !important;
                 border-radius: 50% !important;
                 transition: all 0.3s ease !important;
+                flex-shrink: 0 !important;
             }
             
-            .user-avatar:hover {
+            .header .header-actions .user-avatar:hover {
                 border-color: rgba(255, 255, 255, 0.7) !important;
                 transform: scale(1.05) !important;
             }
             
             /* Better focus states for accessibility */
-            .header-center .search-input:focus,
-            .notification-btn:focus,
-            .user-avatar:focus {
+            .header .header-center .search-input:focus,
+            .header .header-actions .notification-btn:focus,
+            .header .header-actions .user-avatar:focus {
                 outline: 2px solid rgba(255, 255, 255, 0.8) !important;
                 outline-offset: 2px !important;
+            }
+            
+            /* Ensure header actions don't overlap */
+            .header .header-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.8rem !important;
+                flex-shrink: 0 !important;
+                min-width: auto !important;
             }
         }
         
         /* Small mobile devices - Better spacing */
         @media (max-width: 480px) {
-            .header-content {
+            .header .header-content {
                 padding: 0.7rem 0.8rem !important;
                 gap: 0.6rem !important;
                 min-height: 56px !important;
             }
             
-            .header-left .logo {
+            .header .header-left .logo {
                 font-size: 1.2rem !important;
             }
             
-            .header-center .search-input {
-                min-width: 160px !important;
-                max-width: 220px !important;
+            .header .header-center .search-input {
+                min-width: 140px !important;
+                max-width: 200px !important;
                 padding: 0.5rem 0.8rem !important;
                 font-size: 0.9rem !important;
                 height: 36px !important;
             }
             
-            .header-center .search-btn {
+            .header .header-center .search-btn {
                 width: 36px !important;
                 height: 36px !important;
                 font-size: 0.9rem !important;
             }
             
-            .notification-btn {
+            .header .header-actions .notification-btn {
                 width: 40px !important;
                 height: 40px !important;
                 font-size: 1rem !important;
             }
             
-            .user-avatar {
+            .header .header-actions .user-avatar {
                 width: 36px !important;
                 height: 36px !important;
             }
@@ -818,37 +850,37 @@ function enhanceMobileHeaders() {
         
         /* Extra small mobile devices - Still spacious */
         @media (max-width: 360px) {
-            .header-content {
+            .header .header-content {
                 padding: 0.6rem 0.6rem !important;
                 gap: 0.5rem !important;
                 min-height: 52px !important;
             }
             
-            .header-left .logo {
+            .header .header-left .logo {
                 font-size: 1.1rem !important;
             }
             
-            .header-center .search-input {
-                min-width: 140px !important;
-                max-width: 180px !important;
+            .header .header-center .search-input {
+                min-width: 120px !important;
+                max-width: 160px !important;
                 padding: 0.4rem 0.7rem !important;
                 font-size: 0.85rem !important;
                 height: 32px !important;
             }
             
-            .header-center .search-btn {
+            .header .header-center .search-btn {
                 width: 32px !important;
                 height: 32px !important;
                 font-size: 0.85rem !important;
             }
             
-            .notification-btn {
+            .header .header-actions .notification-btn {
                 width: 36px !important;
                 height: 36px !important;
                 font-size: 0.95rem !important;
             }
             
-            .user-avatar {
+            .header .header-actions .user-avatar {
                 width: 32px !important;
                 height: 32px !important;
             }
@@ -856,18 +888,18 @@ function enhanceMobileHeaders() {
         
         /* Landscape orientation fixes */
         @media (max-width: 768px) and (orientation: landscape) {
-            .header-content {
+            .header .header-content {
                 min-height: 52px !important;
                 padding: 0.6rem 1rem !important;
             }
             
-            .header-left .logo {
+            .header .header-left .logo {
                 font-size: 1.2rem !important;
             }
             
-            .header-center .search-input {
-                max-width: 240px !important;
-                min-width: 180px !important;
+            .header .header-center .search-input {
+                max-width: 220px !important;
+                min-width: 160px !important;
             }
         }
         
@@ -887,10 +919,10 @@ function enhanceMobileHeaders() {
         
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
-            .header-content *,
-            .notification-btn,
-            .user-avatar,
-            .search-btn {
+            .header .header-content *,
+            .header .header-actions .notification-btn,
+            .header .header-actions .user-avatar,
+            .header .header-center .search-btn {
                 transition: none !important;
                 animation: none !important;
             }
