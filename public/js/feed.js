@@ -514,7 +514,7 @@ class FeedPage {
                 description: 'This is a sample post to test the comment functionality. Try clicking the comment button below!',
                 authorName: 'Amplifi Team',
                 authorId: 'sample-user-1',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 mediaType: 'image',
                 createdAt: new Date(Date.now() - 3600000), // 1 hour ago
@@ -529,7 +529,7 @@ class FeedPage {
                 description: 'This post is specifically for testing comments. Leave a comment below to see how it works!',
                 authorName: 'Test User',
                 authorId: 'sample-user-2',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 mediaType: 'image',
                 createdAt: new Date(Date.now() - 7200000), // 2 hours ago
@@ -544,7 +544,7 @@ class FeedPage {
                 description: 'Explore all the amazing features of Amplifi including live streaming, music library, and more!',
                 authorName: 'Demo Creator',
                 authorId: 'sample-user-3',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.pexels.com/photos/3183156/pexels-photo-3183156.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 mediaType: 'image',
                 createdAt: new Date(Date.now() - 10800000), // 3 hours ago
@@ -669,7 +669,7 @@ class FeedPage {
         // Channel/avatar
         const channelDiv = document.createElement('span');
         channelDiv.className = 'post-channel';
-        channelDiv.innerHTML = `<img src='${post.authorPic || 'default-avatar.svg'}' alt='Channel' class='post-author-pic' style='width:22px;height:22px;margin-right:0.4em;'> <span class='post-channel-name'>${post.authorName || 'Anonymous'}</span>`;
+        channelDiv.innerHTML = `<img src='${post.authorPic || 'assets/images/default-avatar.svg'}' alt='Channel' class='post-author-pic' style='width:22px;height:22px;margin-right:0.4em;'> <span class='post-channel-name'>${post.authorName || 'Anonymous'}</span>`;
         metaDiv.appendChild(channelDiv);
         infoDiv.appendChild(metaDiv);
 
@@ -871,7 +871,7 @@ class FeedPage {
         authorDiv.style.alignItems = 'center';
         authorDiv.style.marginBottom = '15px';
         authorDiv.innerHTML = `
-                <img src="${freshPostData.authorPic || 'default-avatar.svg'}" alt="Author" style="width:40px;height:40px;border-radius:50%;margin-right:10px;">
+                <img src="${freshPostData.authorPic || 'assets/images/default-avatar.svg'}" alt="Author" style="width:40px;height:40px;border-radius:50%;margin-right:10px;">
             <div>
                     <div style="font-weight:bold;">${freshPostData.authorName || 'Anonymous'}</div>
                     <div style="color:#666;font-size:14px;">${this.formatTimestamp(freshPostData.createdAt)}</div>
@@ -1241,11 +1241,11 @@ class FeedPage {
                         
                         // Create elements safely
                         const img = document.createElement('img');
-                        img.src = comment.authorPic || 'default-avatar.svg';
+                        img.src = comment.authorPic || 'assets/images/default-avatar.svg';
                         img.alt = 'User';
                         img.className = 'comment-user-pic';
                     img.onerror = () => {
-                        img.src = 'default-avatar.svg';
+                        img.src = 'assets/images/default-avatar.svg';
                     };
                         
                         const contentDiv = document.createElement('div');
@@ -1290,7 +1290,7 @@ class FeedPage {
             if (commentUserPic && this.userProfile?.profilePic) {
                 commentUserPic.src = this.userProfile.profilePic;
             } else if (commentUserPic) {
-                commentUserPic.src = 'default-avatar.svg';
+                commentUserPic.src = 'assets/images/default-avatar.svg';
             }
             
             this.setupCommentForm(postId);
@@ -1843,7 +1843,7 @@ class FeedPage {
                 createdAt: new Date(),
                 authorName: this.userProfile?.displayName || 'Anonymous',
                 authorUsername: this.userProfile?.username || 'user',
-                authorPic: this.userProfile?.profilePic || 'default-avatar.svg',
+                authorPic: this.userProfile?.profilePic || 'assets/images/default-avatar.svg',
                 likes: 0,
                 comments: 0,
                 liked: false
@@ -2034,7 +2034,7 @@ class FeedPage {
         
         return `
             <div class="notification-item ${isUnread ? 'unread' : ''}" data-id="${notification.id}">
-                <img src="${notification.senderPic || 'default-avatar.svg'}" alt="User" class="notification-avatar">
+                <img src="${notification.senderPic || 'assets/images/default-avatar.svg'}" alt="User" class="notification-avatar">
                 <div class="notification-content">
                     <div class="notification-text">${this.formatNotificationText(notification)}</div>
                     <div class="notification-time">${timeAgo}</div>

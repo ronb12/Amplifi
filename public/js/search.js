@@ -264,7 +264,7 @@ class SearchPage {
                 displayName: 'Sarah Johnson',
                 username: 'sarahj',
                 bio: 'Photography enthusiast and travel lover 📸✈️',
-                profilePic: 'default-avatar.svg',
+                profilePic: 'assets/images/default-avatar.svg',
                 followers: 1240,
                 following: 567
             },
@@ -273,7 +273,7 @@ class SearchPage {
                 displayName: 'Mike Chen',
                 username: 'mikechen',
                 bio: 'Food blogger and home chef 👨‍🍳',
-                profilePic: 'default-avatar.svg',
+                profilePic: 'assets/images/default-avatar.svg',
                 followers: 890,
                 following: 234
             },
@@ -282,7 +282,7 @@ class SearchPage {
                 displayName: 'Emma Davis',
                 username: 'emmadavis',
                 bio: 'Fitness trainer and wellness coach 💪',
-                profilePic: 'default-avatar.svg',
+                profilePic: 'assets/images/default-avatar.svg',
                 followers: 2100,
                 following: 445
             },
@@ -291,7 +291,7 @@ class SearchPage {
                 displayName: 'Alex Rodriguez',
                 username: 'alexrod',
                 bio: 'Travel vlogger and adventure seeker 🌍',
-                profilePic: 'default-avatar.svg',
+                profilePic: 'assets/images/default-avatar.svg',
                 followers: 3400,
                 following: 123
             },
@@ -300,7 +300,7 @@ class SearchPage {
                 displayName: 'Lisa Wang',
                 username: 'lisawang',
                 bio: 'Coffee artist and barista ☕',
-                profilePic: 'default-avatar.svg',
+                profilePic: 'assets/images/default-avatar.svg',
                 followers: 670,
                 following: 89
             }
@@ -346,7 +346,7 @@ class SearchPage {
                 title: 'Amazing Sunset View',
                 description: 'Captured this beautiful sunset during my evening walk. Nature is truly incredible!',
                 authorName: 'Sarah Johnson',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=600&q=80',
                 mediaType: 'image',
                 likes: 245,
@@ -360,7 +360,7 @@ class SearchPage {
                 title: 'Delicious Homemade Pizza',
                 description: 'Made this pizza from scratch today! The secret is in the dough. 🍕',
                 authorName: 'Mike Chen',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80',
                 mediaType: 'image',
                 likes: 189,
@@ -374,7 +374,7 @@ class SearchPage {
                 title: 'Morning Workout Routine',
                 description: 'Starting the day with energy! This 30-minute routine changed my life. 💪',
                 authorName: 'Emma Davis',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=600&q=80',
                 mediaType: 'image',
                 likes: 312,
@@ -388,7 +388,7 @@ class SearchPage {
                 title: 'Travel Adventures in Japan',
                 description: 'Exploring the beautiful temples and gardens of Kyoto. Japan is magical! 🇯🇵',
                 authorName: 'Alex Rodriguez',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
                 mediaType: 'image',
                 likes: 567,
@@ -402,7 +402,7 @@ class SearchPage {
                 title: 'Artistic Coffee Latte',
                 description: "Today's coffee art attempt! Getting better at latte art. ☕",
                 authorName: 'Lisa Wang',
-                authorPic: 'default-avatar.svg',
+                authorPic: 'assets/images/default-avatar.svg',
                 mediaUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80',
                 mediaType: 'image',
                 likes: 134,
@@ -476,7 +476,7 @@ class SearchPage {
             </div>
             <div class="post-info">
                 <div class="post-author">
-                    <img src="${post.authorPic || 'default-avatar.svg'}" alt="Author" class="author-avatar">
+                    <img src="${post.authorPic || 'assets/images/default-avatar.svg'}" alt="Author" class="author-avatar">
                     <span class="author-name">${post.authorName}</span>
                 </div>
                 <h3 class="post-title">${post.title}</h3>
@@ -504,7 +504,7 @@ class SearchPage {
         
         userDiv.innerHTML = `
             <div class="user-avatar">
-                <img src="${user.profilePic || 'default-avatar.svg'}" alt="User">
+                <img src="${user.profilePic || 'assets/images/default-avatar.svg'}" alt="User">
             </div>
             <div class="user-info">
                 <h4 class="user-name">${user.displayName || 'Anonymous'}</h4>

@@ -213,7 +213,7 @@ class ProfilePage {
         // Update profile avatar
         const profileAvatar = document.getElementById('profileAvatar');
         if (profileAvatar) {
-            profileAvatar.src = profileData.profilePic || 'default-avatar.svg';
+            profileAvatar.src = profileData.profilePic || 'assets/images/default-avatar.svg';
         }
 
         // Update profile info
@@ -425,7 +425,7 @@ class ProfilePage {
                         followerId: 'sample_user_1',
                         followerName: 'Alex Johnson',
                         followerUsername: 'alexjohnson',
-                        followerPic: 'default-avatar.svg',
+                        followerPic: 'assets/images/default-avatar.svg',
                         followedAt: new Date(Date.now() - 86400000) // 1 day ago
                     },
                     {
@@ -433,7 +433,7 @@ class ProfilePage {
                         followerId: 'sample_user_2',
                         followerName: 'GamingMaster',
                         followerUsername: 'gamingmaster',
-                        followerPic: 'default-avatar.svg',
+                        followerPic: 'assets/images/default-avatar.svg',
                         followedAt: new Date(Date.now() - 172800000) // 2 days ago
                     },
                     {
@@ -441,7 +441,7 @@ class ProfilePage {
                         followerId: 'sample_user_3',
                         followerName: 'Mike Chen',
                         followerUsername: 'mikechen',
-                        followerPic: 'default-avatar.svg',
+                        followerPic: 'assets/images/default-avatar.svg',
                         followedAt: new Date(Date.now() - 259200000) // 3 days ago
                     },
                     {
@@ -449,7 +449,7 @@ class ProfilePage {
                         followerId: 'sample_user_4',
                         followerName: 'TechWizard',
                         followerUsername: 'techwizard',
-                        followerPic: 'default-avatar.svg',
+                        followerPic: 'assets/images/default-avatar.svg',
                         followedAt: new Date(Date.now() - 345600000) // 4 days ago
                     },
                     {
@@ -457,7 +457,7 @@ class ProfilePage {
                         followerId: 'sample_user_5',
                         followerName: 'David Rodriguez',
                         followerUsername: 'davidrodriguez',
-                        followerPic: 'default-avatar.svg',
+                        followerPic: 'assets/images/default-avatar.svg',
                         followedAt: new Date(Date.now() - 432000000) // 5 days ago
                     }
                 ];
@@ -474,7 +474,7 @@ class ProfilePage {
                     followerId: 'sample_user_1',
                     followerName: 'Alex Johnson',
                     followerUsername: 'alexjohnson',
-                    followerPic: 'default-avatar.svg',
+                    followerPic: 'assets/images/default-avatar.svg',
                     followedAt: new Date(Date.now() - 86400000)
                 },
                 {
@@ -482,7 +482,7 @@ class ProfilePage {
                     followerId: 'sample_user_2',
                     followerName: 'GamingMaster',
                     followerUsername: 'gamingmaster',
-                    followerPic: 'default-avatar.svg',
+                    followerPic: 'assets/images/default-avatar.svg',
                     followedAt: new Date(Date.now() - 172800000)
                 },
                 {
@@ -490,7 +490,7 @@ class ProfilePage {
                     followerId: 'sample_user_3',
                     followerName: 'Mike Chen',
                     followerUsername: 'mikechen',
-                    followerPic: 'default-avatar.svg',
+                    followerPic: 'assets/images/default-avatar.svg',
                     followedAt: new Date(Date.now() - 259200000)
                 }
             ];
@@ -544,21 +544,21 @@ class ProfilePage {
                         id: 'sample_creator_1',
                         displayName: 'Tech Reviews',
                         username: 'techreviews',
-                        profilePic: 'default-avatar.svg',
+                        profilePic: 'assets/images/default-avatar.svg',
                         bio: 'Latest tech reviews and tutorials'
                     },
                     {
                         id: 'sample_creator_2',
                         displayName: 'Cooking Master',
                         username: 'cookingmaster',
-                        profilePic: 'default-avatar.svg',
+                        profilePic: 'assets/images/default-avatar.svg',
                         bio: 'Delicious recipes and cooking tips'
                     },
                     {
                         id: 'sample_creator_3',
                         displayName: 'Fitness Coach',
                         username: 'fitnesscoach',
-                        profilePic: 'default-avatar.svg',
+                        profilePic: 'assets/images/default-avatar.svg',
                         bio: 'Workout routines and fitness advice'
                     }
                 ];
@@ -573,14 +573,14 @@ class ProfilePage {
                     id: 'sample_creator_1',
                     displayName: 'Tech Reviews',
                     username: 'techreviews',
-                    profilePic: 'default-avatar.svg',
+                    profilePic: 'assets/images/default-avatar.svg',
                     bio: 'Latest tech reviews and tutorials'
                 },
                 {
                     id: 'sample_creator_2',
                     displayName: 'Cooking Master',
                     username: 'cookingmaster',
-                    profilePic: 'default-avatar.svg',
+                    profilePic: 'assets/images/default-avatar.svg',
                     bio: 'Delicious recipes and cooking tips'
                 }
             ];
@@ -620,7 +620,7 @@ class ProfilePage {
         // Handle both real user data and sample subscriber data
         const displayName = user.displayName || user.followerName || 'Anonymous';
         const username = user.username || user.followerUsername || 'unknown';
-        const profilePic = user.profilePic || user.followerPic || 'default-avatar.svg';
+        const profilePic = user.profilePic || user.followerPic || 'assets/images/default-avatar.svg';
         
         userDiv.innerHTML = `
             <img src="${profilePic}" alt="User" class="user-avatar">
@@ -847,7 +847,7 @@ class ProfilePage {
             <div class="users-list">
                 ${this.subscribers.map(subscriber => `
                     <div class="user-item" onclick="profilePage.goToUserProfile('${subscriber.followerId || subscriber.id}')">
-                        <img src="${subscriber.followerPic || subscriber.profilePic || 'default-avatar.svg'}" alt="User" class="user-avatar">
+                        <img src="${subscriber.followerPic || subscriber.profilePic || 'assets/images/default-avatar.svg'}" alt="User" class="user-avatar">
                         <div class="user-info">
                             <h4>${subscriber.followerName || subscriber.displayName || 'Anonymous'}</h4>
                             <p>@${subscriber.followerUsername || subscriber.username || 'unknown'}</p>
@@ -867,7 +867,7 @@ class ProfilePage {
             <div class="users-list">
                 ${this.subscribing.map(subscription => `
                     <div class="user-item" onclick="profilePage.goToUserProfile('${subscription.id}')">
-                        <img src="${subscription.profilePic || 'default-avatar.svg'}" alt="User" class="user-avatar">
+                        <img src="${subscription.profilePic || 'assets/images/default-avatar.svg'}" alt="User" class="user-avatar">
                         <div class="user-info">
                             <h4>${subscription.displayName || 'Anonymous'}</h4>
                             <p>@${subscription.username || 'unknown'}</p>

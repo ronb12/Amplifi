@@ -1962,7 +1962,7 @@ class LivePage {
         
         // Use different fallback images to avoid duplicate avatars
         const thumbnailSrc = stream.thumbnailUrl || 'hero-image.svg';
-        const streamerSrc = stream.streamerPic || 'default-avatar.svg';
+        const streamerSrc = stream.streamerPic || 'assets/images/default-avatar.svg';
         
         streamDiv.innerHTML = `
             <div class="stream-thumbnail">
@@ -2001,7 +2001,7 @@ class LivePage {
                 snapshot.forEach(doc => viewers.push(doc.data()));
                 container.innerHTML = viewers.map(v => `
                     <div class='viewer-item' style='display:inline-flex;align-items:center;gap:0.3rem;margin-right:0.7rem;margin-bottom:0.5rem;'>
-                        <img src='${v.profilePic || 'default-avatar.svg'}' alt='${v.displayName || 'User'}' style='width:28px;height:28px;border-radius:50%;border:1.5px solid #e5e7eb;'>
+                        <img src='${v.profilePic || 'assets/images/default-avatar.svg'}' alt='${v.displayName || 'User'}' style='width:28px;height:28px;border-radius:50%;border:1.5px solid #e5e7eb;'>
                         <span style='font-size:0.97rem;color:#444;'>${v.displayName || 'User'}</span>
                     </div>
                 `).join('');
@@ -2074,7 +2074,7 @@ class LivePage {
                                 <div style="color:#6366f1;font-size:0.98rem;margin-bottom:0.2rem;">${stream.category || 'General'}</div>
                                 <p style="color:#444;font-size:1rem;margin-bottom:0.5rem;">${stream.description || ''}</p>
                                 <div style="display:flex;align-items:center;gap:0.7rem;">
-                                    <img src="${stream.streamerPic || 'default-avatar.svg'}" alt="Streamer" style="width:36px;height:36px;border-radius:50%;border:2px solid #e5e7eb;">
+                                    <img src="${stream.streamerPic || 'assets/images/default-avatar.svg'}" alt="Streamer" style="width:36px;height:36px;border-radius:50%;border:2px solid #e5e7eb;">
                                     <span style="font-weight:600;">${stream.streamerName}</span>
                                     <button class="btn btn-secondary" id="followStreamerBtn" style="margin-left:1rem;">Follow</button>
                                 </div>
@@ -2256,7 +2256,7 @@ class LivePage {
                             }
                         }
                         messageElement.innerHTML = `
-                            <img class="chat-avatar" src="${message.authorPic || 'default-avatar.svg'}" alt="User">
+                            <img class="chat-avatar" src="${message.authorPic || 'assets/images/default-avatar.svg'}" alt="User">
                             <div class="chat-message-content">
                                 <div class="chat-message-header">
                                     <a href="#" class="chat-author" data-uid="${message.authorId}" style="color:#6366f1;text-decoration:underline;">${message.authorName}</a>
@@ -2411,7 +2411,7 @@ class LivePage {
         const isEnded = stream.status === 'ended';
         streamDiv.innerHTML = `
             <div class="stream-thumbnail" style="position:relative;">
-                <img src="${stream.thumbnailUrl || stream.streamerPic || 'default-avatar.svg'}" alt="Stream thumbnail">
+                <img src="${stream.thumbnailUrl || stream.streamerPic || 'assets/images/default-avatar.svg'}" alt="Stream thumbnail">
                 <div class="live-badge" style="background:${isEnded ? '#aaa' : '#ef4444'};color:#fff;position:absolute;top:10px;left:10px;padding:2px 10px;border-radius:8px;font-size:0.95rem;">${isEnded ? 'ENDED' : 'LIVE'}</div>
                 <div class="viewer-count">${stream.viewerCount || 0} viewers</div>
             </div>
@@ -2422,7 +2422,7 @@ class LivePage {
                     <span class="stream-duration">${this.formatDuration(stream.startedAt)}</span>
                 </div>
                 <div class="stream-author">
-                    <img src="${stream.streamerPic || 'default-avatar.svg'}" alt="Streamer">
+                    <img src="${stream.streamerPic || 'assets/images/default-avatar.svg'}" alt="Streamer">
                     <span>${stream.streamerName}</span>
                 </div>
             </div>

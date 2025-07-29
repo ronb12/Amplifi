@@ -163,7 +163,7 @@ class NotificationsPage {
                 type: 'like',
                 senderId: 'sample_user_1',
                 senderName: 'John Doe',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'Great content! Keep it up!',
                 postId: 'sample_post_1',
                 createdAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 2 * 60 * 60 * 1000)), // 2 hours ago
@@ -173,7 +173,7 @@ class NotificationsPage {
                 type: 'follow',
                 senderId: 'sample_user_2',
                 senderName: 'Jane Smith',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'You have a new follower!',
                 createdAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 60 * 1000)), // 5 hours ago
                 read: false
@@ -182,7 +182,7 @@ class NotificationsPage {
                 type: 'tip',
                 senderId: 'sample_user_3',
                 senderName: 'Mike Johnson',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: '💰 $5.00 - "Amazing work!"',
                 amount: 5.00,
                 createdAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // 1 day ago
@@ -192,7 +192,7 @@ class NotificationsPage {
                 type: 'comment',
                 senderId: 'sample_user_4',
                 senderName: 'Sarah Wilson',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'This is exactly what I needed! Thank you!',
                 postId: 'sample_post_2',
                 createdAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)), // 2 days ago
@@ -220,7 +220,7 @@ class NotificationsPage {
                 id: 'sample_1',
                 type: 'like',
                 senderName: 'John Doe',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'Great content! Keep it up!',
                 createdAt: { toDate: () => new Date(Date.now() - 2 * 60 * 60 * 1000) },
                 read: false
@@ -229,7 +229,7 @@ class NotificationsPage {
                 id: 'sample_2',
                 type: 'follow',
                 senderName: 'Jane Smith',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'You have a new follower!',
                 createdAt: { toDate: () => new Date(Date.now() - 5 * 60 * 60 * 1000) },
                 read: false
@@ -238,7 +238,7 @@ class NotificationsPage {
                 id: 'sample_3',
                 type: 'tip',
                 senderName: 'Mike Johnson',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: '💰 $5.00 - "Amazing work!"',
                 createdAt: { toDate: () => new Date(Date.now() - 24 * 60 * 60 * 1000) },
                 read: false
@@ -247,7 +247,7 @@ class NotificationsPage {
                 id: 'sample_4',
                 type: 'comment',
                 senderName: 'Sarah Wilson',
-                senderPic: 'default-avatar.svg',
+                senderPic: 'assets/images/default-avatar.svg',
                 content: 'This is exactly what I needed! Thank you!',
                 createdAt: { toDate: () => new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
                 read: true
@@ -314,7 +314,7 @@ class NotificationsPage {
         
         return `
             <div class="notification-item" data-notification-id="${notification.id}" style="display: flex; align-items: start; gap: 1rem; padding: 1rem; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer;">
-                <img src="${notification.senderPic || 'default-avatar.svg'}" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
+                <img src="${notification.senderPic || 'assets/images/default-avatar.svg'}" alt="User" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;">
                 <div style="flex: 1;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
                         <span style="font-weight: 600; color: #374151;">${notification.senderName || 'Unknown User'}</span>

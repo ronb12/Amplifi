@@ -28,7 +28,7 @@ const STATIC_FILES = [
     '/icons/icon.svg',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
-    '/default-avatar.svg',
+    '/assets/images/default-avatar.svg',
     '/default-banner.svg',
     '/hero-image.svg'
 ];
@@ -169,7 +169,7 @@ async function handleImageRequest(request) {
         return response;
     } catch (error) {
         // Return a placeholder image or default avatar
-        return caches.match('/default-avatar.svg');
+        return caches.match('/assets/images/default-avatar.svg');
     }
 }
 

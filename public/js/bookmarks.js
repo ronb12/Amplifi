@@ -204,7 +204,7 @@ class BookmarksPage {
             </div>
             <div class="post-info">
                 <div class="post-header">
-                    <img src="${post.authorPic || 'default-avatar.svg'}" alt="Author" class="post-author-pic">
+                    <img src="${post.authorPic || 'assets/images/default-avatar.svg'}" alt="Author" class="post-author-pic">
                     <div>
                         <a href="profile.html?username=${post.authorUsername}" class="post-author">${post.authorName}</a>
                         <span class="post-timestamp">${this.formatTimestamp(post.createdAt)}</span>

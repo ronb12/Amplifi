@@ -454,7 +454,7 @@ class MessagesPage {
             const conversationData = {
                 participants: [this.currentUser.uid],
                 participantNames: [this.userProfile?.displayName || 'You'],
-                participantPics: [this.userProfile?.profilePic || 'default-avatar.svg'],
+                participantPics: [this.userProfile?.profilePic || 'assets/images/default-avatar.svg'],
                 createdAt: new Date(),
                 lastMessage: 'Test conversation created',
                 lastMessageAt: new Date(),
@@ -469,7 +469,7 @@ class MessagesPage {
                 conversationId: conversationRef.id,
                 senderId: this.currentUser.uid,
                 senderName: this.userProfile?.displayName || 'You',
-                senderPic: this.userProfile?.profilePic || 'default-avatar.svg',
+                senderPic: this.userProfile?.profilePic || 'assets/images/default-avatar.svg',
                 text: 'Welcome to your test conversation! You can send messages here.',
                 createdAt: new Date(),
                 readBy: [this.currentUser.uid]
@@ -676,7 +676,7 @@ class MessagesPage {
             {
                 id: 'sample1',
                 name: 'Sarah Johnson',
-                avatar: 'default-avatar.svg',
+                avatar: 'assets/images/default-avatar.svg',
                 lastMessage: 'Thanks for the collaboration!',
                 time: '2 hours ago',
                 unread: 1,
@@ -685,7 +685,7 @@ class MessagesPage {
             {
                 id: 'sample2',
                 name: 'Mike Chen',
-                avatar: 'default-avatar.svg',
+                avatar: 'assets/images/default-avatar.svg',
                 lastMessage: 'Great content as always!',
                 time: '1 day ago',
                 unread: 0,
@@ -694,7 +694,7 @@ class MessagesPage {
             {
                 id: 'sample3',
                 name: 'Emma Davis',
-                avatar: 'default-avatar.svg',
+                avatar: 'assets/images/default-avatar.svg',
                 lastMessage: 'Looking forward to working together',
                 time: '3 days ago',
                 unread: 2,
@@ -742,7 +742,7 @@ class MessagesPage {
                          conversation.participantNames[0] : 'Unknown User');
             const avatar = conversation.avatar || 
                           (conversation.participantPics && conversation.participantPics.length > 0 ? 
-                           conversation.participantPics[0] : 'default-avatar.svg');
+                           conversation.participantPics[0] : 'assets/images/default-avatar.svg');
             const lastMessage = conversation.lastMessage || 'No messages yet';
             const time = conversation.time || 
                         (conversation.lastMessageAt ? 
@@ -958,7 +958,7 @@ class MessagesPage {
         div.onclick = () => this.selectConversation(conversation.id, otherUserId);
         
         div.innerHTML = `
-            <img src="${otherUser?.profilePic || 'default-avatar.svg'}" alt="User" class="conversation-avatar">
+            <img src="${otherUser?.profilePic || 'assets/images/default-avatar.svg'}" alt="User" class="conversation-avatar">
             <div class="conversation-info">
                 <h4>${otherUser?.displayName || 'Unknown User'}</h4>
                 <p>${conversation.lastMessage || 'No messages yet'}</p>
@@ -1372,7 +1372,7 @@ class MessagesPage {
             userElement.onclick = () => this.startConversation(user.uid);
             
             userElement.innerHTML = `
-                <img src="${user.profilePic || 'default-avatar.svg'}" alt="User" class="user-avatar">
+                <img src="${user.profilePic || 'assets/images/default-avatar.svg'}" alt="User" class="user-avatar">
                 <div class="user-info">
                     <h4>${user.displayName || 'Unknown User'}</h4>
                     <p>@${user.username || 'unknown'}</p>

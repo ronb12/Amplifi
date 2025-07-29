@@ -102,7 +102,7 @@ class LandingPage {
                             this.currentUser = {
                                 ...user,
                                 displayName: userData.displayName || user.displayName || user.email?.split('@')[0] || 'User',
-                                photoURL: userData.photoURL || user.photoURL || 'default-avatar.svg',
+                                photoURL: userData.photoURL || user.photoURL || 'assets/images/default-avatar.svg',
                                 username: userData.username || userData.displayName || user.displayName || user.email?.split('@')[0] || 'user'
                             };
                         } else {
@@ -110,7 +110,7 @@ class LandingPage {
                             this.currentUser = {
                                 ...user,
                                 displayName: user.displayName || user.email?.split('@')[0] || 'User',
-                                photoURL: user.photoURL || 'default-avatar.svg',
+                                photoURL: user.photoURL || 'assets/images/default-avatar.svg',
                                 username: user.displayName || user.email?.split('@')[0] || 'user'
                             };
                         }
@@ -120,7 +120,7 @@ class LandingPage {
                         this.currentUser = {
                             ...user,
                             displayName: user.displayName || user.email?.split('@')[0] || 'User',
-                            photoURL: user.photoURL || 'default-avatar.svg',
+                            photoURL: user.photoURL || 'assets/images/default-avatar.svg',
                             username: user.displayName || user.email?.split('@')[0] || 'user'
                         };
                     }
@@ -147,7 +147,7 @@ class LandingPage {
                             <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
                         </button>
                         <a href="profile.html" id="userAvatarLink" aria-label="Profile">
-                            <img src="${this.currentUser.photoURL || 'default-avatar.svg'}" alt="User Avatar" class="user-avatar">
+                            <img src="${this.currentUser.photoURL || 'assets/images/default-avatar.svg'}" alt="User Avatar" class="user-avatar">
                         </a>
                         <div class="user-dropdown" style="position: relative; display: inline-block;">
                             <button class="btn btn-secondary" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">▼</button>

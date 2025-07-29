@@ -97,7 +97,7 @@ class MessagesApp {
             
             if (userDoc.exists) {
                 const userData = userDoc.data();
-                document.getElementById('userAvatar').src = userData.profilePic || 'default-avatar.svg';
+                document.getElementById('userAvatar').src = userData.profilePic || 'assets/images/assets/images/default-avatar.svg';
             }
         } catch (error) {
             console.error('Error loading user profile:', error);
@@ -119,7 +119,7 @@ class MessagesApp {
                     this.allUsers.push({
                         id: doc.id,
                         name: userData.displayName || userData.username || 'Unknown User',
-                        avatar: userData.profilePic || userData.photoURL || 'default-avatar.svg',
+                        avatar: userData.profilePic || userData.photoURL || 'assets/images/default-avatar.svg',
                         email: userData.email || '',
                         status: userData.status || 'offline'
                     });
@@ -356,7 +356,7 @@ class MessagesApp {
             const sampleConversation = {
                 participants: [this.currentUser.uid],
                 participantNames: ['You'],
-                participantPics: [this.currentUser.photoURL || 'default-avatar.svg'],
+                participantPics: [this.currentUser.photoURL || 'assets/images/default-avatar.svg'],
                 lastMessage: 'Welcome to Amplifi Messages!',
                 lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -524,7 +524,7 @@ class MessagesApp {
         
         // Update chat header
         document.getElementById('chatName').textContent = this.currentConversation.participantNames?.[0] || 'Unknown User';
-        document.getElementById('chatAvatar').src = this.currentConversation.participantPics?.[0] || 'default-avatar.svg';
+        document.getElementById('chatAvatar').src = this.currentConversation.participantPics?.[0] || 'assets/images/default-avatar.svg';
         document.getElementById('chatStatus').textContent = 'Online';
         
         // Show messages list, hide welcome state
@@ -661,11 +661,11 @@ class MessagesApp {
 
             // Add null checks for sender information
             const senderName = message.senderName || 'Unknown User';
-            const senderPic = message.senderPic || 'default-avatar.svg';
+            const senderPic = message.senderPic || 'assets/images/default-avatar.svg';
 
             messageDiv.innerHTML = `
                 <div class="message-header">
-                    <img src="${senderPic}" alt="${senderName}" class="message-avatar" onerror="this.src='default-avatar.svg'">
+                    <img src="${senderPic}" alt="${senderName}" class="message-avatar" onerror="this.src='assets/images/default-avatar.svg'">
                     <span class="message-author">${senderName}</span>
                 </div>
                 ${messageContent}
@@ -713,7 +713,7 @@ class MessagesApp {
                 text: messageText,
                 senderId: this.currentUser.uid,
                 senderName: this.currentUser.displayName || 'Unknown',
-                senderPic: this.currentUser.photoURL || 'default-avatar.svg',
+                senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: 'sent'
             };
@@ -930,7 +930,7 @@ class MessagesApp {
             
             userElement.innerHTML = `
                 <div class="user-avatar">
-                    <img src="${user.avatar}" alt="${user.name}" onerror="this.src='default-avatar.svg'">
+                    <img src="${user.avatar}" alt="${user.name}" onerror="this.src='assets/images/default-avatar.svg'">
                 </div>
                 <div class="user-info">
                     <div class="user-name">${user.name}</div>
@@ -1240,7 +1240,7 @@ class MessagesApp {
                 fileType: file.type,
                 senderId: this.currentUser.uid,
                 senderName: this.currentUser.displayName || 'You',
-                senderPic: this.currentUser.photoURL || 'default-avatar.svg',
+                senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 conversationId: this.currentConversation.id
             };
@@ -1389,7 +1389,7 @@ class MessagesApp {
             
             userElement.innerHTML = `
                 <div class="user-avatar">
-                    <img src="${user.avatar}" alt="${user.name}" onerror="this.src='default-avatar.svg'">
+                    <img src="${user.avatar}" alt="${user.name}" onerror="this.src='assets/images/default-avatar.svg'">
                 </div>
                 <div class="user-info">
                     <div class="user-name">${user.name}</div>
@@ -1515,7 +1515,7 @@ class MessagesApp {
                 type: 'group',
                 participants: [this.currentUser.uid, ...selectedUserIds],
                 participantNames: [this.currentUser.displayName || 'You', ...selectedUsers.map(u => u.name)],
-                participantPics: [this.currentUser.photoURL || 'default-avatar.svg', ...selectedUsers.map(u => u.avatar)],
+                participantPics: [this.currentUser.photoURL || 'assets/images/default-avatar.svg', ...selectedUsers.map(u => u.avatar)],
                 conversationName: groupName,
                 description: groupDescription,
                 createdBy: this.currentUser.uid,
@@ -1795,7 +1795,7 @@ class MessagesApp {
                 duration: Math.round(audioBlob.size / 1000), // Approximate duration
                 senderId: this.currentUser.uid,
                 senderName: this.currentUser.displayName || 'Unknown',
-                senderPic: this.currentUser.photoURL || 'default-avatar.svg',
+                senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: 'sent',
                 filename: filename,
@@ -2101,7 +2101,7 @@ class MessagesApp {
                 ` : `
                     <div class="voice-call-info">
                         <div class="caller-info">
-                            <img src="${this.currentUser.photoURL || 'default-avatar.svg'}" alt="Caller" class="caller-avatar">
+                            <img src="${this.currentUser.photoURL || 'assets/images/default-avatar.svg'}" alt="Caller" class="caller-avatar">
                             <div class="caller-details">
                                 <h4>${this.currentUser.displayName || 'Unknown'}</h4>
                                 <p>${this.isVideoCall ? 'Video' : 'Voice'} call in progress</p>
@@ -2254,7 +2254,7 @@ class MessagesApp {
         modal.innerHTML = `
             <div class="modal incoming-call">
                 <div class="caller-info">
-                    <img src="${callData.callerPic || 'default-avatar.svg'}" alt="Caller" class="caller-avatar">
+                    <img src="${callData.callerPic || 'assets/images/default-avatar.svg'}" alt="Caller" class="caller-avatar">
                     <h3>${callData.callerName}</h3>
                     <p>Incoming ${callData.type} call</p>
                 </div>
@@ -2401,7 +2401,7 @@ class MessagesApp {
                 message: message || 'Money sent',
                 senderId: this.currentUser.uid,
                 senderName: this.currentUser.displayName || 'Unknown',
-                senderPic: this.currentUser.photoURL || 'default-avatar.svg',
+                senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: 'sent',
                 transactionId: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
