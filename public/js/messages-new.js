@@ -520,20 +520,61 @@ class MessagesApp {
     // Mobile Navigation Methods
     showConversationsList() {
         console.log('📱 Showing conversations list...');
+        console.log('🔍 Debugging showConversationsList...');
+        
         const conversationsSidebar = document.getElementById('conversationsSidebar');
         const chatArea = document.getElementById('chatArea');
         const mobileBackBtn = document.querySelector('.mobile-back-btn');
         
+        console.log('📊 Elements found:');
+        console.log('  - conversationsSidebar:', conversationsSidebar);
+        console.log('  - chatArea:', chatArea);
+        console.log('  - mobileBackBtn:', mobileBackBtn);
+        
         if (conversationsSidebar && chatArea) {
+            console.log('✅ Both elements found, updating display...');
+            
+            // Store current states
+            const sidebarBefore = conversationsSidebar.style.display;
+            const chatBefore = chatArea.style.display;
+            const chatActiveBefore = chatArea.classList.contains('active');
+            
+            console.log('📊 Before changes:');
+            console.log('  - Sidebar display:', sidebarBefore);
+            console.log('  - Chat display:', chatBefore);
+            console.log('  - Chat active class:', chatActiveBefore);
+            
+            // Make changes - ensure sidebar is visible and chat is hidden
             conversationsSidebar.style.display = 'flex';
+            conversationsSidebar.style.position = 'relative';
+            conversationsSidebar.style.zIndex = '1';
+            
             chatArea.classList.remove('active');
             chatArea.style.display = 'none';
+            chatArea.style.position = 'absolute';
+            chatArea.style.zIndex = '0';
+            
+            console.log('📊 After changes:');
+            console.log('  - Sidebar display:', conversationsSidebar.style.display);
+            console.log('  - Sidebar position:', conversationsSidebar.style.position);
+            console.log('  - Sidebar z-index:', conversationsSidebar.style.zIndex);
+            console.log('  - Chat display:', chatArea.style.display);
+            console.log('  - Chat position:', chatArea.style.position);
+            console.log('  - Chat z-index:', chatArea.style.zIndex);
+            console.log('  - Chat active class:', chatArea.classList.contains('active'));
             
             // Hide mobile back button when showing conversations list
             if (mobileBackBtn && window.innerWidth <= 768) {
+                console.log('📱 Hiding mobile back button...');
                 mobileBackBtn.style.display = 'none';
                 console.log('📱 Mobile back button hidden');
             }
+            
+            console.log('✅ showConversationsList completed successfully');
+        } else {
+            console.error('❌ Required elements not found:');
+            console.error('  - conversationsSidebar:', conversationsSidebar);
+            console.error('  - chatArea:', chatArea);
         }
     }
 
@@ -544,9 +585,13 @@ class MessagesApp {
         const mobileBackBtn = document.querySelector('.mobile-back-btn');
         
         if (conversationsSidebar && chatArea) {
+            // Hide sidebar and show chat area
             conversationsSidebar.style.display = 'none';
+            
             chatArea.classList.add('active');
             chatArea.style.display = 'flex';
+            chatArea.style.position = 'absolute';
+            chatArea.style.zIndex = '10';
             
             // Show mobile back button when showing chat view on mobile
             if (mobileBackBtn && window.innerWidth <= 768) {
