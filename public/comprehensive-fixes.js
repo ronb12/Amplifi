@@ -1356,14 +1356,17 @@ function addIOSCompatibility() {
             border-top: 1px solid #e5e7eb !important;
             padding: 1rem !important;
             z-index: 100 !important;
+            margin-bottom: 0 !important;
+            transform: none !important;
         }
         
         /* Ensure chat area has proper layout */
         body:has(.messages-main) .chat-area {
             display: flex !important;
             flex-direction: column !important;
-            height: 100% !important;
+            height: calc(100vh - 70px - 60px) !important;
             position: relative !important;
+            overflow: hidden !important;
         }
         
         /* Fix messages container to take remaining space */
@@ -1371,7 +1374,17 @@ function addIOSCompatibility() {
             flex: 1 !important;
             overflow-y: auto !important;
             padding: 1rem !important;
-            padding-bottom: 80px !important;
+            padding-bottom: 0 !important;
+            min-height: 0 !important;
+        }
+        
+        /* Ensure the main messages container doesn't overflow */
+        body:has(.messages-main) .messages-main {
+            height: calc(100vh - 70px - 60px) !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: row !important;
+            margin-top: 70px !important;
         }
         
         /* Hide mobile tabs on desktop */

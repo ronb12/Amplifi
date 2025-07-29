@@ -588,7 +588,10 @@ class MessagesApp {
             this.messages = [];
             snapshot.forEach(doc => {
                 const message = { id: doc.id, ...doc.data() };
-                this.messages.push(message);
+                // Only add messages that have valid content
+                if (message.text || message.type === 'voice' || message.type === 'money' || message.type === 'file') {
+                    this.messages.push(message);
+                }
             });
             
             this.renderMessages();
@@ -688,6 +691,10 @@ class MessagesApp {
             } else {
                 // Regular text message with null check
                 const messageText = message.text || 'Empty message';
+                // Skip rendering if the message text is undefined or empty
+                if (!messageText || messageText === 'undefined' || messageText.trim() === '') {
+                    return; // Skip this message
+                }
                 messageContent = `
                     <div class="message-bubble">
                         <div class="message-text">${messageText}</div>
