@@ -1464,9 +1464,9 @@ function addIOSCompatibility() {
             flex: 1 !important;
             overflow-y: auto !important;
             padding: 1rem !important;
-            padding-bottom: 20px !important;  /* Account for raised input */
+            padding-bottom: 0 !important;  /* Back to 0 since input is at bottom */
             min-height: 0 !important;
-            max-height: calc(100vh - 70px - 60px - 100px) !important;  /* Adjusted for raised input */
+            max-height: calc(100vh - 70px - 60px - 80px) !important;  /* Back to original */
         }
         
         /* FIX: Chat area layout */
@@ -1484,8 +1484,8 @@ function addIOSCompatibility() {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 32px !important;
-            height: 32px !important;
+            width: 40px !important;  /* Increased from 32px */
+            height: 40px !important;  /* Increased from 32px */
             border-radius: 50% !important;
             background: #007AFF !important;
             border: none !important;
@@ -1507,8 +1507,8 @@ function addIOSCompatibility() {
         
         /* iMessage-style SVG icons */
         body:has(.messages-main) .chat-actions .action-btn svg {
-            width: 14px !important;
-            height: 14px !important;
+            width: 18px !important;  /* Increased from 14px */
+            height: 18px !important;  /* Increased from 14px */
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
@@ -1519,7 +1519,7 @@ function addIOSCompatibility() {
         /* Money button styling (3rd icon) */
         body:has(.messages-main) .chat-actions .action-btn[onclick*="showMoneyModal"] {
             background: #34C759 !important;
-            font-size: 16px !important;
+            font-size: 20px !important;  /* Increased from 16px */
             line-height: 1 !important;
         }
         
@@ -1527,10 +1527,10 @@ function addIOSCompatibility() {
             background: #28A745 !important;
         }
         
-        /* RAISE: Message input area positioning */
+        /* FIX: Message input area positioning - ensure it's on screen */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
-            bottom: 20px !important;  /* Raised from 0 to 20px */
+            bottom: 0 !important;  /* Back to 0 to ensure it's on screen */
             background: white !important;
             border-top: 1px solid #e5e7eb !important;
             padding: 1rem !important;
@@ -1542,7 +1542,7 @@ function addIOSCompatibility() {
             opacity: 1 !important;
             width: 100% !important;
             box-sizing: border-box !important;
-            border-radius: 12px !important;
+            border-radius: 0 !important;  /* Remove border radius */
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
         }
         
