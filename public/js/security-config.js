@@ -291,7 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set Content Security Policy
     const csp = SECURITY_CONFIG.csp;
     const cspString = Object.entries(csp)
-        .map(([key, values]) => `${key} ${values.join(' ')}`)
+        .map(([key, values]) => {
+            if (Array.isArray(values)) {
+                return `${key} ${values.join(' ')}`;
+            } else if (typeof values === 'boolean') {
+                return values ? key : '';
+            } else {
+                return `${key} ${values}`;
+            }
+        })
+        .filter(entry => entry !== '') // Remove empty entries
         .join('; ');
     
     // Add CSP meta tag if not already present
