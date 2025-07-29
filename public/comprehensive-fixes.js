@@ -638,7 +638,7 @@ function enhanceMobileHeaders() {
     // Add enhanced mobile header styles
     const style = document.createElement('style');
     style.textContent = `
-        /* Enhanced Mobile Header Improvements */
+        /* Enhanced Mobile Header Improvements - Less Compact Design */
         
         /* Ensure proper spacing and sizing on all mobile devices */
         @media (max-width: 768px) {
@@ -656,19 +656,117 @@ function enhanceMobileHeaders() {
             .header {
                 backdrop-filter: blur(10px) !important;
                 -webkit-backdrop-filter: blur(10px) !important;
+                min-height: 60px !important;
+            }
+            
+            /* Better header content spacing */
+            .header-content {
+                padding: 0.8rem 1rem !important;
+                gap: 0.8rem !important;
+                min-height: 60px !important;
+                align-items: center !important;
+            }
+            
+            /* Larger logo for better visibility */
+            .header-left .logo {
+                font-size: 1.3rem !important;
+                font-weight: 800 !important;
             }
             
             /* Better touch targets for mobile */
             .notification-btn, .user-avatar, .search-btn {
-                min-width: 44px !important;
-                min-height: 44px !important;
+                min-width: 48px !important;
+                min-height: 48px !important;
             }
             
-            /* Improve search input on mobile */
+            /* Improve search input on mobile - Less Compact */
+            .header-center {
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.6rem !important;
+                justify-content: center !important;
+            }
+            
             .header-center .search-input {
                 -webkit-appearance: none !important;
                 appearance: none !important;
-                border-radius: 20px !important;
+                border-radius: 24px !important;
+                padding: 0.6rem 1rem !important;
+                font-size: 0.95rem !important;
+                min-width: 200px !important;
+                max-width: 280px !important;
+                height: 40px !important;
+                border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                color: white !important;
+                backdrop-filter: blur(10px) !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .header-center .search-input::placeholder {
+                color: rgba(255, 255, 255, 0.7) !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .header-center .search-input:focus {
+                outline: none !important;
+                border-color: rgba(255, 255, 255, 0.6) !important;
+                background: rgba(255, 255, 255, 0.25) !important;
+                box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            .header-center .search-btn {
+                width: 40px !important;
+                height: 40px !important;
+                border-radius: 50% !important;
+                background: rgba(255, 255, 255, 0.2) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                color: white !important;
+                font-size: 1rem !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer !important;
+                transition: all 0.3s ease !important;
+                backdrop-filter: blur(10px) !important;
+            }
+            
+            .header-center .search-btn:hover {
+                background: rgba(255, 255, 255, 0.3) !important;
+                transform: scale(1.05) !important;
+            }
+            
+            /* Better notification button */
+            .notification-btn {
+                width: 44px !important;
+                height: 44px !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                border-radius: 50% !important;
+                color: white !important;
+                font-size: 1.1rem !important;
+                backdrop-filter: blur(10px) !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .notification-btn:hover {
+                background: rgba(255, 255, 255, 0.25) !important;
+                transform: scale(1.05) !important;
+            }
+            
+            /* Better user avatar */
+            .user-avatar {
+                width: 40px !important;
+                height: 40px !important;
+                border: 2px solid rgba(255, 255, 255, 0.4) !important;
+                border-radius: 50% !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .user-avatar:hover {
+                border-color: rgba(255, 255, 255, 0.7) !important;
+                transform: scale(1.05) !important;
             }
             
             /* Better focus states for accessibility */
@@ -680,49 +778,50 @@ function enhanceMobileHeaders() {
             }
         }
         
-        /* Extra small mobile devices */
-        @media (max-width: 360px) {
+        /* Small mobile devices - Better spacing */
+        @media (max-width: 480px) {
             .header-content {
-                padding: 0.4rem 0.5rem !important;
-                gap: 0.4rem !important;
-                min-height: 48px !important;
+                padding: 0.7rem 0.8rem !important;
+                gap: 0.6rem !important;
+                min-height: 56px !important;
             }
             
             .header-left .logo {
-                font-size: 1rem !important;
+                font-size: 1.2rem !important;
             }
             
             .header-center .search-input {
-                max-width: 120px !important;
-                min-width: 80px !important;
-                padding: 0.3rem 0.6rem !important;
-                font-size: 0.75rem !important;
+                min-width: 160px !important;
+                max-width: 220px !important;
+                padding: 0.5rem 0.8rem !important;
+                font-size: 0.9rem !important;
+                height: 36px !important;
             }
             
             .header-center .search-btn {
-                width: 24px !important;
-                height: 24px !important;
-                font-size: 0.75rem !important;
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 0.9rem !important;
             }
             
             .notification-btn {
-                width: 28px !important;
-                height: 28px !important;
-                font-size: 0.9rem !important;
-                padding: 0.2rem !important;
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 1rem !important;
             }
             
             .user-avatar {
-                width: 24px !important;
-                height: 24px !important;
+                width: 36px !important;
+                height: 36px !important;
             }
         }
         
-        /* Landscape orientation fixes */
-        @media (max-width: 768px) and (orientation: landscape) {
+        /* Extra small mobile devices - Still spacious */
+        @media (max-width: 360px) {
             .header-content {
-                min-height: 48px !important;
-                padding: 0.4rem 0.8rem !important;
+                padding: 0.6rem 0.6rem !important;
+                gap: 0.5rem !important;
+                min-height: 52px !important;
             }
             
             .header-left .logo {
@@ -730,7 +829,45 @@ function enhanceMobileHeaders() {
             }
             
             .header-center .search-input {
+                min-width: 140px !important;
                 max-width: 180px !important;
+                padding: 0.4rem 0.7rem !important;
+                font-size: 0.85rem !important;
+                height: 32px !important;
+            }
+            
+            .header-center .search-btn {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .notification-btn {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 0.95rem !important;
+            }
+            
+            .user-avatar {
+                width: 32px !important;
+                height: 32px !important;
+            }
+        }
+        
+        /* Landscape orientation fixes */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header-content {
+                min-height: 52px !important;
+                padding: 0.6rem 1rem !important;
+            }
+            
+            .header-left .logo {
+                font-size: 1.2rem !important;
+            }
+            
+            .header-center .search-input {
+                max-width: 240px !important;
+                min-width: 180px !important;
             }
         }
         
