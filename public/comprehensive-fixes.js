@@ -137,6 +137,240 @@ function fixDesktopNavigation() {
             flex-shrink: 0 !important;
         }
         
+        /* Enhanced Mobile Header Styles */
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+            border-bottom: none !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.15) !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 60px !important;
+        }
+        
+        .header-content {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0.8rem 1rem !important;
+            height: auto !important;
+            min-height: 60px !important;
+            max-width: 1400px !important;
+            margin: 0 auto !important;
+            gap: 0.8rem !important;
+        }
+        
+        .header-left {
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        .header-left .logo {
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: white !important;
+            margin: 0 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+            letter-spacing: -0.5px !important;
+            white-space: nowrap !important;
+        }
+        
+        .header-center {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            min-width: 0 !important;
+        }
+        
+        .header-center .search-input {
+            width: 100% !important;
+            max-width: 300px !important;
+            min-width: 150px !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 1.5rem !important;
+            padding: 0.6rem 1rem !important;
+            color: white !important;
+            font-size: 0.9rem !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s !important;
+            box-sizing: border-box !important;
+        }
+        
+        .header-center .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        
+        .header-center .search-input:focus {
+            outline: none !important;
+            border-color: rgba(255, 255, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .header-center .search-btn {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 32px !important;
+            height: 32px !important;
+            cursor: pointer !important;
+            transition: all 0.3s !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: white !important;
+            font-size: 1rem !important;
+        }
+        
+        .header-center .search-btn:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        .header-actions {
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.8rem !important;
+        }
+        
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            color: white !important;
+            font-size: 1.2rem !important;
+            cursor: pointer !important;
+            padding: 0.5rem !important;
+            border-radius: 50% !important;
+            transition: all 0.3s !important;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        .notification-badge {
+            position: absolute !important;
+            top: -2px !important;
+            right: -2px !important;
+            background: #ef4444 !important;
+            color: white !important;
+            border-radius: 50% !important;
+            width: 18px !important;
+            height: 18px !important;
+            font-size: 0.7rem !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 2px solid white !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+            object-fit: cover !important;
+            transition: all 0.3s !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        }
+        
+        #userAvatarLink:hover .user-avatar {
+            border-color: rgba(255, 255, 255, 0.6) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Mobile Responsive Header */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0.6rem 0.8rem !important;
+                gap: 0.6rem !important;
+                min-height: 56px !important;
+            }
+            
+            .header-left .logo {
+                font-size: 1.2rem !important;
+            }
+            
+            .header-center .search-input {
+                max-width: 200px !important;
+                min-width: 120px !important;
+                padding: 0.5rem 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .header-center .search-btn {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .notification-btn {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 1.1rem !important;
+                padding: 0.4rem !important;
+            }
+            
+            .user-avatar {
+                width: 32px !important;
+                height: 32px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0.5rem 0.6rem !important;
+                gap: 0.5rem !important;
+                min-height: 52px !important;
+            }
+            
+            .header-left .logo {
+                font-size: 1.1rem !important;
+            }
+            
+            .header-center .search-input {
+                max-width: 150px !important;
+                min-width: 100px !important;
+                padding: 0.4rem 0.7rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .header-center .search-btn {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .notification-btn {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 1rem !important;
+                padding: 0.3rem !important;
+            }
+            
+            .user-avatar {
+                width: 28px !important;
+                height: 28px !important;
+            }
+        }
+        
         /* Mobile Navigation - Standardized */
         .mobile-tab-nav {
             display: flex;
@@ -242,27 +476,6 @@ function fixDesktopNavigation() {
         
         .play-btn:active {
             transform: scale(0.95);
-        }
-        
-        /* Notification Button - Consistent */
-        .notification-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .notification-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
         }
     `;
     
@@ -400,26 +613,13 @@ function fixMusicPlayback() {
                         });
                     }
                     
-                    // Show user feedback
-                    const notification = document.createElement('div');
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: #6366f1;
-                        color: white;
-                        padding: 1rem;
-                        border-radius: 0.5rem;
-                        z-index: 1000;
-                        box-shadow: 0 4px 12px rgba(99,102,241,0.3);
-                    `;
-                    notification.textContent = `🎵 Now playing: ${track.title}`;
-                    document.body.appendChild(notification);
-                    
-                    // Remove notification after 3 seconds
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 3000);
+                    // Show notification
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('🎵 Now Playing', {
+                            body: `${track.title} by ${track.artist}`,
+                            icon: '/icons/icon-192x192.png'
+                        });
+                    }
                 } else {
                     console.error('🎵 Track not found:', trackId);
                     alert('Track not found. Please try again.');
@@ -431,81 +631,293 @@ function fixMusicPlayback() {
     }
 }
 
-// 5. Add iOS Device Compatibility
-function addIOSCompatibility() {
-    console.log('🔧 Adding iOS compatibility...');
+// 5. Enhanced Mobile Header Improvements
+function enhanceMobileHeaders() {
+    console.log('🔧 Enhancing mobile headers...');
     
-    // Add viewport meta tag for proper iOS scaling
-    const viewportMeta = document.querySelector('meta[name="viewport"]');
-    if (!viewportMeta) {
-        const meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-        document.head.appendChild(meta);
-    } else {
-        viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-    }
-    
-    // Add iOS-specific CSS
-    const iosStyle = document.createElement('style');
-    iosStyle.textContent = `
-        /* iOS Safe Area Support */
-        @supports (padding: max(0px)) {
+    // Add enhanced mobile header styles
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Enhanced Mobile Header Improvements */
+        
+        /* Ensure proper spacing and sizing on all mobile devices */
+        @media (max-width: 768px) {
             body {
-                padding-left: max(0px, env(safe-area-inset-left));
-                padding-right: max(0px, env(safe-area-inset-right));
-                padding-bottom: max(0px, env(safe-area-inset-bottom));
+                padding-top: 0 !important;
+                margin-top: 0 !important;
             }
             
-            .mobile-tab-nav {
-                padding-bottom: max(0.2rem, env(safe-area-inset-bottom));
+            .main-content {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            
+            /* Improve header visibility and accessibility */
+            .header {
+                backdrop-filter: blur(10px) !important;
+                -webkit-backdrop-filter: blur(10px) !important;
+            }
+            
+            /* Better touch targets for mobile */
+            .notification-btn, .user-avatar, .search-btn {
+                min-width: 44px !important;
+                min-height: 44px !important;
+            }
+            
+            /* Improve search input on mobile */
+            .header-center .search-input {
+                -webkit-appearance: none !important;
+                appearance: none !important;
+                border-radius: 20px !important;
+            }
+            
+            /* Better focus states for accessibility */
+            .header-center .search-input:focus,
+            .notification-btn:focus,
+            .user-avatar:focus {
+                outline: 2px solid rgba(255, 255, 255, 0.8) !important;
+                outline-offset: 2px !important;
             }
         }
         
-        /* Prevent zoom on input focus for iOS */
+        /* Extra small mobile devices */
+        @media (max-width: 360px) {
+            .header-content {
+                padding: 0.4rem 0.5rem !important;
+                gap: 0.4rem !important;
+                min-height: 48px !important;
+            }
+            
+            .header-left .logo {
+                font-size: 1rem !important;
+            }
+            
+            .header-center .search-input {
+                max-width: 120px !important;
+                min-width: 80px !important;
+                padding: 0.3rem 0.6rem !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .header-center .search-btn {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .notification-btn {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 0.9rem !important;
+                padding: 0.2rem !important;
+            }
+            
+            .user-avatar {
+                width: 24px !important;
+                height: 24px !important;
+            }
+        }
+        
+        /* Landscape orientation fixes */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header-content {
+                min-height: 48px !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            
+            .header-left .logo {
+                font-size: 1.1rem !important;
+            }
+            
+            .header-center .search-input {
+                max-width: 180px !important;
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .header {
+                border-bottom: 0.5px solid rgba(255, 255, 255, 0.2) !important;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .header {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .header-content *,
+            .notification-btn,
+            .user-avatar,
+            .search-btn {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            .header {
+                display: none !important;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    
+    // Enhance search functionality
+    const searchInput = document.querySelector('.header-center .search-input');
+    const searchBtn = document.querySelector('.header-center .search-btn');
+    
+    if (searchInput && searchBtn) {
+        // Add search functionality
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                console.log('🔍 Searching for:', query);
+                // Navigate to search page with query
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        });
+        
+        // Add enter key support
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    console.log('🔍 Searching for:', query);
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+        
+        // Add search suggestions (basic)
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.trim();
+            if (query.length > 2) {
+                console.log('🔍 Search suggestion for:', query);
+                // In a real app, this would show search suggestions
+            }
+        });
+    }
+    
+    console.log('✅ Mobile headers enhanced');
+}
+
+// 6. Add iOS Compatibility
+function addIOSCompatibility() {
+    console.log('🔧 Adding iOS compatibility...');
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        /* iOS Specific Fixes */
+        
+        /* Prevent zoom on input focus */
         @media screen and (max-width: 768px) {
             input, select, textarea {
                 font-size: 16px !important;
             }
         }
         
-        /* iOS-specific touch improvements */
-        @media (hover: none) and (pointer: coarse) {
-            .nav-link, .tab-item, .play-btn, .notification-btn {
-                min-height: 44px;
-                min-width: 44px;
+        /* Safe area support for notched devices */
+        @supports (padding: max(0px)) {
+            .mobile-tab-nav {
+                padding-bottom: max(0.2rem, env(safe-area-inset-bottom));
+            }
+            
+            .header {
+                padding-top: max(0px, env(safe-area-inset-top));
+            }
+        }
+        
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .header {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            
+            .header-content {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+        }
+        
+        /* Prevent rubber band scrolling on iOS */
+        body {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+        }
+        
+        /* Fix for iOS Safari viewport issues */
+        @media screen and (max-width: 768px) {
+            .header {
+                position: -webkit-sticky;
+                position: sticky;
             }
         }
     `;
     
-    document.head.appendChild(iosStyle);
+    document.head.appendChild(style);
     console.log('✅ iOS compatibility added');
 }
 
-// 6. Apply all fixes
+// 7. Apply All Fixes
 function applyAllFixes() {
     console.log('🚀 Applying all comprehensive fixes...');
     
-    fixDesktopNavigation();
-    fixMobileNavigation();
-    fixNotificationBells();
-    fixMusicPlayback();
-    addIOSCompatibility();
-    
-    console.log('✅ All fixes applied successfully!');
-    console.log('📱 App now supports all screen sizes including iOS devices');
-    console.log('🔔 All notification bells work consistently');
-    console.log('🎵 Music playback is now functional');
-    console.log('🖥️ Desktop navigation icons and text are properly aligned');
-    console.log('📱 Mobile navigation is standardized across all pages');
+    try {
+        fixDesktopNavigation();
+        fixMobileNavigation();
+        fixNotificationBells();
+        fixMusicPlayback();
+        enhanceMobileHeaders();
+        addIOSCompatibility();
+        
+        console.log('✅ All fixes applied successfully!');
+        
+        // Add success indicator
+        const successIndicator = document.createElement('div');
+        successIndicator.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        `;
+        successIndicator.textContent = '✅ Fixes Applied';
+        document.body.appendChild(successIndicator);
+        
+        // Show and hide success indicator
+        setTimeout(() => {
+            successIndicator.style.opacity = '1';
+        }, 100);
+        
+        setTimeout(() => {
+            successIndicator.style.opacity = '0';
+            setTimeout(() => {
+                successIndicator.remove();
+            }, 300);
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Error applying fixes:', error);
+    }
 }
 
-// Run fixes when DOM is loaded
+// Apply fixes when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyAllFixes);
 } else {
     applyAllFixes();
-}
-
-// Export for manual use
-window.applyComprehensiveFixes = applyAllFixes; 
+} 
