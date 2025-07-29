@@ -1,20 +1,52 @@
 class StripeVercelBackend {
     constructor() {
-        this.backendUrl = 'https://vercel-stripe-backend-dxiumj53d-ronell-bradleys-projects.vercel.app/api';
-        this.stripe = Stripe('pk_live_51RpT30LHe1RTUAGqJFyWQHkA5RdWVfQ4KKTupLHGT6c6YrMs0qIztmOe7PWkfcvlovbXR4FctHy58HAk50NDmnTP002TpCQ53w');
+        // Use centralized security configuration
+        const config = window.SECURITY_CONFIG || {
+            stripe: {
+                publishableKey: 'pk_live_51RpT30LHe1RTUAGqJFyWQHkA5RdWVfQ4KKTupLHGT6c6YrMs0qIztwOe7PWkfcvlovbXR4FctHy58HAk50NDmnTP002TpCQ53w',
+                backendUrl: 'https://vercel-stripe-backend-dxiumj53d-ronell-bradleys-projects.vercel.app/api',
+                currency: 'usd',
+                minimumTipAmount: 0.50
+            }
+        };
+        
+        this.backendUrl = config.stripe.backendUrl;
+        this.stripe = Stripe(config.stripe.publishableKey);
         
         this.config = {
-            currency: 'usd',
-            minimumTipAmount: 0.50,
+            currency: config.stripe.currency,
+            minimumTipAmount: config.stripe.minimumTipAmount,
             successUrl: window.location.origin + '/success.html',
             cancelUrl: window.location.origin + '/cancel.html'
         };
         
-        console.log('Stripe Vercel Backend initialized successfully');
+        // Initialize security measures
+        this.initializeSecurity();
+        
+        console.log('Stripe Vercel Backend initialized successfully with security measures');
+    }
+
+    // Initialize security measures
+    initializeSecurity() {
+        // Rate limiting for payment requests
+        this.rateLimiter = window.SecurityUtils?.rateLimiter || {
+            requests: new Map(),
+            isAllowed: () => true
+        };
+        
+        // CSRF protection
+        this.csrfToken = window.SecurityUtils?.generateCSRFToken?.() || null;
+        
+        console.log('🔒 Stripe security measures initialized');
     }
 
     async sendTip(recipientId, recipientName) {
         try {
+            // Security validation
+            if (!this.validateRequest('tip', recipientId)) {
+                throw new Error('Request blocked by security measures');
+            }
+            
             const amountInput = document.querySelector('#customTipAmount');
             const tipMessage = ""; // No message input in current HTML
             
@@ -25,25 +57,31 @@ class StripeVercelBackend {
                 return;
             }
 
+            // Sanitize inputs
+            const sanitizedRecipientId = window.SecurityUtils?.sanitizeInput?.(recipientId) || recipientId;
+            const sanitizedRecipientName = window.SecurityUtils?.sanitizeInput?.(recipientName) || recipientName;
+
             console.log('Sending tip request:', {
                 amount,
-                recipientId,
-                recipientName,
+                recipientId: sanitizedRecipientId,
+                recipientName: sanitizedRecipientName,
                 backendUrl: this.backendUrl
             });
 
-            // Create payment intent via Vercel backend
+            // Create payment intent via Vercel backend with security headers
             const response = await fetch(`${this.backendUrl}/create-payment-intent`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-Token': this.csrfToken || '',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
                     amount: Math.round(amount * 100), // Convert dollars to cents
                     currency: this.config.currency,
-                    description: `Tip to ${recipientName}`,
-                    recipientId,
-                    recipientName
+                    description: `Tip to ${sanitizedRecipientName}`,
+                    recipientId: sanitizedRecipientId,
+                    recipientName: sanitizedRecipientName
                 })
             });
 
@@ -57,12 +95,30 @@ class StripeVercelBackend {
             const { clientSecret } = responseData;
 
             // Show payment form with Stripe Elements
-            this.showPaymentForm(clientSecret, amount, recipientName);
+            this.showPaymentForm(clientSecret, amount, sanitizedRecipientName);
 
         } catch (error) {
             console.error('Tip payment error:', error);
             alert(`Payment failed: ${error.message}. Please try again.`);
         }
+    }
+
+    // Security validation for requests
+    validateRequest(type, identifier) {
+        // Rate limiting
+        const rateLimitKey = `${type}_${identifier}`;
+        if (!this.rateLimiter.isAllowed(rateLimitKey, 10)) { // 10 requests per minute for payments
+            console.warn('Rate limit exceeded for payment request');
+            return false;
+        }
+        
+        // Session validation
+        if (window.SecurityUtils?.sessionManager?.isSessionValid?.() === false) {
+            console.warn('Invalid session for payment request');
+            return false;
+        }
+        
+        return true;
     }
 
     async createSubscription(customerEmail, priceId, customerId = null) {

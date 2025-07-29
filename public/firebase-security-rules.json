@@ -1,0 +1,342 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && auth.uid == $uid",
+        ".validate": "newData.hasChildren(['email', 'displayName', 'createdAt'])",
+        
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/)"
+        },
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "role": {
+          ".validate": "newData.isString() && newData.val().matches(/^(user|creator|admin)$/)"
+        },
+        "profile": {
+          ".validate": "newData.hasChildren(['bio', 'avatar', 'banner'])",
+          "bio": {
+            ".validate": "newData.isString() && newData.val().length <= 500"
+          },
+          "avatar": {
+            ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.+/)"
+          },
+          "banner": {
+            ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.+/)"
+          }
+        },
+        "settings": {
+          ".validate": "newData.hasChildren(['privacy', 'notifications', 'security'])",
+          "privacy": {
+            ".validate": "newData.hasChildren(['profileVisibility', 'allowMessages', 'allowTips'])"
+          },
+          "notifications": {
+            ".validate": "newData.hasChildren(['email', 'push', 'sms'])"
+          },
+          "security": {
+            ".validate": "newData.hasChildren(['twoFactorEnabled', 'loginHistory'])"
+          }
+        }
+      }
+    },
+    
+    "posts": {
+      "$postId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (data.child('authorId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['authorId', 'content', 'createdAt', 'type'])",
+        
+        "authorId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "content": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 10000"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "type": {
+          ".validate": "newData.isString() && newData.val().matches(/^(text|image|video|audio|link)$/)"
+        },
+        "media": {
+          ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.+/)"
+        },
+        "tags": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "privacy": {
+          ".validate": "newData.isString() && newData.val().matches(/^(public|private|followers)$/)"
+        }
+      }
+    },
+    
+    "comments": {
+      "$commentId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (data.child('authorId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".validate": "newData.hasChildren(['authorId', 'postId', 'content', 'createdAt'])",
+        
+        "authorId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "postId": {
+          ".validate": "newData.isString() && root.child('posts').child(newData.val()).exists()"
+        },
+        "content": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        }
+      }
+    },
+    
+    "likes": {
+      "$likeId": {
+        ".read": "auth != null",
+        ".write": "auth != null && data.child('userId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['userId', 'postId', 'createdAt'])",
+        
+        "userId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "postId": {
+          ".validate": "newData.isString() && root.child('posts').child(newData.val()).exists()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        }
+      }
+    },
+    
+    "follows": {
+      "$followId": {
+        ".read": "auth != null",
+        ".write": "auth != null && data.child('followerId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['followerId', 'followingId', 'createdAt'])",
+        
+        "followerId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "followingId": {
+          ".validate": "newData.isString() && newData.val() != auth.uid && root.child('users').child(newData.val()).exists()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        }
+      }
+    },
+    
+    "messages": {
+      "$messageId": {
+        ".read": "auth != null && (data.child('senderId').val() == auth.uid || data.child('recipientId').val() == auth.uid)",
+        ".write": "auth != null && data.child('senderId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['senderId', 'recipientId', 'content', 'createdAt', 'type'])",
+        
+        "senderId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "recipientId": {
+          ".validate": "newData.isString() && newData.val() != auth.uid && root.child('users').child(newData.val()).exists()"
+        },
+        "content": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 2000"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "type": {
+          ".validate": "newData.isString() && newData.val().matches(/^(text|image|video|audio|file)$/)"
+        },
+        "media": {
+          ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.+/)"
+        }
+      }
+    },
+    
+    "payments": {
+      "$paymentId": {
+        ".read": "auth != null && (data.child('senderId').val() == auth.uid || data.child('recipientId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && data.child('senderId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['senderId', 'recipientId', 'amount', 'currency', 'status', 'createdAt'])",
+        
+        "senderId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "recipientId": {
+          ".validate": "newData.isString() && newData.val() != auth.uid && root.child('users').child(newData.val()).exists()"
+        },
+        "amount": {
+          ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 10000"
+        },
+        "currency": {
+          ".validate": "newData.isString() && newData.val() == 'usd'"
+        },
+        "status": {
+          ".validate": "newData.isString() && newData.val().matches(/^(pending|completed|failed|cancelled)$/)"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "stripePaymentIntentId": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        }
+      }
+    },
+    
+    "subscriptions": {
+      "$subscriptionId": {
+        ".read": "auth != null && (data.child('subscriberId').val() == auth.uid || data.child('creatorId').val() == auth.uid)",
+        ".write": "auth != null && data.child('subscriberId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['subscriberId', 'creatorId', 'planId', 'status', 'createdAt'])",
+        
+        "subscriberId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "creatorId": {
+          ".validate": "newData.isString() && newData.val() != auth.uid && root.child('users').child(newData.val()).child('role').val() == 'creator'"
+        },
+        "planId": {
+          ".validate": "newData.isString() && root.child('subscriptionPlans').child(newData.val()).exists()"
+        },
+        "status": {
+          ".validate": "newData.isString() && newData.val().matches(/^(active|cancelled|expired)$/)"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "stripeSubscriptionId": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        }
+      }
+    },
+    
+    "subscriptionPlans": {
+      "$planId": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+        ".validate": "newData.hasChildren(['creatorId', 'name', 'price', 'currency', 'interval', 'description'])",
+        
+        "creatorId": {
+          ".validate": "newData.isString() && root.child('users').child(newData.val()).child('role').val() == 'creator'"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "price": {
+          ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 1000"
+        },
+        "currency": {
+          ".validate": "newData.isString() && newData.val() == 'usd'"
+        },
+        "interval": {
+          ".validate": "newData.isString() && newData.val().matches(/^(month|year)$/)"
+        },
+        "description": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        }
+      }
+    },
+    
+    "notifications": {
+      "$notificationId": {
+        ".read": "auth != null && data.child('userId').val() == auth.uid",
+        ".write": "auth != null && data.child('userId').val() == auth.uid",
+        ".validate": "newData.hasChildren(['userId', 'type', 'title', 'message', 'createdAt', 'read'])",
+        
+        "userId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "type": {
+          ".validate": "newData.isString() && newData.val().matches(/^(like|comment|follow|tip|subscription|system)$/)"
+        },
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "read": {
+          ".validate": "newData.isBoolean()"
+        },
+        "data": {
+          ".validate": "newData.hasChildren(['postId', 'senderId'])"
+        }
+      }
+    },
+    
+    "reports": {
+      "$reportId": {
+        ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['reporterId', 'reportedUserId', 'reason', 'description', 'createdAt', 'status'])",
+        
+        "reporterId": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "reportedUserId": {
+          ".validate": "newData.isString() && newData.val() != auth.uid && root.child('users').child(newData.val()).exists()"
+        },
+        "reason": {
+          ".validate": "newData.isString() && newData.val().matches(/^(spam|harassment|inappropriate|fake|other)$/)"
+        },
+        "description": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "status": {
+          ".validate": "newData.isString() && newData.val().matches(/^(pending|reviewed|resolved|dismissed)$/)"
+        }
+      }
+    },
+    
+    "analytics": {
+      "$analyticsId": {
+        ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+        ".validate": "newData.hasChildren(['userId', 'event', 'data', 'timestamp'])",
+        
+        "userId": {
+          ".validate": "newData.isString() && root.child('users').child(newData.val()).exists()"
+        },
+        "event": {
+          ".validate": "newData.isString() && newData.val().matches(/^(page_view|post_create|post_like|user_follow|payment_made)$/)"
+        },
+        "data": {
+          ".validate": "newData.hasChildren(['page', 'referrer', 'userAgent'])"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        }
+      }
+    },
+    
+    "system": {
+      "maintenance": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      },
+      "announcements": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      },
+      "config": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      }
+    }
+  }
+} 
