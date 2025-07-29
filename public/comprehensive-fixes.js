@@ -708,7 +708,7 @@ function enhanceMobileHeaders() {
                 justify-content: center !important;
                 min-width: 0 !important;
                 max-width: none !important;
-                margin: 0 0.8rem !important;
+                margin: 0 1rem !important;
                 position: relative !important;
             }
             
@@ -718,8 +718,8 @@ function enhanceMobileHeaders() {
                 border-radius: 24px !important;
                 padding: 0.6rem 1rem !important;
                 font-size: 0.95rem !important;
-                min-width: 140px !important;
-                max-width: 200px !important;
+                min-width: 120px !important;
+                max-width: 160px !important;
                 width: 100% !important;
                 height: 40px !important;
                 border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
@@ -864,7 +864,7 @@ function enhanceMobileHeaders() {
         @media (max-width: 480px) {
             .header .header-content {
                 padding: 0.7rem 0.8rem !important;
-                gap: 0.8rem !important;
+                gap: 1rem !important;
                 min-height: 56px !important;
             }
             
@@ -874,8 +874,8 @@ function enhanceMobileHeaders() {
             }
             
             .header .header-center .search-input {
-                min-width: 100px !important;
-                max-width: 160px !important;
+                min-width: 80px !important;
+                max-width: 120px !important;
                 padding: 0.5rem 0.8rem !important;
                 font-size: 0.9rem !important;
                 height: 36px !important;
@@ -903,7 +903,7 @@ function enhanceMobileHeaders() {
         @media (max-width: 360px) {
             .header .header-content {
                 padding: 0.6rem 0.6rem !important;
-                gap: 0.6rem !important;
+                gap: 0.8rem !important;
                 min-height: 52px !important;
             }
             
@@ -913,8 +913,8 @@ function enhanceMobileHeaders() {
             }
             
             .header .header-center .search-input {
-                min-width: 80px !important;
-                max-width: 120px !important;
+                min-width: 60px !important;
+                max-width: 90px !important;
                 padding: 0.4rem 0.7rem !important;
                 font-size: 0.85rem !important;
                 height: 32px !important;
