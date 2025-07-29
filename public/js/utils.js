@@ -1,36 +1,6 @@
 /* global db, auth, firebase, storage */
 // Utility functions for Amplifi platform
 
-// Security utilities
-const SecurityUtils = {
-    // Sanitize HTML to prevent XSS attacks
-    sanitizeHTML(text) {
-        if (!text || typeof text !== 'string') return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    },
-
-    // Validate and sanitize user input
-    validateInput(input, maxLength = 1000) {
-        if (!input || typeof input !== 'string') return '';
-        const sanitized = input.trim().substring(0, maxLength);
-        return this.sanitizeHTML(sanitized);
-    },
-
-    // Validate email format
-    validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    },
-
-    // Validate username format
-    validateUsername(username) {
-        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        return usernameRegex.test(username);
-    }
-};
-
 // DOM utilities
 const DOMUtils = {
     // Safe DOM element creation
@@ -44,7 +14,7 @@ const DOMUtils = {
     // Safe innerHTML setting
     setInnerHTML(element, content) {
         if (element && content) {
-            element.innerHTML = SecurityUtils.sanitizeHTML(content);
+            element.innerHTML = window.SecurityUtils?.sanitizeHTML?.(content) || content;
         }
     },
 
@@ -327,7 +297,6 @@ const NotificationUtils = {
 };
 
 // Export utilities for use in other files
-window.SecurityUtils = SecurityUtils;
 window.DOMUtils = DOMUtils;
 window.StorageUtils = StorageUtils;
 window.ErrorUtils = ErrorUtils;

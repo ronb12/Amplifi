@@ -126,6 +126,33 @@ const SecurityUtils = {
         }
     },
     
+    // Sanitize HTML to prevent XSS attacks
+    sanitizeHTML(text) {
+        if (!text || typeof text !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    // Validate and sanitize user input
+    validateInput(input, maxLength = 1000) {
+        if (!input || typeof input !== 'string') return '';
+        const sanitized = input.trim().substring(0, maxLength);
+        return this.sanitizeHTML(sanitized);
+    },
+
+    // Validate email format
+    validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    },
+
+    // Validate username format
+    validateUsername(username) {
+        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+        return usernameRegex.test(username);
+    },
+    
     // Input sanitization
     sanitizeInput(input) {
         if (typeof input !== 'string') return input;
