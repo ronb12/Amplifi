@@ -157,7 +157,7 @@ function fixDesktopNavigation() {
         
         body:has(.messages-main) .chat-actions .action-btn:hover {
             background: rgba(255,255,255,0.3) !important;
-            transform: scale(1.05) !important;
+            transform: translateY(-1px) !important;
         }
         
         /* Force chat actions to be visible */
@@ -1442,6 +1442,117 @@ function addIOSCompatibility() {
             }
         }
         
+        /* FIX: Message input area positioning */
+        body:has(.messages-main) .message-input-area {
+            position: sticky !important;
+            bottom: 0 !important;
+            background: white !important;
+            border-top: 1px solid #e5e7eb !important;
+            padding: 1rem !important;
+            z-index: 100 !important;
+            margin-bottom: 0 !important;
+            transform: none !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* FIX: Messages container to not overflow */
+        body:has(.messages-main) .messages-container {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            padding: 1rem !important;
+            padding-bottom: 0 !important;
+            min-height: 0 !important;
+            max-height: calc(100vh - 70px - 60px - 80px) !important;
+        }
+        
+        /* FIX: Chat area layout */
+        body:has(.messages-main) .chat-area {
+            display: flex !important;
+            flex-direction: column !important;
+            height: calc(100vh - 70px - 60px) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            width: 100% !important;
+        }
+        
+        /* iMessage-style call and video icons */
+        body:has(.messages-main) .chat-actions .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            background: #007AFF !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+            margin-left: 8px !important;
+        }
+        
+        /* iMessage-style hover effects */
+        body:has(.messages-main) .chat-actions .action-btn:hover {
+            background: #0056CC !important;
+            transform: scale(1.1) !important;
+        }
+        
+        /* iMessage-style SVG icons */
+        body:has(.messages-main) .chat-actions .action-btn svg {
+            width: 14px !important;
+            height: 14px !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            fill: white !important;
+            stroke: white !important;
+        }
+        
+        /* Money button styling (3rd icon) */
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="showMoneyModal"] {
+            background: #34C759 !important;
+        }
+        
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="showMoneyModal"]:hover {
+            background: #28A745 !important;
+        }
+        
+        /* Ensure message input container is properly laid out */
+        body:has(.messages-main) .message-input-container {
+            display: flex !important;
+            align-items: flex-end !important;
+            gap: 0.5rem !important;
+            background: white !important;
+            border-radius: 20px !important;
+            padding: 0.5rem !important;
+            border: 1px solid #e5e7eb !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Ensure message input is properly styled */
+        body:has(.messages-main) .message-input {
+            flex: 1 !important;
+            border: none !important;
+            outline: none !important;
+            resize: none !important;
+            font-family: inherit !important;
+            font-size: 0.9rem !important;
+            line-height: 1.4 !important;
+            padding: 0.5rem !important;
+            background: transparent !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
         /* Ensure message input area buttons are visible */
         body:has(.messages-main) .message-input-container .emoji-btn,
         body:has(.messages-main) .message-input-container .voice-btn,
@@ -1498,99 +1609,6 @@ function addIOSCompatibility() {
         body:has(.messages-main) .message-input-container .send-btn:hover:not(:disabled) {
             transform: scale(1.05) !important;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-        }
-        
-        /* Ensure message input area is properly positioned */
-        body:has(.messages-main) .message-input-area {
-            position: sticky !important;
-            bottom: 0 !important;
-            background: white !important;
-            border-top: 1px solid #e5e7eb !important;
-            padding: 1rem !important;
-            z-index: 100 !important;
-            margin-bottom: 0 !important;
-            transform: none !important;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        /* Ensure message input container is properly laid out */
-        body:has(.messages-main) .message-input-container {
-            display: flex !important;
-            align-items: flex-end !important;
-            gap: 0.5rem !important;
-            background: white !important;
-            border-radius: 20px !important;
-            padding: 0.5rem !important;
-            border: 1px solid #e5e7eb !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        /* Ensure message input is properly styled */
-        body:has(.messages-main) .message-input {
-            flex: 1 !important;
-            border: none !important;
-            outline: none !important;
-            resize: none !important;
-            font-family: inherit !important;
-            font-size: 0.9rem !important;
-            line-height: 1.4 !important;
-            padding: 0.5rem !important;
-            background: transparent !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        /* Ensure chat area has proper layout */
-        body:has(.messages-main) .chat-area {
-            display: flex !important;
-            flex-direction: column !important;
-            height: calc(100vh - 70px - 60px) !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-        
-        /* Fix messages container to take remaining space */
-        body:has(.messages-main) .messages-container {
-            flex: 1 !important;
-            overflow-y: auto !important;
-            padding: 1rem !important;
-            padding-bottom: 0 !important;
-            min-height: 0 !important;
-        }
-        
-        /* Ensure the main messages container doesn't overflow */
-        body:has(.messages-main) .messages-main {
-            height: calc(100vh - 70px - 60px) !important;
-            overflow: hidden !important;
-            display: flex !important;
-            flex-direction: row !important;
-            margin-top: 70px !important;
-        }
-        
-        /* Hide mobile tabs on desktop */
-        @media (min-width: 769px) {
-            .mobile-tab-nav {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-            }
-        }
-        
-        /* Show mobile tabs only on mobile */
-        @media (max-width: 768px) {
-            .mobile-tab-nav {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
-            
-            /* Adjust message input for mobile */
-            body:has(.messages-main) .message-input-area {
-                padding-bottom: 80px !important;
-            }
         }
     `;
     
