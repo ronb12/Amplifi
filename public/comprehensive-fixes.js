@@ -638,14 +638,7 @@ function fixMobileNavigation() {
     const existingMobileNav = document.querySelector('.mobile-tab-nav');
     
     if (existingMobileNav) {
-        // Check if we're on messages.html - don't replace if we are
-        if (window.location.pathname.includes('messages.html')) {
-            console.log('✅ Mobile navigation already correct on messages.html - skipping replacement');
-            window.mobileNavFixed = true;
-            return;
-        }
-        
-        // Replace with standardized navigation for other pages
+        // Replace with standardized navigation for all pages
         const standardizedNav = `
             <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
                 <a href="feed.html" class="tab-item" aria-label="Home">
