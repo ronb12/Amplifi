@@ -76,7 +76,10 @@ const SECURITY_CONFIG = {
             "https://securetoken.googleapis.com",
             "https://firebaseapp.com",
             "https://*.firebaseapp.com",
-            "https://*.googleapis.com"
+            "https://*.googleapis.com",
+            "https://firestore.googleapis.com",
+            "https://storage.googleapis.com",
+            "https://fcm.googleapis.com"
         ],
         frameSrc: [
             "'self'",
@@ -341,12 +344,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
     });
     
-    // Check session validity every minute
+    // Check session validity every 5 minutes
     setInterval(() => {
         if (!SecurityUtils.sessionManager.isSessionValid()) {
             console.warn('Session expired due to inactivity');
         }
-    }, 60000);
+    }, 300000); // 5 minutes instead of 1 minute
     
     console.log('🔒 Security configuration initialized');
 });
