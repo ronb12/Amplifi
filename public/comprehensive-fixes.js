@@ -1517,11 +1517,19 @@ function addIOSCompatibility() {
         body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"] {
             background: #007AFF !important;
             color: white !important;
+            border-radius: 50% !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s ease !important;
         }
         
         body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"]:hover {
             background: #0056CC !important;
             transform: scale(1.05) !important;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3) !important;
         }
         
         /* Video icon specific styling */
@@ -1529,8 +1537,10 @@ function addIOSCompatibility() {
             width: 16px !important;
             height: 16px !important;
             fill: none !important;
-            stroke: currentColor !important;
+            stroke: white !important;
             stroke-width: 2 !important;
+            stroke-linecap: round !important;
+            stroke-linejoin: round !important;
         }
         
         /* Money button styling (3rd icon) */
