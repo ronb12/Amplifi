@@ -67,12 +67,85 @@ class MessagesApp {
         // Auto-resize textarea
         this.setupAutoResize();
         
+        // Setup mobile back button event listener
+        this.setupMobileBackButton();
+        
         // Test mobile back button functionality
         setTimeout(() => {
             this.testMobileBackButton();
+            this.checkMobileBackButtonStatus();
         }, 1000);
         
         console.log('Messages App initialized successfully');
+    }
+
+    setupMobileBackButton() {
+        console.log('🔧 Setting up mobile back button...');
+        
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        if (mobileBackBtn) {
+            console.log('✅ Mobile back button found, adding event listener');
+            
+            // Remove any existing onclick attribute to prevent conflicts
+            mobileBackBtn.removeAttribute('onclick');
+            
+            // Add direct event listener
+            mobileBackBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Mobile back button clicked via event listener!');
+                this.showConversationsList();
+            });
+            
+            console.log('✅ Mobile back button event listener added');
+        } else {
+            console.log('ℹ️ Mobile back button not found during setup');
+        }
+    }
+
+    checkMobileBackButtonStatus() {
+        console.log('🔍 Checking mobile back button status...');
+        
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        if (mobileBackBtn) {
+            console.log('✅ Mobile back button found');
+            console.log('📊 Button properties:');
+            console.log('  - Display:', mobileBackBtn.style.display);
+            console.log('  - Visibility:', mobileBackBtn.style.visibility);
+            console.log('  - Onclick:', mobileBackBtn.getAttribute('onclick'));
+            console.log('  - Event listeners:', mobileBackBtn.onclick);
+            console.log('  - Window width:', window.innerWidth);
+            console.log('  - Is mobile:', window.innerWidth <= 768);
+            
+            // Test if the button is clickable
+            const rect = mobileBackBtn.getBoundingClientRect();
+            console.log('📊 Button position:');
+            console.log('  - Top:', rect.top);
+            console.log('  - Left:', rect.left);
+            console.log('  - Width:', rect.width);
+            console.log('  - Height:', rect.height);
+            console.log('  - Visible:', rect.width > 0 && rect.height > 0);
+            
+            return true;
+        } else {
+            console.error('❌ Mobile back button not found');
+            return false;
+        }
+    }
+
+    // Global function to test mobile back button
+    testMobileBackButtonClick() {
+        console.log('🧪 Testing mobile back button click...');
+        
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        if (mobileBackBtn) {
+            console.log('✅ Mobile back button found, simulating click...');
+            mobileBackBtn.click();
+            return true;
+        } else {
+            console.error('❌ Mobile back button not found');
+            return false;
+        }
     }
 
     setupAuthListener() {
@@ -2789,30 +2862,73 @@ class MessagesApp {
     }
 
     async checkMessageLimits(recipientId) {
-        const now = Date.now();
-        const senderId = this.currentUser.uid;
-        const key = `${senderId}_${recipientId}`;
-        
-        // Check cooldown
-        if (this.creatorSettings.lastMessageTime[key]) {
-            const timeSinceLastMessage = now - this.creatorSettings.lastMessageTime[key];
-            if (timeSinceLastMessage < this.creatorSettings.messageCooldown) {
-                const remainingTime = Math.ceil((this.creatorSettings.messageCooldown - timeSinceLastMessage) / 1000 / 60);
-                return {
-                    allowed: false,
-                    reason: `Please wait ${remainingTime} minutes before sending another message.`
+        try {
+            const userDoc = await firebase.firestore()
+                .collection('users')
+                .doc(this.currentUser.uid)
+                .get();
+            
+            if (!userDoc.exists) return { allowed: true };
+            
+            const userData = userDoc.data();
+            const messageCount = userData.messageCount || 0;
+            const lastMessageTime = userData.lastMessageTime || 0;
+            const now = Date.now();
+            
+            // Check daily message limit
+            if (messageCount >= this.creatorSettings.maxMessagesPerDay) {
+                return { 
+                    allowed: false, 
+                    reason: 'Daily message limit reached' 
                 };
             }
+            
+            // Check message cooldown
+            if (now - lastMessageTime < this.creatorSettings.messageCooldown) {
+                return { 
+                    allowed: false, 
+                    reason: 'Message cooldown active' 
+                };
+            }
+            
+            return { allowed: true };
+            
+        } catch (error) {
+            console.error('Error checking message limits:', error);
+            return { allowed: true };
         }
-        
-        // Update last message time
-        this.creatorSettings.lastMessageTime[key] = now;
-        
-        return { allowed: true };
     }
 }
 
-// Initialize the app when DOM is loaded
+// Global functions for testing
+window.testMobileBackButton = function() {
+    if (window.messagesApp) {
+        return window.messagesApp.testMobileBackButtonClick();
+    } else {
+        console.error('❌ MessagesApp not available');
+        return false;
+    }
+};
+
+window.checkMobileBackButtonStatus = function() {
+    if (window.messagesApp) {
+        return window.messagesApp.checkMobileBackButtonStatus();
+    } else {
+        console.error('❌ MessagesApp not available');
+        return false;
+    }
+};
+
+window.showConversationsList = function() {
+    if (window.messagesApp) {
+        return window.messagesApp.showConversationsList();
+    } else {
+        console.error('❌ MessagesApp not available');
+        return false;
+    }
+};
+
+// Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     window.messagesApp = new MessagesApp();
 }); 
