@@ -82,7 +82,7 @@ class MessagesApp {
     setupMobileBackButton() {
         console.log('🔧 Setting up mobile back button...');
         
-        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        const mobileBackBtn = document.getElementById('mobileBackBtn');
         if (mobileBackBtn) {
             console.log('✅ Mobile back button found, adding event listener');
             
@@ -106,7 +106,7 @@ class MessagesApp {
     checkMobileBackButtonStatus() {
         console.log('🔍 Checking mobile back button status...');
         
-        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        const mobileBackBtn = document.getElementById('mobileBackBtn');
         if (mobileBackBtn) {
             console.log('✅ Mobile back button found');
             console.log('📊 Button properties:');
@@ -137,7 +137,7 @@ class MessagesApp {
     testMobileBackButtonClick() {
         console.log('🧪 Testing mobile back button click...');
         
-        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        const mobileBackBtn = document.getElementById('mobileBackBtn');
         if (mobileBackBtn) {
             console.log('✅ Mobile back button found, simulating click...');
             mobileBackBtn.click();
@@ -2543,51 +2543,34 @@ class MessagesApp {
 
     // Send Money Feature
     showMoneyModal() {
-        if (!this.currentConversation) {
-            this.showToast('Please select a conversation first', 'error');
-            return;
+        console.log('💰 Showing money modal...');
+        
+        const moneyModal = document.getElementById('moneyModal');
+        if (moneyModal) {
+            console.log('✅ Using existing money modal');
+            moneyModal.style.display = 'flex';
+            this.setupMoneyModalListeners();
+        } else {
+            console.error('❌ Money modal not found in HTML');
         }
-        
-        const moneyModal = document.createElement('div');
-        moneyModal.className = 'modal-overlay';
-        moneyModal.id = 'moneyModal';
-        moneyModal.innerHTML = `
-            <div class="modal money-modal">
-                <div class="modal-header">
-                    <h3>💰 Send Money</h3>
-                    <button class="close-btn" onclick="messagesApp.hideMoneyModal()">×</button>
-                </div>
-                <div class="modal-body">
-                    <div class="money-form">
-                        <div class="form-group">
-                            <label for="moneyAmount" class="form-label">Amount ($)</label>
-                            <input type="number" id="moneyAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="moneyMessage" class="form-label">Message (Optional)</label>
-                            <textarea id="moneyMessage" class="form-textarea" placeholder="Add a message..."></textarea>
-                        </div>
-                        <div class="money-preview">
-                            <div class="preview-amount">$<span id="previewAmount">0.00</span></div>
-                            <div class="preview-message" id="previewMessage">No message</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="secondary-btn" onclick="messagesApp.hideMoneyModal()">Cancel</button>
-                    <button class="primary-btn" onclick="messagesApp.sendMoney()">Send Money</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(moneyModal);
-        this.setupMoneyModalListeners();
     }
 
     hideMoneyModal() {
+        console.log('💰 Hiding money modal...');
         const moneyModal = document.getElementById('moneyModal');
         if (moneyModal) {
-            moneyModal.remove();
+            moneyModal.style.display = 'none';
+            // Reset form
+            const amountInput = document.getElementById('moneyAmount');
+            const messageInput = document.getElementById('moneyMessage');
+            if (amountInput) amountInput.value = '';
+            if (messageInput) messageInput.value = '';
+            
+            // Reset preview
+            const previewAmount = document.getElementById('previewAmount');
+            const previewMessage = document.getElementById('previewMessage');
+            if (previewAmount) previewAmount.textContent = '0.00';
+            if (previewMessage) previewMessage.textContent = '';
         }
     }
 
