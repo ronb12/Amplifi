@@ -1400,6 +1400,48 @@ function addIOSCompatibility() {
             z-index: 1 !important;
         }
         
+        /* CRITICAL FIX: Ensure mobile tabs are hidden on desktop */
+        @media (min-width: 769px) {
+            .mobile-tab-nav {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                position: absolute !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+            }
+            
+            /* Override any messages-specific mobile tab showing */
+            body:has(.messages-main) .mobile-tab-nav {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                position: absolute !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+            }
+        }
+        
+        /* Show mobile tabs only on mobile */
+        @media (max-width: 768px) {
+            .mobile-tab-nav {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                pointer-events: auto !important;
+            }
+            
+            /* Adjust message input for mobile */
+            body:has(.messages-main) .message-input-area {
+                padding-bottom: 80px !important;
+            }
+        }
+        
         /* Ensure message input area buttons are visible */
         body:has(.messages-main) .message-input-container .emoji-btn,
         body:has(.messages-main) .message-input-container .voice-btn,
