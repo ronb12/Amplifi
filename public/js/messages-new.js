@@ -367,6 +367,43 @@ class MessagesApp {
                 .collection('conversations')
                 .add(sampleConversation);
             
+            // Add sample messages to the conversation
+            const sampleMessages = [
+                {
+                    text: 'Welcome to Amplifi Messages! This is a sample conversation.',
+                    senderId: this.currentUser.uid,
+                    senderName: this.currentUser.displayName || 'You',
+                    senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'sent'
+                },
+                {
+                    text: 'You can send text messages, voice messages, files, and even money!',
+                    senderId: this.currentUser.uid,
+                    senderName: this.currentUser.displayName || 'You',
+                    senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'sent'
+                },
+                {
+                    text: 'Try clicking the phone or video buttons to start a call!',
+                    senderId: this.currentUser.uid,
+                    senderName: this.currentUser.displayName || 'You',
+                    senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'sent'
+                }
+            ];
+            
+            // Add messages to the conversation
+            for (const message of sampleMessages) {
+                await firebase.firestore()
+                    .collection('conversations')
+                    .doc(docRef.id)
+                    .collection('messages')
+                    .add(message);
+            }
+            
             this.conversations.push({ id: docRef.id, ...sampleConversation });
             
         } catch (error) {

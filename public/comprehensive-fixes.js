@@ -160,6 +160,61 @@ function fixDesktopNavigation() {
             transform: scale(1.05) !important;
         }
         
+        /* Force chat actions to be visible */
+        body:has(.messages-main) .chat-header .chat-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Ensure action buttons are visible and properly styled */
+        body:has(.messages-main) .chat-header .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: rgba(255,255,255,0.2) !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Fix message display issues */
+        body:has(.messages-main) .message-bubble {
+            background: #667eea !important;
+            color: white !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 18px !important;
+            max-width: 70% !important;
+            word-wrap: break-word !important;
+        }
+        
+        body:has(.messages-main) .message-text {
+            color: white !important;
+            font-size: 0.9rem !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* Fix avatar display in messages */
+        body:has(.messages-main) .message-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+        
         /* Mobile-specific fixes for messages page */
         @media (max-width: 768px) {
             body:has(.messages-main) .messages-main {
