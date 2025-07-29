@@ -50,7 +50,10 @@ const SECURITY_CONFIG = {
             "https://js.stripe.com",
             "https://www.googletagmanager.com",
             "https://www.google-analytics.com",
-            "https://pagead2.googlesyndication.com"
+            "https://pagead2.googlesyndication.com",
+            "https://www.gstatic.com",
+            "https://*.firebaseapp.com",
+            "https://*.googleapis.com"
         ],
         styleSrc: [
             "'self'",
@@ -68,7 +71,12 @@ const SECURITY_CONFIG = {
             "'self'",
             "https://api.stripe.com",
             "https://vercel-stripe-backend-dxiumj53d-ronell-bradleys-projects.vercel.app",
-            "https://www.google-analytics.com"
+            "https://www.google-analytics.com",
+            "https://identitytoolkit.googleapis.com",
+            "https://securetoken.googleapis.com",
+            "https://firebaseapp.com",
+            "https://*.firebaseapp.com",
+            "https://*.googleapis.com"
         ],
         frameSrc: [
             "'self'",
