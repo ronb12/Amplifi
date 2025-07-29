@@ -12,27 +12,17 @@ class SecurityMonitor {
         this.blockDuration = 3600000; // 1 hour
         this.isInitialized = false;
         
-        // Initialize after a short delay to avoid recursion
-        setTimeout(() => {
-            this.initializeMonitoring();
-        }, 100);
-        
         console.log('🔒 Security monitoring system initialized');
     }
 
+    // Simplified initialization without overriding browser functions
     initializeMonitoring() {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
         try {
-            // Monitor for XSS attempts
-            this.monitorXSS();
-            
-            // Monitor for CSRF attempts
+            // Only monitor form submissions for CSRF
             this.monitorCSRF();
-            
-            // Monitor for suspicious network activity
-            this.monitorNetworkActivity();
             
             // Monitor for rate limiting violations
             this.monitorRateLimiting();
@@ -43,39 +33,7 @@ class SecurityMonitor {
         }
     }
 
-    // Monitor for XSS attempts
-    monitorXSS() {
-        try {
-            // Monitor script tag creation
-            const originalCreateElement = document.createElement;
-            document.createElement = (tagName) => {
-                if (tagName.toLowerCase() === 'script') {
-                    this.logThreat('XSS_ATTEMPT', {
-                        type: 'script_creation',
-                        stack: new Error().stack,
-                        timestamp: Date.now()
-                    });
-                }
-                return originalCreateElement.call(document, tagName);
-            };
-
-            // Monitor eval usage
-            const originalEval = window.eval;
-            window.eval = (code) => {
-                this.logThreat('XSS_ATTEMPT', {
-                    type: 'eval_usage',
-                    code: code,
-                    stack: new Error().stack,
-                    timestamp: Date.now()
-                });
-                return originalEval.call(window, code);
-            };
-        } catch (error) {
-            console.warn('XSS monitoring error:', error);
-        }
-    }
-
-    // Monitor for CSRF attempts
+    // Monitor for CSRF attempts (simplified)
     monitorCSRF() {
         try {
             // Monitor form submissions
@@ -97,95 +55,66 @@ class SecurityMonitor {
         }
     }
 
-    // Monitor for suspicious network activity
-    monitorNetworkActivity() {
-        try {
-            // Monitor fetch requests
-            const originalFetch = window.fetch;
-            window.fetch = (url, options) => {
-                // Check for suspicious URLs
-                if (typeof url === 'string' && this.isSuspiciousURL(url)) {
-                    this.logThreat('SUSPICIOUS_NETWORK', {
-                        type: 'suspicious_url',
-                        url: url,
-                        timestamp: Date.now()
-                    });
-                }
-                return originalFetch.call(window, url, options);
-            };
-        } catch (error) {
-            console.warn('Network monitoring error:', error);
-        }
-    }
-
     // Monitor for rate limiting violations
     monitorRateLimiting() {
         try {
             // Simple rate limiting for form submissions
-            const submissionTimes = new Map();
+            const submissions = new Map();
             
             document.addEventListener('submit', (event) => {
                 const formId = event.target.id || 'unknown';
                 const now = Date.now();
-                const lastSubmission = submissionTimes.get(formId) || 0;
+                const recentSubmissions = submissions.get(formId) || [];
                 
-                if (now - lastSubmission < 1000) { // Less than 1 second
+                // Remove submissions older than 1 minute
+                const recentSubmissionsFiltered = recentSubmissions.filter(time => now - time < 60000);
+                
+                if (recentSubmissionsFiltered.length >= 5) {
                     this.logThreat('RATE_LIMIT_VIOLATION', {
-                        type: 'rapid_form_submission',
+                        type: 'form_submission',
                         formId: formId,
-                        timeSinceLast: now - lastSubmission,
+                        submissions: recentSubmissionsFiltered.length,
                         timestamp: now
                     });
+                    event.preventDefault();
+                    return;
                 }
                 
-                submissionTimes.set(formId, now);
+                recentSubmissionsFiltered.push(now);
+                submissions.set(formId, recentSubmissionsFiltered);
             });
         } catch (error) {
             console.warn('Rate limiting monitoring error:', error);
         }
     }
 
-    // Check if URL is suspicious
-    isSuspiciousURL(url) {
-        const suspiciousPatterns = [
-            /javascript:/i,
-            /data:text\/html/i,
-            /vbscript:/i,
-            /onload=/i,
-            /onerror=/i
-        ];
-        
-        return suspiciousPatterns.some(pattern => pattern.test(url));
-    }
-
-    // Log security threat
+    // Log security threats
     logThreat(type, details) {
         try {
+            const threatId = this.generateThreatId();
             const threat = {
-                id: this.generateThreatId(),
+                id: threatId,
                 type: type,
                 details: details,
                 timestamp: Date.now(),
                 userAgent: navigator.userAgent,
-                url: window.location.href,
-                referrer: document.referrer
+                url: window.location.href
             };
             
-            this.threats.set(threat.id, threat);
+            this.threats.set(threatId, threat);
             this.suspiciousActivities.push(threat);
             
-            // Keep only recent threats
+            // Keep only recent activities
+            if (this.suspiciousActivities.length > 50) {
+                this.suspiciousActivities = this.suspiciousActivities.slice(-50);
+            }
+            
+            console.warn('🚨 Security threat detected:', type, details);
+            
+            // Show warning if too many threats
             if (this.threats.size > this.maxThreats) {
-                const oldestKey = this.threats.keys().next().value;
-                this.threats.delete(oldestKey);
+                this.showSecurityWarning();
             }
-            
-            // Block IP if too many threats
-            if (this.suspiciousActivities.filter(t => t.type === type).length > 5) {
-                this.blockIP();
-            }
-            
-            console.warn('🚨 Security threat detected:', threat);
         } catch (error) {
             console.error('Error logging threat:', error);
         }
@@ -196,20 +125,7 @@ class SecurityMonitor {
         return 'threat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
-    // Block IP address
-    blockIP() {
-        try {
-            console.warn('🚫 IP address blocked due to security threats');
-            this.blockedIPs.add('current_ip');
-            
-            // Show warning to user
-            this.showSecurityWarning();
-        } catch (error) {
-            console.error('Error blocking IP:', error);
-        }
-    }
-
-    // Show security warning to user
+    // Show security warning
     showSecurityWarning() {
         try {
             const warning = document.createElement('div');
@@ -281,6 +197,10 @@ class SecurityMonitor {
         if (!SecurityMonitor.instance) {
             try {
                 SecurityMonitor.instance = new SecurityMonitor();
+                // Initialize after a short delay
+                setTimeout(() => {
+                    SecurityMonitor.instance.initializeMonitoring();
+                }, 100);
             } catch (error) {
                 console.error('Failed to create SecurityMonitor instance:', error);
                 // Return a minimal fallback
