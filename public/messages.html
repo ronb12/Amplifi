@@ -10,6 +10,46 @@
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="messages-new.css">
     <script src="version.js"></script>
+    
+    <!-- FORCE CACHE CLEAR SCRIPT -->
+    <script>
+        // Force clear all caches and unregister service workers
+        (async function() {
+            console.log('🔄 FORCE CACHE CLEAR: Starting aggressive cache cleanup...');
+            
+            try {
+                // Clear all caches
+                const cacheNames = await caches.keys();
+                console.log('🔄 Found caches to delete:', cacheNames);
+                
+                for (const cacheName of cacheNames) {
+                    console.log('🔄 Deleting cache:', cacheName);
+                    await caches.delete(cacheName);
+                }
+                console.log('✅ All caches deleted');
+                
+                // Unregister all service workers
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                console.log('🔄 Found service workers to unregister:', registrations.length);
+                
+                for (const registration of registrations) {
+                    console.log('🔄 Unregistering service worker:', registration.scope);
+                    await registration.unregister();
+                }
+                console.log('✅ All service workers unregistered');
+                
+                // Clear localStorage and sessionStorage
+                localStorage.clear();
+                sessionStorage.clear();
+                console.log('✅ Browser storage cleared');
+                
+                console.log('✅ FORCE CACHE CLEAR: Complete!');
+                
+            } catch (error) {
+                console.error('❌ Error during cache clear:', error);
+            }
+        })();
+    </script>
 </head>
 <body>
     <!-- Header -->

@@ -1,7 +1,7 @@
 // Enhanced Service Worker for Seamless PWA Experience
-const CACHE_NAME = 'amplifi-v1.0.134'; // Incremented version for full cache refresh
-const STATIC_CACHE = 'amplifi-static-v2.4';
-const DYNAMIC_CACHE = 'amplifi-dynamic-v2.4';
+const CACHE_NAME = 'amplifi-v1.0.135'; // Incremented version for immediate cache refresh
+const STATIC_CACHE = 'amplifi-static-v2.5';
+const DYNAMIC_CACHE = 'amplifi-dynamic-v2.5';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -36,7 +36,23 @@ const STATIC_FILES = [
 // Install event - cache static files
 self.addEventListener('install', event => {
     console.log('Service Worker installing...');
-    self.skipWaiting(); // Forces new service worker to activate immediately
+    // Force immediate activation and cache clearing
+    self.skipWaiting();
+    
+    // Immediately clear all old caches
+    event.waitUntil(
+        caches.keys().then(keys => {
+            console.log('INSTALL: Found caches to delete:', keys);
+            return Promise.all(
+                keys.map(key => {
+                    console.log('INSTALL: Deleting cache:', key);
+                    return caches.delete(key);
+                })
+            );
+        }).then(() => {
+            console.log('INSTALL: All old caches deleted during install');
+        })
+    );
 });
 
 // Activate event - clean up old caches
@@ -44,15 +60,15 @@ self.addEventListener('activate', event => {
     console.log('Service Worker activating...');
     event.waitUntil(
         caches.keys().then(keys => {
-            console.log('Found caches:', keys);
+            console.log('ACTIVATE: Found caches:', keys);
             return Promise.all(
                 keys.map(key => {
-                    console.log('Deleting cache:', key);
+                    console.log('ACTIVATE: Deleting cache:', key);
                     return caches.delete(key);
                 })
             );
         }).then(() => {
-            console.log('All old caches deleted');
+            console.log('ACTIVATE: All old caches deleted');
             return self.clients.claim();
         })
     );
@@ -62,17 +78,17 @@ self.addEventListener('activate', event => {
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
-            console.log('Clearing old caches:', cacheNames);
+            console.log('ACTIVATE 2: Clearing old caches:', cacheNames);
             return Promise.all(
                 cacheNames.map(cacheName => {
                     if (cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-                        console.log('Deleting old cache:', cacheName);
+                        console.log('ACTIVATE 2: Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         }).then(() => {
-            console.log('Cache cleanup complete');
+            console.log('ACTIVATE 2: Cache cleanup complete');
             return self.clients.claim();
         })
     );
