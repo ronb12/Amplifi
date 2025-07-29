@@ -67,6 +67,11 @@ class MessagesApp {
         // Auto-resize textarea
         this.setupAutoResize();
         
+        // Test mobile back button functionality
+        setTimeout(() => {
+            this.testMobileBackButton();
+        }, 1000);
+        
         console.log('Messages App initialized successfully');
     }
 
@@ -514,24 +519,63 @@ class MessagesApp {
 
     // Mobile Navigation Methods
     showConversationsList() {
+        console.log('📱 Showing conversations list...');
         const conversationsSidebar = document.getElementById('conversationsSidebar');
         const chatArea = document.getElementById('chatArea');
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
         
         if (conversationsSidebar && chatArea) {
             conversationsSidebar.style.display = 'flex';
             chatArea.classList.remove('active');
             chatArea.style.display = 'none';
+            
+            // Hide mobile back button when showing conversations list
+            if (mobileBackBtn && window.innerWidth <= 768) {
+                mobileBackBtn.style.display = 'none';
+                console.log('📱 Mobile back button hidden');
+            }
         }
     }
 
     showChatView() {
+        console.log('📱 Showing chat view...');
         const conversationsSidebar = document.getElementById('conversationsSidebar');
         const chatArea = document.getElementById('chatArea');
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
         
         if (conversationsSidebar && chatArea) {
             conversationsSidebar.style.display = 'none';
             chatArea.classList.add('active');
             chatArea.style.display = 'flex';
+            
+            // Show mobile back button when showing chat view on mobile
+            if (mobileBackBtn && window.innerWidth <= 768) {
+                mobileBackBtn.style.display = 'flex';
+                console.log('📱 Mobile back button shown');
+            }
+        }
+    }
+
+    // Test mobile back button functionality
+    testMobileBackButton() {
+        console.log('🧪 Testing mobile back button...');
+        
+        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        if (mobileBackBtn) {
+            console.log('✅ Mobile back button found');
+            console.log('📊 Current display:', mobileBackBtn.style.display);
+            console.log('📊 Window width:', window.innerWidth);
+            console.log('📊 Is mobile:', window.innerWidth <= 768);
+            
+            // Test click functionality
+            mobileBackBtn.addEventListener('click', () => {
+                console.log('🖱️ Mobile back button clicked!');
+            });
+            
+            return true;
+        } else {
+            console.error('❌ Mobile back button not found');
+            return false;
         }
     }
 
