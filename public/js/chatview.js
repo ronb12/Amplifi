@@ -99,7 +99,7 @@ class ChatView {
         // Get avatar
         const avatar = this.conversation.avatar || 
                       (this.conversation.participantPics && this.conversation.participantPics.length > 0 ? 
-                       this.conversation.participantPics[0] : 'default-avatar.svg');
+                       this.conversation.participantPics[0] : 'assets/images/default-avatar.svg');
         
         // Update header
         document.getElementById('conversationName').textContent = name;
@@ -326,7 +326,7 @@ class ChatView {
                 conversationId: this.conversationId,
                 senderId: this.currentUser.uid,
                 senderName: this.userProfile?.displayName || 'You',
-                senderPic: this.userProfile?.profilePic || 'default-avatar.svg',
+                senderPic: this.userProfile?.profilePic || 'assets/images/default-avatar.svg',
                 text: text,
                 createdAt: new Date(),
                 readBy: [this.currentUser.uid],
