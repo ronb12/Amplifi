@@ -1441,11 +1441,36 @@ function addIOSCompatibility() {
                 right: 0 !important;
                 z-index: 1000 !important;
                 pointer-events: auto !important;
+                gap: 0.125rem !important;
+                padding: 0.25rem 0.125rem !important;
+            }
+            
+            .mobile-tab-nav .tab-item {
+                min-width: 0 !important;
+                padding: 0.125rem 0.0625rem !important;
+                flex: 1 !important;
+                max-width: calc(100% / 8) !important;
+            }
+            
+            .mobile-tab-nav .tab-icon {
+                width: 18px !important;
+                height: 18px !important;
+                font-size: 1rem !important;
+                margin-bottom: 0.0625rem !important;
+            }
+            
+            .mobile-tab-nav .tab-label {
+                font-size: 0.6rem !important;
+                line-height: 1 !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
             
             /* Adjust message input for mobile */
             body:has(.messages-main) .message-input-area {
-                padding-bottom: 80px !important;
+                padding-bottom: 70px !important;
             }
         }
         
