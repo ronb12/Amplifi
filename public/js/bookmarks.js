@@ -11,9 +11,41 @@ class BookmarksPage {
     }
 
     async init() {
+        // Initialize payment processor
+        this.initializePaymentProcessor();
+        
         await this.setupAuthStateListener();
         this.setupEventListeners();
-        this.setupMobileTabNavigation();
+        this.initializeAdMob();
+        
+        // Initialize PWA features
+        this.initializePWAFeatures();
+        
+        // Add fallback to show sample posts if loadPosts fails
+        try {
+            await this.loadPosts();
+        } catch (error) {
+            console.error('Failed to load posts, showing sample posts:', error);
+            this.showSamplePosts();
+        }
+        
+        this.loadBookmarks();
+        this.initializeNotifications();
+        this.startNewPostsBannerSimulation(); // Start banner simulation
+    }
+
+    initializePaymentProcessor() {
+        try {
+            // Initialize Stripe payment processor
+            if (typeof StripeVercelBackend !== 'undefined') {
+                window.paymentProcessor = new StripeVercelBackend();
+                console.log('✅ Payment processor initialized successfully');
+            } else {
+                console.warn('⚠️ StripeVercelBackend not available');
+            }
+        } catch (error) {
+            console.error('❌ Error initializing payment processor:', error);
+        }
     }
 
     async setupAuthStateListener() {
