@@ -288,16 +288,19 @@ const SecurityUtils = {
 
 // Initialize security measures
 document.addEventListener('DOMContentLoaded', () => {
-    // Set Content Security Policy
+    // Set Content Security Policy with proper directive names
     const csp = SECURITY_CONFIG.csp;
     const cspString = Object.entries(csp)
         .map(([key, values]) => {
+            // Convert camelCase to kebab-case for CSP directives
+            const directive = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+            
             if (Array.isArray(values)) {
-                return `${key} ${values.join(' ')}`;
+                return `${directive} ${values.join(' ')}`;
             } else if (typeof values === 'boolean') {
-                return values ? key : '';
+                return values ? directive : '';
             } else {
-                return `${key} ${values}`;
+                return `${directive} ${values}`;
             }
         })
         .filter(entry => entry !== '') // Remove empty entries
