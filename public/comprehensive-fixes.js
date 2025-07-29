@@ -1464,9 +1464,9 @@ function addIOSCompatibility() {
             flex: 1 !important;
             overflow-y: auto !important;
             padding: 1rem !important;
-            padding-bottom: 20px !important;  /* Account for raised input */
+            padding-bottom: 30px !important;  /* Account for higher raised input */
             min-height: 0 !important;
-            max-height: calc(100vh - 70px - 60px - 100px) !important;  /* Adjusted for raised input */
+            max-height: calc(100vh - 70px - 60px - 110px) !important;  /* Adjusted for higher raised input */
         }
         
         /* FIX: Chat area layout */
@@ -1560,10 +1560,10 @@ function addIOSCompatibility() {
             line-height: 1 !important;
         }
         
-        /* FIX: Message input area positioning - raise it up */
+        /* FIX: Message input area positioning - raise it up more */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
-            bottom: 10px !important;  /* Raised from 0 to 10px */
+            bottom: 20px !important;  /* Raised from 10px to 20px */
             background: white !important;
             border-top: 1px solid #e5e7eb !important;
             padding: 1rem !important;
