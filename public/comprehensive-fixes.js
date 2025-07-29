@@ -1343,12 +1343,54 @@ function addIOSCompatibility() {
             z-index: 10 !important;
         }
         
+        /* Force all action buttons to be visible */
+        body:has(.messages-main) .chat-header .chat-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* Ensure chat header has proper layout */
+        body:has(.messages-main) .chat-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 1rem !important;
+            background: white !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            min-height: 60px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* Override any hiding rules */
+        body:has(.messages-main) .chat-actions,
+        body:has(.messages-main) .chat-actions .action-btn {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+        
+        /* Ensure SVG icons are visible */
+        body:has(.messages-main) .chat-actions .action-btn svg {
+            width: 16px !important;
+            height: 16px !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Hover effects for action buttons */
         body:has(.messages-main) .chat-actions .action-btn:hover {
             background: rgba(102, 126, 234, 0.2) !important;
             transform: scale(1.05) !important;
         }
         
-        /* Fix message input area positioning */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
             bottom: 0 !important;
