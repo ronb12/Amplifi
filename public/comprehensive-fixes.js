@@ -233,23 +233,33 @@ function fixDesktopNavigation() {
                 transition: transform 0.3s ease !important;
             }
             
-            body:has(.messages-main) .conversations-sidebar.show {
-                transform: translateX(0) !important;
-            }
-            
             body:has(.messages-main) .chat-area {
-                position: fixed !important;
-                left: 0 !important;
-                top: 70px !important;
-                width: 100% !important;
-                height: calc(100vh - 70px - 60px) !important;
-                z-index: 999 !important;
-                transform: translateX(100%) !important;
-                transition: transform 0.3s ease !important;
+                display: flex !important;
+                position: relative !important;
+                transform: none !important;
+                z-index: 1 !important;
             }
             
-            body:has(.messages-main) .chat-area.active {
-                transform: translateX(0) !important;
+            body:has(.messages-main) .chat-header {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            body:has(.messages-main) .chat-actions {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                position: relative !important;
+                z-index: 10 !important;
+            }
+            
+            body:has(.messages-main) .chat-actions .action-btn {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                position: relative !important;
+                z-index: 10 !important;
             }
         }
         
