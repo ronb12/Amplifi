@@ -1304,6 +1304,76 @@ function addIOSCompatibility() {
             opacity: 1 !important;
         }
         
+        /* Force chat actions to be visible and properly positioned */
+        body:has(.messages-main) .chat-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 1rem !important;
+            background: white !important;
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+        
+        body:has(.messages-main) .chat-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Ensure action buttons are visible and properly styled */
+        body:has(.messages-main) .chat-actions .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: rgba(102, 126, 234, 0.1) !important;
+            border: 1px solid rgba(102, 126, 234, 0.2) !important;
+            color: #667eea !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        body:has(.messages-main) .chat-actions .action-btn:hover {
+            background: rgba(102, 126, 234, 0.2) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Fix message input area positioning */
+        body:has(.messages-main) .message-input-area {
+            position: sticky !important;
+            bottom: 0 !important;
+            background: white !important;
+            border-top: 1px solid #e5e7eb !important;
+            padding: 1rem !important;
+            z-index: 100 !important;
+        }
+        
+        /* Ensure chat area has proper layout */
+        body:has(.messages-main) .chat-area {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            position: relative !important;
+        }
+        
+        /* Fix messages container to take remaining space */
+        body:has(.messages-main) .messages-container {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            padding: 1rem !important;
+            padding-bottom: 80px !important;
+        }
+        
         /* Hide mobile tabs on desktop */
         @media (min-width: 769px) {
             .mobile-tab-nav {
@@ -1319,6 +1389,11 @@ function addIOSCompatibility() {
                 display: flex !important;
                 visibility: visible !important;
                 opacity: 1 !important;
+            }
+            
+            /* Adjust message input for mobile */
+            body:has(.messages-main) .message-input-area {
+                padding-bottom: 80px !important;
             }
         }
     `;
