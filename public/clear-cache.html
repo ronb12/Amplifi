@@ -7,118 +7,219 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .container {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            width: 100%;
         }
         h1 {
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-        .btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin: 1rem;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+            color: #374151;
+            margin-bottom: 1rem;
+            text-align: center;
         }
         .status {
-            margin-top: 2rem;
             padding: 1rem;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cache-info {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔄 Clear Cache</h1>
-        <p>This will clear all cached files and force a fresh reload.</p>
+        <h1>🔄 Cache Management</h1>
         
-        <button class="btn" onclick="clearAllCaches()">Clear All Caches</button>
-        <button class="btn" onclick="reloadMessages()">Reload Messages Page</button>
-        <button class="btn" onclick="goToMessages()">Go to Messages</button>
+        <div id="status" class="status info">
+            Ready to clear cache...
+        </div>
         
-        <div id="status" class="status" style="display: none;"></div>
+        <div class="button-group">
+            <button onclick="clearAllCaches()">Clear All Caches</button>
+            <button onclick="clearServiceWorker()">Unregister Service Worker</button>
+            <button onclick="hardRefresh()">Hard Refresh</button>
+            <button onclick="goHome()">Go Home</button>
+        </div>
+        
+        <div class="cache-info" id="cacheInfo">
+            <strong>Current Cache Status:</strong><br>
+            <span id="cacheStatus">Loading...</span>
+        </div>
     </div>
 
     <script>
+        let isProcessing = false;
+
         async function clearAllCaches() {
-            const status = document.getElementById('status');
-            status.style.display = 'block';
-            status.innerHTML = 'Clearing caches...';
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Clearing caches...';
             
             try {
-                // Clear service worker cache
-                if ('caches' in window) {
-                    const cacheNames = await caches.keys();
-                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                // Clear all caches
+                const cacheNames = await caches.keys();
+                console.log('Found caches:', cacheNames);
+                
+                for (const cacheName of cacheNames) {
+                    console.log('Deleting cache:', cacheName);
+                    await caches.delete(cacheName);
                 }
                 
                 // Clear localStorage
                 localStorage.clear();
+                console.log('localStorage cleared');
                 
                 // Clear sessionStorage
                 sessionStorage.clear();
+                console.log('sessionStorage cleared');
                 
-                // Unregister service worker
-                if ('serviceWorker' in navigator) {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    for (let registration of registrations) {
-                        await registration.unregister();
-                    }
+                // Unregister service workers
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (const registration of registrations) {
+                    await registration.unregister();
+                    console.log('Service worker unregistered');
                 }
                 
-                status.innerHTML = '✅ All caches cleared successfully!';
-                status.style.background = 'rgba(40, 167, 69, 0.3)';
+                statusEl.className = 'status success';
+                statusEl.textContent = '✅ All caches cleared successfully!';
                 
-                setTimeout(() => {
-                    location.reload(true);
-                }, 2000);
+                updateCacheInfo();
                 
             } catch (error) {
-                status.innerHTML = '❌ Error clearing caches: ' + error.message;
-                status.style.background = 'rgba(220, 53, 69, 0.3)';
+                console.error('Error clearing caches:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Error clearing caches: ' + error.message;
+            } finally {
+                isProcessing = false;
             }
         }
-        
-        function reloadMessages() {
-            const status = document.getElementById('status');
-            status.style.display = 'block';
-            status.innerHTML = 'Reloading messages page...';
+
+        async function clearServiceWorker() {
+            if (isProcessing) return;
+            isProcessing = true;
             
-            // Force reload messages page
-            window.open('/messages.html', '_blank');
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Unregistering service worker...';
             
-            status.innerHTML = '✅ Messages page opened in new tab!';
-            status.style.background = 'rgba(40, 167, 69, 0.3)';
+            try {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (const registration of registrations) {
+                    await registration.unregister();
+                    console.log('Service worker unregistered');
+                }
+                
+                statusEl.className = 'status success';
+                statusEl.textContent = '✅ Service worker unregistered!';
+                
+            } catch (error) {
+                console.error('Error unregistering service worker:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Error: ' + error.message;
+            } finally {
+                isProcessing = false;
+            }
         }
-        
-        function goToMessages() {
-            window.location.href = '/messages.html';
+
+        function hardRefresh() {
+            if (isProcessing) return;
+            
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Refreshing page...';
+            
+            // Force a hard refresh
+            window.location.reload(true);
         }
+
+        function goHome() {
+            window.location.href = '/';
+        }
+
+        async function updateCacheInfo() {
+            const cacheStatusEl = document.getElementById('cacheStatus');
+            
+            try {
+                const cacheNames = await caches.keys();
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                
+                let status = `Caches: ${cacheNames.length}\n`;
+                status += `Service Workers: ${registrations.length}\n`;
+                status += `localStorage: ${Object.keys(localStorage).length} items\n`;
+                status += `sessionStorage: ${Object.keys(sessionStorage).length} items`;
+                
+                cacheStatusEl.textContent = status;
+                
+            } catch (error) {
+                cacheStatusEl.textContent = 'Error getting cache status: ' + error.message;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCacheInfo();
+        });
     </script>
 </body>
 </html> 

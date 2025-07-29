@@ -1,7 +1,7 @@
 // Enhanced Service Worker for Seamless PWA Experience
-const CACHE_NAME = 'amplifi-v1.0.133'; // Incremented version for full cache refresh
-const STATIC_CACHE = 'amplifi-static-v2.3';
-const DYNAMIC_CACHE = 'amplifi-dynamic-v2.3';
+const CACHE_NAME = 'amplifi-v1.0.134'; // Incremented version for full cache refresh
+const STATIC_CACHE = 'amplifi-static-v2.4';
+const DYNAMIC_CACHE = 'amplifi-dynamic-v2.4';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -43,11 +43,18 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
     console.log('Service Worker activating...');
     event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(
-                keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-            )
-        ).then(() => self.clients.claim())
+        caches.keys().then(keys => {
+            console.log('Found caches:', keys);
+            return Promise.all(
+                keys.map(key => {
+                    console.log('Deleting cache:', key);
+                    return caches.delete(key);
+                })
+            );
+        }).then(() => {
+            console.log('All old caches deleted');
+            return self.clients.claim();
+        })
     );
 });
 
@@ -55,14 +62,18 @@ self.addEventListener('activate', event => {
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
+            console.log('Clearing old caches:', cacheNames);
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
+                    if (cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
                         console.log('Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
+        }).then(() => {
+            console.log('Cache cleanup complete');
+            return self.clients.claim();
         })
     );
 });
