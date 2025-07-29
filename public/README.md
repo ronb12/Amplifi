@@ -112,7 +112,7 @@ Amplifi is a modern, secure social media platform built with cutting-edge web te
 │   ├── stripe-vercel-backend.js     # Payment processing
 │   ├── music-library.js             # Music features
 │   ├── feed.js                      # Social feed
-│   ├── messages.js                  # Messaging system
+│   ├── messages-new.js              # Messaging system
 │   └── ...                          # Other modules
 ├── 📁 tests/                         # Test files
 │   ├── 📁 security/                 # Security tests
