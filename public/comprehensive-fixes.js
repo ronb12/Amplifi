@@ -1513,21 +1513,24 @@ function addIOSCompatibility() {
             margin-left: 8px !important;
         }
         
-        /* iMessage-style hover effects */
-        body:has(.messages-main) .chat-actions .action-btn:hover {
-            background: #0056CC !important;
-            transform: scale(1.1) !important;
+        /* Video button styling (2nd icon) */
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"] {
+            background: #007AFF !important;
+            color: white !important;
         }
         
-        /* iMessage-style SVG icons */
-        body:has(.messages-main) .chat-actions .action-btn svg {
-            width: 18px !important;  /* Increased from 14px */
-            height: 18px !important;  /* Increased from 14px */
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            fill: white !important;
-            stroke: white !important;
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"]:hover {
+            background: #0056CC !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Video icon specific styling */
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"] svg {
+            width: 16px !important;
+            height: 16px !important;
+            fill: none !important;
+            stroke: currentColor !important;
+            stroke-width: 2 !important;
         }
         
         /* Money button styling (3rd icon) */
@@ -1539,17 +1542,6 @@ function addIOSCompatibility() {
         
         body:has(.messages-main) .chat-actions .action-btn[onclick*="showMoneyModal"]:hover {
             background: #28A745 !important;
-        }
-        
-        /* Video button styling (2nd icon) */
-        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"] {
-            background: #007AFF !important;
-            font-size: 20px !important;
-            line-height: 1 !important;
-        }
-        
-        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"]:hover {
-            background: #0056CC !important;
         }
         
         /* Ensure all action buttons are properly sized */
