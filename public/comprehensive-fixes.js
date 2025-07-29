@@ -666,7 +666,7 @@ function enhanceMobileHeaders() {
             /* Better header content spacing - Override feed.css */
             .header .header-content {
                 padding: 0.8rem 1rem !important;
-                gap: 0.8rem !important;
+                gap: 1rem !important;
                 min-height: 60px !important;
                 align-items: center !important;
                 max-width: 100vw !important;
@@ -686,6 +686,8 @@ function enhanceMobileHeaders() {
                 flex-shrink: 0 !important;
                 color: white !important;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+                min-width: 80px !important;
+                white-space: nowrap !important;
             }
             
             /* Better touch targets for mobile */
@@ -706,7 +708,7 @@ function enhanceMobileHeaders() {
                 justify-content: center !important;
                 min-width: 0 !important;
                 max-width: none !important;
-                margin: 0 0.5rem !important;
+                margin: 0 0.8rem !important;
                 position: relative !important;
             }
             
@@ -716,8 +718,8 @@ function enhanceMobileHeaders() {
                 border-radius: 24px !important;
                 padding: 0.6rem 1rem !important;
                 font-size: 0.95rem !important;
-                min-width: 160px !important;
-                max-width: 240px !important;
+                min-width: 140px !important;
+                max-width: 200px !important;
                 width: 100% !important;
                 height: 40px !important;
                 border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
@@ -834,7 +836,8 @@ function enhanceMobileHeaders() {
                 flex: 0 0 auto !important;
                 display: flex !important;
                 align-items: center !important;
-                min-width: auto !important;
+                min-width: 80px !important;
+                margin-right: 0.5rem !important;
             }
             
             .header .header-center {
@@ -844,6 +847,7 @@ function enhanceMobileHeaders() {
                 justify-content: center !important;
                 min-width: 0 !important;
                 max-width: none !important;
+                margin: 0 0.5rem !important;
             }
             
             .header .header-actions {
@@ -852,6 +856,7 @@ function enhanceMobileHeaders() {
                 align-items: center !important;
                 gap: 0.8rem !important;
                 min-width: auto !important;
+                margin-left: 0.5rem !important;
             }
         }
         
@@ -859,17 +864,18 @@ function enhanceMobileHeaders() {
         @media (max-width: 480px) {
             .header .header-content {
                 padding: 0.7rem 0.8rem !important;
-                gap: 0.6rem !important;
+                gap: 0.8rem !important;
                 min-height: 56px !important;
             }
             
             .header .header-left .logo {
                 font-size: 1.2rem !important;
+                min-width: 70px !important;
             }
             
             .header .header-center .search-input {
-                min-width: 120px !important;
-                max-width: 180px !important;
+                min-width: 100px !important;
+                max-width: 160px !important;
                 padding: 0.5rem 0.8rem !important;
                 font-size: 0.9rem !important;
                 height: 36px !important;
@@ -897,17 +903,18 @@ function enhanceMobileHeaders() {
         @media (max-width: 360px) {
             .header .header-content {
                 padding: 0.6rem 0.6rem !important;
-                gap: 0.5rem !important;
+                gap: 0.6rem !important;
                 min-height: 52px !important;
             }
             
             .header .header-left .logo {
                 font-size: 1.1rem !important;
+                min-width: 60px !important;
             }
             
             .header .header-center .search-input {
-                min-width: 100px !important;
-                max-width: 140px !important;
+                min-width: 80px !important;
+                max-width: 120px !important;
                 padding: 0.4rem 0.7rem !important;
                 font-size: 0.85rem !important;
                 height: 32px !important;
@@ -940,11 +947,12 @@ function enhanceMobileHeaders() {
             
             .header .header-left .logo {
                 font-size: 1.2rem !important;
+                min-width: 70px !important;
             }
             
             .header .header-center .search-input {
-                max-width: 200px !important;
-                min-width: 140px !important;
+                max-width: 180px !important;
+                min-width: 120px !important;
             }
         }
         
