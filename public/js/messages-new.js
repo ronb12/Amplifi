@@ -355,7 +355,7 @@ class MessagesApp {
         try {
             const sampleConversation = {
                 participants: [this.currentUser.uid],
-                participantNames: ['You'],
+                participantNames: ['Sample User'],
                 participantPics: [this.currentUser.photoURL || 'assets/images/default-avatar.svg'],
                 lastMessage: 'Welcome to Amplifi Messages!',
                 lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -372,7 +372,7 @@ class MessagesApp {
                 {
                     text: 'Welcome to Amplifi Messages! This is a sample conversation.',
                     senderId: this.currentUser.uid,
-                    senderName: this.currentUser.displayName || 'You',
+                    senderName: 'You',
                     senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'sent'
@@ -380,7 +380,7 @@ class MessagesApp {
                 {
                     text: 'You can send text messages, voice messages, files, and even money!',
                     senderId: this.currentUser.uid,
-                    senderName: this.currentUser.displayName || 'You',
+                    senderName: 'You',
                     senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'sent'
@@ -388,7 +388,7 @@ class MessagesApp {
                 {
                     text: 'Try clicking the phone or video buttons to start a call!',
                     senderId: this.currentUser.uid,
-                    senderName: this.currentUser.displayName || 'You',
+                    senderName: 'You',
                     senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'sent'
@@ -445,7 +445,7 @@ class MessagesApp {
             const activeClass = isActive ? 'active' : '';
             
             // Get conversation display name with proper null checks
-            let displayName = 'Unknown';
+            let displayName = 'Sample Conversation';
             if (isGroupChat) {
                 displayName = conversation.conversationName || 'Group Chat';
             } else {
@@ -454,15 +454,20 @@ class MessagesApp {
                     const otherParticipant = conversation.participantNames.find(name => 
                         name !== (this.currentUser?.displayName || 'You')
                     );
-                    displayName = otherParticipant || 'Unknown User';
+                    // If it's a sample conversation with only current user, show "Sample Conversation"
+                    if (!otherParticipant && conversation.participantNames.length === 1) {
+                        displayName = 'Sample Conversation';
+                    } else {
+                        displayName = otherParticipant || 'Sample Conversation';
+                    }
                 } else {
-                    displayName = 'Unknown User';
+                    displayName = 'Sample Conversation';
                 }
             }
             
             // Format the last message preview with proper null checks
             let lastMessagePreview = 'No messages yet';
-            if (conversation.lastMessage) {
+            if (conversation.lastMessage && conversation.lastMessage !== 'undefined') {
                 if (conversation.lastMessage.includes('🎤 Voice message')) {
                     lastMessagePreview = '🎤 Voice message';
                 } else if (conversation.lastMessage.includes('💰')) {
@@ -695,6 +700,10 @@ class MessagesApp {
                 if (!messageText || messageText === 'undefined' || messageText.trim() === '') {
                     return; // Skip this message
                 }
+                
+                // Ensure sender name is properly set
+                const senderName = message.senderName || (message.senderId === this.currentUser?.uid ? 'You' : 'Unknown User');
+                
                 messageContent = `
                     <div class="message-bubble">
                         <div class="message-text">${messageText}</div>
@@ -704,7 +713,6 @@ class MessagesApp {
             }
 
             // Add null checks for sender information
-            const senderName = message.senderName || 'Unknown User';
             const senderPic = message.senderPic || 'assets/images/default-avatar.svg';
 
             messageDiv.innerHTML = `
