@@ -626,6 +626,12 @@ function fixDesktopNavigation() {
 
 // 2. Fix Mobile Navigation - Standardize across all pages
 function fixMobileNavigation() {
+    // Prevent multiple executions
+    if (window.mobileNavFixed) {
+        console.log('🔄 Mobile navigation already fixed, skipping...');
+        return;
+    }
+    
     console.log('🔧 Fixing mobile navigation...');
     
     // Find existing mobile navigation
@@ -635,6 +641,7 @@ function fixMobileNavigation() {
         // Check if we're on messages.html - don't replace if we are
         if (window.location.pathname.includes('messages.html')) {
             console.log('✅ Mobile navigation already correct on messages.html - skipping replacement');
+            window.mobileNavFixed = true;
             return;
         }
         
@@ -673,6 +680,7 @@ function fixMobileNavigation() {
         `;
         
         existingMobileNav.outerHTML = standardizedNav;
+        window.mobileNavFixed = true;
         console.log('✅ Mobile navigation standardized');
     }
 }
@@ -1680,7 +1688,15 @@ function addIOSCompatibility() {
 }
 
 // 7. Apply All Fixes
+let fixesApplied = false;
+
 function applyAllFixes() {
+    // Prevent multiple executions
+    if (fixesApplied) {
+        console.log('🔄 Fixes already applied, skipping...');
+        return;
+    }
+    
     console.log('🚀 Applying all comprehensive fixes...');
     
     try {
@@ -1691,6 +1707,7 @@ function applyAllFixes() {
         enhanceMobileHeaders();
         addIOSCompatibility();
         
+        fixesApplied = true;
         console.log('✅ All fixes applied successfully!');
         
         // Add success indicator
