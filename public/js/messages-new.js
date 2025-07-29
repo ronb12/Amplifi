@@ -1963,34 +1963,51 @@ class MessagesApp {
 
     // Full WebRTC Call and Video Features
     async startVoiceCall() {
+        console.log('🔊 Starting voice call...');
+        
         if (!this.currentConversation) {
             this.showToast('Please select a conversation first', 'error');
+            console.log('❌ No conversation selected');
             return;
         }
         
+        console.log('✅ Conversation selected, initializing voice call');
         this.isVideoCall = false;
         await this.initializeCall();
     }
 
     async startVideoCall() {
+        console.log('📹 Starting video call...');
+        
         if (!this.currentConversation) {
             this.showToast('Please select a conversation first', 'error');
+            console.log('❌ No conversation selected');
             return;
         }
         
+        console.log('✅ Conversation selected, initializing video call');
         this.isVideoCall = true;
         await this.initializeCall();
     }
 
     async initializeCall() {
         try {
+            console.log('🔧 Initializing call...');
+            
+            // Check if getUserMedia is supported
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                throw new Error('getUserMedia not supported');
+            }
+            
             // Get user media
             const constraints = {
                 audio: true,
                 video: this.isVideoCall
             };
             
+            console.log('📹 Requesting media permissions...');
             this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+            console.log('✅ Media permissions granted');
             
             // Create peer connection
             this.peerConnection = new RTCPeerConnection({
@@ -2026,6 +2043,7 @@ class MessagesApp {
                 status: 'calling'
             };
             
+            console.log('💾 Saving call data to Firestore...');
             const callDoc = await firebase.firestore()
                 .collection('calls')
                 .add(callData);
@@ -2035,12 +2053,14 @@ class MessagesApp {
             this.updateCallUI();
             this.showCallInterface();
             
+            console.log('✅ Call interface shown successfully');
+            
             // Listen for answer
             this.listenForCallAnswer(callDoc.id);
             
         } catch (error) {
-            console.error('Error starting call:', error);
-            this.showToast('Error starting call', 'error');
+            console.error('❌ Error starting call:', error);
+            this.showToast(`Error starting call: ${error.message}`, 'error');
         }
     }
 
@@ -2561,15 +2581,6 @@ class MessagesApp {
 
     hideFileUploadArea() {
         document.getElementById('fileUploadArea').style.display = 'none';
-    }
-
-    // Placeholder methods for future features
-    startVoiceCall() {
-        this.showToast('Voice calls coming soon!', 'info');
-    }
-
-    startVideoCall() {
-        this.showToast('Video calls coming soon!', 'info');
     }
 
     showChatOptions() {
