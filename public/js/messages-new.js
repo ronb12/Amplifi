@@ -175,6 +175,11 @@ class MessagesApp {
                     this.sendMessage();
                 }
             });
+            
+            // Update send button when typing
+            messageInput.addEventListener('input', () => {
+                this.updateSendButton();
+            });
         }
 
         // Send button
@@ -543,6 +548,10 @@ class MessagesApp {
             
             // Update UI
             this.updateConversationUI();
+            
+            // Enable inputs for sending messages
+            this.enableInputs();
+            this.updateSendButton();
             
             // Load messages
             await this.loadMessages(conversationId);
