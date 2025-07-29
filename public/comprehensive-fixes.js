@@ -824,6 +824,7 @@ function enhanceMobileHeaders() {
                 min-width: auto !important;
                 position: relative !important;
                 z-index: 1 !important;
+                margin-left: 1.5rem !important;
             }
             
             /* Override any conflicting styles from feed.css */
@@ -856,7 +857,7 @@ function enhanceMobileHeaders() {
                 align-items: center !important;
                 gap: 0.8rem !important;
                 min-width: auto !important;
-                margin-left: 0.5rem !important;
+                margin-left: 1.5rem !important;
             }
         }
         
