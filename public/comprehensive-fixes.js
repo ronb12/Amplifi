@@ -1527,6 +1527,39 @@ function addIOSCompatibility() {
             background: #28A745 !important;
         }
         
+        /* Video button styling (2nd icon) */
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"] {
+            background: #007AFF !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+        }
+        
+        body:has(.messages-main) .chat-actions .action-btn[onclick*="startVideoCall"]:hover {
+            background: #0056CC !important;
+        }
+        
+        /* Ensure all action buttons are properly sized */
+        body:has(.messages-main) .chat-actions .action-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            background: #007AFF !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10 !important;
+            margin-left: 8px !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+        }
+        
         /* FIX: Message input area positioning - ensure it's on screen */
         body:has(.messages-main) .message-input-area {
             position: sticky !important;
