@@ -87,6 +87,30 @@
     object-fit: cover;
     max-height: 340px;
     background: #f3f4f6;
+    /* Debug styling to ensure images are visible */
+    min-height: 200px;
+    border: 2px solid #e5e7eb;
+}
+
+/* Fallback for when images fail to load */
+.post-media img:not([src]), 
+.post-media img[src=""], 
+.post-media img[src*="undefined"] {
+    display: none;
+}
+
+/* Ensure post-media container is visible */
+.post-media {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    overflow: hidden;
+    /* Debug styling */
+    min-height: 200px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .post-video-wrapper {

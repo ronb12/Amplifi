@@ -296,6 +296,132 @@ const NotificationUtils = {
     }
 };
 
+// Dropdown positioning functionality - REMOVED to prevent conflicts with dropdown-nav.js
+// The new dropdown system in dropdown-nav.js handles all dropdown functionality
+
+// function initializeDropdowns() {
+//     console.log('🔧 initializeDropdowns called');
+//     const dropdowns = document.querySelectorAll('.nav-dropdown');
+//     console.log('🔧 Initializing dropdowns, found:', dropdowns.length);
+//     
+//     // Test if dropdown elements exist
+//     const buttons = document.querySelectorAll('.nav-dropdown-btn');
+//     const contents = document.querySelectorAll('.nav-dropdown-content');
+//     console.log('🔧 Found buttons:', buttons.length, 'contents:', contents.length);
+//     
+//     if (dropdowns.length === 0) {
+//         console.log('❌ No dropdowns found!');
+//         return;
+//     }
+//     
+//     dropdowns.forEach((dropdown, index) => {
+//         const button = dropdown.querySelector('.nav-dropdown-btn');
+//         const content = dropdown.querySelector('.nav-dropdown-content');
+//         
+//         console.log(`🔧 Dropdown ${index + 1}:`, {
+//             hasButton: !!button,
+//             hasContent: !!content,
+//             buttonText: button?.textContent?.trim()
+//         });
+//         
+//         if (button && content) {
+//             // Show dropdown on hover
+//             dropdown.addEventListener('mouseenter', () => {
+//                 console.log('🖱️ Hover detected on dropdown');
+//                 positionDropdown(button, content);
+//                 content.classList.add('show');
+//                 
+//                 // Force visibility for debugging
+//                 content.style.display = 'block';
+//                 content.style.visibility = 'visible';
+//                 content.style.opacity = '1';
+//                 content.style.backgroundColor = '#ff0000';
+//                 content.style.border = '3px solid #00ff00';
+//                 
+//                 console.log('🔍 Dropdown classes after show:', content.className);
+//                 console.log('🔍 Dropdown display style:', window.getComputedStyle(content).display);
+//                 console.log('🔍 Dropdown visibility style:', window.getComputedStyle(content).visibility);
+//                 console.log('🔍 Dropdown background color:', window.getComputedStyle(content).backgroundColor);
+//             });
+//             
+//             // Hide dropdown on mouse leave
+//             dropdown.addEventListener('mouseleave', () => {
+//                 console.log('🖱️ Mouse left dropdown');
+//                 content.classList.remove('show');
+//             });
+//             
+//             // Also handle click for mobile
+//             button.addEventListener('click', (e) => {
+//                 e.preventDefault();
+//                 console.log('🖱️ Click detected on dropdown button');
+//                 if (content.classList.contains('show')) {
+//                     content.classList.remove('show');
+//                 } else {
+//                     positionDropdown(button, content);
+//                     content.classList.add('show');
+//                 }
+//             });
+//         }
+//     });
+//     
+//     // Close dropdowns when clicking outside
+//     document.addEventListener('click', (e) => {
+//         if (!e.target.closest('.nav-dropdown')) {
+//             document.querySelectorAll('.nav-dropdown-content').forEach(content => {
+//                 content.classList.remove('show');
+//             });
+//         }
+//     });
+// }
+
+// function positionDropdown(button, content) {
+//     const buttonRect = button.getBoundingClientRect();
+//     const viewportWidth = window.innerWidth;
+//     const viewportHeight = window.innerHeight;
+//     
+//     console.log('📍 Positioning dropdown:', {
+//         buttonRect: { left: buttonRect.left, top: buttonRect.top, bottom: buttonRect.bottom },
+//         viewport: { width: viewportWidth, height: viewportHeight },
+//         contentSize: { width: content.offsetWidth, height: content.offsetHeight }
+//     });
+//     
+//     // Calculate position
+//     let left = buttonRect.left;
+//     let top = buttonRect.bottom + 5; // 5px gap
+//     
+//     // Ensure dropdown doesn't go off the right edge
+//     if (left + content.offsetWidth > viewportWidth) {
+//         left = viewportWidth - content.offsetWidth - 10;
+//     }
+//     
+//     // Ensure dropdown doesn't go off the bottom edge
+//     if (top + content.offsetHeight > viewportHeight) {
+//         top = buttonRect.top - content.offsetHeight - 5;
+//     }
+//     
+//     // Apply position
+//     content.style.position = 'fixed';
+//     content.style.left = left + 'px';
+//     content.style.top = top + 'px';
+//     content.style.zIndex = '1000';
+//     
+//     console.log('📍 Final dropdown position:', { left, top });
+// }
+
+// Initialize dropdowns when DOM is loaded
+console.log('🔧 Utils.js loaded, DOM ready state:', document.readyState);
+
+if (document.readyState === 'loading') {
+    console.log('🔧 DOM still loading, adding event listener');
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🔧 DOMContentLoaded fired, initializing dropdowns');
+        // initializeDropdowns(); // This line is removed as per the edit hint
+    });
+} else {
+    console.log('🔧 DOM already loaded, initializing dropdowns immediately');
+    // initializeDropdowns(); // This line is removed as per the edit hint
+}
+
 // Export utilities for use in other files
 window.DOMUtils = DOMUtils;
 window.StorageUtils = StorageUtils;

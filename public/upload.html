@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="upload.css?v=1">
     <link rel="stylesheet" href="enhanced-buttons.css?v=2">
     <link rel="stylesheet" href="modal-overlays.css?v=1">
+    <link rel="stylesheet" href="dropdown-nav.css?v=1">
     <!-- AdSense SDK -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3565666509316178" crossorigin="anonymous"></script>
     
@@ -134,28 +135,47 @@
         </div>
     </main>
 
-    <!-- Mobile Tab Navigation -->
-    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
-        <a href="feed.html" class="tab-item" aria-label="Home">
-            <div class="tab-icon" aria-hidden="true">🏠</div>
-            <span class="tab-label">Home</span>
-        </a>
-        <a href="search.html" class="tab-item" aria-label="Search">
-            <div class="tab-icon" aria-hidden="true">🔍</div>
-            <span class="tab-label">Search</span>
-        </a>
-        <a href="upload.html" class="tab-item active" aria-label="Create" aria-current="page">
-            <div class="tab-icon" aria-hidden="true">➕</div>
-            <span class="tab-label">Create</span>
-        </a>
-        <a href="messages.html" class="tab-item" aria-label="Messages">
-            <div class="tab-icon" aria-hidden="true">💬</div>
-            <span class="tab-label">Messages</span>
-        </a>
-        <a href="profile.html" class="tab-item" aria-label="Profile">
-            <div class="tab-icon" aria-hidden="true">👤</div>
-            <span class="tab-label">Profile</span>
-        </a>
+    <!-- Desktop tab navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">🏠 Home</a>
+        <a href="feed.html" class="nav-link">�� Feed</a>
+        <a href="trending.html" class="nav-link">🔥 Trending</a>
+        <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+        
+        <!-- Creator Tools Dropdown -->
+        <div class="nav-dropdown">
+            <button class="nav-dropdown-btn">
+                🛠️ Creator Tools
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </button>
+            <div class="nav-dropdown-content">
+                <a href="upload.html" class="nav-dropdown-link active">➕ Upload</a>
+                <a href="dashboard.html" class="nav-dropdown-link">📊 Dashboard</a>
+                <a href="live.html" class="nav-dropdown-link">📺 Live</a>
+                <a href="music-library.html" class="nav-dropdown-link">🎵 Music</a>
+            </div>
+        </div>
+        
+        <a href="store.html" class="nav-link">🛍️ Store</a>
+        <a href="messages.html" class="nav-link">💬 Messages</a>
+        
+        <!-- Settings Dropdown -->
+        <div class="nav-dropdown">
+            <button class="nav-dropdown-btn">
+                ⚙️ Settings
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </button>
+            <div class="nav-dropdown-content">
+                <a href="settings.html" class="nav-dropdown-link">⚙️ General</a>
+                <a href="profile.html" class="nav-dropdown-link">👤 Profile</a>
+                <a href="privacy-settings.html" class="nav-dropdown-link">🔒 Privacy</a>
+                <a href="notifications.html" class="nav-dropdown-link">�� Notifications</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Scripts -->
@@ -166,6 +186,7 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config/firebaseConfig.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/dropdown-nav.js?v=1"></script>
     <script src="js/upload.js"></script>
 </body>
 </html>

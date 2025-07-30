@@ -1,13 +1,25 @@
-// Version configuration for cache busting
-const APP_VERSION = '1.0.132';
+// Version information for cache busting
+const APP_VERSION = '1.1.0';
+const BUILD_DATE = new Date().toISOString();
 
-// Function to append version to URLs
+// Export version info
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { APP_VERSION, BUILD_DATE };
+}
+
+// Make version available globally
+window.APP_VERSION = APP_VERSION;
+window.BUILD_DATE = BUILD_DATE;
+
+console.log(`🚀 Amplifi Store v${APP_VERSION} loaded at ${BUILD_DATE}`);
+
+// Cache busting function
 function getVersionedUrl(url) {
     const separator = url.includes('?') ? '&' : '?';
     return `${url}${separator}v=${APP_VERSION}`;
 }
 
-// Function to update all CSS and JS links with versioning
+// Update asset versions to force cache refresh
 function updateAssetVersions() {
     // Update CSS files
     const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');

@@ -800,3 +800,104 @@
 .performance-badge.popular {
   background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 } 
+
+/* Paid Messaging Stats Styles */
+.paid-messaging-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.paid-messaging-section .breakdown-title {
+    color: #6366f1;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stats-container {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stats-grid .stat-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 4%);
+    transition: all 0.2s ease;
+}
+
+.stats-grid .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.stats-grid .stat-card h4 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.stats-grid .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.stats-grid .stat-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Breakdown item types */
+.breakdown-item .breakdown-type {
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.breakdown-item .breakdown-type.tip {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.breakdown-item .breakdown-type.paid_message {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stats-grid .stat-value {
+        font-size: 1.25rem;
+    }
+} 

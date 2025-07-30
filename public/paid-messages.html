@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paid Messages - Amplifi</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="enhanced-buttons.css">
+    <link rel="stylesheet" href="modal-overlays.css">
+    <link rel="stylesheet" href="paid-messages.css">
+    <script src="version.js"></script>
+    <script src="config/firebaseConfig.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/paid-messages.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <h2 class="page-title">Paid Messages</h2>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" onclick="window.location.href='notifications.html'" title="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="user-menu">
+                    <img id="userAvatar" src="assets/images/default-avatar.svg" alt="User" class="user-avatar">
+                    <div class="user-dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="settings.html">Settings</a>
+                        <button onclick="paidMessagesApp.logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">🏠 Home</a>
+        <a href="feed.html" class="nav-link">📱 Feed</a>
+        <a href="trending.html" class="nav-link">🔥 Trending</a>
+        <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+        <a href="upload.html" class="nav-link">➕ Upload</a>
+        <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+        <a href="store.html" class="nav-link">🛍️ Store</a>
+        <a href="paid-messages.html" class="nav-link active" aria-current="page">💬 Paid Messages</a>
+        <a href="live.html" class="nav-link">📺 Live</a>
+        <a href="music-library.html" class="nav-link">🎵 Music</a>
+        <a href="settings.html" class="nav-link">⚙️ Settings</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+        <main class="main-content" id="mainContent" tabindex="-1" role="main">
+            <!-- Creator Selection -->
+            <div class="creator-selection">
+                <h3>Choose a Creator to Message</h3>
+                <div class="creators-grid" id="creatorsGrid">
+                    <!-- Creators will be loaded here -->
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <p>Loading creators...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Types -->
+            <div class="message-types" id="messageTypes" style="display: none;">
+                <h3>Select Message Type</h3>
+                <div class="message-options">
+                    <div class="message-option" data-type="text" data-price="2">
+                        <div class="option-icon">💬</div>
+                        <div class="option-details">
+                            <h4>Text Message</h4>
+                            <p>Send a personal message</p>
+                            <span class="price">$2.00</span>
+                        </div>
+                    </div>
+                    <div class="message-option" data-type="voice" data-price="5">
+                        <div class="option-icon">🎤</div>
+                        <div class="option-details">
+                            <h4>Voice Message</h4>
+                            <p>Send a voice recording</p>
+                            <span class="price">$5.00</span>
+                        </div>
+                    </div>
+                    <div class="message-option" data-type="priority" data-price="10">
+                        <div class="option-icon">⚡</div>
+                        <div class="option-details">
+                            <h4>Priority Message</h4>
+                            <p>Guaranteed fast response</p>
+                            <span class="price">$10.00</span>
+                        </div>
+                    </div>
+                    <div class="message-option" data-type="video" data-price="15">
+                        <div class="option-icon">📹</div>
+                        <div class="option-details">
+                            <h4>Video Message</h4>
+                            <p>Send a video recording</p>
+                            <span class="price">$15.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Composer -->
+            <div class="message-composer" id="messageComposer" style="display: none;">
+                <h3>Compose Your Message</h3>
+                <div class="composer-content">
+                    <div class="selected-creator">
+                        <img id="selectedCreatorAvatar" src="" alt="Creator" class="creator-avatar-small">
+                        <span id="selectedCreatorName">Creator Name</span>
+                    </div>
+                    <div class="message-input-container">
+                        <textarea id="messageText" placeholder="Type your message here..." rows="4"></textarea>
+                        <div class="message-actions">
+                            <button id="recordVoiceBtn" class="btn btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                    <line x1="12" y1="19" x2="12" y2="23"/>
+                                    <line x1="8" y1="23" x2="16" y2="23"/>
+                                </svg>
+                                Record Voice
+                            </button>
+                            <button id="attachFileBtn" class="btn btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                                Attach File
+                            </button>
+                        </div>
+                    </div>
+                    <div class="payment-summary">
+                        <div class="summary-item">
+                            <span>Message Type:</span>
+                            <span id="selectedMessageType">Text Message</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Price:</span>
+                            <span id="messagePrice">$2.00</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total:</span>
+                            <span id="totalPrice">$2.00</span>
+                        </div>
+                    </div>
+                    <div class="composer-actions">
+                        <button class="btn btn-secondary" onclick="paidMessagesApp.cancelMessage()">Cancel</button>
+                        <button class="btn btn-primary" onclick="paidMessagesApp.sendPaidMessage()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                            </svg>
+                            Send Message ($2.00)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message History -->
+            <div class="message-history" id="messageHistory" style="display: none;">
+                <h3>Your Message History</h3>
+                <div class="history-filters">
+                    <select id="historyFilter" onchange="paidMessagesApp.filterHistory()">
+                        <option value="all">All Messages</option>
+                        <option value="sent">Sent</option>
+                        <option value="received">Received</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- Message history will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Creator Profile Modal -->
+    <div id="creatorProfileModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalCreatorName">Creator Name</h3>
+                <button class="close-btn" onclick="paidMessagesApp.hideCreatorProfile()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="creator-profile">
+                    <img id="modalCreatorAvatar" src="" alt="Creator" class="creator-avatar-large">
+                    <div class="creator-info">
+                        <h4 id="modalCreatorDisplayName">Creator Name</h4>
+                        <p id="modalCreatorBio">Creator bio...</p>
+                        <div class="creator-stats">
+                            <div class="stat">
+                                <span class="stat-label">Response Rate</span>
+                                <span class="stat-value" id="responseRate">95%</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Avg Response Time</span>
+                                <span class="stat-value" id="avgResponseTime">2 hours</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Messages Sent</span>
+                                <span class="stat-value" id="messagesSent">1,234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="message-pricing">
+                    <h4>Message Pricing</h4>
+                    <div class="pricing-list">
+                        <div class="pricing-item">
+                            <span>Text Message</span>
+                            <span>$2.00</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Voice Message</span>
+                            <span>$5.00</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Priority Message</span>
+                            <span>$10.00</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Video Message</span>
+                            <span>$15.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="paidMessagesApp.selectCreator()">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Complete Payment</h3>
+                <button class="close-btn" onclick="paidMessagesApp.hidePayment()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-details">
+                    <div class="payment-item">
+                        <span>Message to:</span>
+                        <span id="paymentCreatorName">Creator Name</span>
+                    </div>
+                    <div class="payment-item">
+                        <span>Message Type:</span>
+                        <span id="paymentMessageType">Text Message</span>
+                    </div>
+                    <div class="payment-item">
+                        <span>Amount:</span>
+                        <span id="paymentAmount">$2.00</span>
+                    </div>
+                </div>
+                <div class="payment-methods">
+                    <h4>Select Payment Method</h4>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="card" checked>
+                            <span class="option-label">Credit/Debit Card</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="paypal">
+                            <span class="option-label">PayPal</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="crypto">
+                            <span class="option-label">Cryptocurrency</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="payment-actions">
+                    <button class="btn btn-secondary" onclick="paidMessagesApp.hidePayment()">Cancel</button>
+                    <button class="btn btn-primary" onclick="paidMessagesApp.processPayment()">
+                        Pay $2.00
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+</body>
+</html> 

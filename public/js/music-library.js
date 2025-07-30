@@ -936,7 +936,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/lofi-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/lofi-${i}`,
-                coverArt: `https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.8 + Math.random() * 0.4}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.5 + Math.random() * 1.5).toFixed(1),
                 downloads: Math.floor(Math.random() * 10000),
                 copyrightFree: true,
@@ -965,7 +965,7 @@ class MusicLibraryPage {
                 source: 'CCMixter',
                 downloadUrl: `https://ccmixter.org/track/electronic-${i}`,
                 streamUrl: `https://ccmixter.org/stream/electronic-${i}`,
-                coverArt: `https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&saturation=${1.0 + Math.random() * 0.5}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.5 + Math.random() * 1.5).toFixed(1),
                 downloads: Math.floor(Math.random() * 15000),
                 copyrightFree: true,
@@ -994,7 +994,7 @@ class MusicLibraryPage {
                 source: 'Musopen',
                 downloadUrl: `https://musopen.org/track/classical-${i}`,
                 streamUrl: `https://musopen.org/stream/classical-${i}`,
-                coverArt: `https://images.pexels.com/photos/1029243/pexels-photo-1029243.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.9 + Math.random() * 0.2}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (4.0 + Math.random() * 1.0).toFixed(1),
                 downloads: Math.floor(Math.random() * 8000),
                 copyrightFree: true,
@@ -1023,7 +1023,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/jazz-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/jazz-${i}`,
-                coverArt: `https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.7 + Math.random() * 0.3}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.8 + Math.random() * 1.2).toFixed(1),
                 downloads: Math.floor(Math.random() * 12000),
                 copyrightFree: true,
@@ -1052,7 +1052,7 @@ class MusicLibraryPage {
                 source: 'CCMixter',
                 downloadUrl: `https://ccmixter.org/track/rock-${i}`,
                 streamUrl: `https://ccmixter.org/stream/rock-${i}`,
-                coverArt: `https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&contrast=${1.1 + Math.random() * 0.3}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.6 + Math.random() * 1.4).toFixed(1),
                 downloads: Math.floor(Math.random() * 18000),
                 copyrightFree: true,
@@ -1081,7 +1081,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/hiphop-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/hiphop-${i}`,
-                coverArt: `https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.6 + Math.random() * 0.4}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.7 + Math.random() * 1.3).toFixed(1),
                 downloads: Math.floor(Math.random() * 20000),
                 copyrightFree: true,
@@ -1110,7 +1110,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/world-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/world-${i}`,
-                coverArt: `https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&saturation=${1.1 + Math.random() * 0.4}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.9 + Math.random() * 1.1).toFixed(1),
                 downloads: Math.floor(Math.random() * 10000),
                 copyrightFree: true,
@@ -1139,7 +1139,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/ambient-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/ambient-${i}`,
-                coverArt: `https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.8 + Math.random() * 0.2}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (4.1 + Math.random() * 0.9).toFixed(1),
                 downloads: Math.floor(Math.random() * 15000),
                 copyrightFree: true,
@@ -1168,7 +1168,7 @@ class MusicLibraryPage {
                 source: 'CCMixter',
                 downloadUrl: `https://ccmixter.org/track/pop-${i}`,
                 streamUrl: `https://ccmixter.org/stream/pop-${i}`,
-                coverArt: `https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&saturation=${1.2 + Math.random() * 0.3}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.8 + Math.random() * 1.2).toFixed(1),
                 downloads: Math.floor(Math.random() * 25000),
                 copyrightFree: true,
@@ -1197,7 +1197,7 @@ class MusicLibraryPage {
                 source: 'Free Music Archive',
                 downloadUrl: `https://freemusicarchive.org/track/country-${i}`,
                 streamUrl: `https://freemusicarchive.org/stream/country-${i}`,
-                coverArt: `https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop&brightness=${0.9 + Math.random() * 0.2}`,
+                coverArt: `assets/images/default-banner.svg
                 rating: (3.7 + Math.random() * 1.3).toFixed(1),
                 downloads: Math.floor(Math.random() * 12000),
                 copyrightFree: true,

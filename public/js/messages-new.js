@@ -29,7 +29,7 @@ class MessagesApp {
             smileys: ['😊', '😄', '😃', '😀', '😁', '😆', '😅', '😂', '🤣', '😉', '😋', '😎', '😍', '🥰', '😘', '😗', '😙', '😚', '🙂', '🤗', '🤔', '🤨', '😐', '😑', '😶', '🙄', '😏', '😣', '😥', '😮', '🤐', '😯', '😪', '😫', '😴', '😌', '😛', '😜', '😝', '🤤', '😒', '😓', '😔', '😕', '🙃', '🤑', '😲', '😷', '🤒', '🤕', '🤢', '🤧', '🤮', '🤯', '😳', '🤪', '😵', '😡', '😠', '🤬', '😈', '👿', '💀', '☠️', '💩', '🤡', '👹', '👺', '👻', '👽', '👾', '🤖'],
             hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥️', '💌', '💋', '💯', '💢', '💥', '💫', '💦', '💨', '🕳️', '💬', '🗨️', '🗯️', '💭', '💤'],
             animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦙', '🦒', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐁', '🐀', '🐿️', '🦔'],
-            food: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍪', '🌰', '🥜', '🍯', '🥛', '🍼', '🫖', '☕', '🍵', '🧃', '🥤', '🧋', '🍶', '🍺', '🍷', '🍾', '🍷', '🥂', '🥃', '🍸', '🍹', '🧉', '🍾', '🥄', '🍴', '🍽️', '🥣', '🥡', '🥢', '🧂'],
+            food: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '8', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍪', '🌰', '🥜', '🍯', '🥛', '🍼', '🫖', '☕', '🍵', '🧃', '🥤', '🧋', '🍶', '🍺', '🍷', '🍾', '🍷', '🥂', '🥃', '🍸', '🍹', '🧉', '🍾', '🥄', '🍴', '🍽️', '🥣', '🥡', '🥢', '🧂'],
             activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸️', '🥌', '🎿', '⛷️', '🏂', '🪂', '🏋️‍♀️', '🏋️', '🏋️‍♂️', '🤼‍♀️', '🤼', '🤼‍♂️', '🤸‍♀️', '🤸', '🤸‍♂️', '⛹️‍♀️', '⛹️', '⛹️‍♂️', '🤺', '🤾‍♀️', '🤾', '🤾‍♂️', '🏊‍♀️', '🏊', '🏊‍♂️', '🤽‍♀️', '🤽', '🤽‍♂️', '🚣‍♀️', '🚣', '🚣‍♂️', '🧗‍♀️', '🧗', '🧗‍♂️', '🚵‍♀️', '🚵', '🚵‍♂️', '🚴‍♀️', '🚴', '🚴‍♂️', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🤹‍♀️', '🤹', '🤹‍♂️', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🪘', '🎷', '🎺', '🪗', '🎸', '🪕', '🎻', '🎲', '♟️', '🎯', '🎳', '🎮', '🎰', '🧩', '🎨', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '🕹️', '🎮', '🎰', '🎲', '🧩', '🎨', '🎭', '🎪', '🎟️', '🎫', '🎗️', '🏵️', '🎖️', '🏅', '🥉', '🥈', '🥇', '🏆', '🎯', '🎳', '🎮', '🎰', '🎲', '🧩', '🎨', '🎭', '🎪', '🎟️', '🎫', '🎗️', '🏵️', '🎖️', '🏅', '🥉', '🥈', '🥇', '🏆']
         };
         
@@ -89,8 +89,12 @@ class MessagesApp {
             // Remove any existing onclick attribute to prevent conflicts
             mobileBackBtn.removeAttribute('onclick');
             
-            // Add direct event listener
-            mobileBackBtn.addEventListener('click', (e) => {
+            // Remove any existing event listeners to prevent duplicates
+            const newMobileBackBtn = mobileBackBtn.cloneNode(true);
+            mobileBackBtn.parentNode.replaceChild(newMobileBackBtn, mobileBackBtn);
+            
+            // Add direct event listener to the new button
+            newMobileBackBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('🖱️ Mobile back button clicked via event listener!');
@@ -205,6 +209,7 @@ class MessagesApp {
             });
             
             console.log('Loaded', this.allUsers.length, 'users for new conversations');
+            console.log('Users loaded:', this.allUsers.map(u => ({ id: u.id, name: u.name, email: u.email })));
             
         } catch (error) {
             console.error('Error loading users:', error);
@@ -213,21 +218,21 @@ class MessagesApp {
                 {
                     id: 'user1',
                     name: 'John Doe',
-                    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+                    avatar: 'assets/images/default-avatar.svg',
                     email: 'john@example.com',
                     status: 'online'
                 },
                 {
                     id: 'user2',
                     name: 'Jane Smith',
-                    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+                    avatar: 'assets/images/default-avatar.svg',
                     email: 'jane@example.com',
                     status: 'online'
                 },
                 {
                     id: 'user3',
                     name: 'Mike Johnson',
-                    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+                    avatar: 'assets/images/default-avatar.svg',
                     email: 'mike@example.com',
                     status: 'offline'
                 }
@@ -402,7 +407,10 @@ class MessagesApp {
     }
 
     async loadConversations() {
-        if (!this.currentUser) return;
+        if (!this.currentUser) {
+            console.log('❌ No current user, cannot load conversations');
+            return;
+        }
         
         try {
             console.log('Loading conversations for user:', this.currentUser.uid);
@@ -416,13 +424,51 @@ class MessagesApp {
             const snapshot = await conversationsRef.get();
             
             this.conversations = [];
-            snapshot.forEach(doc => {
+            for (const doc of snapshot.docs) {
                 const conversation = { id: doc.id, ...doc.data() };
+                
+                // Populate participant names if not already present
+                if (!conversation.participantNames || conversation.participantNames.length === 0) {
+                    conversation.participantNames = [];
+                    for (const participantId of conversation.participants) {
+                        if (participantId === this.currentUser.uid) {
+                            conversation.participantNames.push(this.currentUser.displayName || 'You');
+                        } else {
+                            // Find user in allUsers array
+                            const user = this.allUsers.find(u => u.id === participantId);
+                            if (user) {
+                                conversation.participantNames.push(user.name);
+                            } else {
+                                // If user not found, try to get from Firestore
+                                try {
+                                    const userDoc = await firebase.firestore()
+                                        .collection('users')
+                                        .doc(participantId)
+                                        .get();
+                                    if (userDoc.exists) {
+                                        const userData = userDoc.data();
+                                        const userName = userData.displayName || userData.username || 'Unknown User';
+                                        conversation.participantNames.push(userName);
+                                    } else {
+                                        conversation.participantNames.push('Unknown User');
+                                    }
+                                } catch (error) {
+                                    console.error('Error fetching user data:', error);
+                                    conversation.participantNames.push('Unknown User');
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 this.conversations.push(conversation);
-            });
+            }
+            
+            console.log('📊 Loaded', this.conversations.length, 'conversations from database');
             
             // If no conversations, create a sample one
             if (this.conversations.length === 0) {
+                console.log('📝 No conversations found, creating sample conversation...');
                 await this.createSampleConversation();
             }
             
@@ -496,9 +542,17 @@ class MessagesApp {
 
     renderConversations() {
         const conversationsList = document.getElementById('conversationsList');
-        if (!conversationsList) return;
+        if (!conversationsList) {
+            console.error('❌ conversationsList element not found');
+            return;
+        }
 
         console.log('Rendering conversations:', this.conversations.length, 'conversations');
+        console.log('📊 conversationsList element found:', conversationsList);
+        console.log('📊 conversationsList display:', conversationsList.style.display);
+        console.log('📊 conversationsList visibility:', conversationsList.style.visibility);
+        
+        // Log each conversation for debugging
         this.conversations.forEach((conv, index) => {
             console.log(`Conversation ${index}:`, {
                 id: conv.id,
@@ -509,6 +563,7 @@ class MessagesApp {
         });
 
         if (this.conversations.length === 0) {
+            console.log('📝 No conversations available, showing empty state');
             conversationsList.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">💬</div>
@@ -522,7 +577,7 @@ class MessagesApp {
             return;
         }
         
-        conversationsList.innerHTML = this.conversations.map(conversation => {
+        const conversationHTML = this.conversations.map(conversation => {
             const isGroupChat = conversation.type === 'group';
             const isActive = this.currentConversation && this.currentConversation.id === conversation.id;
             const activeClass = isActive ? 'active' : '';
@@ -588,66 +643,61 @@ class MessagesApp {
                 </div>
             `;
         }).join('');
+        
+        console.log('📝 Setting conversations HTML:', conversationHTML);
+        conversationsList.innerHTML = conversationHTML;
+        console.log('✅ Conversations HTML set successfully');
     }
 
     // Mobile Navigation Methods
     showConversationsList() {
         console.log('📱 Showing conversations list...');
-        console.log('🔍 Debugging showConversationsList...');
         
         const conversationsSidebar = document.getElementById('conversationsSidebar');
         const chatArea = document.getElementById('chatArea');
-        const mobileBackBtn = document.querySelector('.mobile-back-btn');
-        
-        console.log('📊 Elements found:');
-        console.log('  - conversationsSidebar:', conversationsSidebar);
-        console.log('  - chatArea:', chatArea);
-        console.log('  - mobileBackBtn:', mobileBackBtn);
+        const mobileBackBtn = document.getElementById('mobileBackBtn');
         
         if (conversationsSidebar && chatArea) {
-            console.log('✅ Both elements found, updating display...');
-            
-            // Store current states
-            const sidebarBefore = conversationsSidebar.style.display;
-            const chatBefore = chatArea.style.display;
-            const chatActiveBefore = chatArea.classList.contains('active');
-            
-            console.log('📊 Before changes:');
-            console.log('  - Sidebar display:', sidebarBefore);
-            console.log('  - Chat display:', chatBefore);
-            console.log('  - Chat active class:', chatActiveBefore);
-            
-            // Make changes - ensure sidebar is visible and chat is hidden
+            // Show conversations sidebar
             conversationsSidebar.style.display = 'flex';
             conversationsSidebar.style.position = 'relative';
             conversationsSidebar.style.zIndex = '1';
             
+            // Hide chat area
             chatArea.classList.remove('active');
             chatArea.style.display = 'none';
             chatArea.style.position = 'absolute';
             chatArea.style.zIndex = '0';
             
-            console.log('📊 After changes:');
-            console.log('  - Sidebar display:', conversationsSidebar.style.display);
-            console.log('  - Sidebar position:', conversationsSidebar.style.position);
-            console.log('  - Sidebar z-index:', conversationsSidebar.style.zIndex);
-            console.log('  - Chat display:', chatArea.style.display);
-            console.log('  - Chat position:', chatArea.style.position);
-            console.log('  - Chat z-index:', chatArea.style.zIndex);
-            console.log('  - Chat active class:', chatArea.classList.contains('active'));
-            
-            // Hide mobile back button when showing conversations list
-            if (mobileBackBtn && window.innerWidth <= 768) {
-                console.log('📱 Hiding mobile back button...');
+            // Hide mobile back button
+            if (mobileBackBtn) {
                 mobileBackBtn.style.display = 'none';
-                console.log('📱 Mobile back button hidden');
+            }
+            
+            // Ensure conversations are loaded before rendering
+            if (this.conversations.length === 0) {
+                console.log('🔄 No conversations found, loading conversations...');
+                this.loadConversations().then(() => {
+                    this.renderConversations();
+                });
+            } else {
+                // Re-render conversations
+                this.renderConversations();
+            }
+            
+            // Hide welcome state and messages list
+            const welcomeState = document.getElementById('welcomeState');
+            const messagesList = document.getElementById('messagesList');
+            if (welcomeState) {
+                welcomeState.style.display = 'none';
+            }
+            if (messagesList) {
+                messagesList.style.display = 'none';
             }
             
             console.log('✅ showConversationsList completed successfully');
         } else {
-            console.error('❌ Required elements not found:');
-            console.error('  - conversationsSidebar:', conversationsSidebar);
-            console.error('  - chatArea:', chatArea);
+            console.error('❌ Required elements not found for showConversationsList');
         }
     }
 
@@ -655,7 +705,7 @@ class MessagesApp {
         console.log('📱 Showing chat view...');
         const conversationsSidebar = document.getElementById('conversationsSidebar');
         const chatArea = document.getElementById('chatArea');
-        const mobileBackBtn = document.querySelector('.mobile-back-btn');
+        const mobileBackBtn = document.getElementById('mobileBackBtn');
         
         if (conversationsSidebar && chatArea) {
             // Hide sidebar and show chat area
@@ -666,11 +716,14 @@ class MessagesApp {
             chatArea.style.position = 'absolute';
             chatArea.style.zIndex = '10';
             
-            // Show mobile back button when showing chat view on mobile
-            if (mobileBackBtn && window.innerWidth <= 768) {
+            // Show mobile back button
+            if (mobileBackBtn) {
                 mobileBackBtn.style.display = 'flex';
-                console.log('📱 Mobile back button shown');
             }
+            
+            console.log('✅ showChatView completed successfully');
+        } else {
+            console.error('❌ Required elements not found for showChatView');
         }
     }
 
@@ -783,194 +836,156 @@ class MessagesApp {
         const messagesList = document.getElementById('messagesList');
         if (!messagesList) return;
 
-        console.log('Rendering messages:', this.messages.length, 'messages');
-        this.messages.forEach((message, index) => {
-            console.log(`Message ${index}:`, {
-                type: message.type,
-                text: message.text,
-                audioUrl: message.audioUrl,
-                senderName: message.senderName,
-                senderPic: message.senderPic
-            });
-        });
-
-        messagesList.innerHTML = '';
-
-        this.messages.forEach(message => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${message.senderId === this.currentUser?.uid ? 'own-message' : 'other-message'}`;
-            messageDiv.style.animationDelay = `${Math.random() * 0.3}s`;
-
-            let messageContent = '';
-
-            if (message.type === 'voice') {
-                console.log('Rendering voice message:', message);
-                // Voice message display - use available URL or show placeholder
-                const audioUrl = message.audioUrl || message.firebaseStorageUrl || '';
-                
-                if (audioUrl) {
-                    messageContent = `
-                        <div class="voice-message">
-                            <div class="voice-icon">🎤</div>
-                            <audio class="voice-player" controls preload="none">
-                                <source src="${audioUrl}" type="audio/webm">
-                                <source src="${audioUrl}" type="audio/mp4">
-                                <source src="${audioUrl}" type="audio/wav">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <div class="message-time">${this.formatTimestamp(message.timestamp)}</div>
-                        </div>
-                    `;
-                } else {
-                    // Fallback for voice messages without audio URL
-                    messageContent = `
-                        <div class="voice-message">
-                            <div class="voice-icon">🎤</div>
-                            <div class="voice-placeholder">
-                                <span>Voice message</span>
-                                <small>Audio not available</small>
-                            </div>
-                            <div class="message-time">${this.formatTimestamp(message.timestamp)}</div>
-                        </div>
-                    `;
-                }
-            } else if (message.type === 'money') {
-                // Money message display with null checks
-                const amount = message.amount || 0;
-                const moneyMessage = message.message || 'Money sent';
-                messageContent = `
-                    <div class="money-message">
-                        <div class="money-details">
-                            <div class="money-icon">💰</div>
-                            <div class="money-amount">$${amount.toFixed(2)}</div>
-                        </div>
-                        <div class="money-message-text">${moneyMessage}</div>
-                        <div class="message-time">${this.formatTimestamp(message.timestamp)}</div>
-                    </div>
-                `;
-            } else if (message.type === 'file') {
-                // File message display with null checks
-                const fileSize = this.formatFileSize(message.fileSize || 0);
-                const fileName = message.fileName || 'Unknown file';
-                const fileUrl = message.fileUrl || '#';
-                messageContent = `
-                    <div class="file-message">
-                        <div class="file-icon">📎</div>
-                        <div class="file-details">
-                            <div class="file-name">${fileName}</div>
-                            <div class="file-size">${fileSize}</div>
-                            <a href="${fileUrl}" download class="download-btn">Download</a>
-                        </div>
-                        <div class="message-time">${this.formatTimestamp(message.timestamp)}</div>
-                    </div>
-                `;
-            } else {
-                // Regular text message with null check
-                const messageText = message.text || 'Empty message';
-                // Skip rendering if the message text is undefined or empty
-                if (!messageText || messageText === 'undefined' || messageText.trim() === '') {
-                    return; // Skip this message
-                }
-                
-                // Ensure sender name is properly set
-                const senderName = message.senderName || (message.senderId === this.currentUser?.uid ? 'You' : 'Unknown User');
-                
-                messageContent = `
-                    <div class="message-bubble">
-                        <div class="message-text">${messageText}</div>
-                        <div class="message-time">${this.formatTimestamp(message.timestamp)}</div>
-                    </div>
-                `;
-            }
-
-            // Add null checks for sender information
-            const senderPic = message.senderPic || 'assets/images/default-avatar.svg';
-
-            messageDiv.innerHTML = `
-                <div class="message-header">
-                    <img src="${senderPic}" alt="${senderName}" class="message-avatar" onerror="this.src='assets/images/default-avatar.svg'">
-                    <span class="message-author">${senderName}</span>
+        if (this.messages.length === 0) {
+            messagesList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>No messages yet</h3>
+                    <p>Start the conversation by sending a message!</p>
                 </div>
-                ${messageContent}
             `;
+            return;
+        }
 
-            messagesList.appendChild(messageDiv);
-        });
+        messagesList.innerHTML = this.messages.map(message => {
+            const isOwnMessage = message.senderId === this.currentUser.uid;
+            const messageClass = isOwnMessage ? 'message own-message' : 'message other-message';
+            const timestamp = this.formatTimestamp(message.timestamp);
+            
+            // Format read receipts
+            const readReceipts = message.readBy || [];
+            const isRead = readReceipts.length > 1; // More than just sender
+            
+            // Add reply preview if message is a reply
+            const replyPreview = message.replyTo ? `
+                <div class="reply-preview">
+                    <div class="reply-author">${message.replyTo.author}</div>
+                    <div class="reply-text">${message.replyTo.text}</div>
+                </div>
+            ` : '';
+
+            // Add edited indicator
+            const editedIndicator = message.edited ? ' <span class="edited-indicator">(edited)</span>' : '';
+
+            // Add reactions if any
+            const reactions = imessageFeatures.messageReactions.get(message.id) || new Map();
+            const reactionsHtml = Array.from(reactions.entries()).length > 0 ? `
+                <div class="message-reactions">
+                    ${Array.from(reactions.entries()).map(([reaction, count]) => `
+                        <div class="reaction" onclick="imessageFeatures.removeReaction('${message.id}', '${reaction}')">
+                            <span class="reaction-emoji">${reaction}</span>
+                            <span class="reaction-count">${count}</span>
+                        </div>
+                    `).join('')}
+                            </div>
+            ` : '';
+
+            return `
+                <div class="${messageClass}" data-message-id="${message.id}">
+                    <div class="message-bubble">
+                        ${replyPreview}
+                        <div class="message-header">
+                            <span class="message-author">${message.senderName}</span>
+                            <span class="message-time">${timestamp}</span>
+                        </div>
+                        <div class="message-text">${message.text}${editedIndicator}</div>
+                        <div class="message-status">
+                            ${isOwnMessage ? `
+                                <svg class="status-icon ${isRead ? 'read' : 'sent'}" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                    ${isRead ? `
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                    ` : `
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    `}
+                                </svg>
+                            ` : ''}
+                        </div>
+                        ${reactionsHtml}
+                    </div>
+                    </div>
+                `;
+        }).join('');
 
         this.scrollToBottom();
+        
+        // Setup read receipts observer
+        this.setupReadReceiptsObserver();
     }
 
     async sendMessage() {
-        if (!this.currentConversation || !this.currentUser) {
+        if (!this.currentUser || !this.currentConversation) {
             this.showToast('Please select a conversation first', 'error');
             return;
         }
 
         const messageInput = document.getElementById('messageInput');
-        const messageText = messageInput.value.trim();
+        const text = messageInput.value.trim();
         
-        if (!messageText) {
+        if (!text) {
             this.showToast('Please enter a message', 'error');
             return;
         }
 
-        try {
-            // Check creator protection for the conversation
-            const otherParticipantId = this.currentConversation.participants.find(id => id !== this.currentUser.uid);
-            if (otherParticipantId) {
-                const protectionCheck = await this.checkCreatorProtection(otherParticipantId);
-                if (!protectionCheck.allowed) {
-                    this.showToast(protectionCheck.reason, 'error');
+        // Check message limits
+        const canSend = await this.checkMessageLimits(this.currentConversation.id);
+        if (!canSend) {
                     return;
                 }
                 
-                const limitCheck = await this.checkMessageLimits(otherParticipantId);
-                if (!limitCheck.allowed) {
-                    this.showToast(limitCheck.reason, 'error');
-                    return;
-                }
-            }
-
-            // Create message object
-            const message = {
-                text: messageText,
+        try {
+            // Get reply information if exists
+            const replyTo = imessageFeatures.getReplyToMessage();
+            
+            const messageData = {
+                text: text,
                 senderId: this.currentUser.uid,
-                senderName: this.currentUser.displayName || 'Unknown',
-                senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                senderName: this.currentUser.displayName || 'Anonymous',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                status: 'sent'
+                type: 'text',
+                readBy: [this.currentUser.uid],
+                readAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // Save to Firestore
-            await firebase.firestore()
+            // Add reply information if replying
+            if (replyTo) {
+                messageData.replyTo = {
+                    messageId: replyTo.id,
+                    text: replyTo.text,
+                    author: replyTo.author
+                };
+            }
+
+            // Add to Firestore
+            const messageRef = await firebase.firestore()
                 .collection('conversations')
                 .doc(this.currentConversation.id)
                 .collection('messages')
-                .add(message);
+                .add(messageData);
 
-            // Update conversation
+            // Update conversation with last message
             await firebase.firestore()
                 .collection('conversations')
                 .doc(this.currentConversation.id)
                 .update({
-                    lastMessage: messageText,
-                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp()
+                    lastMessage: text,
+                    lastMessageTime: messageData.timestamp,
+                    lastMessageSender: this.currentUser.uid
                 });
 
-            this.currentConversation.lastMessage = messageText;
-            this.currentConversation.lastMessageAt = new Date();
-            this.renderConversations();
-
-            // Clear input
+            // Clear input and reply
             messageInput.value = '';
+            messageInput.style.height = 'auto';
             this.updateSendButton();
+            imessageFeatures.clearReplyToMessage();
 
-            // Reload messages
+            // Reload messages to show new message
             await this.loadMessages(this.currentConversation.id);
+
+            this.showToast('Message sent', 'success');
 
         } catch (error) {
             console.error('Error sending message:', error);
-            this.showToast('Error sending message', 'error');
+            this.showToast('Failed to send message', 'error');
         }
     }
 
@@ -1087,7 +1102,7 @@ class MessagesApp {
     }
 
     // New Conversation Feature
-    showNewConversationModal() {
+    async showNewConversationModal() {
         if (!this.currentUser) {
             this.showToast('Please log in to create conversations', 'error');
             return;
@@ -1112,7 +1127,7 @@ class MessagesApp {
                     </div>
                     
                     <div class="users-list" id="usersList">
-                        ${this.renderUsersList(this.allUsers)}
+                        <div class="loading-users">Loading users...</div>
                     </div>
                     
                     <div class="selected-users" id="selectedUsers" style="display: none;">
@@ -1132,11 +1147,25 @@ class MessagesApp {
         
         this.showModal(modalContent);
         this.setupNewConversationEventListeners();
+        
+        // Ensure users are loaded before rendering
+        if (!this.allUsers || this.allUsers.length === 0) {
+            console.log('🔄 Users not loaded, loading now...');
+            await this.loadAllUsers();
+        }
+        
+        this.renderUsersList(this.allUsers);
     }
 
     renderUsersList(users) {
         const usersList = document.getElementById('usersList');
-        if (!usersList) return;
+        if (!usersList) {
+            console.warn('Users list element not found');
+            return;
+        }
+
+        console.log('🔍 Rendering users list:', users.length, 'users');
+        console.log('🔍 Users data:', users.map(u => ({ id: u.id, name: u.name, email: u.email })));
 
         usersList.innerHTML = '';
         
@@ -1153,17 +1182,19 @@ class MessagesApp {
             
             userElement.innerHTML = `
                 <div class="user-avatar">
-                    <img src="${user.avatar}" alt="${user.name}" onerror="this.src='assets/images/default-avatar.svg'">
+                    <img src="${user.avatar || 'assets/images/default-avatar.svg'}" alt="${user.name || 'User'}" onerror="this.src='assets/images/default-avatar.svg'">
                 </div>
                 <div class="user-info">
-                    <div class="user-name">${user.name}</div>
-                    <div class="user-email">${user.email}</div>
-                    <div class="user-status ${user.status}">${user.status}</div>
+                    <div class="user-name">${user.name || 'Unknown User'}</div>
+                    <div class="user-email">${user.email || 'No email'}</div>
+                    <div class="user-status ${user.status || 'offline'}">${user.status || 'offline'}</div>
                 </div>
             `;
             
             usersList.appendChild(userElement);
         });
+        
+        console.log('✅ Users list rendered successfully');
     }
 
     setupNewConversationEventListeners() {
@@ -1181,8 +1212,7 @@ class MessagesApp {
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
         
-        const usersList = document.getElementById('usersList');
-        usersList.innerHTML = this.renderUsersList(filteredUsers);
+        this.renderUsersList(filteredUsers);
     }
 
     toggleUserSelection(userId) {
@@ -1270,6 +1300,79 @@ class MessagesApp {
         
         if (selectedUsers && selectedCount === 0) {
             selectedUsers.style.display = 'none';
+        }
+    }
+
+    async createNewConversation() {
+        try {
+            const selectedUsers = document.querySelectorAll('.user-item.selected');
+            if (selectedUsers.length === 0) {
+                this.showToast('Please select at least one user', 'error');
+                return;
+            }
+
+            const selectedUserIds = Array.from(selectedUsers).map(item => item.dataset.userId);
+            console.log('🔧 Creating new conversation with users:', selectedUserIds);
+
+            // Get participant names
+            const participantNames = [this.currentUser.displayName || 'You'];
+            for (const userId of selectedUserIds) {
+                const user = this.allUsers.find(u => u.id === userId);
+                if (user) {
+                    participantNames.push(user.name);
+                } else {
+                    participantNames.push('Unknown User');
+                }
+            }
+
+            // Create conversation
+            const conversationData = {
+                participants: [this.currentUser.uid, ...selectedUserIds],
+                participantNames: participantNames,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastMessage: null,
+                lastMessageTime: null,
+                type: selectedUserIds.length > 1 ? 'group' : 'direct'
+            };
+
+            const conversationRef = await firebase.firestore()
+                .collection('conversations')
+                .add(conversationData);
+
+            console.log('✅ Created conversation:', conversationRef.id);
+
+            // Add initial message
+            const messageData = {
+                text: 'Conversation started',
+                senderId: this.currentUser.uid,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                type: 'text'
+            };
+
+            await firebase.firestore()
+                .collection('conversations')
+                .doc(conversationRef.id)
+                .collection('messages')
+                .add(messageData);
+
+            // Update conversation with last message
+            await firebase.firestore()
+                .collection('conversations')
+                .doc(conversationRef.id)
+                .update({
+                    lastMessage: messageData.text,
+                    lastMessageTime: messageData.timestamp
+                });
+
+            this.hideModal();
+            this.showToast('Conversation created successfully!', 'success');
+            
+            // Reload conversations
+            await this.loadConversations();
+            
+        } catch (error) {
+            console.error('❌ Error creating conversation:', error);
+            this.showToast('Failed to create conversation', 'error');
         }
     }
 
@@ -2803,8 +2906,108 @@ class MessagesApp {
         this.showToast('Chat options coming soon!', 'info');
     }
 
-    loadSampleConversations() {
-        this.showToast('Sample conversations loaded!', 'success');
+    async loadSampleConversations() {
+        if (!this.currentUser) {
+            console.log('❌ No current user, cannot create sample conversations');
+            return;
+        }
+        
+        try {
+            console.log('📝 Creating multiple sample conversations...');
+            
+            const sampleConversations = [
+                {
+                    participants: [this.currentUser.uid],
+                    participantNames: ['Sarah Johnson'],
+                    participantPics: ['assets/images/default-avatar.svg'],
+                    lastMessage: 'Hey! How was your weekend?',
+                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: 2
+                },
+                {
+                    participants: [this.currentUser.uid],
+                    participantNames: ['Mike Chen'],
+                    participantPics: ['assets/images/default-avatar.svg'],
+                    lastMessage: 'The project is ready for review',
+                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: 0
+                },
+                {
+                    participants: [this.currentUser.uid],
+                    participantNames: ['Emma Davis'],
+                    participantPics: ['assets/images/default-avatar.svg'],
+                    lastMessage: 'Thanks for the help yesterday!',
+                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: 1
+                },
+                {
+                    participants: [this.currentUser.uid],
+                    participantNames: ['Alex Rodriguez'],
+                    participantPics: ['assets/images/default-avatar.svg'],
+                    lastMessage: 'Are you free for lunch tomorrow?',
+                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: 0
+                },
+                {
+                    participants: [this.currentUser.uid],
+                    participantNames: ['Lisa Thompson'],
+                    participantPics: ['assets/images/default-avatar.svg'],
+                    lastMessage: 'The meeting is scheduled for 3 PM',
+                    lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: 3
+                }
+            ];
+            
+            for (const conversationData of sampleConversations) {
+                const docRef = await firebase.firestore()
+                    .collection('conversations')
+                    .add(conversationData);
+                
+                // Add sample messages to each conversation
+                const sampleMessages = [
+                    {
+                        text: conversationData.lastMessage,
+                        senderId: this.currentUser.uid,
+                        senderName: 'You',
+                        senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'sent'
+                    },
+                    {
+                        text: 'This is a sample conversation for testing the mobile view.',
+                        senderId: this.currentUser.uid,
+                        senderName: 'You',
+                        senderPic: this.currentUser.photoURL || 'assets/images/default-avatar.svg',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'sent'
+                    }
+                ];
+                
+                // Add messages to the conversation
+                for (const message of sampleMessages) {
+                    await firebase.firestore()
+                        .collection('conversations')
+                        .doc(docRef.id)
+                        .collection('messages')
+                        .add(message);
+                }
+            }
+            
+            console.log('✅ Created', sampleConversations.length, 'sample conversations');
+            this.showToast('Sample conversations created!', 'success');
+            
+            // Reload conversations to show the new ones
+            await this.loadConversations();
+            
+        } catch (error) {
+            console.error('Error creating sample conversations:', error);
+            this.showToast('Error creating sample conversations', 'error');
+        }
     }
 
     toggleNotifications() {

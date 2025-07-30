@@ -2,6 +2,7 @@
 // Feed Page JavaScript
 class FeedPage {
     constructor() {
+        console.log('🎯 FeedPage constructor called');
         this.currentUser = null;
         this.userProfile = null;
         this.posts = [];
@@ -12,10 +13,13 @@ class FeedPage {
         this.bookmarkedPosts = new Set();
         this.currentCommentPostId = null;
         
+        console.log('🎯 FeedPage constructor completed, calling init');
         this.init();
     }
 
     async init() {
+        console.log('🎯 FeedPage init started');
+        
         // Setup global error handling
         if (window.ErrorUtils) {
             window.ErrorUtils.setupGlobalErrorHandler();
@@ -31,17 +35,23 @@ class FeedPage {
         // Initialize PWA features
         this.initializePWAFeatures();
         
-        // Add fallback to show sample posts if loadPosts fails
+        // Always show sample posts for now to ensure images are visible
+        console.log('🎯 Showing sample posts by default');
+        this.showSamplePosts();
+        
+        // Try to load real posts in the background
         try {
             await this.loadPosts();
         } catch (error) {
-            console.error('Failed to load posts, showing sample posts:', error);
-            this.showSamplePosts();
+            console.error('❌ Failed to load posts from Firestore:', error);
+            // Sample posts are already shown, so we don't need to show them again
         }
         
         this.loadBookmarks();
         this.initializeNotifications();
         this.startNewPostsBannerSimulation(); // Start banner simulation
+        
+        console.log('✅ FeedPage init completed');
     }
 
     initializePaymentProcessor() {
@@ -478,11 +488,13 @@ class FeedPage {
             const newPosts = [];
             snapshot.forEach(doc => {
                 const postData = doc.data();
-                newPosts.push({
+                // Replace Unsplash URLs with Pexels URLs
+                const processedPost = this.replaceUnsplashWithPexels({
                     id: doc.id,
                     ...postData,
                     createdAt: postData.createdAt?.toDate() || new Date()
                 });
+                newPosts.push(processedPost);
             });
             
             console.log(`Loaded ${newPosts.length} new posts`);
@@ -521,8 +533,35 @@ class FeedPage {
         }
     }
 
+    // Function to replace Unsplash URLs with Pexels URLs
+    replaceUnsplashWithPexels(post) {
+        if (post.mediaUrl && post.mediaUrl.includes('unsplash.com')) {
+            console.log('🎯 Replacing Unsplash URL with Pexels:', post.mediaUrl);
+            
+            // Map of Pexels URLs to use instead of Unsplash
+            const pexelsReplacements = [
+                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183156/pexels-photo-3183156.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183159/pexels-photo-3183159.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183162/pexels-photo-3183162.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183165/pexels-photo-3183165.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183168/pexels-photo-3183168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'https://images.pexels.com/photos/3183171/pexels-photo-3183171.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+            ];
+            
+            // Pick a random Pexels URL
+            const randomIndex = Math.floor(Math.random() * pexelsReplacements.length);
+            post.mediaUrl = pexelsReplacements[randomIndex];
+            
+            console.log('✅ Replaced with Pexels URL:', post.mediaUrl);
+        }
+        
+        return post;
+    }
+
     showSamplePosts() {
-        console.log('Showing sample posts for testing');
+        console.log('🎯 showSamplePosts called');
         
         const samplePosts = [
             {
@@ -572,6 +611,9 @@ class FeedPage {
             }
         ];
         
+        console.log('🎯 Sample posts created:', samplePosts.length, 'posts');
+        console.log('🎯 Sample post 1 media URL:', samplePosts[0].mediaUrl);
+        
         this.posts = samplePosts;
         this.renderPosts(samplePosts);
         
@@ -581,26 +623,41 @@ class FeedPage {
         
         if (loadingElement) {
             loadingElement.style.display = 'none';
+            console.log('✅ Loading element hidden');
         }
         
         if (emptyStateElement) {
             emptyStateElement.style.display = 'none';
+            console.log('✅ Empty state element hidden');
         }
         
-        console.log('Sample posts rendered successfully');
+        console.log('✅ Sample posts rendered successfully');
     }
 
     renderPosts(posts) {
+        console.log('🎯 renderPosts called with', posts.length, 'posts');
         const postsContainer = document.getElementById('feedPosts');
-        if (!postsContainer) return;
+        if (!postsContainer) {
+            console.error('❌ feedPosts container not found');
+            return;
+        }
 
-        posts.forEach(post => {
+        // Clear existing posts if this is a fresh load
+        if (posts.length > 0 && postsContainer.children.length === 0) {
+            postsContainer.innerHTML = '';
+        }
+
+        posts.forEach((post, index) => {
+            console.log(`🎯 Creating post element ${index + 1}:`, post.title, 'Media URL:', post.mediaUrl);
             const postElement = this.createPostElement(post);
             postsContainer.appendChild(postElement);
         });
+        
+        console.log('✅ renderPosts completed');
     }
 
     createPostElement(post) {
+        console.log('🎯 createPostElement called for:', post.title);
         const postDiv = document.createElement('div');
         postDiv.className = 'post-card';
         postDiv.setAttribute('data-post-id', post.id);
@@ -617,6 +674,7 @@ class FeedPage {
 
         // Create media section safely
         if (post.mediaUrl && post.mediaUrl.trim() !== '') {
+            console.log('🎯 Creating media section for:', post.mediaUrl);
             const mediaDiv = document.createElement('div');
             mediaDiv.className = 'post-media';
             if (post.mediaType === 'video') {
@@ -651,13 +709,21 @@ class FeedPage {
 
                 mediaDiv.appendChild(videoWrapper);
             } else {
+                console.log('🎯 Creating image element with src:', post.mediaUrl);
                 const img = document.createElement('img');
                 img.src = post.mediaUrl;
                 img.alt = 'Post image';
-                img.onerror = () => img.style.display = 'none';
+                img.onload = () => console.log('✅ Image loaded successfully:', post.mediaUrl);
+                img.onerror = () => {
+                    console.error('❌ Image failed to load:', post.mediaUrl);
+                    img.style.display = 'none';
+                };
                 mediaDiv.appendChild(img);
             }
             postDiv.appendChild(mediaDiv);
+            console.log('✅ Media section created');
+        } else {
+            console.log('⚠️ No media URL for post:', post.title);
         }
 
         // Create post info section
@@ -2399,13 +2465,18 @@ class FeedPage {
 
 // Initialize the feed page when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
+    console.log('🎯 DOMContentLoaded event fired');
+    
     // Initialize payment processor
     if (typeof StripeVercelBackend !== "undefined") {
         window.paymentProcessor = new StripeVercelBackend();
+        console.log('✅ Payment processor initialized');
     } else {
-        console.error("StripeVercelBackend not loaded");
+        console.error("❌ StripeVercelBackend not loaded");
     }
 
     // Initialize the feed page
+    console.log('🎯 Creating FeedPage instance');
     window.feedPage = new FeedPage();
+    console.log('✅ FeedPage instance created');
 }); 

@@ -561,21 +561,16 @@ class AdminDashboard {
     }
 
     async generateAIImage(prompt) {
-        // Generate a more reliable Unsplash image URL
-        const keywords = prompt.split(' ').slice(0, 3).join(',');
-        const timestamp = Date.now(); // Add timestamp to prevent caching issues
-        // Try Unsplash, fallback to a local placeholder if 503
-        const url = `https://source.unsplash.com/800x600/?${encodeURIComponent(keywords)}&t=${timestamp}`;
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            if (response.status === 503) {
-                throw new Error('Unsplash returned 503');
-            }
-            return url;
-        } catch (error) {
-            console.error('Error fetching image:', error);
-            return 'default-placeholder.png';
-        }
+        // Use local placeholder images instead of Unsplash to avoid 503 errors
+        const placeholderImages = [
+            'assets/images/default-avatar.svg',
+            'assets/images/default-banner.svg',
+            'assets/images/hero-image.svg'
+        ];
+        
+        // Pick a random placeholder image
+        const randomIndex = Math.floor(Math.random() * placeholderImages.length);
+        return placeholderImages[randomIndex];
     }
 
     // Other admin actions (placeholder implementations)

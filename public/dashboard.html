@@ -73,17 +73,47 @@
       </div>
     </div>
   </header>
+  <!-- Desktop tab navigation -->
   <nav class="page-nav" role="navigation" aria-label="Main navigation">
     <a href="index.html" class="nav-link">🏠 Home</a>
     <a href="feed.html" class="nav-link">📱 Feed</a>
     <a href="trending.html" class="nav-link">🔥 Trending</a>
     <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
-    <a href="upload.html" class="nav-link">➕ Upload</a>
-    <a href="dashboard.html" class="nav-link active" aria-current="page">📊 Dashboard</a>
+    
+    <!-- Creator Tools Dropdown -->
+    <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+            🛠️ Creator Tools
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+        </button>
+        <div class="nav-dropdown-content">
+            <a href="upload.html" class="nav-dropdown-link">➕ Upload</a>
+            <a href="dashboard.html" class="nav-dropdown-link active">📊 Dashboard</a>
+            <a href="live.html" class="nav-dropdown-link">📺 Live</a>
+            <a href="music-library.html" class="nav-dropdown-link">🎵 Music</a>
+        </div>
+    </div>
+    
+    <a href="store.html" class="nav-link">🛍️ Store</a>
     <a href="messages.html" class="nav-link">💬 Messages</a>
-    <a href="live.html" class="nav-link">📺 Live</a>
-    <a href="music-library.html" class="nav-link">🎵 Music</a>
-    <a href="settings.html" class="nav-link">⚙️ Settings</a>
+    
+    <!-- Settings Dropdown -->
+    <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+            ⚙️ Settings
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+        </button>
+        <div class="nav-dropdown-content">
+            <a href="settings.html" class="nav-dropdown-link">⚙️ General</a>
+            <a href="profile.html" class="nav-dropdown-link">👤 Profile</a>
+            <a href="privacy-settings.html" class="nav-dropdown-link">🔒 Privacy</a>
+            <a href="notifications.html" class="nav-dropdown-link">🔔 Notifications</a>
+        </div>
+    </div>
   </nav>
   <div class="main-layout">
     <main class="main-content" id="mainContent" tabindex="-1" role="main">
@@ -321,6 +351,14 @@
               <div class="earnings-breakdown">
                 <h4 class="breakdown-title">Earnings Breakdown</h4>
                 <div id="earningsBreakdown" class="breakdown-list"></div>
+              </div>
+              
+              <!-- Paid Messaging Stats Section -->
+              <div class="paid-messaging-section">
+                <h4 class="breakdown-title">💬 Paid Messaging Stats</h4>
+                <div id="paidMessagingStats" class="stats-container">
+                  <!-- Paid messaging stats will be loaded here -->
+                </div>
               </div>
             </div>
           </div>

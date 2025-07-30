@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Store - Amplifi</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="enhanced-buttons.css">
+    <link rel="stylesheet" href="modal-overlays.css">
+    <link rel="stylesheet" href="store-style.css">
+    <link rel="stylesheet" href="proper-dropdown.css">
+    <script src="version.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="logo">Amplifi</h1>
+            </div>
+            <div class="header-center">
+                <h2 class="page-title">Creator Store</h2>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" onclick="window.location.href='notifications.html'" title="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <div class="user-menu">
+                    <img id="userAvatar" src="assets/images/default-avatar.svg" alt="User" class="user-avatar">
+                    <div class="user-dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="settings.html">Settings</a>
+                        <button onclick="storeApp.logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="page-nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">🏠 Home</a>
+        <a href="feed.html" class="nav-link">📱 Feed</a>
+        <a href="trending.html" class="nav-link">🔥 Trending</a>
+        <a href="subscriptions.html" class="nav-link">⭐ Subscriptions</a>
+        
+        <!-- Creator Tools Dropdown -->
+        <div class="proper-dropdown">
+            <button class="dropdown-trigger" id="creatorToolsDropdownBtn">
+                🛠️ Creator Tools
+                <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </button>
+            <div class="dropdown-menu" id="creatorToolsDropdownMenu" role="menu">
+                <a href="upload.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">➕</span>
+                    <span class="dropdown-item-text">Upload</span>
+                </a>
+                <a href="dashboard.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">📊</span>
+                    <span class="dropdown-item-text">Dashboard</span>
+                </a>
+                <a href="live.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">📺</span>
+                    <span class="dropdown-item-text">Live</span>
+                </a>
+                <a href="music-library.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">🎵</span>
+                    <span class="dropdown-item-text">Music</span>
+                </a>
+            </div>
+        </div>
+        
+        <a href="store.html" class="nav-link active" aria-current="page">🛍️ Store</a>
+        <a href="messages.html" class="nav-link">💬 Messages</a>
+        
+        <!-- Settings Dropdown -->
+        <div class="proper-dropdown">
+            <button class="dropdown-trigger" id="settingsDropdownBtn">
+                ⚙️ Settings
+                <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </button>
+            <div class="dropdown-menu" id="settingsDropdownMenu" role="menu">
+                <a href="settings.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">⚙️</span>
+                    <span class="dropdown-item-text">General</span>
+                </a>
+                <a href="profile.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">👤</span>
+                    <span class="dropdown-item-text">Profile</span>
+                </a>
+                <a href="privacy-settings.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">🔒</span>
+                    <span class="dropdown-item-text">Privacy</span>
+                </a>
+                <a href="notifications.html" class="dropdown-item" role="menuitem">
+                    <span class="dropdown-item-icon">🔔</span>
+                    <span class="dropdown-item-text">Notifications</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+        <main class="main-content" id="mainContent" tabindex="-1" role="main">
+            <!-- YouTube-Style Creator Header -->
+            <div class="creator-header">
+                <div class="creator-banner">
+                    <div class="creator-info-overlay">
+                        <div class="creator-profile">
+                            <img id="creatorAvatar" src="assets/images/default-avatar.svg" alt="Creator" class="creator-avatar-large">
+                            <div class="creator-details">
+                                <h1 id="creatorName">Creator Name</h1>
+                                <p id="creatorBio">Support your favorite creator by purchasing their merchandise!</p>
+                                <div class="creator-stats">
+                                    <span class="stat">
+                                        <strong id="productCount">0</strong> Products
+                                    </span>
+                                    <span class="stat">
+                                        <strong id="orderCount">0</strong> Orders
+                                    </span>
+                                    <span class="stat">
+                                        <strong id="followerCount">0</strong> Followers
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="creator-actions">
+                            <button class="btn btn-primary" onclick="storeApp.showCreateProductModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Add Product
+                            </button>
+                            <button class="btn btn-secondary" onclick="storeApp.forceCreateSampleProducts()" id="autoBuildBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                    <path d="M2 17l10 5 10-5"/>
+                                    <path d="M2 12l10 5 10-5"/>
+                                </svg>
+                                Auto-Build Store
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YouTube-Style Store Content -->
+            <div class="store-content">
+                <!-- Analytics Dashboard (FREE) -->
+                <div class="analytics-section" id="analyticsContainer">
+                    <!-- Analytics will be loaded here -->
+                </div>
+
+                <!-- Inventory Alerts (FREE) -->
+                <div class="inventory-alerts" id="inventoryAlerts">
+                    <!-- Low stock alerts will appear here -->
+                </div>
+
+                <!-- Revenue Model Section -->
+                <div class="revenue-model-section">
+                    <h4>💰 Revenue Model</h4>
+                    <div class="revenue-comparison">
+                        <div class="revenue-card amplifi">
+                            <h5>🎨 Amplifi Store</h5>
+                            <div class="revenue-split">
+                                <div class="creator-revenue">
+                                    <span class="percentage">85%</span>
+                                    <span class="label">Creator Revenue</span>
+                                </div>
+                                <div class="platform-fee">
+                                    <span class="percentage">15%</span>
+                                    <span class="label">Platform Fee</span>
+                                </div>
+                            </div>
+                            <p class="advantage">✅ Better than competitors!</p>
+                        </div>
+                        <div class="revenue-card competitor">
+                            <h5>📺 Other Platforms</h5>
+                            <div class="revenue-split">
+                                <div class="creator-revenue">
+                                    <span class="percentage">70%</span>
+                                    <span class="label">Creator Revenue</span>
+                                </div>
+                                <div class="platform-fee">
+                                    <span class="percentage">30%</span>
+                                    <span class="label">Platform Fee</span>
+                                </div>
+                            </div>
+                            <p class="disadvantage">❌ Higher fees</p>
+                        </div>
+                    </div>
+                    <div class="revenue-note">
+                        <p>💡 <strong>Amplifi Advantage:</strong> You keep 15% more revenue compared to other merchandise platforms!</p>
+                    </div>
+                </div>
+
+                <!-- Quick Start Section -->
+                <div class="quick-start-section">
+                    <h4>🚀 Get Started in 30 Seconds</h4>
+                    <p>Ready to see your store in action? Click the button below to instantly populate your store with 8 professional sample products!</p>
+                    <button class="btn btn-primary quick-start-btn" onclick="storeApp.forceCreateSampleProducts()" id="quickStartBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        🚀 Auto-Build My Store Now
+                    </button>
+                    <div class="quick-start-features">
+                        <div class="feature">
+                            <span class="feature-icon">⚡</span>
+                            <span>Instant Setup</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🖼️</span>
+                            <span>Real Product Images</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">💰</span>
+                            <span>Realistic Pricing</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🖨️</span>
+                            <span>POD Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Navigation (Proper Dropdown) -->
+                <div class="category-filter-section">
+                    <div class="proper-dropdown">
+                        <button class="dropdown-trigger" id="categoryDropdownBtn">
+                            <span id="selectedCategory">All Products</span>
+                            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu" id="categoryDropdownMenu" role="menu">
+                            <button class="dropdown-item" data-category="all" role="menuitem">
+                                <span class="dropdown-item-icon">🛍️</span>
+                                <span class="dropdown-item-text">All Products</span>
+                            </button>
+                            <button class="dropdown-item" data-category="clothing" role="menuitem">
+                                <span class="dropdown-item-icon">👕</span>
+                                <span class="dropdown-item-text">Clothing</span>
+                            </button>
+                            <button class="dropdown-item" data-category="accessories" role="menuitem">
+                                <span class="dropdown-item-icon">👜</span>
+                                <span class="dropdown-item-text">Accessories</span>
+                            </button>
+                            <button class="dropdown-item" data-category="home" role="menuitem">
+                                <span class="dropdown-item-icon">🏠</span>
+                                <span class="dropdown-item-text">Home & Living</span>
+                            </button>
+                            <button class="dropdown-item" data-category="digital" role="menuitem">
+                                <span class="dropdown-item-icon">💻</span>
+                                <span class="dropdown-item-text">Digital</span>
+                            </button>
+                            <button class="dropdown-item" data-category="art" role="menuitem">
+                                <span class="dropdown-item-icon">🎨</span>
+                                <span class="dropdown-item-text">Art & Prints</span>
+                            </button>
+                            <button class="dropdown-item" data-category="tech" role="menuitem">
+                                <span class="dropdown-item-icon">📱</span>
+                                <span class="dropdown-item-text">Tech Accessories</span>
+                            </button>
+                            <button class="dropdown-item" data-category="electronics" role="menuitem">
+                                <span class="dropdown-item-icon">⚡</span>
+                                <span class="dropdown-item-text">Electronics</span>
+                            </button>
+                            <button class="dropdown-item" data-category="stickers" role="menuitem">
+                                <span class="dropdown-item-icon">🎭</span>
+                                <span class="dropdown-item-text">Stickers</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="active-filter-display" id="activeFilterDisplay">
+                        <span class="filter-label">Showing:</span>
+                        <span class="filter-value" id="filterValue">All Products</span>
+                        <button class="clear-filter-btn" id="clearFilterBtn" onclick="storeApp.clearCategoryFilter()" style="display: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filters (YouTube-style) -->
+                <div class="store-filters">
+                    <div class="search-container">
+                        <input type="text" id="searchProducts" placeholder="Search products..." class="search-input">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <div class="filter-options">
+                        <select id="sortProducts" class="sort-select">
+                            <option value="newest">Newest First</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products Grid (YouTube-style) -->
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded here -->
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <p>Loading products...</p>
+                    </div>
+                </div>
+
+                <!-- Empty State (YouTube-style) -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <h3>No Products Yet</h3>
+                    <p>Get started by creating your first product or use our Auto-Build feature to instantly populate your store with sample products!</p>
+                    <div class="empty-state-actions">
+                        <button class="btn btn-primary" onclick="storeApp.showCreateProductModal()">
+                            Add Your First Product
+                        </button>
+                        <button class="btn btn-secondary auto-build-btn" onclick="storeApp.forceCreateSampleProducts()" id="autoBuildBtn">
+                            🚀 Auto-Build Store (Recommended)
+                        </button>
+                    </div>
+                    <div class="auto-build-info">
+                        <p><strong>💡 Auto-Build Store:</strong> Instantly creates 8 sample products with realistic images, pricing, and POD integration. Perfect for testing and demonstration!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Tab Navigation -->
+    <nav class="mobile-tab-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="feed.html" class="tab-item" aria-label="Home">
+            <div class="tab-icon" aria-hidden="true">🏠</div>
+            <span class="tab-label">Home</span>
+        </a>
+        <a href="search.html" class="tab-item" aria-label="Search">
+            <div class="tab-icon" aria-hidden="true">🔍</div>
+            <span class="tab-label">Search</span>
+        </a>
+        <a href="upload.html" class="tab-item" aria-label="Create">
+            <div class="tab-icon" aria-hidden="true">➕</div>
+            <span class="tab-label">Create</span>
+        </a>
+        <a href="messages.html" class="tab-item" aria-label="Messages">
+            <div class="tab-icon" aria-hidden="true">💬</div>
+            <span class="tab-label">Messages</span>
+        </a>
+        <a href="live.html" class="tab-item" aria-label="Live">
+            <div class="tab-icon" aria-hidden="true">📺</div>
+            <span class="tab-label">Live</span>
+        </a>
+        <a href="music-library.html" class="tab-item" aria-label="Music">
+            <div class="tab-icon" aria-hidden="true">🎵</div>
+            <span class="tab-label">Music</span>
+        </a>
+        <a href="profile.html" class="tab-item" aria-label="Profile">
+            <div class="tab-icon" aria-hidden="true">👤</div>
+            <span class="tab-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Shopping Cart Sidebar (YouTube-style) -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>🛒 Shopping Cart</h3>
+            <button class="cart-close" onclick="storeApp.hideCart()">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+            <!-- Discount Code Input (FREE) -->
+            <div class="discount-section">
+                <input type="text" id="discountCode" placeholder="Enter discount code..." class="discount-input">
+                <button class="btn-apply-discount" onclick="storeApp.applyDiscountCode(document.getElementById('discountCode').value)">
+                    Apply
+                </button>
+            </div>
+            <div id="discountApplied">
+                <!-- Applied discount will appear here -->
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="cart-total-amount" id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="storeApp.checkout()">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Creation Modal (YouTube-style) -->
+    <div class="modal" id="createProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <button class="modal-close" onclick="storeApp.hideCreateProductModal()">×</button>
+            </div>
+            <form id="createProductForm" onsubmit="storeApp.createProduct(event)">
+                <div class="form-group">
+                    <label for="productName">Product Name *</label>
+                    <input type="text" id="productName" required placeholder="e.g., Amplifi T-Shirt">
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category *</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="clothing">👕 Clothing</option>
+                        <option value="accessories">👜 Accessories</option>
+                        <option value="home">🏠 Home & Living</option>
+                        <option value="digital">💻 Digital</option>
+                        <option value="art">🎨 Art & Prints</option>
+                        <option value="tech">📱 Tech Accessories</option>
+                        <option value="electronics">⚡ Electronics</option>
+                        <option value="stickers">🎭 Stickers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Description *</label>
+                    <textarea id="productDescription" required placeholder="Describe your product..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Price *</label>
+                        <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity</label>
+                        <input type="number" id="productStock" min="0" placeholder="Unlimited">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="serviceType">Service Type *</label>
+                    <select id="serviceType" required>
+                        <option value="">Select Service Type</option>
+                        <option value="pod">Print-on-Demand (POD) - Automatic Tax Handling</option>
+                    </select>
+                    <small class="form-help">POD services handle taxes automatically - no license required!</small>
+                </div>
+                
+                <div class="form-group" id="podServiceGroup">
+                    <label for="podService">POD Service *</label>
+                    <select id="podService" required>
+                        <option value="">Select POD Service</option>
+                        <option value="printful">Printful - Premium Quality + Tax Handling</option>
+                        <option value="printify">Printify - Wide Variety + Tax Compliance</option>
+                        <option value="spring">Spring - Social Commerce + Tax Management</option>
+                        <option value="redbubble">Redbubble - Artist Focused + Global Tax</option>
+                    </select>
+                    <small class="form-help">All POD services handle sales tax automatically - no license required!</small>
+                </div>
+                
+                <!-- Tax Information Display -->
+                <div id="taxInfo" class="tax-info-section">
+                    <!-- Tax information will be displayed here when POD service is selected -->
+                </div>
+                
+                <!-- POD Service Benefits -->
+                <div class="pod-benefits">
+                    <h4>🛡️ Service Options Explained</h4>
+                    
+                    <div class="service-option">
+                        <h5>📦 Print-on-Demand (POD)</h5>
+                        <p><strong>✅ Automatic Tax Handling - No License Required!</strong></p>
+                        <ul>
+                            <li>✅ <strong>Automatic Tax Calculation</strong> - POD services calculate tax based on customer location</li>
+                            <li>✅ <strong>Tax Collection & Remittance</strong> - POD services pay taxes to governments</li>
+                            <li>✅ <strong>Tax Reporting</strong> - Complete documentation provided</li>
+                            <li>✅ <strong>Global Compliance</strong> - Handle international tax laws</li>
+                            <li>✅ <strong>No Legal Worries</strong> - Focus on creating, not tax compliance</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="benefit-note">💡 <em>🛡️ ALL Services = No tax worries, zero upfront costs, and no licenses required!</em></p>
+                </div>
+                
+                <!-- POD Service Configuration -->
+                <div class="pod-config-section">
+                    <h4>🔧 POD Service Configuration</h4>
+                    <p>Connect your POD services to enable automatic order fulfillment:</p>
+                    
+                    <div class="pod-service-configs">
+                        <div class="pod-service-config">
+                            <h5>🖨️ Printful</h5>
+                            <div class="api-key-input">
+                                <input type="password" id="printfulApiKey" placeholder="Enter Printful API Key">
+                                <button onclick="storeApp.configurePODService('printful', document.getElementById('printfulApiKey').value)" class="btn btn-primary">Configure</button>
+                            </div>
+                            <small>Get your API key from <a href="https://www.printful.com/dashboard" target="_blank">Printful Dashboard</a></small>
+                        </div>
+                        
+                        <div class="pod-service-config">
+                            <h5>🎨 Printify</h5>
+                            <div class="api-key-input">
+                                <input type="password" id="printifyApiKey" placeholder="Enter Printify API Key">
+                                <button onclick="storeApp.configurePODService('printify', document.getElementById('printifyApiKey').value)" class="btn btn-primary">Configure</button>
+                            </div>
+                            <small>Get your API key from <a href="https://printify.com/app" target="_blank">Printify App</a></small>
+                        </div>
+                        
+                        <div class="pod-service-config">
+                            <h5>🌱 Spring</h5>
+                            <div class="api-key-input">
+                                <input type="password" id="springApiKey" placeholder="Enter Spring API Key">
+                                <button onclick="storeApp.configurePODService('spring', document.getElementById('springApiKey').value)" class="btn btn-primary">Configure</button>
+                            </div>
+                            <small>Get your API key from <a href="https://www.spring.com/partner" target="_blank">Spring Partner Portal</a></small>
+                        </div>
+                        
+                        <div class="pod-service-config">
+                            <h5>🎭 Redbubble</h5>
+                            <div class="api-key-input">
+                                <input type="password" id="redbubbleApiKey" placeholder="Enter Redbubble API Key">
+                                <button onclick="storeApp.configurePODService('redbubble', document.getElementById('redbubbleApiKey').value)" class="btn btn-primary">Configure</button>
+                            </div>
+                            <small>Get your API key from <a href="https://www.redbubble.com/developers" target="_blank">Redbubble Developers</a></small>
+                        </div>
+                    </div>
+                    
+                    <div class="pod-config-note">
+                        <p>💡 <strong>Note:</strong> API keys are stored securely and used only for order fulfillment. Orders will be processed manually if no API key is configured.</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productImage">Product Image</label>
+                    <input type="file" id="productImage" accept="image/*">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="storeApp.hideCreateProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal (YouTube-style) -->
+    <div class="modal" id="productDetailModal">
+        <div class="modal-content product-detail-content">
+            <div class="modal-header">
+                <h3 id="detailProductName">Product Name</h3>
+                <button class="modal-close" onclick="storeApp.hideProductDetail()">×</button>
+            </div>
+            <div class="product-detail-body">
+                <div class="product-detail-image">
+                    <img id="detailProductImage" src="assets/images/default-avatar.svg" alt="Product">
+                </div>
+                <div class="product-detail-info">
+                    <h4 id="detailProductTitle">Product Title</h4>
+                    <p id="detailProductDescription">Product description...</p>
+                    <div class="product-detail-price">
+                        <span class="price" id="detailProductPrice">$0.00</span>
+                        <span class="stock" id="detailProductStock">In Stock</span>
+                    </div>
+                    
+                    <!-- Social Sharing (FREE) -->
+                    <div class="social-sharing">
+                        <button class="btn-share" onclick="storeApp.shareProduct()">
+                            📤 Share Product
+                        </button>
+                        <button class="btn-wishlist" onclick="storeApp.addToWishlist()">
+                            ❤️ Add to Wishlist
+                        </button>
+                    </div>
+                    
+                    <div class="product-detail-actions">
+                        <button class="btn btn-primary" onclick="storeApp.showProductVariants()">
+                            Select Options
+                        </button>
+                        <button class="btn btn-secondary" onclick="storeApp.buyNow()">
+                            Buy Now
+                        </button>
+                    </div>
+                    
+                    <!-- Product Reviews (FREE) -->
+                    <div class="product-reviews" id="reviews-container">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Variants Modal (FREE) -->
+    <div class="modal" id="variantModal">
+        <!-- Variant options will be loaded here -->
+    </div>
+
+    <!-- Scripts - Load in correct order -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="config/firebaseConfig.js?v=1.0.50"></script>
+    <script src="js/utils.js?v=1.0.50"></script>
+    <script src="js/proper-dropdown.js"></script>
+    <script src="js/store.js"></script>
+</body>
+</html> 

@@ -8,13 +8,25 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      "**/node_modules/**",
+      "**/tests/**",
+      "**/vercel-stripe-backend/**",
+      "**/netlify-stripe-backend/**",
+      "**/.venv/**",
+      "**/*.py",
+      "**/*.pyc",
+      "**/requirements*.txt",
+      "**/__pycache__/**",
+      "**/.git/**",
+      "**/.github/**",
+      "**/README.md",
+      "**/CHANGELOG.md",
+      "**/LICENSE",
+      "**/package.json",
+      "**/package-lock.json",
+      "**/yarn.lock",
+      "**/.env*",
+      "**/.DS_Store"
     ]
   }
 } 

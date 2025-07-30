@@ -870,6 +870,13 @@ class DashboardPage {
                 lifetimeEarnings = earnings.totalEarnings || 0;
             }
 
+            // Load paid messaging earnings
+            const paidMessagingEarnings = await this.loadPaidMessagingEarnings();
+            
+            // Add paid messaging earnings to totals
+            monthlyEarnings += paidMessagingEarnings.monthly;
+            lifetimeEarnings += paidMessagingEarnings.lifetime;
+
             document.getElementById('monthlyEarnings').textContent = `$${monthlyEarnings.toFixed(2)}`;
             document.getElementById('lifetimeEarnings').textContent = `$${lifetimeEarnings.toFixed(2)}`;
 
@@ -881,9 +888,95 @@ class DashboardPage {
         }
     }
 
+    async loadPaidMessagingEarnings() {
+        try {
+            // Get current month and year
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            // Load all paid messages for this user (as recipient)
+            const paidMessagesSnapshot = await db.collection('paidMessages')
+                .where('recipientId', '==', this.currentUser.uid)
+                .get();
+
+            let monthlyEarnings = 0;
+            let lifetimeEarnings = 0;
+            let monthlyMessages = 0;
+            let lifetimeMessages = 0;
+
+            paidMessagesSnapshot.forEach(doc => {
+                const message = doc.data();
+                const messageDate = message.createdAt?.toDate?.() || new Date(message.createdAt);
+                
+                // Add to lifetime earnings
+                lifetimeEarnings += message.price || 0;
+                lifetimeMessages++;
+                
+                // Check if message is from current month
+                if (messageDate.getMonth() === currentMonth && messageDate.getFullYear() === currentYear) {
+                    monthlyEarnings += message.price || 0;
+                    monthlyMessages++;
+                }
+            });
+
+            // Update UI with paid messaging stats
+            this.updatePaidMessagingStats({
+                monthlyEarnings,
+                lifetimeEarnings,
+                monthlyMessages,
+                lifetimeMessages
+            });
+
+            return {
+                monthly: monthlyEarnings,
+                lifetime: lifetimeEarnings,
+                monthlyMessages,
+                lifetimeMessages
+            };
+
+        } catch (error) {
+            console.error('Error loading paid messaging earnings:', error);
+            return { monthly: 0, lifetime: 0, monthlyMessages: 0, lifetimeMessages: 0 };
+        }
+    }
+
+    updatePaidMessagingStats(stats) {
+        // Update paid messaging stats in the dashboard
+        const paidMessagingSection = document.getElementById('paidMessagingStats');
+        if (paidMessagingSection) {
+            paidMessagingSection.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Monthly Messaging</h4>
+                        <span class="stat-value">$${stats.monthlyEarnings.toFixed(2)}</span>
+                        <span class="stat-label">${stats.monthlyMessages} messages</span>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Lifetime Messaging</h4>
+                        <span class="stat-value">$${stats.lifetimeEarnings.toFixed(2)}</span>
+                        <span class="stat-label">${stats.lifetimeMessages} messages</span>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Avg Per Message</h4>
+                        <span class="stat-value">$${stats.lifetimeMessages > 0 ? (stats.lifetimeEarnings / stats.lifetimeMessages).toFixed(2) : '0.00'}</span>
+                        <span class="stat-label">Average</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
     async loadEarningsBreakdown() {
         try {
             const tipsSnapshot = await db.collection('tips')
+                .where('recipientId', '==', this.currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .limit(10)
+                .get();
+
+            // Load paid messaging earnings
+            const paidMessagesSnapshot = await db.collection('paidMessages')
                 .where('recipientId', '==', this.currentUser.uid)
                 .orderBy('createdAt', 'desc')
                 .limit(10)
@@ -894,19 +987,59 @@ class DashboardPage {
 
             breakdownContainer.innerHTML = '';
 
+            // Combine tips and paid messages
+            const allEarnings = [];
+
+            // Add tips
             tipsSnapshot.forEach(doc => {
                 const tip = doc.data();
-                const tipElement = document.createElement('div');
-                tipElement.className = 'breakdown-item';
-                tipElement.innerHTML = `
-                    <div class="breakdown-info">
-                        <span class="breakdown-amount">$${tip.amount.toFixed(2)}</span>
-                        <span class="breakdown-source">Tip from ${tip.senderName}</span>
-                    </div>
-                    <span class="breakdown-date">${this.formatTimestamp(tip.createdAt)}</span>
-                `;
-                breakdownContainer.appendChild(tipElement);
+                allEarnings.push({
+                    ...tip,
+                    type: 'tip',
+                    source: 'Tip',
+                    docId: doc.id
+                });
             });
+
+            // Add paid messages
+            paidMessagesSnapshot.forEach(doc => {
+                const message = doc.data();
+                allEarnings.push({
+                    ...message,
+                    type: 'paid_message',
+                    source: 'Paid Message',
+                    docId: doc.id
+                });
+            });
+
+            // Sort by date (newest first)
+            allEarnings.sort((a, b) => {
+                const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt);
+                const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt);
+                return dateB - dateA;
+            });
+
+            // Display combined earnings
+            allEarnings.slice(0, 15).forEach(earning => {
+                const earningElement = document.createElement('div');
+                earningElement.className = 'breakdown-item';
+                
+                const amount = earning.type === 'tip' ? earning.amount : earning.price;
+                const source = earning.type === 'tip' ? 
+                    `Tip from ${earning.senderName}` : 
+                    `Paid message from ${earning.senderName}`;
+                
+                earningElement.innerHTML = `
+                    <div class="breakdown-info">
+                        <span class="breakdown-amount">$${amount.toFixed(2)}</span>
+                        <span class="breakdown-source">${source}</span>
+                        <span class="breakdown-type ${earning.type}">${earning.type === 'tip' ? '💝' : '💬'}</span>
+                    </div>
+                    <span class="breakdown-date">${this.formatTimestamp(earning.createdAt)}</span>
+                `;
+                breakdownContainer.appendChild(earningElement);
+            });
+
         } catch (error) {
             console.error('Error loading earnings breakdown:', error);
         }
@@ -1297,20 +1430,16 @@ class DashboardPage {
         // For now, return a placeholder image. In a real implementation, you'd call an AI image generation API
         // Examples: DALL-E, Midjourney, Stable Diffusion, etc.
         
-        // Placeholder: Return a random Unsplash image based on the prompt
-        const keywords = prompt.split(' ').slice(0, 3).join(',');
-        // Try Unsplash, fallback to a local placeholder if 503
-        const url = `https://source.unsplash.com/800x600/?${encodeURIComponent(keywords)}`;
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            if (response.status === 503) {
-                throw new Error('Unsplash returned 503');
-            }
-            return url;
-        } catch (error) {
-            console.error('Error fetching image:', error);
-            return 'default-placeholder.png';
-        }
+        // Use local placeholder images instead of Unsplash to avoid 503 errors
+        const placeholderImages = [
+            'assets/images/default-avatar.svg',
+            'assets/images/default-banner.svg',
+            'assets/images/hero-image.svg'
+        ];
+        
+        // Pick a random placeholder image
+        const randomIndex = Math.floor(Math.random() * placeholderImages.length);
+        return placeholderImages[randomIndex];
     }
 
     // Check if user is admin and restrict posting

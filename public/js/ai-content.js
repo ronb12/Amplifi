@@ -272,20 +272,14 @@ function extractHashtags(text) {
   return hashtags ? hashtags.map(tag => tag.substring(1).toLowerCase()) : [];
 }
 async function generateAIImage(prompt) {
-    // Fetch images from Firestore and pick a random one
-    // Fallback to Unsplash if no images in Firestore
-    const keywords = prompt.split(' ').slice(0, 3).join(',');
-    const url = `https://source.unsplash.com/800x600/?${encodeURIComponent(keywords)}`;
-    try {
-        // Try to fetch the image to check for 503
-        const response = await fetch(url, { method: 'HEAD' });
-        if (response.status === 503) {
-            throw new Error('Unsplash returned 503');
-        }
-        return url;
-    } catch (error) {
-        console.error('Error fetching image:', error);
-        // Fallback to a local placeholder image
-        return 'default-placeholder.png';
-    }
+    // Use local placeholder images instead of Unsplash to avoid 503 errors
+    const placeholderImages = [
+        'assets/images/default-avatar.svg',
+        'assets/images/default-banner.svg',
+        'assets/images/hero-image.svg'
+    ];
+    
+    // Pick a random placeholder image
+    const randomIndex = Math.floor(Math.random() * placeholderImages.length);
+    return placeholderImages[randomIndex];
 } 

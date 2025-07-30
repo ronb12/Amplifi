@@ -1219,7 +1219,7 @@ class LivePage {
     }
 
     async getAIThumbnailSuggestions(title) {
-        const PEXELS_API_KEY = 'fukzfUyQBBPXqfJyNeXsFvIFOXhIjkRWFaeNVLSggxEZ9aKhqnWa3lgR';
+        // Pexels API key removed - using local images instead
         
         // Determine search query based on title keywords
         let searchQuery = 'professional';
@@ -1269,15 +1269,16 @@ class LivePage {
         }
         
         try {
-            // Fetch images from Pexels API
+            // Fetch images from Pexels API with proper error handling
             const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=8&orientation=landscape`, {
                 headers: {
-                    'Authorization': PEXELS_API_KEY
+                    'Authorization': 'fukzfUyQBBPXqfJyNeXsFvIFOXhIjkRWFaeNVLSggxEZ9aKhqnWa3lgR'
                 }
             });
             
             if (!response.ok) {
-                throw new Error(`Pexels API error: ${response.status}`);
+                console.warn(`Pexels API error: ${response.status}, using fallback images`);
+                return this.getFallbackThumbnails(searchQuery, styleNames);
             }
             
             const data = await response.json();
@@ -1290,7 +1291,7 @@ class LivePage {
                     originalUrl: photo.url
                 }));
             } else {
-                // Fallback to static images if API fails
+                console.warn('No Pexels photos found, using fallback images');
                 return this.getFallbackThumbnails(searchQuery, styleNames);
             }
         } catch (error) {
@@ -1301,73 +1302,73 @@ class LivePage {
     }
     
     getFallbackThumbnails(searchQuery, styleNames) {
-        // Fallback images for when API is unavailable
+        // Local fallback images to avoid 503 errors
         const fallbackImages = {
             'fitness workout': [
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=0.8',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.3',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.2'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'gaming setup': [
-                'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=0.9',
-                'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.4',
-                'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&blur=1'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'music performance': [
-                'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=0.8',
-                'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.2',
-                'https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&blur=0.5'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'cooking food': [
-                'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=0.9',
-                'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.3',
-                'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.1'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'technology digital': [
-                'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=0.8',
-                'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.2',
-                'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.3'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'art creative': [
-                'https://images.pexels.com/photos/1029243/pexels-photo-1029243.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/1029243/pexels-photo-1029243.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.1',
-                'https://images.pexels.com/photos/1029243/pexels-photo-1029243.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.4',
-                'https://images.pexels.com/photos/1029243/pexels-photo-1029243.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&blur=0.3'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'business professional': [
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.2',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.1',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.2'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'education learning': [
-                'https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.1',
-                'https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.2',
-                'https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.1'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'travel adventure': [
-                'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.1',
-                'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.3',
-                'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.1'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'lifestyle wellness': [
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.2',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.1',
-                'https://images.pexels.com/photos/4056530/pexels-photo-4056530.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.1'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ],
             'default': [
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&brightness=1.2',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&saturation=1.1',
-                'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop&contrast=1.2'
+                'assets/images/default-banner.svg',
+                'assets/images/hero-image.svg',
+                'assets/images/default-avatar.svg',
+                'assets/images/default-banner.svg'
             ]
         };
         
