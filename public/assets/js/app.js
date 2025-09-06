@@ -2679,6 +2679,29 @@ class AmplifiApp {
     }
 }
 
+// Global function for opening auth modal
+function openAuthModal(type = 'login') {
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.style.display = 'block';
+        
+        // Switch to the appropriate tab
+        if (type === 'login') {
+            const loginTab = document.querySelector('[data-tab="login"]');
+            if (loginTab) {
+                loginTab.click();
+            }
+        } else if (type === 'signup') {
+            const signupTab = document.querySelector('[data-tab="signup"]');
+            if (signupTab) {
+                signupTab.click();
+            }
+        }
+    } else {
+        console.error('Auth modal not found');
+    }
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener("DOMContentLoaded", function() {
     console.log("🚀 Initializing Amplifi App...");
