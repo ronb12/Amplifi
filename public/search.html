@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search - Amplifi</title>
-    <meta name="description" content="Search for content, creators, and topics.">
+    <meta name="description" content="Search for content, creators, and discover new videos.">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
@@ -713,262 +713,40 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="yt-main">
-        <div class="yt-content-wrapper">
-            
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Search</h1>
-            <p class="page-subtitle">Find exactly what you're looking for</p>
-        </div>
-
-        <!-- Video Categories -->
-        <div class="yt-categories-row">
-            <button class="yt-category-btn active">All</button>
-            <button class="yt-category-btn">Music</button>
-            <button class="yt-category-btn">Gaming</button>
-            <button class="yt-category-btn">Live</button>
-            <button class="yt-category-btn">News</button>
-            <button class="yt-category-btn">Sports</button>
-            <button class="yt-category-btn">Education</button>
-            <button class="yt-category-btn">Entertainment</button>
-        </div>
-
-        <!-- Video Grid -->
-        <div class="yt-video-grid">
-            
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">20:31</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">How to Build a Successful YouTube Channel</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Sarah Chen</span>
-                            <span class="yt-video-stats">60,410 views • 1 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">20:39</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Advanced Video Editing Techniques</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Mike Johnson</span>
-                            <span class="yt-video-stats">42,791 views • 1 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">9:16</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Content Creation Tips for Beginners</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Video Pro</span>
-                            <span class="yt-video-stats">37,214 views • 4 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">23:53</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Live Streaming Setup Guide</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Creator Academy</span>
-                            <span class="yt-video-stats">61,231 views • 3 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">15:42</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Monetization Strategies for Creators</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Tech Reviews</span>
-                            <span class="yt-video-stats">30,751 views • 3 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">8:40</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Building Your Personal Brand</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Creative Studio</span>
-                            <span class="yt-video-stats">33,276 views • 5 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">19:14</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Video SEO Best Practices</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Content Master</span>
-                            <span class="yt-video-stats">46,367 views • 6 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">19:13</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Engaging Your Audience Effectively</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Video Expert</span>
-                            <span class="yt-video-stats">8,176 views • 5 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">8:49</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Creating Viral Content Ideas</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Sarah Chen</span>
-                            <span class="yt-video-stats">34,376 views • 1 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">12:47</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Professional Lighting Setup</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Mike Johnson</span>
-                            <span class="yt-video-stats">7,756 views • 1 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">24:23</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Audio Quality Improvement</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Video Pro</span>
-                            <span class="yt-video-stats">73,481 views • 6 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="yt-video-card">
-                <div class="yt-video-thumbnail">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMyMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPHN2ZyB4PSIxNDAiIHk9IjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggNXYxNGw3LTd6IiBmaWxsPSIjOTlhM2FmIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Video Thumbnail">
-                    <span class="yt-video-duration">8:52</span>
-                </div>
-                <div class="yt-video-info">
-                    <div class="yt-video-avatar">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEzIDE3SDEwVjE1SDEzVjE3Wk0xMyAxM0gxMFY3SDEzVjEzWiIgZmlsbD0iIzYwNjA2MCIvPgo8L3N2Zz4KPC9zdmc+" alt="Channel Avatar">
-                    </div>
-                    <div class="yt-video-details">
-                        <h3 class="yt-video-title">Thumbnail Design Masterclass</h3>
-                        <div class="yt-video-meta">
-                            <span class="yt-video-author">Creator Academy</span>
-                            <span class="yt-video-stats">86,206 views • 3 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-        </div>
     
+<main class="yt-main">
+    <div class="yt-content-wrapper">
+        <div class="page-header">
+            <h1>Search</h1>
+            <p>Find What You're Looking For</p>
         </div>
-    </main>
+        
+        
+            <div class="search-header">
+                <h1>Search</h1>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search videos, creators, and more..." class="search-input">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <div class="search-content">
+                <div class="search-filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Videos</button>
+                    <button class="filter-btn">Channels</button>
+                    <button class="filter-btn">Playlists</button>
+                </div>
+                
+                <div class="search-results">
+                    <div class="yt-video-grid">
+                        <!-- Search results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+</main>
 
     
     <!-- Mobile Tab Bar -->
