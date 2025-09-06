@@ -10,10 +10,13 @@
     <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+          onerror="this.onerror=null;this.href='https://use.fontawesome.com/releases/v6.4.0/css/all.css';">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" 
+          rel="stylesheet" 
+          onerror="this.onerror=null;this.href='https://fonts.gstatic.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap';">
     
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/youtube-style.css">
@@ -715,53 +718,53 @@
     <!-- Main Content -->
     
 <main class="yt-main">
-    <div class="yt-content-wrapper">
-        <div class="page-header">
-            <h1>Your Profile</h1>
-            <p>Manage Your Channel</p>
-        </div>
-        
-        
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <img src="assets/images/default-avatar.svg" alt="Profile">
-                </div>
-                <div class="profile-info">
-                    <h1>Your Channel</h1>
-                    <p>@username</p>
-                    <div class="profile-stats">
-                        <div class="stat">
-                            <span class="stat-number">0</span>
-                            <span class="stat-label">Videos</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">0</span>
-                            <span class="stat-label">Subscribers</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">0</span>
-                            <span class="stat-label">Views</span>
-                        </div>
-                    </div>
-                </div>
+    
+        <div class="yt-content-wrapper">
+            <div class="page-header">
+                <h1>Profile</h1>
+                <p>Manage your profile and channel settings.</p>
             </div>
             
-            <div class="profile-content">
-                <div class="profile-tabs">
-                    <button class="tab-btn active">Videos</button>
-                    <button class="tab-btn">Playlists</button>
-                    <button class="tab-btn">About</button>
-                </div>
-                
-                <div class="profile-videos">
-                    <div class="yt-video-grid">
-                        <!-- User's videos will be loaded here -->
+            
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img src="assets/images/default-avatar.svg" alt="Profile">
+            </div>
+            <div class="profile-info">
+                <h1>Your Channel</h1>
+                <p>@username</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Videos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Subscribers</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Views</span>
                     </div>
                 </div>
             </div>
+        </div>
         
-    </div>
-</main>
+        <div class="profile-content">
+            <div class="profile-tabs">
+                <button class="tab-btn active">Videos</button>
+                <button class="tab-btn">Playlists</button>
+                <button class="tab-btn">About</button>
+            </div>
+            
+            <div class="profile-videos">
+                <div class="yt-video-grid">
+                    <!-- User's videos will be loaded here -->
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
 
     
     <!-- Mobile Tab Bar -->
