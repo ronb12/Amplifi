@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Posts collection
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.creatorId;
+    }
+    
+    // Comments collection
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+    }
+    
+    // Likes collection
+    match /likes/{likeId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Follows collection
+    match /follows/{followId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Live streams collection
+    match /liveStreams/{streamId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.creatorId;
+    }
+    
+    // Earnings collection
+    match /earnings/{earningId} {
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+      allow write: if false; // Only server can modify earnings
+    }
+    
+    // Tips collection
+    match /tips/{tipId} {
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.fromUserId || 
+         request.auth.uid == resource.data.toUserId);
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+    
+    // Reports collection
+    match /reports/{reportId} {
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.reporterId;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+    
+    // Push subscriptions collection
+    match /pushSubscriptions/{subId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+    }
+  }
+}

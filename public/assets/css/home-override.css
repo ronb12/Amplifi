@@ -1,0 +1,18 @@
+/* Home Page Content Width Override */
+.yt-content-wrapper {
+    max-width: 1800px !important;
+    padding: 0 24px !important;
+}
+
+/* Make video grid wider */
+.yt-video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 20px !important;
+}
+
+/* Remove any refresh elements */
+.refresh-button,
+.refresh-element,
+[onclick*="refresh"] {
+    display: none !important;
+}

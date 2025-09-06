@@ -1,0 +1,95 @@
+{
+  "name": "Amplifi - Complete Creator Platform",
+  "version": "3.0.0",
+  "short_name": "Amplifi",
+  "description": "A complete creator platform with live streaming, video sharing, AI recommendations, and community features. Product of Bradley Virtual Solutions, LLC.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["social", "entertainment", "lifestyle"],
+  "icons": [
+    {
+      "src": "amplifi-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "amplifi-icon-simple.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/images/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "assets/images/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Go Live",
+      "short_name": "Live",
+      "description": "Start a live stream",
+      "url": "/?action=live",
+      "icons": [
+        {
+          "src": "assets/icons/live-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Upload Video",
+      "short_name": "Upload",
+      "description": "Upload a new video",
+      "url": "/?action=upload",
+      "icons": [
+        {
+          "src": "assets/icons/upload-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Profile",
+      "short_name": "Profile",
+      "description": "View your profile",
+      "url": "/?action=profile",
+      "icons": [
+        {
+          "src": "assets/icons/profile-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+amplifi",
+      "url": "/?action=%s"
+    }
+  ]
+}

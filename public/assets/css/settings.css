@@ -1,0 +1,76 @@
+/* --- Amplifi Settings Page Styles --- */
+.settings-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 24px rgb(0 0 0 / 10%);
+    border: 1.5px solid #e5e7eb;
+    padding: 2rem 1.5rem;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-label {
+    font-size: 1.05rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.settings-input, .settings-select {
+    border-radius: 0.75rem;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.settings-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.privacy-info {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.save-settings-btn {
+    background: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+
+.save-settings-btn:hover {
+    background: #059669;
+}
+
+@media (width <= 900px) {
+  .settings-container {
+    padding: 1.5rem 1rem;
+    max-width: 98vw;
+  }
+}
+
+@media (width <= 600px) {
+  .settings-container {
+    padding: 1rem 0.5rem;
+    max-width: 100vw;
+  }
+} 
