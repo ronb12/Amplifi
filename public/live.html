@@ -1045,6 +1045,28 @@
     </div>
 
     <script>
+        function openAuthModal(type = 'login') {
+            const authModal = document.getElementById('authModal');
+            if (authModal) {
+                authModal.style.display = 'block';
+                
+                // Switch to the appropriate tab
+                if (type === 'login') {
+                    const loginTab = document.querySelector('[data-tab="login"]');
+                    if (loginTab) {
+                        loginTab.click();
+                    }
+                } else if (type === 'signup') {
+                    const signupTab = document.querySelector('[data-tab="signup"]');
+                    if (signupTab) {
+                        signupTab.click();
+                    }
+                }
+            } else {
+                console.error('Auth modal not found');
+            }
+        }
+        
         function closeAuthModal() {
             document.getElementById('authModal').style.display = 'none';
         }
