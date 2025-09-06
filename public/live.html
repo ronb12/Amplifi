@@ -719,37 +719,119 @@
     
 <main class="yt-main">
     
+        
         <div class="yt-content-wrapper">
             <div class="page-header">
-                <h1>Live</h1>
-                <p>Watch live streams and go live yourself.</p>
+                <h1>Live Streaming</h1>
+                <p>Watch live streams and go live yourself</p>
             </div>
             
-            
-        <div class="live-header">
-            <h1>Live Streaming</h1>
-            <p>Watch live streams and connect with creators</p>
             <div class="live-actions">
-                <button class="btn-primary">Go Live</button>
-                <button class="btn-secondary">Schedule Stream</button>
-            </div>
-        </div>
-        
-        <div class="live-content">
-            <div class="live-streams">
-                <h2>Live Now</h2>
-                <div class="live-grid">
-                    <!-- Live streams will be loaded here -->
-                </div>
+                <button class="btn-primary" onclick="openAuthModal('login')">
+                    <i class="fas fa-broadcast-tower"></i>
+                    Go Live
+                </button>
+                <button class="btn-secondary" onclick="openAuthModal('login')">
+                    <i class="fas fa-calendar"></i>
+                    Schedule Stream
+                </button>
             </div>
             
-            <div class="upcoming-streams">
-                <h2>Upcoming</h2>
-                <div class="upcoming-grid">
-                    <!-- Upcoming streams will be loaded here -->
+            <div class="live-content">
+                <div class="live-streams">
+                    <h2><i class="fas fa-circle" style="color: #ff0000; font-size: 12px;"></i> Live Now</h2>
+                    <div class="live-grid">
+                        <div class="live-card">
+                            <div class="live-thumbnail">
+                                <img src="https://images.pexels.com/photos/1374651/pexels-photo-1374651.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Live Stream">
+                                <div class="live-badge">LIVE</div>
+                                <div class="live-viewers">1.2K watching</div>
+                            </div>
+                            <div class="live-info">
+                                <h3>Amazing Live Stream</h3>
+                                <p>Creator Name</p>
+                                <div class="live-stats">
+                                    <span><i class="fas fa-eye"></i> 1.2K</span>
+                                    <span><i class="fas fa-heart"></i> 45</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="live-card">
+                            <div class="live-thumbnail">
+                                <img src="https://images.pexels.com/photos/1573141/pexels-photo-1573141.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Live Stream">
+                                <div class="live-badge">LIVE</div>
+                                <div class="live-viewers">856 watching</div>
+                            </div>
+                            <div class="live-info">
+                                <h3>Creative Workshop</h3>
+                                <p>Artist Studio</p>
+                                <div class="live-stats">
+                                    <span><i class="fas fa-eye"></i> 856</span>
+                                    <span><i class="fas fa-heart"></i> 23</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="live-card">
+                            <div class="live-thumbnail">
+                                <img src="https://images.pexels.com/photos/60726/pexels-photo-60726.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Live Stream">
+                                <div class="live-badge">LIVE</div>
+                                <div class="live-viewers">2.1K watching</div>
+                            </div>
+                            <div class="live-info">
+                                <h3>Gaming Session</h3>
+                                <p>Gamer Pro</p>
+                                <div class="live-stats">
+                                    <span><i class="fas fa-eye"></i> 2.1K</span>
+                                    <span><i class="fas fa-heart"></i> 89</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upcoming-streams">
+                    <h2><i class="fas fa-clock"></i> Upcoming Streams</h2>
+                    <div class="upcoming-grid">
+                        <div class="upcoming-card">
+                            <div class="upcoming-thumbnail">
+                                <img src="https://images.pexels.com/photos/87611/sun-fireball-solar-flare-sunlight-87611.jpeg?auto=compress&cs=tinysrgb&h=150" alt="Upcoming Stream">
+                                <div class="upcoming-time">2:30 PM</div>
+                            </div>
+                            <div class="upcoming-info">
+                                <h3>Tech Talk Live</h3>
+                                <p>Tech Expert</p>
+                                <span class="upcoming-date">Today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="upcoming-card">
+                            <div class="upcoming-thumbnail">
+                                <img src="https://images.pexels.com/photos/750225/pexels-photo-750225.jpeg?auto=compress&cs=tinysrgb&h=150" alt="Upcoming Stream">
+                                <div class="upcoming-time">4:00 PM</div>
+                            </div>
+                            <div class="upcoming-info">
+                                <h3>Music Performance</h3>
+                                <p>Musician Name</p>
+                                <span class="upcoming-date">Today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="upcoming-card">
+                            <div class="upcoming-thumbnail">
+                                <img src="https://images.pexels.com/photos/173880/pexels-photo-173880.jpeg?auto=compress&cs=tinysrgb&h=150" alt="Upcoming Stream">
+                                <div class="upcoming-time">6:00 PM</div>
+                            </div>
+                            <div class="upcoming-info">
+                                <h3>Cooking Show</h3>
+                                <p>Chef Name</p>
+                                <span class="upcoming-date">Today</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     </main>
 
