@@ -1,7 +1,13 @@
-# Firebase
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+/dist
+/build
 
 # Environment variables
 .env
@@ -10,19 +16,14 @@ firebase-debug.*.log
 .env.test.local
 .env.production.local
 
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
@@ -30,24 +31,34 @@ Thumbs.db
 logs
 *.log
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Sensitive files - NEVER COMMIT THESE
+*.key
+*.pem
+serviceAccountKey.json
+firebase-adminsdk*.json
+config/secrets.js
+config/private.js
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Firebase
+.firebase/
+firebase-debug.log
 
 # Coverage directory used by tools like istanbul
 coverage/
 
-# Temporary folders
-tmp/
-temp/
+# Dependency directories
+jspm_packages/
 
 # Optional npm cache directory
 .npm
 
-# Optional eslint cache
-.eslintcache
+# Optional REPL history
+.node_repl_history
 
 # Output of 'npm pack'
 *.tgz
@@ -55,34 +66,20 @@ temp/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
-# Stripe secret keys
-.stripe-secret
-*.stripe-secret
-
 # parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
+.parcel-cache/
 
-# next.js build output
+# Next.js build output
 .next
 
-# nuxt.js build output
+# Nuxt.js build / generate output
 .nuxt
+dist
 
-# vuepress build output
-.vuepress/dist
+# Storybook build outputs
+.out
+.storybook-out
 
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port serviceAccountKey.json
+# Temporary folders
+tmp/
+temp/

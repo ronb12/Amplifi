@@ -1,6 +1,6 @@
 // Amplifi Service Worker - Enabling Offline Support
 // Updated to fix CSS conflicts and improve cache management
-const CACHE_NAME = 'amplifi-v11';
+const CACHE_NAME = 'amplifi-v9-secure';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -238,3 +238,50 @@ self.addEventListener('message', (event) => {
 });
 
 console.log('✅ Amplifi Service Worker v2 loaded successfully');
+
+// Security enhancements for service worker
+const SECURITY_HEADERS = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
+};
+
+// Add security headers to all responses
+self.addEventListener('fetch', (event) => {
+    // Only handle GET requests for our domain
+    if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+        return;
+    }
+    
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            if (response) {
+                // Clone the response to modify headers
+                const newResponse = new Response(response.body, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: new Headers(response.headers)
+                });
+                
+                // Add security headers
+                Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
+                    newResponse.headers.set(key, value);
+                });
+                
+                return newResponse;
+            }
+            
+            return fetch(event.request).then((response) => {
+                // Only cache successful responses from our origin
+                if (response.status === 200 && response.url.startsWith(self.location.origin)) {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
+                return response;
+            });
+        })
+    );
+});
