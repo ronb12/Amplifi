@@ -1324,84 +1324,429 @@
         });
     </script>
 
-    <!-- Live Streaming JavaScript -->
+    
+    <!-- YouTube-Style Live Streaming JavaScript -->
     <script>
 
-// Live Streaming Functionality
-class LiveStreamManager {
+// YouTube-Style Live Streaming Manager
+class YouTubeLiveStreamManager {
     constructor() {
         this.isStreaming = false;
         this.stream = null;
         this.mediaRecorder = null;
         this.recordedChunks = [];
+        this.streamSettings = {
+            video: {
+                width: { ideal: 1920, min: 640, max: 1920 },
+                height: { ideal: 1080, min: 360, max: 1080 },
+                frameRate: { ideal: 30, min: 15, max: 60 }
+            },
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+                sampleRate: 48000
+            }
+        };
+        this.streamQuality = '1080p';
+        this.viewers = 0;
+        this.chatMessages = [];
+        this.streamTitle = '';
+        this.streamDescription = '';
+        this.streamCategory = 'Gaming';
+        this.streamPrivacy = 'public';
+        this.streamScheduled = false;
+        this.streamStartTime = null;
+        this.streamDuration = 0;
+        this.streamStats = {
+            viewers: 0,
+            likes: 0,
+            comments: 0,
+            shares: 0
+        };
         this.init();
     }
 
     init() {
         this.setupEventListeners();
         this.checkBrowserSupport();
+        this.loadStreamHistory();
+        this.initializeUI();
     }
 
     checkBrowserSupport() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            console.error('❌ Browser does not support media devices');
-            this.showError('Your browser does not support live streaming');
+        const features = {
+            getUserMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+            mediaRecorder: !!(window.MediaRecorder),
+            webRTC: !!(window.RTCPeerConnection),
+            screenShare: !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)
+        };
+
+        console.log('🔍 Browser Support Check:', features);
+        
+        if (!features.getUserMedia) {
+            this.showError('Your browser does not support camera/microphone access');
             return false;
         }
+        
+        if (!features.mediaRecorder) {
+            this.showError('Your browser does not support video recording');
+            return false;
+        }
+        
         return true;
     }
 
+    initializeUI() {
+        // Create YouTube-style live streaming interface
+        this.createStreamingDashboard();
+        this.createStreamSettings();
+        this.createLiveChat();
+        this.createStreamStats();
+    }
+
+    createStreamingDashboard() {
+        const dashboard = document.createElement('div');
+        dashboard.className = 'yt-live-dashboard';
+        dashboard.innerHTML = `
+            <div class="yt-live-header">
+                <h1><i class="fas fa-broadcast-tower"></i> Go Live</h1>
+                <div class="yt-live-status">
+                    <span class="status-indicator offline">Offline</span>
+                    <span class="stream-key-info">Stream Key: Hidden</span>
+                </div>
+            </div>
+            
+            <div class="yt-live-content">
+                <div class="yt-live-main">
+                    <div class="stream-preview-container">
+                        <video id="streamPreview" autoplay muted playsinline></video>
+                        <div class="stream-overlay">
+                            <div class="stream-controls">
+                                <button class="stream-btn primary go-live-btn">
+                                    <i class="fas fa-video"></i> Go Live
+                                </button>
+                                <button class="stream-btn secondary end-stream-btn" disabled>
+                                    <i class="fas fa-stop"></i> End Stream
+                                </button>
+                                <button class="stream-btn toggle-audio-btn">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button class="stream-btn toggle-video-btn">
+                                    <i class="fas fa-video"></i>
+                                </button>
+                                <button class="stream-btn screen-share-btn">
+                                    <i class="fas fa-desktop"></i> Share Screen
+                                </button>
+                                <button class="stream-btn settings-btn">
+                                    <i class="fas fa-cog"></i> Settings
+                                </button>
+                            </div>
+                            
+                            <div class="stream-info-overlay">
+                                <div class="live-indicator" style="display: none;">
+                                    <i class="fas fa-circle"></i> LIVE
+                                </div>
+                                <div class="viewer-count">0 viewers</div>
+                                <div class="stream-duration">00:00:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stream-details">
+                        <div class="stream-form">
+                            <div class="form-group">
+                                <label>Stream Title *</label>
+                                <input type="text" id="streamTitle" placeholder="Enter stream title" maxlength="100" required>
+                                <div class="char-count">0/100</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="streamDescription" placeholder="Tell viewers about your stream" maxlength="5000"></textarea>
+                                <div class="char-count">0/5000</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select id="streamCategory">
+                                        <option value="Gaming">Gaming</option>
+                                        <option value="Music">Music</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Entertainment">Entertainment</option>
+                                        <option value="Sports">Sports</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Lifestyle">Lifestyle</option>
+                                        <option value="News">News & Politics</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Privacy</label>
+                                    <select id="streamPrivacy">
+                                        <option value="public">Public</option>
+                                        <option value="unlisted">Unlisted</option>
+                                        <option value="private">Private</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="stream-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableChat"> Enable live chat
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="recordStream"> Record stream
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableDonations"> Enable donations
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="yt-live-sidebar">
+                    <div class="live-chat-container">
+                        <div class="chat-header">
+                            <h3><i class="fas fa-comments"></i> Live Chat</h3>
+                            <button class="chat-settings-btn"><i class="fas fa-cog"></i></button>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-welcome">
+                                <p>Welcome to live chat! Start streaming to see messages from viewers.</p>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" id="chatInput" placeholder="Say something..." disabled>
+                            <button id="sendChatBtn" disabled><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="stream-stats-container">
+                        <div class="stats-header">
+                            <h3><i class="fas fa-chart-line"></i> Stream Stats</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number" id="viewerCount">0</div>
+                                <div class="stat-label">Viewers</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="likeCount">0</div>
+                                <div class="stat-label">Likes</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="commentCount">0</div>
+                                <div class="stat-label">Comments</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="shareCount">0</div>
+                                <div class="stat-label">Shares</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const liveContent = document.querySelector('.live-content');
+        if (liveContent) {
+            liveContent.innerHTML = '';
+            liveContent.appendChild(dashboard);
+        }
+    }
+
+    createStreamSettings() {
+        const settingsModal = document.createElement('div');
+        settingsModal.className = 'yt-stream-settings-modal';
+        settingsModal.innerHTML = `
+            <div class="settings-modal-content">
+                <div class="settings-header">
+                    <h3><i class="fas fa-cog"></i> Stream Settings</h3>
+                    <button class="close-settings">&times;</button>
+                </div>
+                
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="video">Video</button>
+                    <button class="settings-tab" data-tab="audio">Audio</button>
+                    <button class="settings-tab" data-tab="advanced">Advanced</button>
+                </div>
+                
+                <div class="settings-content">
+                    <div class="settings-panel active" id="videoSettings">
+                        <div class="setting-group">
+                            <label>Video Quality</label>
+                            <select id="videoQuality">
+                                <option value="1080p">1080p (1920x1080)</option>
+                                <option value="720p">720p (1280x720)</option>
+                                <option value="480p">480p (854x480)</option>
+                                <option value="360p">360p (640x360)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Frame Rate</label>
+                            <select id="frameRate">
+                                <option value="60">60 FPS</option>
+                                <option value="30" selected>30 FPS</option>
+                                <option value="24">24 FPS</option>
+                                <option value="15">15 FPS</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Bitrate</label>
+                            <select id="videoBitrate">
+                                <option value="6000">6000 kbps (High)</option>
+                                <option value="4500" selected>4500 kbps (Medium)</option>
+                                <option value="3000">3000 kbps (Low)</option>
+                                <option value="1500">1500 kbps (Very Low)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-panel" id="audioSettings">
+                        <div class="setting-group">
+                            <label>Audio Quality</label>
+                            <select id="audioQuality">
+                                <option value="high">High (128 kbps)</option>
+                                <option value="medium" selected>Medium (96 kbps)</option>
+                                <option value="low">Low (64 kbps)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="echoCancellation" checked> Echo Cancellation
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="noiseSuppression" checked> Noise Suppression
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoGainControl" checked> Auto Gain Control
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-panel" id="advancedSettings">
+                        <div class="setting-group">
+                            <label>Stream Key</label>
+                            <div class="stream-key-container">
+                                <input type="password" id="streamKey" value="sk_live_demo_key_12345" readonly>
+                                <button class="copy-key-btn"><i class="fas fa-copy"></i></button>
+                                <button class="show-key-btn"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label>Server URL</label>
+                            <input type="text" id="serverUrl" value="rtmp://live.amplifi.com/live" readonly>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="lowLatency"> Low Latency Mode
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="adaptiveBitrate"> Adaptive Bitrate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="btn-secondary cancel-settings">Cancel</button>
+                    <button class="btn-primary save-settings">Save Settings</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(settingsModal);
+        this.setupSettingsModal();
+    }
+
     setupEventListeners() {
-        // Go Live button
-        const goLiveBtn = document.querySelector('.go-live-btn');
-        if (goLiveBtn) {
-            goLiveBtn.addEventListener('click', () => this.startLiveStream());
-        }
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('go-live-btn')) {
+                this.startLiveStream();
+            } else if (e.target.classList.contains('end-stream-btn')) {
+                this.endLiveStream();
+            } else if (e.target.classList.contains('toggle-audio-btn')) {
+                this.toggleAudio();
+            } else if (e.target.classList.contains('toggle-video-btn')) {
+                this.toggleVideo();
+            } else if (e.target.classList.contains('screen-share-btn')) {
+                this.toggleScreenShare();
+            } else if (e.target.classList.contains('settings-btn')) {
+                this.openStreamSettings();
+            }
+        });
 
-        // Schedule Stream button
-        const scheduleBtn = document.querySelector('.schedule-stream-btn');
-        if (scheduleBtn) {
-            scheduleBtn.addEventListener('click', () => this.showScheduleModal());
-        }
+        // Stream form listeners
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'streamTitle') {
+                this.updateCharCount(e.target, 100);
+            } else if (e.target.id === 'streamDescription') {
+                this.updateCharCount(e.target, 5000);
+            }
+        });
 
-        // Stop Stream button
-        const stopBtn = document.querySelector('.stop-stream-btn');
-        if (stopBtn) {
-            stopBtn.addEventListener('click', () => this.stopLiveStream());
-        }
+        // Chat functionality
+        document.addEventListener('keypress', (e) => {
+            if (e.target.id === 'chatInput' && e.key === 'Enter') {
+                this.sendChatMessage();
+            }
+        });
     }
 
     async startLiveStream() {
         try {
-            console.log('🎥 Starting live stream...');
+            console.log('🎥 Starting YouTube-style live stream...');
             
-            // Request camera and microphone permissions
-            const constraints = {
-                video: {
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
-                    frameRate: { ideal: 30 }
-                },
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: true
-                }
-            };
+            // Validate stream details
+            const title = document.getElementById('streamTitle')?.value.trim();
+            if (!title) {
+                this.showError('Stream title is required');
+                return;
+            }
 
+            // Get media permissions
+            const constraints = this.getStreamConstraints();
             this.stream = await navigator.mediaDevices.getUserMedia(constraints);
             
-            // Create video preview
-            this.createStreamPreview();
-            
-            // Setup media recorder for potential recording
+            // Setup video preview
+            const video = document.getElementById('streamPreview');
+            if (video) {
+                video.srcObject = this.stream;
+            }
+
+            // Setup media recorder
             this.setupMediaRecorder();
             
-            this.isStreaming = true;
-            this.updateUI();
+            // Update UI for live state
+            this.updateUIForLiveState(true);
             
+            // Start stream timer
+            this.startStreamTimer();
+            
+            // Simulate viewer interactions
+            this.simulateViewerActivity();
+            
+            this.isStreaming = true;
             console.log('✅ Live stream started successfully');
-            this.showSuccess('Live stream started! You are now broadcasting.');
+            this.showSuccess('You are now live! Stream started successfully.');
             
         } catch (error) {
             console.error('❌ Error starting live stream:', error);
@@ -1409,74 +1754,35 @@ class LiveStreamManager {
         }
     }
 
-    createStreamPreview() {
-        // Create or get preview container
-        let previewContainer = document.querySelector('.stream-preview-container');
-        if (!previewContainer) {
-            previewContainer = document.createElement('div');
-            previewContainer.className = 'stream-preview-container';
-            previewContainer.innerHTML = `
-                <div class="stream-preview">
-                    <video id="streamPreview" autoplay muted playsinline></video>
-                    <div class="stream-controls">
-                        <button class="stream-control-btn stop-stream-btn">
-                            <i class="fas fa-stop"></i> Stop Stream
-                        </button>
-                        <button class="stream-control-btn toggle-audio-btn">
-                            <i class="fas fa-microphone"></i> Mute
-                        </button>
-                        <button class="stream-control-btn toggle-video-btn">
-                            <i class="fas fa-video"></i> Camera Off
-                        </button>
-                    </div>
-                    <div class="stream-stats">
-                        <div class="live-indicator">
-                            <i class="fas fa-circle" style="color: #ff0000;"></i> LIVE
-                        </div>
-                        <div class="viewer-count">0 viewers</div>
-                    </div>
-                </div>
-            `;
-            document.querySelector('.live-content').prepend(previewContainer);
-        }
+    getStreamConstraints() {
+        const quality = document.getElementById('videoQuality')?.value || '720p';
+        const frameRate = parseInt(document.getElementById('frameRate')?.value || '30');
+        
+        const qualitySettings = {
+            '1080p': { width: 1920, height: 1080 },
+            '720p': { width: 1280, height: 720 },
+            '480p': { width: 854, height: 480 },
+            '360p': { width: 640, height: 360 }
+        };
 
-        // Set video source
-        const video = document.getElementById('streamPreview');
-        if (video && this.stream) {
-            video.srcObject = this.stream;
-        }
-
-        // Setup new event listeners for controls
-        this.setupStreamControls();
-    }
-
-    setupStreamControls() {
-        // Stop stream
-        const stopBtn = document.querySelector('.stop-stream-btn');
-        if (stopBtn) {
-            stopBtn.replaceWith(stopBtn.cloneNode(true)); // Remove old listeners
-            document.querySelector('.stop-stream-btn').addEventListener('click', () => this.stopLiveStream());
-        }
-
-        // Toggle audio
-        const audioBtn = document.querySelector('.toggle-audio-btn');
-        if (audioBtn) {
-            audioBtn.replaceWith(audioBtn.cloneNode(true));
-            document.querySelector('.toggle-audio-btn').addEventListener('click', () => this.toggleAudio());
-        }
-
-        // Toggle video
-        const videoBtn = document.querySelector('.toggle-video-btn');
-        if (videoBtn) {
-            videoBtn.replaceWith(videoBtn.cloneNode(true));
-            document.querySelector('.toggle-video-btn').addEventListener('click', () => this.toggleVideo());
-        }
+        return {
+            video: {
+                width: { ideal: qualitySettings[quality].width },
+                height: { ideal: qualitySettings[quality].height },
+                frameRate: { ideal: frameRate }
+            },
+            audio: {
+                echoCancellation: document.getElementById('echoCancellation')?.checked ?? true,
+                noiseSuppression: document.getElementById('noiseSuppression')?.checked ?? true,
+                autoGainControl: document.getElementById('autoGainControl')?.checked ?? true
+            }
+        };
     }
 
     setupMediaRecorder() {
         if (this.stream && MediaRecorder.isTypeSupported('video/webm')) {
             this.mediaRecorder = new MediaRecorder(this.stream, {
-                mimeType: 'video/webm'
+                mimeType: 'video/webm;codecs=vp9'
             });
 
             this.mediaRecorder.ondataavailable = (event) => {
@@ -1486,8 +1792,187 @@ class LiveStreamManager {
             };
 
             this.mediaRecorder.onstop = () => {
-                console.log('📹 Recording stopped');
+                this.saveRecording();
             };
+
+            // Start recording if enabled
+            if (document.getElementById('recordStream')?.checked) {
+                this.mediaRecorder.start();
+            }
+        }
+    }
+
+    updateUIForLiveState(isLive) {
+        const statusIndicator = document.querySelector('.status-indicator');
+        const liveIndicator = document.querySelector('.live-indicator');
+        const goLiveBtn = document.querySelector('.go-live-btn');
+        const endStreamBtn = document.querySelector('.end-stream-btn');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatBtn = document.getElementById('sendChatBtn');
+
+        if (isLive) {
+            statusIndicator?.classList.remove('offline');
+            statusIndicator?.classList.add('live');
+            statusIndicator.textContent = 'Live';
+            
+            liveIndicator?.style.setProperty('display', 'flex');
+            
+            goLiveBtn.disabled = true;
+            goLiveBtn.innerHTML = '<i class="fas fa-circle"></i> Live';
+            
+            endStreamBtn.disabled = false;
+            
+            chatInput.disabled = false;
+            sendChatBtn.disabled = false;
+        } else {
+            statusIndicator?.classList.remove('live');
+            statusIndicator?.classList.add('offline');
+            statusIndicator.textContent = 'Offline';
+            
+            liveIndicator?.style.setProperty('display', 'none');
+            
+            goLiveBtn.disabled = false;
+            goLiveBtn.innerHTML = '<i class="fas fa-video"></i> Go Live';
+            
+            endStreamBtn.disabled = true;
+            
+            chatInput.disabled = true;
+            sendChatBtn.disabled = true;
+        }
+    }
+
+    startStreamTimer() {
+        this.streamStartTime = Date.now();
+        this.streamTimer = setInterval(() => {
+            this.streamDuration = Date.now() - this.streamStartTime;
+            this.updateStreamDuration();
+        }, 1000);
+    }
+
+    updateStreamDuration() {
+        const duration = Math.floor(this.streamDuration / 1000);
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = duration % 60;
+        
+        const durationElement = document.querySelector('.stream-duration');
+        if (durationElement) {
+            durationElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+
+    simulateViewerActivity() {
+        // Simulate viewer count changes
+        this.viewerSimulator = setInterval(() => {
+            if (this.isStreaming) {
+                const change = Math.floor(Math.random() * 10) - 3; // -3 to +6 viewers
+                this.streamStats.viewers = Math.max(0, this.streamStats.viewers + change);
+                this.updateViewerCount();
+                
+                // Simulate chat messages
+                if (Math.random() < 0.3) {
+                    this.simulateChatMessage();
+                }
+                
+                // Simulate likes and interactions
+                if (Math.random() < 0.2) {
+                    this.streamStats.likes += Math.floor(Math.random() * 3) + 1;
+                    this.updateStats();
+                }
+            }
+        }, 3000);
+    }
+
+    simulateChatMessage() {
+        const sampleMessages = [
+            { user: 'Viewer123', message: 'Great stream! 👍' },
+            { user: 'StreamFan', message: 'Hello from the chat!' },
+            { user: 'TechGuru', message: 'Amazing content as always' },
+            { user: 'NewViewer', message: 'First time watching, loving it!' },
+            { user: 'RegularViewer', message: 'Keep up the great work! 🔥' }
+        ];
+        
+        const randomMessage = sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
+        this.addChatMessage(randomMessage.user, randomMessage.message, false);
+    }
+
+    addChatMessage(username, message, isStreamer = false) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.className = `chat-message ${isStreamer ? 'streamer-message' : ''}`;
+        messageElement.innerHTML = `
+            <div class="message-header">
+                <span class="username ${isStreamer ? 'streamer' : ''}">${username}</span>
+                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+            </div>
+            <div class="message-content">${message}</div>
+        `;
+        
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Update comment count
+        this.streamStats.comments++;
+        this.updateStats();
+    }
+
+    sendChatMessage() {
+        const chatInput = document.getElementById('chatInput');
+        const message = chatInput.value.trim();
+        
+        if (message) {
+            this.addChatMessage('You (Streamer)', message, true);
+            chatInput.value = '';
+        }
+    }
+
+    updateViewerCount() {
+        const viewerCountElements = document.querySelectorAll('.viewer-count, #viewerCount');
+        viewerCountElements.forEach(element => {
+            element.textContent = this.streamStats.viewers + (element.classList.contains('viewer-count') ? ' viewers' : '');
+        });
+    }
+
+    updateStats() {
+        document.getElementById('likeCount').textContent = this.streamStats.likes;
+        document.getElementById('commentCount').textContent = this.streamStats.comments;
+        document.getElementById('shareCount').textContent = this.streamStats.shares;
+    }
+
+    async toggleScreenShare() {
+        try {
+            if (this.screenStream) {
+                // Stop screen sharing
+                this.screenStream.getTracks().forEach(track => track.stop());
+                this.screenStream = null;
+                
+                // Switch back to camera
+                if (this.stream) {
+                    const video = document.getElementById('streamPreview');
+                    video.srcObject = this.stream;
+                }
+                
+                document.querySelector('.screen-share-btn').innerHTML = '<i class="fas fa-desktop"></i> Share Screen';
+            } else {
+                // Start screen sharing
+                this.screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true
+                });
+                
+                const video = document.getElementById('streamPreview');
+                video.srcObject = this.screenStream;
+                
+                document.querySelector('.screen-share-btn').innerHTML = '<i class="fas fa-stop"></i> Stop Sharing';
+                
+                // Handle screen share end
+                this.screenStream.getVideoTracks()[0].onended = () => {
+                    this.toggleScreenShare();
+                };
+            }
+        } catch (error) {
+            console.error('Screen share error:', error);
+            this.showError('Could not start screen sharing');
         }
     }
 
@@ -1498,14 +1983,13 @@ class LiveStreamManager {
                 audioTrack.enabled = !audioTrack.enabled;
                 const btn = document.querySelector('.toggle-audio-btn');
                 const icon = btn.querySelector('i');
-                const text = btn.querySelector('span') || btn.childNodes[1];
                 
                 if (audioTrack.enabled) {
                     icon.className = 'fas fa-microphone';
-                    if (text) text.textContent = ' Mute';
+                    btn.classList.remove('muted');
                 } else {
                     icon.className = 'fas fa-microphone-slash';
-                    if (text) text.textContent = ' Unmute';
+                    btn.classList.add('muted');
                 }
             }
         }
@@ -1518,144 +2002,186 @@ class LiveStreamManager {
                 videoTrack.enabled = !videoTrack.enabled;
                 const btn = document.querySelector('.toggle-video-btn');
                 const icon = btn.querySelector('i');
-                const text = btn.querySelector('span') || btn.childNodes[1];
                 
                 if (videoTrack.enabled) {
                     icon.className = 'fas fa-video';
-                    if (text) text.textContent = ' Camera Off';
+                    btn.classList.remove('disabled');
                 } else {
                     icon.className = 'fas fa-video-slash';
-                    if (text) text.textContent = ' Camera On';
+                    btn.classList.add('disabled');
                 }
             }
         }
     }
 
-    stopLiveStream() {
+    endLiveStream() {
         try {
-            console.log('🛑 Stopping live stream...');
+            console.log('🛑 Ending live stream...');
             
             // Stop all tracks
             if (this.stream) {
-                this.stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                this.stream = null;
+                this.stream.getTracks().forEach(track => track.stop());
+            }
+            
+            if (this.screenStream) {
+                this.screenStream.getTracks().forEach(track => track.stop());
             }
 
-            // Stop recording if active
-            if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+            // Stop recording
+            if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
                 this.mediaRecorder.stop();
             }
 
-            // Remove preview
-            const previewContainer = document.querySelector('.stream-preview-container');
-            if (previewContainer) {
-                previewContainer.remove();
+            // Clear timers
+            if (this.streamTimer) {
+                clearInterval(this.streamTimer);
+            }
+            
+            if (this.viewerSimulator) {
+                clearInterval(this.viewerSimulator);
+            }
+
+            // Update UI
+            this.updateUIForLiveState(false);
+            
+            // Clear video preview
+            const video = document.getElementById('streamPreview');
+            if (video) {
+                video.srcObject = null;
             }
 
             this.isStreaming = false;
-            this.updateUI();
+            this.showStreamSummary();
             
-            console.log('✅ Live stream stopped');
-            this.showSuccess('Live stream ended successfully.');
+            console.log('✅ Live stream ended');
             
         } catch (error) {
-            console.error('❌ Error stopping stream:', error);
+            console.error('❌ Error ending stream:', error);
         }
     }
 
-    showScheduleModal() {
-        // Create schedule modal
-        const modal = document.createElement('div');
-        modal.className = 'schedule-modal';
-        modal.innerHTML = `
-            <div class="schedule-modal-content">
-                <div class="schedule-header">
-                    <h3>Schedule Live Stream</h3>
-                    <button class="close-modal">&times;</button>
+    showStreamSummary() {
+        const duration = Math.floor(this.streamDuration / 1000);
+        const minutes = Math.floor(duration / 60);
+        const seconds = duration % 60;
+        
+        const summary = `
+            <div class="stream-summary">
+                <h3>🎉 Stream Completed!</h3>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <strong>Duration:</strong> ${minutes}m ${seconds}s
+                    </div>
+                    <div class="summary-stat">
+                        <strong>Peak Viewers:</strong> ${this.streamStats.viewers}
+                    </div>
+                    <div class="summary-stat">
+                        <strong>Total Likes:</strong> ${this.streamStats.likes}
+                    </div>
+                    <div class="summary-stat">
+                        <strong>Comments:</strong> ${this.streamStats.comments}
+                    </div>
                 </div>
-                <form class="schedule-form">
-                    <div class="form-group">
-                        <label>Stream Title</label>
-                        <input type="text" name="title" placeholder="Enter stream title" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea name="description" placeholder="Describe your stream"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Scheduled Date & Time</label>
-                        <input type="datetime-local" name="datetime" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select name="category">
-                            <option value="gaming">Gaming</option>
-                            <option value="music">Music</option>
-                            <option value="education">Education</option>
-                            <option value="entertainment">Entertainment</option>
-                            <option value="lifestyle">Lifestyle</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary cancel-schedule">Cancel</button>
-                        <button type="submit" class="btn-primary">Schedule Stream</button>
-                    </div>
-                </form>
+                <p>Your stream has been saved and will be available in your channel.</p>
             </div>
         `;
         
-        document.body.appendChild(modal);
-        
-        // Event listeners
-        modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
-        modal.querySelector('.cancel-schedule').addEventListener('click', () => modal.remove());
-        modal.querySelector('.schedule-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.scheduleStream(new FormData(e.target));
-            modal.remove();
-        });
-        
-        // Close on outside click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.remove();
+        this.showSuccess(summary);
+    }
+
+    saveRecording() {
+        if (this.recordedChunks.length > 0) {
+            const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `stream-recording-${new Date().toISOString().split('T')[0]}.webm`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            this.recordedChunks = [];
+            console.log('📹 Stream recording saved');
+        }
+    }
+
+    openStreamSettings() {
+        const modal = document.querySelector('.yt-stream-settings-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+    }
+
+    setupSettingsModal() {
+        // Settings tabs functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('settings-tab')) {
+                const tabName = e.target.dataset.tab;
+                
+                // Update tabs
+                document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Update panels
+                document.querySelectorAll('.settings-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(tabName + 'Settings').classList.add('active');
+            }
+            
+            if (e.target.classList.contains('close-settings') || e.target.classList.contains('cancel-settings')) {
+                document.querySelector('.yt-stream-settings-modal').style.display = 'none';
+            }
+            
+            if (e.target.classList.contains('save-settings')) {
+                this.saveStreamSettings();
+                document.querySelector('.yt-stream-settings-modal').style.display = 'none';
+            }
         });
     }
 
-    scheduleStream(formData) {
-        const streamData = {
-            title: formData.get('title'),
-            description: formData.get('description'),
-            datetime: formData.get('datetime'),
-            category: formData.get('category'),
-            scheduled: true,
-            createdAt: new Date().toISOString()
+    saveStreamSettings() {
+        // Save settings to localStorage
+        const settings = {
+            videoQuality: document.getElementById('videoQuality')?.value,
+            frameRate: document.getElementById('frameRate')?.value,
+            videoBitrate: document.getElementById('videoBitrate')?.value,
+            audioQuality: document.getElementById('audioQuality')?.value,
+            echoCancellation: document.getElementById('echoCancellation')?.checked,
+            noiseSuppression: document.getElementById('noiseSuppression')?.checked,
+            autoGainControl: document.getElementById('autoGainControl')?.checked,
+            lowLatency: document.getElementById('lowLatency')?.checked,
+            adaptiveBitrate: document.getElementById('adaptiveBitrate')?.checked
         };
         
-        console.log('📅 Stream scheduled:', streamData);
-        this.showSuccess(`Stream "${streamData.title}" scheduled for ${new Date(streamData.datetime).toLocaleString()}`);
-        
-        // In a real app, this would be saved to a database
-        this.saveScheduledStream(streamData);
+        localStorage.setItem('streamSettings', JSON.stringify(settings));
+        this.showSuccess('Stream settings saved successfully!');
     }
 
-    saveScheduledStream(streamData) {
-        // Get existing scheduled streams
-        let scheduledStreams = JSON.parse(localStorage.getItem('scheduledStreams') || '[]');
-        scheduledStreams.push(streamData);
-        localStorage.setItem('scheduledStreams', JSON.stringify(scheduledStreams));
+    loadStreamHistory() {
+        // Load previous stream settings
+        const savedSettings = localStorage.getItem('streamSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            // Apply saved settings to form elements
+            Object.keys(settings).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = settings[key];
+                    } else {
+                        element.value = settings[key];
+                    }
+                }
+            });
+        }
     }
 
-    updateUI() {
-        const goLiveBtn = document.querySelector('.go-live-btn');
-        if (goLiveBtn) {
-            if (this.isStreaming) {
-                goLiveBtn.innerHTML = '<i class="fas fa-stop"></i> End Stream';
-                goLiveBtn.classList.add('streaming');
+    updateCharCount(input, maxLength) {
+        const charCount = input.parentElement.querySelector('.char-count');
+        if (charCount) {
+            charCount.textContent = `${input.value.length}/${maxLength}`;
+            if (input.value.length > maxLength * 0.9) {
+                charCount.style.color = '#ff6b6b';
             } else {
-                goLiveBtn.innerHTML = '<i class="fas fa-broadcast-tower"></i> Go Live';
-                goLiveBtn.classList.remove('streaming');
+                charCount.style.color = '#6b7280';
             }
         }
     }
@@ -1664,11 +2190,11 @@ class LiveStreamManager {
         let message = 'Failed to start live stream. ';
         
         if (error.name === 'NotAllowedError') {
-            message += 'Please allow camera and microphone access.';
+            message += 'Please allow camera and microphone access to start streaming.';
         } else if (error.name === 'NotFoundError') {
-            message += 'No camera or microphone found.';
+            message += 'No camera or microphone found. Please connect your devices.';
         } else if (error.name === 'NotReadableError') {
-            message += 'Camera or microphone is already in use.';
+            message += 'Camera or microphone is already in use by another application.';
         } else {
             message += 'Please check your camera and microphone settings.';
         }
@@ -1686,10 +2212,12 @@ class LiveStreamManager {
 
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
+        notification.className = `yt-notification yt-notification-${type}`;
         notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
+            <div class="notification-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <div class="notification-message">${message}</div>
+            </div>
             <button class="notification-close">&times;</button>
         `;
         
@@ -1709,127 +2237,407 @@ class LiveStreamManager {
     }
 }
 
-// Initialize Live Stream Manager
-let liveStreamManager;
+// Initialize YouTube-style Live Stream Manager
+let youtubeLiveStreamManager;
 document.addEventListener('DOMContentLoaded', () => {
-    liveStreamManager = new LiveStreamManager();
+    youtubeLiveStreamManager = new YouTubeLiveStreamManager();
 });
 
     </script>
     
     <style>
 
-/* Live Streaming Styles */
+/* YouTube-Style Live Streaming Interface */
+.yt-live-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.yt-live-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.yt-live-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.yt-live-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.status-indicator {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-indicator.offline {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.status-indicator.live {
+    background: #ef4444;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.stream-key-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.yt-live-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+}
+
+.yt-live-main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .stream-preview-container {
-    margin: 20px 0;
+    position: relative;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.stream-preview {
-    position: relative;
+    aspect-ratio: 16/9;
 }
 
 #streamPreview {
     width: 100%;
-    height: 400px;
+    height: 100%;
     object-fit: cover;
-    background: #000;
+}
+
+.stream-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: 20px;
 }
 
 .stream-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
     display: flex;
     gap: 12px;
-    justify-content: center;
+    margin-bottom: 15px;
 }
 
-.stream-control-btn {
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
+.stream-btn {
+    padding: 10px 16px;
     border: none;
-    padding: 12px 16px;
     border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
+    cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.stream-control-btn:hover {
-    background: rgba(0, 0, 0, 0.9);
+.stream-btn.primary {
+    background: #ef4444;
+    color: white;
+}
+
+.stream-btn.primary:hover {
+    background: #dc2626;
     transform: translateY(-2px);
 }
 
-.stream-stats {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-end;
-}
-
-.live-indicator {
-    background: #ff0000;
+.stream-btn.secondary {
+    background: rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.viewer-count {
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
     backdrop-filter: blur(10px);
 }
 
-.btn-primary.streaming {
-    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-    animation: pulse 2s infinite;
+.stream-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
-/* Schedule Modal Styles */
-.schedule-modal {
+.stream-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.stream-btn.muted {
+    background: #ef4444;
+}
+
+.stream-btn.disabled {
+    background: #6b7280;
+}
+
+.stream-info-overlay {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.live-indicator {
+    background: #ef4444;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    gap: 4px;
+}
+
+.viewer-count, .stream-duration {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(10px);
+}
+
+.stream-details {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.char-count {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.stream-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400 !important;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.yt-live-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.live-chat-container,
+.stream-stats-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header,
+.stats-header {
+    padding: 16px 20px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3,
+.stats-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 16px 20px;
+}
+
+.chat-welcome {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+.chat-message {
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.username {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.username.streamer {
+    color: #ef4444;
+}
+
+.timestamp {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.message-content {
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.chat-input-container {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input-container input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.chat-input-container button {
+    padding: 8px 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #e5e7eb;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Settings Modal */
+.yt-stream-settings-modal {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.8);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 10000;
 }
 
-.schedule-modal-content {
+.settings-modal-content {
     background: white;
     border-radius: 16px;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
 }
 
-.schedule-header {
+.settings-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1837,13 +2645,13 @@ document.addEventListener('DOMContentLoaded', () => {
     border-bottom: 1px solid #e5e7eb;
 }
 
-.schedule-header h3 {
+.settings-header h3 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-.close-modal {
+.close-settings {
     background: none;
     border: none;
     font-size: 24px;
@@ -1852,261 +2660,82 @@ document.addEventListener('DOMContentLoaded', () => {
     padding: 4px;
 }
 
-.schedule-form {
-    padding: 24px;
-}
-
-.schedule-form .form-group {
-    margin-bottom: 20px;
-}
-
-.schedule-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #374151;
-}
-
-.schedule-form input,
-.schedule-form textarea,
-.schedule-form select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.schedule-form input:focus,
-.schedule-form textarea:focus,
-.schedule-form select:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.form-actions {
+.settings-tabs {
     display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 24px;
-}
-
-/* File Upload Styles */
-.drag-drop-area {
-    margin: 20px 0;
-    border: 2px dashed #d1d5db;
-    border-radius: 16px;
-    padding: 40px 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: #f9fafb;
-}
-
-.drag-drop-area.drag-over {
-    border-color: #667eea;
-    background: #f0f4ff;
-    transform: scale(1.02);
-}
-
-.upload-zone-content {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.upload-icon {
-    font-size: 4rem;
-    color: #9ca3af;
-    margin-bottom: 16px;
-}
-
-.drag-drop-area h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 8px;
-}
-
-.browse-files-btn {
-    background: none;
-    border: none;
-    color: #667eea;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.file-info {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.file-info small {
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-.upload-progress-container {
-    margin-top: 24px;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e5e7eb;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 12px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    transition: width 0.3s ease;
-    border-radius: 4px;
-}
-
-.progress-text {
-    text-align: center;
-    font-weight: 500;
-    color: #374151;
-}
-
-/* Upload History Styles */
-.upload-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px;
-    background: white;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-.upload-item:hover {
-    transform: translateY(-2px);
-}
-
-.upload-item-icon {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.25rem;
-}
-
-.upload-item-info {
-    flex: 1;
-}
-
-.upload-item-info h4 {
-    margin: 0 0 4px 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.upload-item-info p {
-    margin: 0;
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-.upload-item-status {
-    display: flex;
-    align-items: center;
-}
-
-.status-completed {
-    color: #10b981;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.status-failed {
-    color: #ef4444;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.no-uploads {
-    text-align: center;
-    color: #6b7280;
-    font-style: italic;
-    padding: 40px 20px;
-}
-
-/* Moment Creator Styles */
-.moment-creator-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-}
-
-.moment-creator-content {
-    background: white;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.moment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.moment-creator {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+.settings-tab {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.settings-tab.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.settings-content {
     padding: 24px;
 }
 
-.moment-preview {
-    position: relative;
+.settings-panel {
+    display: none;
 }
 
-#momentPreview {
-    width: 100%;
-    height: 300px;
-    background: #000;
-    border-radius: 12px;
-    object-fit: cover;
+.settings-panel.active {
+    display: block;
 }
 
-.moment-controls {
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.stream-key-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.stream-key-container input {
+    flex: 1;
+}
+
+.copy-key-btn,
+.show-key-btn {
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.settings-actions {
+    padding: 24px;
+    border-top: 1px solid #e5e7eb;
     display: flex;
     gap: 12px;
-    justify-content: center;
-    margin-top: 16px;
+    justify-content: flex-end;
 }
 
-.moment-btn {
-    padding: 12px 20px;
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     font-weight: 600;
@@ -2114,63 +2743,26 @@ document.addEventListener('DOMContentLoaded', () => {
     transition: all 0.3s ease;
 }
 
-.start-recording {
-    background: #ef4444;
+.btn-primary {
+    background: #667eea;
     color: white;
 }
 
-.stop-recording {
-    background: #6b7280;
-    color: white;
+.btn-primary:hover {
+    background: #5a67d8;
 }
 
-.moment-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.recording-timer {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: #ef4444;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-family: monospace;
-    font-weight: 600;
-    animation: pulse 1s infinite;
-}
-
-.moment-form .form-group {
-    margin-bottom: 20px;
-}
-
-.moment-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
+.btn-secondary {
+    background: #f3f4f6;
     color: #374151;
 }
 
-.moment-form input,
-.moment-form textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
+.btn-secondary:hover {
+    background: #e5e7eb;
 }
 
-.moment-form input:focus,
-.moment-form textarea:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-/* Notification Styles */
-.notification {
+/* Notifications */
+.yt-notification {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -2179,11 +2771,134 @@ document.addEventListener('DOMContentLoaded', () => {
     padding: 16px 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     z-index: 10001;
     max-width: 400px;
     animation: slideIn 0.3s ease;
+}
+
+.yt-notification-success {
+    border-left: 4px solid #10b981;
+}
+
+.yt-notification-error {
+    border-left: 4px solid #ef4444;
+}
+
+.yt-notification-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.notification-content {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notification-content i {
+    font-size: 1.25rem;
+    margin-top: 2px;
+}
+
+.yt-notification-success i {
+    color: #10b981;
+}
+
+.yt-notification-error i {
+    color: #ef4444;
+}
+
+.yt-notification-info i {
+    color: #3b82f6;
+}
+
+.notification-message {
+    font-weight: 500;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px;
+    margin-left: 8px;
+}
+
+.stream-summary {
+    text-align: left;
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.summary-stat {
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+    .yt-live-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .yt-live-sidebar {
+        order: -1;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .yt-live-dashboard {
+        padding: 15px;
+    }
+    
+    .yt-live-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .stream-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .stream-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .settings-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .yt-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
 }
 
 @keyframes slideIn {
@@ -2197,80 +2912,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 }
 
-.notification-success {
-    border-left: 4px solid #10b981;
-}
-
-.notification-error {
-    border-left: 4px solid #ef4444;
-}
-
-.notification-info {
-    border-left: 4px solid #3b82f6;
-}
-
-.notification i {
-    font-size: 1.25rem;
-}
-
-.notification-success i {
-    color: #10b981;
-}
-
-.notification-error i {
-    color: #ef4444;
-}
-
-.notification-info i {
-    color: #3b82f6;
-}
-
-.notification span {
-    flex: 1;
-    font-weight: 500;
-    color: #374151;
-}
-
-.notification-close {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #9ca3af;
-    padding: 4px;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .moment-creator {
-        grid-template-columns: 1fr;
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
     }
-    
-    .schedule-modal-content,
-    .moment-creator-content {
-        width: 95%;
-        margin: 20px;
-    }
-    
-    .stream-controls {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .stream-control-btn {
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-    
-    .upload-item {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .notification {
-        right: 10px;
-        left: 10px;
-        max-width: none;
+    50% {
+        opacity: 0.7;
     }
 }
 
