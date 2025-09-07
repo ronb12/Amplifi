@@ -772,6 +772,45 @@
 .auth-modal-content {
     transition: transform 0.3s ease;
 }</style>
+<style>
+/* Auth Message Styles */
+.auth-message {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+.auth-message.success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.auth-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}</style>
 </head>
 <body class="yt-layout">
     <!-- Header -->
@@ -970,58 +1009,243 @@
         </div>
     </div>
 
+    
+    
     <script>
+        console.log('🔐 Loading authentication system...');
+        
         function openAuthModal(type = 'login') {
+            console.log('🔐 Opening auth modal:', type);
             const authModal = document.getElementById('authModal');
             if (authModal) {
                 authModal.style.display = 'block';
-                
-                // Switch to the appropriate tab
-                if (type === 'login') {
-                    const loginTab = document.querySelector('[data-tab="login"]');
-                    if (loginTab) {
-                        loginTab.click();
-                    }
-                } else if (type === 'signup') {
-                    const signupTab = document.querySelector('[data-tab="signup"]');
-                    if (signupTab) {
-                        signupTab.click();
-                    }
-                }
+                switchAuthTab(type);
             } else {
-                console.error('Auth modal not found');
+                console.error('❌ Auth modal not found');
+                alert('Authentication modal not found. Please refresh the page.');
             }
         }
         
         function closeAuthModal() {
+            console.log('🔐 Closing auth modal');
             const authModal = document.getElementById('authModal');
             if (authModal) {
                 authModal.style.display = 'none';
+                clearForms();
             }
         }
         
         function switchAuthTab(type) {
+            console.log('🔐 Switching to tab:', type);
+            
             // Remove active class from all tabs and forms
-            document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.color = '#6b7280';
+                tab.style.borderBottomColor = 'transparent';
+            });
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+                form.style.display = 'none';
+            });
             
             // Add active class to selected tab and form
             const selectedTab = document.querySelector('[data-tab="' + type + '"]');
             const selectedForm = document.getElementById(type + 'Form');
             
-            if (selectedTab) selectedTab.classList.add('active');
-            if (selectedForm) selectedForm.classList.add('active');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+                selectedTab.style.color = '#667eea';
+                selectedTab.style.borderBottomColor = '#667eea';
+            }
+            if (selectedForm) {
+                selectedForm.classList.add('active');
+                selectedForm.style.display = 'block';
+            }
         }
         
-        // Close modal when clicking outside
+        function clearForms() {
+            document.querySelectorAll('#authModal input').forEach(input => {
+                input.value = '';
+            });
+        }
+        
+        function showMessage(message, isError = false) {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.auth-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'auth-message ' + (isError ? 'error' : 'success');
+            messageDiv.textContent = message;
+            messageDiv.style.cssText = `
+                margin-top: 16px;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-weight: 500;
+                text-align: center;
+                background: ${isError ? '#fee2e2' : '#d1fae5'};
+                color: ${isError ? '#991b1b' : '#065f46'};
+                border: 1px solid ${isError ? '#fca5a5' : '#a7f3d0'};
+            `;
+            
+            // Insert after auth-forms
+            const authForms = document.querySelector('.auth-forms');
+            if (authForms) {
+                authForms.appendChild(messageDiv);
+            }
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            console.log('🔐 Handling login...');
+            
+            const email = document.querySelector('#loginForm input[type="email"]').value;
+            const password = document.querySelector('#loginForm input[type="password"]').value;
+            
+            if (!email || !password) {
+                showMessage('Please fill in all fields', true);
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#loginForm .auth-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Signing In...';
+            submitBtn.disabled = true;
+            
+            // Simulate authentication
+            setTimeout(() => {
+                if (email.includes('@') && password.length >= 6) {
+                    showMessage('Welcome back! You are now signed in.');
+                    setTimeout(() => {
+                        closeAuthModal();
+                        updateUI(true);
+                    }, 1500);
+                } else {
+                    showMessage('Invalid email or password. Please try again.', true);
+                }
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function handleSignup(event) {
+            event.preventDefault();
+            console.log('🔐 Handling signup...');
+            
+            const name = document.querySelector('#signupForm input[placeholder="Full Name"]').value;
+            const email = document.querySelector('#signupForm input[type="email"]').value;
+            const password = document.querySelector('#signupForm input[type="password"]').value;
+            
+            if (!name || !email || !password) {
+                showMessage('Please fill in all fields', true);
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', true);
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#signupForm .auth-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+            
+            // Simulate account creation
+            setTimeout(() => {
+                if (email.includes('@') && password.length >= 6) {
+                    showMessage('Account created successfully! Welcome to Amplifi!');
+                    setTimeout(() => {
+                        closeAuthModal();
+                        updateUI(true);
+                    }, 1500);
+                } else {
+                    showMessage('Please enter a valid email address', true);
+                }
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function updateUI(isSignedIn) {
+            const signInBtn = document.querySelector('.yt-btn-primary');
+            const signUpBtn = document.querySelector('.yt-btn-secondary');
+            
+            if (isSignedIn) {
+                if (signInBtn) {
+                    signInBtn.innerHTML = '<i class="fas fa-user"></i> Profile';
+                    signInBtn.onclick = () => window.location.href = 'profile.html';
+                }
+                if (signUpBtn) {
+                    signUpBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
+                    signUpBtn.onclick = () => {
+                        updateUI(false);
+                        showMessage('You have been signed out');
+                    };
+                }
+            } else {
+                if (signInBtn) {
+                    signInBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                    signInBtn.onclick = () => openAuthModal('login');
+                }
+                if (signUpBtn) {
+                    signUpBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+                    signUpBtn.onclick = () => openAuthModal('signup');
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔐 Initializing authentication system...');
+            
             const authModal = document.getElementById('authModal');
             if (authModal) {
+                // Close modal when clicking outside
                 authModal.addEventListener('click', function(e) {
                     if (e.target === this) {
                         closeAuthModal();
                     }
                 });
+                
+                // Add form submission handlers
+                const loginForm = document.getElementById('loginForm');
+                const signupForm = document.getElementById('signupForm');
+                
+                if (loginForm) {
+                    loginForm.addEventListener('submit', handleLogin);
+                    console.log('✅ Login form handler attached');
+                } else {
+                    console.error('❌ Login form not found');
+                }
+                
+                if (signupForm) {
+                    signupForm.addEventListener('submit', handleSignup);
+                    console.log('✅ Signup form handler attached');
+                } else {
+                    console.error('❌ Signup form not found');
+                }
+                
+                console.log('✅ Authentication system initialized');
+            } else {
+                console.error('❌ Auth modal not found during initialization');
             }
         });
     </script>
