@@ -903,11 +903,11 @@
             </div>
             
             <div class="live-actions">
-                <button class="btn-primary" onclick="openAuthModal('login')">
+                <button class="btn-primary go-live-btn" onclick="openAuthModal('login')">
                     <i class="fas fa-broadcast-tower"></i>
                     Go Live
                 </button>
-                <button class="btn-secondary" onclick="openAuthModal('login')">
+                <button class="btn-secondary schedule-stream-btn" onclick="openAuthModal('login')">
                     <i class="fas fa-calendar"></i>
                     Schedule Stream
                 </button>
@@ -1323,5 +1323,957 @@
             }
         });
     </script>
+
+    <!-- Live Streaming JavaScript -->
+    <script>
+
+// Live Streaming Functionality
+class LiveStreamManager {
+    constructor() {
+        this.isStreaming = false;
+        this.stream = null;
+        this.mediaRecorder = null;
+        this.recordedChunks = [];
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.checkBrowserSupport();
+    }
+
+    checkBrowserSupport() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error('❌ Browser does not support media devices');
+            this.showError('Your browser does not support live streaming');
+            return false;
+        }
+        return true;
+    }
+
+    setupEventListeners() {
+        // Go Live button
+        const goLiveBtn = document.querySelector('.go-live-btn');
+        if (goLiveBtn) {
+            goLiveBtn.addEventListener('click', () => this.startLiveStream());
+        }
+
+        // Schedule Stream button
+        const scheduleBtn = document.querySelector('.schedule-stream-btn');
+        if (scheduleBtn) {
+            scheduleBtn.addEventListener('click', () => this.showScheduleModal());
+        }
+
+        // Stop Stream button
+        const stopBtn = document.querySelector('.stop-stream-btn');
+        if (stopBtn) {
+            stopBtn.addEventListener('click', () => this.stopLiveStream());
+        }
+    }
+
+    async startLiveStream() {
+        try {
+            console.log('🎥 Starting live stream...');
+            
+            // Request camera and microphone permissions
+            const constraints = {
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                    frameRate: { ideal: 30 }
+                },
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                }
+            };
+
+            this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            // Create video preview
+            this.createStreamPreview();
+            
+            // Setup media recorder for potential recording
+            this.setupMediaRecorder();
+            
+            this.isStreaming = true;
+            this.updateUI();
+            
+            console.log('✅ Live stream started successfully');
+            this.showSuccess('Live stream started! You are now broadcasting.');
+            
+        } catch (error) {
+            console.error('❌ Error starting live stream:', error);
+            this.handleStreamError(error);
+        }
+    }
+
+    createStreamPreview() {
+        // Create or get preview container
+        let previewContainer = document.querySelector('.stream-preview-container');
+        if (!previewContainer) {
+            previewContainer = document.createElement('div');
+            previewContainer.className = 'stream-preview-container';
+            previewContainer.innerHTML = `
+                <div class="stream-preview">
+                    <video id="streamPreview" autoplay muted playsinline></video>
+                    <div class="stream-controls">
+                        <button class="stream-control-btn stop-stream-btn">
+                            <i class="fas fa-stop"></i> Stop Stream
+                        </button>
+                        <button class="stream-control-btn toggle-audio-btn">
+                            <i class="fas fa-microphone"></i> Mute
+                        </button>
+                        <button class="stream-control-btn toggle-video-btn">
+                            <i class="fas fa-video"></i> Camera Off
+                        </button>
+                    </div>
+                    <div class="stream-stats">
+                        <div class="live-indicator">
+                            <i class="fas fa-circle" style="color: #ff0000;"></i> LIVE
+                        </div>
+                        <div class="viewer-count">0 viewers</div>
+                    </div>
+                </div>
+            `;
+            document.querySelector('.live-content').prepend(previewContainer);
+        }
+
+        // Set video source
+        const video = document.getElementById('streamPreview');
+        if (video && this.stream) {
+            video.srcObject = this.stream;
+        }
+
+        // Setup new event listeners for controls
+        this.setupStreamControls();
+    }
+
+    setupStreamControls() {
+        // Stop stream
+        const stopBtn = document.querySelector('.stop-stream-btn');
+        if (stopBtn) {
+            stopBtn.replaceWith(stopBtn.cloneNode(true)); // Remove old listeners
+            document.querySelector('.stop-stream-btn').addEventListener('click', () => this.stopLiveStream());
+        }
+
+        // Toggle audio
+        const audioBtn = document.querySelector('.toggle-audio-btn');
+        if (audioBtn) {
+            audioBtn.replaceWith(audioBtn.cloneNode(true));
+            document.querySelector('.toggle-audio-btn').addEventListener('click', () => this.toggleAudio());
+        }
+
+        // Toggle video
+        const videoBtn = document.querySelector('.toggle-video-btn');
+        if (videoBtn) {
+            videoBtn.replaceWith(videoBtn.cloneNode(true));
+            document.querySelector('.toggle-video-btn').addEventListener('click', () => this.toggleVideo());
+        }
+    }
+
+    setupMediaRecorder() {
+        if (this.stream && MediaRecorder.isTypeSupported('video/webm')) {
+            this.mediaRecorder = new MediaRecorder(this.stream, {
+                mimeType: 'video/webm'
+            });
+
+            this.mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    this.recordedChunks.push(event.data);
+                }
+            };
+
+            this.mediaRecorder.onstop = () => {
+                console.log('📹 Recording stopped');
+            };
+        }
+    }
+
+    toggleAudio() {
+        if (this.stream) {
+            const audioTrack = this.stream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                const btn = document.querySelector('.toggle-audio-btn');
+                const icon = btn.querySelector('i');
+                const text = btn.querySelector('span') || btn.childNodes[1];
+                
+                if (audioTrack.enabled) {
+                    icon.className = 'fas fa-microphone';
+                    if (text) text.textContent = ' Mute';
+                } else {
+                    icon.className = 'fas fa-microphone-slash';
+                    if (text) text.textContent = ' Unmute';
+                }
+            }
+        }
+    }
+
+    toggleVideo() {
+        if (this.stream) {
+            const videoTrack = this.stream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                const btn = document.querySelector('.toggle-video-btn');
+                const icon = btn.querySelector('i');
+                const text = btn.querySelector('span') || btn.childNodes[1];
+                
+                if (videoTrack.enabled) {
+                    icon.className = 'fas fa-video';
+                    if (text) text.textContent = ' Camera Off';
+                } else {
+                    icon.className = 'fas fa-video-slash';
+                    if (text) text.textContent = ' Camera On';
+                }
+            }
+        }
+    }
+
+    stopLiveStream() {
+        try {
+            console.log('🛑 Stopping live stream...');
+            
+            // Stop all tracks
+            if (this.stream) {
+                this.stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                this.stream = null;
+            }
+
+            // Stop recording if active
+            if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+                this.mediaRecorder.stop();
+            }
+
+            // Remove preview
+            const previewContainer = document.querySelector('.stream-preview-container');
+            if (previewContainer) {
+                previewContainer.remove();
+            }
+
+            this.isStreaming = false;
+            this.updateUI();
+            
+            console.log('✅ Live stream stopped');
+            this.showSuccess('Live stream ended successfully.');
+            
+        } catch (error) {
+            console.error('❌ Error stopping stream:', error);
+        }
+    }
+
+    showScheduleModal() {
+        // Create schedule modal
+        const modal = document.createElement('div');
+        modal.className = 'schedule-modal';
+        modal.innerHTML = `
+            <div class="schedule-modal-content">
+                <div class="schedule-header">
+                    <h3>Schedule Live Stream</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form class="schedule-form">
+                    <div class="form-group">
+                        <label>Stream Title</label>
+                        <input type="text" name="title" placeholder="Enter stream title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="Describe your stream"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Scheduled Date & Time</label>
+                        <input type="datetime-local" name="datetime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category">
+                            <option value="gaming">Gaming</option>
+                            <option value="music">Music</option>
+                            <option value="education">Education</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="lifestyle">Lifestyle</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary cancel-schedule">Cancel</button>
+                        <button type="submit" class="btn-primary">Schedule Stream</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Event listeners
+        modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
+        modal.querySelector('.cancel-schedule').addEventListener('click', () => modal.remove());
+        modal.querySelector('.schedule-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.scheduleStream(new FormData(e.target));
+            modal.remove();
+        });
+        
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    }
+
+    scheduleStream(formData) {
+        const streamData = {
+            title: formData.get('title'),
+            description: formData.get('description'),
+            datetime: formData.get('datetime'),
+            category: formData.get('category'),
+            scheduled: true,
+            createdAt: new Date().toISOString()
+        };
+        
+        console.log('📅 Stream scheduled:', streamData);
+        this.showSuccess(`Stream "${streamData.title}" scheduled for ${new Date(streamData.datetime).toLocaleString()}`);
+        
+        // In a real app, this would be saved to a database
+        this.saveScheduledStream(streamData);
+    }
+
+    saveScheduledStream(streamData) {
+        // Get existing scheduled streams
+        let scheduledStreams = JSON.parse(localStorage.getItem('scheduledStreams') || '[]');
+        scheduledStreams.push(streamData);
+        localStorage.setItem('scheduledStreams', JSON.stringify(scheduledStreams));
+    }
+
+    updateUI() {
+        const goLiveBtn = document.querySelector('.go-live-btn');
+        if (goLiveBtn) {
+            if (this.isStreaming) {
+                goLiveBtn.innerHTML = '<i class="fas fa-stop"></i> End Stream';
+                goLiveBtn.classList.add('streaming');
+            } else {
+                goLiveBtn.innerHTML = '<i class="fas fa-broadcast-tower"></i> Go Live';
+                goLiveBtn.classList.remove('streaming');
+            }
+        }
+    }
+
+    handleStreamError(error) {
+        let message = 'Failed to start live stream. ';
+        
+        if (error.name === 'NotAllowedError') {
+            message += 'Please allow camera and microphone access.';
+        } else if (error.name === 'NotFoundError') {
+            message += 'No camera or microphone found.';
+        } else if (error.name === 'NotReadableError') {
+            message += 'Camera or microphone is already in use.';
+        } else {
+            message += 'Please check your camera and microphone settings.';
+        }
+        
+        this.showError(message);
+    }
+
+    showSuccess(message) {
+        this.showNotification(message, 'success');
+    }
+
+    showError(message) {
+        this.showNotification(message, 'error');
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close">&times;</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+        
+        // Close button
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.remove();
+        });
+    }
+}
+
+// Initialize Live Stream Manager
+let liveStreamManager;
+document.addEventListener('DOMContentLoaded', () => {
+    liveStreamManager = new LiveStreamManager();
+});
+
+    </script>
+    
+    <style>
+
+/* Live Streaming Styles */
+.stream-preview-container {
+    margin: 20px 0;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.stream-preview {
+    position: relative;
+}
+
+#streamPreview {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    background: #000;
+}
+
+.stream-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.stream-control-btn {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.stream-control-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-2px);
+}
+
+.stream-stats {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.live-indicator {
+    background: #ff0000;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.viewer-count {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.btn-primary.streaming {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    animation: pulse 2s infinite;
+}
+
+/* Schedule Modal Styles */
+.schedule-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.schedule-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.schedule-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+}
+
+.schedule-form {
+    padding: 24px;
+}
+
+.schedule-form .form-group {
+    margin-bottom: 20px;
+}
+
+.schedule-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.schedule-form input,
+.schedule-form textarea,
+.schedule-form select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.schedule-form input:focus,
+.schedule-form textarea:focus,
+.schedule-form select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+/* File Upload Styles */
+.drag-drop-area {
+    margin: 20px 0;
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+}
+
+.drag-drop-area.drag-over {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: scale(1.02);
+}
+
+.upload-zone-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: #9ca3af;
+    margin-bottom: 16px;
+}
+
+.drag-drop-area h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.browse-files-btn {
+    background: none;
+    border: none;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.file-info {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.file-info small {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.upload-progress-container {
+    margin-top: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Upload History Styles */
+.upload-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.upload-item:hover {
+    transform: translateY(-2px);
+}
+
+.upload-item-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.upload-item-info {
+    flex: 1;
+}
+
+.upload-item-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.upload-item-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.upload-item-status {
+    display: flex;
+    align-items: center;
+}
+
+.status-completed {
+    color: #10b981;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-failed {
+    color: #ef4444;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.no-uploads {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+/* Moment Creator Styles */
+.moment-creator-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.moment-creator-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.moment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.moment-creator {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px;
+}
+
+.moment-preview {
+    position: relative;
+}
+
+#momentPreview {
+    width: 100%;
+    height: 300px;
+    background: #000;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.moment-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.moment-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.start-recording {
+    background: #ef4444;
+    color: white;
+}
+
+.stop-recording {
+    background: #6b7280;
+    color: white;
+}
+
+.moment-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.recording-timer {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #ef4444;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-family: monospace;
+    font-weight: 600;
+    animation: pulse 1s infinite;
+}
+
+.moment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.moment-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.moment-form input,
+.moment-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.moment-form input:focus,
+.moment-form textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10001;
+    max-width: 400px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-success {
+    border-left: 4px solid #10b981;
+}
+
+.notification-error {
+    border-left: 4px solid #ef4444;
+}
+
+.notification-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.notification i {
+    font-size: 1.25rem;
+}
+
+.notification-success i {
+    color: #10b981;
+}
+
+.notification-error i {
+    color: #ef4444;
+}
+
+.notification-info i {
+    color: #3b82f6;
+}
+
+.notification span {
+    flex: 1;
+    font-weight: 500;
+    color: #374151;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .moment-creator {
+        grid-template-columns: 1fr;
+    }
+    
+    .schedule-modal-content,
+    .moment-creator-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .stream-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .stream-control-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .upload-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+    </style>
 </body>
 </html>
