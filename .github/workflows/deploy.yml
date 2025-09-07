@@ -47,10 +47,13 @@ jobs:
         echo "🔍 Running security scan..."
         
         # Check for actual secrets (not public client-side keys)
-        if grep -r "sk_test_" . --exclude-dir=.git --exclude-dir=node_modules 2>/dev/null || \
-           grep -r "sk_live_" . --exclude-dir=.git --exclude-dir=node_modules 2>/dev/null || \
-           grep -r "firebase-adminsdk" . --exclude-dir=.git --exclude-dir=node_modules 2>/dev/null; then
+        # Exclude .github directory to avoid false positives from workflow files
+        if grep -r "sk_test_" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github 2>/dev/null || \
+           grep -r "sk_live_" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github 2>/dev/null || \
+           grep -r "firebase-adminsdk" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github 2>/dev/null; then
           echo "❌ Actual secrets found in repository!"
+          echo "🔍 Found secrets in the following locations:"
+          grep -r "sk_test_\|sk_live_\|firebase-adminsdk" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.github 2>/dev/null || true
           exit 1
         else
           echo "✅ No actual secrets found - only safe public keys detected"
