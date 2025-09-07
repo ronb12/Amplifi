@@ -1,1 +1,0 @@
-console.log('Current Stripe localStorage data:'); console.log('stripeConnected:', localStorage.getItem('stripeConnected')); console.log('stripeAccountId:', localStorage.getItem('stripeAccountId')); console.log('stripeDemoMode:', localStorage.getItem('stripeDemoMode'));

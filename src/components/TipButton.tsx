@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FiHeart, FiGift } from 'react-icons/fi';
-import { sendTip, tipAmounts } from '../services/stripeService';
 
 interface TipButtonProps {
   creatorId: string;

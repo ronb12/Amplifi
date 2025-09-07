@@ -503,8 +503,6 @@ class AmplifiApp {
             });
         }
 
-
-
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === authModal) {
@@ -1320,8 +1318,7 @@ class AmplifiApp {
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && (key.includes('stripe') || key.includes('dashboard') || key.includes('creator'))) {
-                keysToRemove.push(key);
+            if (key && (key.includes('                keysToRemove.push(key);
             }
         }
         
@@ -1533,7 +1530,6 @@ class AmplifiApp {
                 // Create Stripe Connect account first
                 const createAccount = confirm('You need to connect your Stripe account first. Would you like to do that now?');
                 if (createAccount) {
-                    await this.createStripeConnectAccount();
                 }
                 return;
             }
@@ -1597,7 +1593,6 @@ class AmplifiApp {
     }
 
     // Create Stripe Connect account
-    async createStripeConnectAccount() {
         try {
             const response = await fetch('/api/create-stripe-account', {
                 method: 'POST',

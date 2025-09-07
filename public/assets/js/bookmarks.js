@@ -37,8 +37,6 @@ class BookmarksPage {
     initializePaymentProcessor() {
         try {
             // Initialize Stripe payment processor
-            if (typeof StripeVercelBackend !== 'undefined') {
-                window.paymentProcessor = new StripeVercelBackend();
                 console.log('✅ Payment processor initialized successfully');
             } else {
                 console.warn('⚠️ StripeVercelBackend not available');

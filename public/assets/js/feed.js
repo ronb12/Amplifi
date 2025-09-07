@@ -57,8 +57,6 @@ class FeedPage {
     initializePaymentProcessor() {
         try {
             // Initialize Stripe payment processor
-            if (typeof StripeVercelBackend !== 'undefined') {
-                window.paymentProcessor = new StripeVercelBackend();
                 console.log('✅ Payment processor initialized successfully');
             } else {
                 console.warn('⚠️ StripeVercelBackend not available');
@@ -1976,15 +1974,11 @@ class FeedPage {
         localStorage.setItem('amplifi_local_posts', JSON.stringify(localPosts.slice(0, 50))); // Keep last 50 posts
     }
 
-
-
     storeLikeLocally(likeData) {
         const localLikes = JSON.parse(localStorage.getItem('amplifi_local_likes') || '[]');
         localLikes.push(likeData);
         localStorage.setItem('amplifi_local_likes', JSON.stringify(localLikes.slice(-100))); // Keep last 100 likes
     }
-
-
 
     addCommentLocally(postId, commentData) {
         const localComments = JSON.parse(localStorage.getItem('amplifi_local_comments') || '[]');
@@ -2229,8 +2223,6 @@ class FeedPage {
         }
     }
 
-
-
     updateNotificationBadge() {
         if (!this.currentUser) return;
 
@@ -2292,8 +2284,6 @@ class FeedPage {
             this.showNewPostsBanner();
         }, 90000);
     }
-
-
 
     downloadMedia(mediaUrl, title) {
         try {
@@ -2492,8 +2482,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('🎯 DOMContentLoaded event fired');
     
     // Initialize payment processor
-    if (typeof StripeVercelBackend !== "undefined") {
-        window.paymentProcessor = new StripeVercelBackend();
         console.log('✅ Payment processor initialized');
     } else {
         console.error("❌ StripeVercelBackend not loaded");

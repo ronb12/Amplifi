@@ -77,8 +77,6 @@ function requestPayout() {
 function viewAllContent() {
 }
 
-// Stripe Connect functionality - Updated for new design
-function connectStripeAccount() {
     try {
         const connectBtn = document.querySelector('.btn-stripe');
         
@@ -141,67 +139,15 @@ function connectStripeAccount() {
     }
 }
 
-function learnMoreStripe() {
     showNotification("📚 Stripe Connect allows you to receive payments for tips, subscriptions, and other revenue streams. It's secure, compliant, and provides instant payment processing.", "info");
 }
 
-// Stripe Connect status management - Updated for new design
-function updateStripeConnectStatus(status) {
-    try {
-        const stripeSection = document.querySelector('.stripe-connect-section');
-        if (stripeSection) {
-            if (status === 'connected') {
-                stripeSection.innerHTML = `
-                    <div class="stripe-info">
-                        <h3>✅ Stripe Account Connected</h3>
-                        <p>Your Stripe account is now connected and ready to receive payments!</p>
-                        
-                        <div class="stripe-benefits">
-                            <div class="benefit-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Payment processing active</span>
-                            </div>
-                            <div class="benefit-item">
-                                <i class="fas fa-credit-card"></i>
-                                <span>Ready to receive payments</span>
-                            </div>
-                            <div class="benefit-item">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>Secure and compliant</span>
-                            </div>
-                            <div class="benefit-item">
-                                <i class="fas fa-rocket"></i>
-                                <span>Start earning immediately</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="stripe-actions">
-                        <button class="btn btn-primary" onclick="viewStripeDashboard()">
-                            <i class="fas fa-external-link-alt"></i>
-                            View Stripe Dashboard
-                        </button>
-                        <button class="btn btn-secondary" onclick="disconnectStripe()">
-                            <i class="fas fa-unlink"></i>
-                            Disconnect
-                        </button>
-                    </div>
-                `;
-            }
-        }
-    } catch (error) {
-        console.error("❌ Error updating Stripe status:", error);
-    }
-}
-
-function viewStripeDashboard() {
     showNotification('🔗 Opening Stripe dashboard...', 'info');
     // Here you would typically redirect to Stripe dashboard
     setTimeout(() => {
     }, 1000);
 }
 
-function disconnectStripe() {
     if (confirm('Are you sure you want to disconnect your Stripe account? This will stop payment processing.')) {
         showNotification('🔗 Disconnecting Stripe account...', 'info');
         setTimeout(() => {
@@ -270,11 +216,6 @@ window.viewAnalytics = viewAnalytics;
 window.manageEarnings = manageEarnings;
 window.requestPayout = requestPayout;
 window.viewAllContent = viewAllContent;
-window.connectStripeAccount = connectStripeAccount;
-window.learnMoreStripe = learnMoreStripe;
-window.updateStripeConnectStatus = updateStripeConnectStatus;
-window.viewStripeDashboard = viewStripeDashboard;
-window.disconnectStripe = disconnectStripe;
 window.showNotification = showNotification;
 
 // Initialize dashboard functions

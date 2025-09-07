@@ -30,7 +30,7 @@ Amplifi is a modern, secure social media platform built with cutting-edge web te
 ### 💰 **Monetization**
 - **Tip System**: Send tips to creators
 - **Subscription Plans**: Monthly/yearly creator subscriptions
-- **Stripe Integration**: Secure payment processing
+- **Payment Integration**: Secure payment processing (configurable)
 - **Creator Dashboard**: Manage earnings and analytics
 
 ### 🔒 **Security & Privacy**
@@ -109,7 +109,7 @@ Amplifi is a modern, secure social media platform built with cutting-edge web te
 ├── 📁 js/                            # JavaScript files
 │   ├── security-config.js           # Security configuration
 │   ├── security-monitor.js          # Security monitoring
-│   ├── stripe-vercel-backend.js     # Payment processing
+│   ├── payment-backend.js           # Payment processing
 │   ├── music-library.js             # Music features
 │   ├── feed.js                      # Social feed
 │   ├── messages-new.js              # Messaging system
@@ -124,7 +124,7 @@ Amplifi is a modern, secure social media platform built with cutting-edge web te
 ├── 📁 scripts/                       # Utility scripts
 │   ├── 📁 deployment/               # Deployment scripts
 │   └── 📁 backup/                   # Backup scripts
-├── 📁 vercel-stripe-backend/         # Backend API
+├── 📁 backend-api/                   # Backend API
 ├── 📁 functions/                     # Firebase Functions
 ├── 📄 index.html                     # Main application
 ├── 📄 styles.css                     # Main stylesheet
@@ -147,11 +147,6 @@ FIREBASE_PROJECT_ID=your_project_id
 FIREBASE_STORAGE_BUCKET=your_storage_bucket
 FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 FIREBASE_APP_ID=your_app_id
-
-# Stripe Configuration
-STRIPE_PUBLISHABLE_KEY=your_publishable_key
-STRIPE_SECRET_KEY=your_secret_key
-STRIPE_BACKEND_URL=your_backend_url
 
 # Security Configuration
 SECURITY_SESSION_TIMEOUT=3600000
@@ -241,8 +236,8 @@ firebase deploy --only functions
 ### Vercel Backend Deployment
 
 ```bash
-# Deploy Stripe backend
-cd vercel-stripe-backend
+# Deploy backend API
+cd backend-api
 vercel deploy
 ```
 
@@ -311,7 +306,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Firebase](https://firebase.google.com/) for backend infrastructure
-- [Stripe](https://stripe.com/) for payment processing
+- Payment processing services (configurable)
 - [OWASP](https://owasp.org/) for security guidelines
 - [Vercel](https://vercel.com/) for backend hosting
 - Security community for best practices and guidance

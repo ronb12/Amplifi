@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FiStar, FiCheck } from 'react-icons/fi';
-import { subscribeToCreator, subscriptionTiers } from '../services/stripeService';
 
 interface SubscriptionButtonProps {
   creatorId: string;
