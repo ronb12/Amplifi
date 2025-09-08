@@ -1012,9 +1012,8 @@
     </main>
 
     
-    <!-- Mobile Tab Bar -->
     
-    <!-- Mobile Tab Bar -->
+    <!-- YouTube-Style Mobile Tab Bar -->
     <div class="yt-mobile-tab-bar">
         <a href="index.html" class="yt-mobile-tab">
             <i class="fas fa-home"></i>
@@ -1024,7 +1023,7 @@
             <i class="fas fa-rss"></i>
             <span>Feed</span>
         </a>
-        <a href="upload.html" class="yt-mobile-tab yt-mobile-tab-plus">
+        <a href="#" class="yt-mobile-tab yt-mobile-tab-plus" onclick="openMobileMenu(); return false;">
             <i class="fas fa-plus"></i>
             <span>Create</span>
         </a>
@@ -1037,50 +1036,6 @@
             <span>Library</span>
         </a>
     </div>
-
-    <!-- Scripts -->
-    <script src="assets/js/ux-enhancements.js"></script>
-    <script src="assets/js/pexels-service.js"></script>
-    <script src="assets/js/image-loader.js"></script>
-
-    <!-- Authentication Modal -->
-    <div id="authModal" class="auth-modal" style="display: none;">
-        <div class="auth-modal-content">
-            <div class="auth-modal-header">
-                <h2>Welcome to Amplifi</h2>
-                <button class="auth-close" onclick="closeAuthModal()">&times;</button>
-            </div>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
-                <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
-            </div>
-            
-            <div class="auth-forms">
-                <form id="loginForm" class="auth-form active">
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign In</button>
-                </form>
-                
-                <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Full Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign Up</button>
-                </form>
-            </div>
-        </div>
     </div>
 
     
@@ -1180,9 +1135,15 @@
             }, 5000);
         }
         
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             console.log('🔐 Handling login...');
+            
+            // Check if Firebase auth is available
+            if (typeof auth === 'undefined') {
+                showMessage('Authentication service not available. Please try again later.', true);
+                return;
+            }
             
             const email = document.querySelector('#loginForm input[type="email"]').value;
             const password = document.querySelector('#loginForm input[type="password"]').value;
@@ -1198,27 +1159,35 @@
             submitBtn.textContent = 'Signing In...';
             submitBtn.disabled = true;
             
-            // Simulate authentication
-            setTimeout(() => {
-                if (email.includes('@') && password.length >= 6) {
-                    showMessage('Welcome back! You are now signed in.');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
-                } else {
-                    showMessage('Invalid email or password. Please try again.', true);
-                }
+            try {
+                // Use real Firebase authentication
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Login successful:', userCredential.user.email);
                 
+                showMessage('Welcome back! You are now signed in.');
+                setTimeout(() => {
+                    closeAuthModal();
+                    updateUI(true);
+                }, 1500);
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                showMessage('Invalid email or password. Please try again.', true);
+            } finally {
                 // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-            }, 1500);
+            }
         }
         
-        function handleSignup(event) {
+        async function handleSignup(event) {
             event.preventDefault();
             console.log('🔐 Handling signup...');
+            
+            // Check if Firebase services are available
+            if (typeof auth === 'undefined' || typeof db === 'undefined') {
+                showMessage('Authentication service not available. Please try again later.', true);
+                return;
+            }
             
             const name = document.querySelector('#signupForm input[placeholder="Full Name"]').value;
             const email = document.querySelector('#signupForm input[type="email"]').value;
@@ -1240,22 +1209,37 @@
             submitBtn.textContent = 'Creating Account...';
             submitBtn.disabled = true;
             
-            // Simulate account creation
-            setTimeout(() => {
-                if (email.includes('@') && password.length >= 6) {
-                    showMessage('Account created successfully! Welcome to Amplifi!');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
-                } else {
-                    showMessage('Please enter a valid email address', true);
-                }
+            try {
+                // Use real Firebase authentication
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 
+                // Create user profile in Firestore
+                const userProfile = {
+                    displayName: name,
+                    username: email.split('@')[0], // Use email prefix as username
+                    bio: '',
+                    profilePic: '',
+                    banner: '',
+                    createdAt: new Date(),
+                    isAdmin: false
+                };
+
+                await db.collection('users').doc(userCredential.user.uid).set(userProfile);
+                
+                console.log('✅ Signup successful:', userCredential.user.email);
+                showMessage('Account created successfully! Welcome to Amplifi!');
+                setTimeout(() => {
+                    closeAuthModal();
+                    updateUI(true);
+                }, 1500);
+            } catch (error) {
+                console.error('❌ Signup error:', error);
+                showMessage('Signup failed: ' + error.message, true);
+            } finally {
                 // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-            }, 1500);
+            }
         }
         
         function updateUI(isSignedIn) {
@@ -1269,9 +1253,18 @@
                 }
                 if (signUpBtn) {
                     signUpBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
-                    signUpBtn.onclick = () => {
-                        updateUI(false);
-                        showMessage('You have been signed out');
+                    signUpBtn.onclick = async () => {
+                        try {
+                            if (typeof auth !== 'undefined') {
+                                await auth.signOut();
+                                console.log('✅ Sign out successful');
+                            }
+                            updateUI(false);
+                            showMessage('You have been signed out');
+                        } catch (error) {
+                            console.error('❌ Sign out error:', error);
+                            showMessage('Error signing out. Please try again.', true);
+                        }
                     };
                 }
             } else {
@@ -1320,6 +1313,22 @@
                 console.log('✅ Authentication system initialized');
             } else {
                 console.error('❌ Auth modal not found during initialization');
+            }
+            
+            // Set up Firebase authentication state listener
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log('🔐 User is signed in:', user.email);
+                        updateUI(true);
+                    } else {
+                        console.log('🔐 User is signed out');
+                        updateUI(false);
+                    }
+                });
+            } else {
+                console.log('⚠️ Firebase auth not available, using fallback UI');
+                updateUI(false);
             }
         });
     </script>
@@ -1691,6 +1700,9 @@ class YouTubeLiveStreamManager {
                 this.toggleScreenShare();
             } else if (e.target.classList.contains('settings-btn')) {
                 this.openStreamSettings();
+            } else if (e.target.classList.contains('chat-settings-btn') || e.target.closest('.chat-settings-btn')) {
+                console.log('🔧 Chat settings button clicked (global listener)');
+                this.openChatSettings();
             }
         });
 
@@ -1896,10 +1908,10 @@ class YouTubeLiveStreamManager {
         this.addChatMessage(randomMessage.user, randomMessage.message, false);
     }
 
-    addChatMessage(username, message, isStreamer = false) {
+    addChatMessage(username, message, isStreamer = false, isSystem = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageElement = document.createElement('div');
-        messageElement.className = `chat-message ${isStreamer ? 'streamer-message' : ''}`;
+        messageElement.className = `chat-message ${isStreamer ? 'streamer-message' : ''} ${isSystem ? 'system-message' : ''}`;
         messageElement.innerHTML = `
             <div class="message-header">
                 <span class="username ${isStreamer ? 'streamer' : ''}">${username}</span>
@@ -1911,9 +1923,11 @@ class YouTubeLiveStreamManager {
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
-        // Update comment count
-        this.streamStats.comments++;
-        this.updateStats();
+        // Update comment count (not for system messages)
+        if (!isSystem) {
+            this.streamStats.comments++;
+            this.updateStats();
+        }
     }
 
     sendChatMessage() {
@@ -2111,6 +2125,246 @@ class YouTubeLiveStreamManager {
         }
     }
 
+    openChatSettings() {
+        console.log('🔧 openChatSettings() called');
+        this.createChatSettingsModal();
+    }
+
+    createChatSettingsModal() {
+        console.log('🔧 createChatSettingsModal() called');
+        // Remove existing chat settings modal if it exists
+        const existingModal = document.querySelector('.yt-chat-settings-modal');
+        if (existingModal) {
+            console.log('🔧 Removing existing modal');
+            existingModal.remove();
+        }
+
+        const chatSettingsModal = document.createElement('div');
+        chatSettingsModal.className = 'yt-chat-settings-modal';
+        chatSettingsModal.innerHTML = `
+            <div class="chat-settings-modal-content">
+                <div class="chat-settings-header">
+                    <h3><i class="fas fa-comments"></i> Chat Settings</h3>
+                    <button class="close-chat-settings">&times;</button>
+                </div>
+                
+                <div class="chat-settings-content">
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Chat Mode</label>
+                        <select id="chatMode">
+                            <option value="enabled">Enabled - Anyone can chat</option>
+                            <option value="followers">Followers only - Must follow to chat</option>
+                            <option value="subscribers">Subscribers only - Must be subscribed</option>
+                            <option value="moderators">Moderators only - Only moderators can chat</option>
+                            <option value="disabled">Disabled - No one can chat</option>
+                        </select>
+                    </div>
+                    
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Slow Mode</label>
+                        <select id="slowMode">
+                            <option value="off">Off</option>
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="30">30 seconds</option>
+                            <option value="60">1 minute</option>
+                            <option value="300">5 minutes</option>
+                        </select>
+                        <small class="setting-description">Prevents users from sending messages too frequently</small>
+                    </div>
+                    
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Message Filtering</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="filterProfanity" checked> Filter profanity
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="filterSpam" checked> Filter spam messages
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="filterLinks"> Filter links
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="filterEmojis"> Limit emoji usage
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Chat Appearance</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showTimestamps" checked> Show timestamps
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="showUserBadges" checked> Show user badges
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="highlightStreamer"> Highlight streamer messages
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="compactMode"> Compact chat mode
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Moderation</label>
+                        <div class="moderation-controls">
+                            <button class="mod-btn" id="banUserBtn">
+                                <i class="fas fa-ban"></i> Ban User
+                            </button>
+                            <button class="mod-btn" id="timeoutUserBtn">
+                                <i class="fas fa-clock"></i> Timeout User
+                            </button>
+                            <button class="mod-btn" id="addModBtn">
+                                <i class="fas fa-user-shield"></i> Add Moderator
+                            </button>
+                        </div>
+                        <small class="setting-description">Click on a username in chat to moderate them</small>
+                    </div>
+                    
+                    <div class="chat-setting-group">
+                        <label class="setting-label">Chat Commands</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="enableCommands" checked> Enable chat commands
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="allowCustomCommands"> Allow custom commands
+                            </label>
+                        </div>
+                        <div class="commands-list">
+                            <div class="command-item">
+                                <code>!help</code> - Show available commands
+                            </div>
+                            <div class="command-item">
+                                <code>!follow</code> - Follow the streamer
+                            </div>
+                            <div class="command-item">
+                                <code>!social</code> - Show social media links
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-settings-actions">
+                    <button class="btn-secondary cancel-chat-settings">Cancel</button>
+                    <button class="btn-primary save-chat-settings">Save Settings</button>
+                </div>
+            </div>
+        `;
+        
+        console.log('🔧 Appending modal to DOM');
+        document.body.appendChild(chatSettingsModal);
+        console.log('🔧 Modal appended, setting up modal');
+        
+        // Make the modal visible
+        chatSettingsModal.style.display = 'flex';
+        console.log('🔧 Modal display set to flex');
+        
+        this.setupChatSettingsModal();
+        console.log('🔧 Modal setup complete');
+    }
+
+    setupChatSettingsModal() {
+        const modal = document.querySelector('.yt-chat-settings-modal');
+        
+        // Close modal events
+        modal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-chat-settings') || 
+                e.target.classList.contains('cancel-chat-settings') ||
+                e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+        // Save settings
+        modal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('save-chat-settings')) {
+                this.saveChatSettings();
+                modal.remove();
+            }
+        });
+        
+        // Moderation button events
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'banUserBtn') {
+                this.showModerationPrompt('ban');
+            } else if (e.target.id === 'timeoutUserBtn') {
+                this.showModerationPrompt('timeout');
+            } else if (e.target.id === 'addModBtn') {
+                this.showModerationPrompt('moderator');
+            }
+        });
+    }
+
+    saveChatSettings() {
+        const settings = {
+            chatMode: document.getElementById('chatMode')?.value || 'enabled',
+            slowMode: document.getElementById('slowMode')?.value || 'off',
+            filterProfanity: document.getElementById('filterProfanity')?.checked ?? true,
+            filterSpam: document.getElementById('filterSpam')?.checked ?? true,
+            filterLinks: document.getElementById('filterLinks')?.checked ?? false,
+            filterEmojis: document.getElementById('filterEmojis')?.checked ?? false,
+            showTimestamps: document.getElementById('showTimestamps')?.checked ?? true,
+            showUserBadges: document.getElementById('showUserBadges')?.checked ?? true,
+            highlightStreamer: document.getElementById('highlightStreamer')?.checked ?? false,
+            compactMode: document.getElementById('compactMode')?.checked ?? false,
+            enableCommands: document.getElementById('enableCommands')?.checked ?? true,
+            allowCustomCommands: document.getElementById('allowCustomCommands')?.checked ?? false
+        };
+        
+        localStorage.setItem('chatSettings', JSON.stringify(settings));
+        this.applyChatSettings(settings);
+        this.showSuccess('Chat settings saved successfully!');
+    }
+
+    applyChatSettings(settings) {
+        const chatMessages = document.getElementById('chatMessages');
+        if (!chatMessages) return;
+        
+        // Apply compact mode
+        if (settings.compactMode) {
+            chatMessages.classList.add('compact-mode');
+        } else {
+            chatMessages.classList.remove('compact-mode');
+        }
+        
+        // Apply timestamp visibility
+        const timestamps = chatMessages.querySelectorAll('.timestamp');
+        timestamps.forEach(timestamp => {
+            timestamp.style.display = settings.showTimestamps ? 'block' : 'none';
+        });
+        
+        // Apply user badge visibility
+        const badges = chatMessages.querySelectorAll('.user-badge');
+        badges.forEach(badge => {
+            badge.style.display = settings.showUserBadges ? 'inline' : 'none';
+        });
+    }
+
+    showModerationPrompt(action) {
+        const username = prompt(`Enter username to ${action}:`);
+        if (username && username.trim()) {
+            this.performModerationAction(action, username.trim());
+        }
+    }
+
+    performModerationAction(action, username) {
+        const actions = {
+            ban: `User "${username}" has been banned from chat`,
+            timeout: `User "${username}" has been timed out for 10 minutes`,
+            moderator: `User "${username}" has been added as a moderator`
+        };
+        
+        this.showSuccess(actions[action]);
+        
+        // Add moderation message to chat
+        this.addChatMessage('System', `${action.charAt(0).toUpperCase() + action.slice(1)}: ${username}`, false, true);
+    }
+
     setupSettingsModal() {
         // Settings tabs functionality
         document.addEventListener('click', (e) => {
@@ -2235,6 +2489,156 @@ class YouTubeLiveStreamManager {
             notification.remove();
         });
     }
+
+    createLiveChat() {
+        // Check if chat container already exists
+        const existingChatContainer = document.querySelector('.live-chat-container');
+        if (existingChatContainer) {
+            console.log('✅ Chat container already exists, setting up functionality');
+            // Set up chat functionality on existing container
+            this.setupChatFunctionality();
+            return;
+        }
+
+        // Create new chat container if it doesn't exist
+        const chatContainer = document.createElement('div');
+        chatContainer.className = 'live-chat-container';
+        chatContainer.innerHTML = `
+            <div class="chat-header">
+                <h3><i class="fas fa-comments"></i> Live Chat</h3>
+                <button class="chat-settings-btn" title="Chat Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-welcome">
+                    <p>Welcome to the live chat! Start streaming to see messages here.</p>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="Send a message..." disabled>
+                <button id="sendChatBtn" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        `;
+
+        // Add chat container to sidebar
+        const sidebar = document.querySelector('.yt-live-sidebar');
+        if (sidebar) {
+            sidebar.appendChild(chatContainer);
+        }
+
+        // Set up chat functionality
+        this.setupChatFunctionality();
+    }
+
+    createStreamStats() {
+        const statsContainer = document.createElement('div');
+        statsContainer.className = 'stream-stats-container';
+        statsContainer.innerHTML = `
+            <div class="stats-header">
+                <h3><i class="fas fa-chart-line"></i> Stream Analytics</h3>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="viewerCount">0</div>
+                    <div class="stat-label">Viewers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="commentCount">0</div>
+                    <div class="stat-label">Comments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="likeCount">0</div>
+                    <div class="stat-label">Likes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="shareCount">0</div>
+                    <div class="stat-label">Shares</div>
+                </div>
+            </div>
+        `;
+
+        // Add stats container to sidebar
+        const sidebar = document.querySelector('.yt-live-sidebar');
+        if (sidebar) {
+            sidebar.appendChild(statsContainer);
+        }
+
+        // Initialize stats
+        this.streamStats = {
+            viewers: 0,
+            comments: 0,
+            likes: 0,
+            shares: 0
+        };
+    }
+
+    setupChatFunctionality() {
+        // Use the first chat input and send button (from existing HTML)
+        const chatInput = document.querySelector('#chatInput');
+        const sendBtn = document.querySelector('#sendChatBtn');
+        const chatMessages = document.querySelector('#chatMessages');
+
+        if (chatInput && sendBtn) {
+            // Enable chat when streaming
+            if (this.isStreaming) {
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+            }
+
+            // Send message functionality
+            const sendMessage = () => {
+                const message = chatInput.value.trim();
+                if (message && this.isStreaming) {
+                    this.addChatMessage('You', message);
+                    chatInput.value = '';
+                }
+            };
+
+            // Remove existing event listeners to avoid duplicates
+            sendBtn.replaceWith(sendBtn.cloneNode(true));
+            chatInput.replaceWith(chatInput.cloneNode(true));
+            
+            // Get the new elements
+            const newSendBtn = document.querySelector('#sendChatBtn');
+            const newChatInput = document.querySelector('#chatInput');
+            
+            newSendBtn.addEventListener('click', sendMessage);
+            newChatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        // Set up chat settings button
+        const chatSettingsBtn = document.querySelector('.chat-settings-btn');
+        if (chatSettingsBtn) {
+            console.log('🔧 Chat settings button found, setting up listener');
+            chatSettingsBtn.addEventListener('click', (e) => {
+                console.log('🔧 Chat settings button clicked (specific listener)');
+                e.preventDefault();
+                e.stopPropagation();
+                this.openChatSettings();
+            });
+        } else {
+            console.log('❌ Chat settings button not found');
+        }
+    }
+
+    updateStats() {
+        const viewerCount = document.getElementById('viewerCount');
+        const commentCount = document.getElementById('commentCount');
+        const likeCount = document.getElementById('likeCount');
+        const shareCount = document.getElementById('shareCount');
+
+        if (viewerCount) viewerCount.textContent = this.streamStats.viewers;
+        if (commentCount) commentCount.textContent = this.streamStats.comments;
+        if (likeCount) likeCount.textContent = this.streamStats.likes;
+        if (shareCount) shareCount.textContent = this.streamStats.shares;
+    }
 }
 
 // Initialize YouTube-style Live Stream Manager
@@ -2243,6 +2647,38 @@ document.addEventListener('DOMContentLoaded', () => {
     youtubeLiveStreamManager = new YouTubeLiveStreamManager();
 });
 
+    
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay && e.target === overlay) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
     </script>
     
     <style>
@@ -2615,7 +3051,8 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 /* Settings Modal */
-.yt-stream-settings-modal {
+.yt-stream-settings-modal,
+.yt-chat-settings-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -2921,6 +3358,272 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 }
 
+/* Chat Settings Modal Styles */
+.chat-settings-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.chat-settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.chat-settings-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.close-chat-settings {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+}
+
+.chat-settings-content {
+    padding: 24px;
+}
+
+.chat-setting-group {
+    margin-bottom: 24px;
+}
+
+.setting-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.chat-setting-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    background: white;
+}
+
+.setting-description {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.moderation-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.mod-btn {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    color: #374151;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mod-btn:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.mod-btn i {
+    font-size: 0.75rem;
+}
+
+.commands-list {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.command-item {
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.command-item code {
+    background: #e5e7eb;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #1f2937;
+}
+
+.chat-settings-actions {
+    padding: 24px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* Chat Settings Button */
+.chat-settings-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.chat-settings-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Compact Chat Mode */
+.chat-messages.compact-mode .chat-message {
+    margin-bottom: 4px;
+    padding: 4px 0;
+}
+
+.chat-messages.compact-mode .message-header {
+    margin-bottom: 2px;
+}
+
+.chat-messages.compact-mode .username {
+    font-size: 0.75rem;
+}
+
+.chat-messages.compact-mode .timestamp {
+    font-size: 0.625rem;
+}
+
+.chat-messages.compact-mode .message-content {
+    font-size: 0.75rem;
+}
+
+/* System Messages */
+.chat-message.system-message {
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0 6px 6px 0;
+}
+
+.chat-message.system-message .username {
+    color: #92400e;
+    font-weight: 600;
+}
+
+.chat-message.system-message .message-content {
+    color: #92400e;
+    font-style: italic;
+}
+
     </style>
-</body>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">
+        <div class="yt-mobile-menu">
+            <div class="yt-mobile-menu-header">
+                <h3>Navigate</h3>
+                <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">&times;</button>
+            </div>
+            <div class="yt-mobile-menu-content">
+                <a href="index.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="feed.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="moments.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-video"></i>
+                    <span>Moments</span>
+                </a>
+                <a href="trending.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <a href="search.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="upload.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="live.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Go Live</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="library.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Library</span>
+                </a>
+                <a href="profile.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="about.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="privacy.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </a>
+                <a href="terms.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Terms</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    </body>
 </html>

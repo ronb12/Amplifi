@@ -923,9 +923,8 @@
     </main>
 
     
-    <!-- Mobile Tab Bar -->
     
-    <!-- Mobile Tab Bar -->
+    <!-- YouTube-Style Mobile Tab Bar -->
     <div class="yt-mobile-tab-bar">
         <a href="index.html" class="yt-mobile-tab">
             <i class="fas fa-home"></i>
@@ -935,7 +934,7 @@
             <i class="fas fa-rss"></i>
             <span>Feed</span>
         </a>
-        <a href="upload.html" class="yt-mobile-tab yt-mobile-tab-plus">
+        <a href="#" class="yt-mobile-tab yt-mobile-tab-plus" onclick="openMobileMenu(); return false;">
             <i class="fas fa-plus"></i>
             <span>Create</span>
         </a>
@@ -948,50 +947,6 @@
             <span>Library</span>
         </a>
     </div>
-
-    <!-- Scripts -->
-    <script src="assets/js/ux-enhancements.js"></script>
-    <script src="assets/js/pexels-service.js"></script>
-    <script src="assets/js/image-loader.js"></script>
-
-    <!-- Authentication Modal -->
-    <div id="authModal" class="auth-modal" style="display: none;">
-        <div class="auth-modal-content">
-            <div class="auth-modal-header">
-                <h2>Welcome to Amplifi</h2>
-                <button class="auth-close" onclick="closeAuthModal()">&times;</button>
-            </div>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
-                <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
-            </div>
-            
-            <div class="auth-forms">
-                <form id="loginForm" class="auth-form active">
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign In</button>
-                </form>
-                
-                <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Full Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign Up</button>
-                </form>
-            </div>
-        </div>
     </div>
 
     
@@ -1233,6 +1188,101 @@
                 console.error('❌ Auth modal not found during initialization');
             }
         });
+    
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay && e.target === overlay) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
     </script>
-</body>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">
+        <div class="yt-mobile-menu">
+            <div class="yt-mobile-menu-header">
+                <h3>Navigate</h3>
+                <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">&times;</button>
+            </div>
+            <div class="yt-mobile-menu-content">
+                <a href="index.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="feed.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="moments.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-video"></i>
+                    <span>Moments</span>
+                </a>
+                <a href="trending.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <a href="search.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="upload.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="live.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Go Live</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="library.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Library</span>
+                </a>
+                <a href="profile.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="about.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="privacy.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </a>
+                <a href="terms.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Terms</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    </body>
 </html>

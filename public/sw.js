@@ -1,6 +1,6 @@
 // Amplifi Service Worker - Enabling Offline Support
 // Updated to fix CSS conflicts and improve cache management
-const CACHE_NAME = 'amplifi-v9-secure';
+const CACHE_NAME = 'amplifi-v17-mobile-menu';
 const urlsToCache = [
     '/',
     '/index.html',

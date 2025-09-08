@@ -416,6 +416,101 @@
             const overlay = document.getElementById('mobileMenuOverlay');
             overlay.classList.toggle('show');
         }
+    
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay && e.target === overlay) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
     </script>
-</body>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">
+        <div class="yt-mobile-menu">
+            <div class="yt-mobile-menu-header">
+                <h3>Navigate</h3>
+                <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">&times;</button>
+            </div>
+            <div class="yt-mobile-menu-content">
+                <a href="index.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="feed.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="moments.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-video"></i>
+                    <span>Moments</span>
+                </a>
+                <a href="trending.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <a href="search.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="upload.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="live.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Go Live</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="library.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Library</span>
+                </a>
+                <a href="profile.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="about.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="privacy.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </a>
+                <a href="terms.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Terms</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    </body>
 </html>
