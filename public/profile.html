@@ -982,6 +982,361 @@
         .tab-content.active {
             display: block;
         }
+
+        /* Playlists Styles */
+        .playlists-dashboard {
+            padding: 24px;
+        }
+
+        .playlists-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .playlists-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .playlist-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .playlist-thumbnail {
+            position: relative;
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+
+        .playlist-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .playlist-info {
+            padding: 16px;
+        }
+
+        .playlist-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .playlist-info p {
+            margin: 0 0 16px 0;
+            color: #606060;
+            font-size: 14px;
+        }
+
+        .playlist-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .playlist-actions .btn-secondary {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        /* About Styles */
+        .about-dashboard {
+            padding: 24px;
+        }
+
+        .about-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .about-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .about-content {
+            max-width: 800px;
+        }
+
+        .about-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-section h3 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .about-text p {
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            color: #606060;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .contact-item i {
+            width: 20px;
+            color: #ff0000;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 14px;
+            color: #606060;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #030303;
+            transition: background 0.2s;
+        }
+
+        .link-item:hover {
+            background: #e9ecef;
+        }
+
+        .link-item i {
+            color: #ff0000;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #606060;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #030303;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        /* Settings Tabs */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 24px;
+        }
+
+        .settings-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #606060;
+            transition: all 0.2s;
+        }
+
+        .settings-tab.active {
+            color: #ff0000;
+            border-bottom-color: #ff0000;
+        }
+
+        .settings-tab:hover {
+            color: #ff0000;
+        }
+
+        .settings-content {
+            min-height: 300px;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-section h4 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .settings-section .form-group {
+            margin-bottom: 12px;
+        }
+
+        .settings-section label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .settings-section input[type="checkbox"],
+        .settings-section input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
     </style>
 
 <style>
@@ -1279,10 +1634,10 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <button class="btn-primary">
+                    <button class="btn-primary" onclick="openEditChannelModal()">
                         <i class="fas fa-edit"></i> Edit Channel
                     </button>
-                    <button class="btn-secondary">
+                    <button class="btn-secondary" onclick="openSettingsModal()">
                         <i class="fas fa-cog"></i> Settings
                     </button>
                 </div>
@@ -1510,6 +1865,171 @@
                 </div>
             </div>
             
+            <!-- Playlists Tab -->
+            <div class="tab-content" id="playlists" style="display: none;">
+                <div class="playlists-dashboard">
+                    <div class="playlists-header">
+                        <h2><i class="fas fa-list"></i> Playlists</h2>
+                        <button class="btn-primary" onclick="createNewPlaylist()">
+                            <i class="fas fa-plus"></i> Create Playlist
+                        </button>
+                    </div>
+                    
+                    <div class="playlists-grid">
+                        <div class="playlist-card">
+                            <div class="playlist-thumbnail">
+                                <i class="fas fa-play-circle"></i>
+                                <div class="playlist-overlay">
+                                    <span class="video-count">12 videos</span>
+                                </div>
+                            </div>
+                            <div class="playlist-info">
+                                <h3>My Favorites</h3>
+                                <p>12 videos • 2.3K views</p>
+                                <div class="playlist-actions">
+                                    <button class="btn-secondary" onclick="editPlaylist('favorites')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn-secondary" onclick="deletePlaylist('favorites')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="playlist-card">
+                            <div class="playlist-thumbnail">
+                                <i class="fas fa-play-circle"></i>
+                                <div class="playlist-overlay">
+                                    <span class="video-count">8 videos</span>
+                                </div>
+                            </div>
+                            <div class="playlist-info">
+                                <h3>Tutorial Series</h3>
+                                <p>8 videos • 1.8K views</p>
+                                <div class="playlist-actions">
+                                    <button class="btn-secondary" onclick="editPlaylist('tutorials')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn-secondary" onclick="deletePlaylist('tutorials')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="playlist-card">
+                            <div class="playlist-thumbnail">
+                                <i class="fas fa-play-circle"></i>
+                                <div class="playlist-overlay">
+                                    <span class="video-count">5 videos</span>
+                                </div>
+                            </div>
+                            <div class="playlist-info">
+                                <h3>Live Streams</h3>
+                                <p>5 videos • 3.2K views</p>
+                                <div class="playlist-actions">
+                                    <button class="btn-secondary" onclick="editPlaylist('live')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn-secondary" onclick="deletePlaylist('live')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- About Tab -->
+            <div class="tab-content" id="about" style="display: none;">
+                <div class="about-dashboard">
+                    <div class="about-header">
+                        <h2><i class="fas fa-info-circle"></i> About</h2>
+                        <button class="btn-primary" onclick="editAbout()">
+                            <i class="fas fa-edit"></i> Edit About
+                        </button>
+                    </div>
+                    
+                    <div class="about-content">
+                        <div class="about-section">
+                            <h3>Channel Description</h3>
+                            <div class="about-text">
+                                <p>Welcome to my channel! I create content about technology, programming, and digital creativity. Join me as we explore the latest trends in web development, video editing, and social media.</p>
+                                <p>I upload new videos every week, so make sure to subscribe and hit the notification bell to never miss an update!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="about-section">
+                            <h3>Contact Information</h3>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>contact@example.com</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>www.example.com</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fab fa-twitter"></i>
+                                    <span>@username</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>@username</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="about-section">
+                            <h3>Channel Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Joined</span>
+                                    <span class="stat-value">January 2023</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Videos</span>
+                                    <span class="stat-value">45</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Views</span>
+                                    <span class="stat-value">125.6K</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Subscribers</span>
+                                    <span class="stat-value">1.2K</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="about-section">
+                            <h3>Channel Links</h3>
+                            <div class="links-list">
+                                <a href="#" class="link-item">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <span>My Website</span>
+                                </a>
+                                <a href="#" class="link-item">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <span>Discord Server</span>
+                                </a>
+                                <a href="#" class="link-item">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <span>Patreon</span>
+                                </a>
+                                <a href="#" class="link-item">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <span>Merch Store</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="profile-videos">
                 <div class="yt-video-grid">
                     <!-- User's videos will be loaded here -->
@@ -1573,7 +2093,252 @@
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Page initialized - using auth-guard for authentication');
+            initializeTabs();
         });
+
+        // Edit Channel Modal Functions
+        function openEditChannelModal() {
+            const modal = document.getElementById('editChannelModal');
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                createEditChannelModal();
+            }
+        }
+
+        function createEditChannelModal() {
+            const modal = document.createElement('div');
+            modal.id = 'editChannelModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Edit Channel</h3>
+                        <button class="modal-close" onclick="closeEditChannelModal()">&times;</button>
+                    </div>
+                    <form id="editChannelForm">
+                        <div class="form-group">
+                            <label for="channelName">Channel Name</label>
+                            <input type="text" id="channelName" value="Your Channel" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="channelDescription">Description</label>
+                            <textarea id="channelDescription" placeholder="Tell viewers about your channel...">Welcome to my channel! I create content about technology, programming, and digital creativity.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="channelWebsite">Website</label>
+                            <input type="url" id="channelWebsite" placeholder="https://yourwebsite.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="channelLocation">Location</label>
+                            <input type="text" id="channelLocation" placeholder="City, Country">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeEditChannelModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+
+            // Handle form submission
+            document.getElementById('editChannelForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveChannelChanges();
+            });
+        }
+
+        function closeEditChannelModal() {
+            const modal = document.getElementById('editChannelModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function saveChannelChanges() {
+            const channelName = document.getElementById('channelName').value;
+            const channelDescription = document.getElementById('channelDescription').value;
+            const channelWebsite = document.getElementById('channelWebsite').value;
+            const channelLocation = document.getElementById('channelLocation').value;
+
+            console.log('💾 Saving channel changes:', {
+                name: channelName,
+                description: channelDescription,
+                website: channelWebsite,
+                location: channelLocation
+            });
+
+            // Update the channel info display
+            const channelTitle = document.querySelector('.channel-title');
+            if (channelTitle) {
+                channelTitle.textContent = channelName;
+            }
+
+            alert('Channel updated successfully!');
+            closeEditChannelModal();
+        }
+
+        // Settings Modal Functions
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                createSettingsModal();
+            }
+        }
+
+        function createSettingsModal() {
+            const modal = document.createElement('div');
+            modal.id = 'settingsModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Channel Settings</h3>
+                        <button class="modal-close" onclick="closeSettingsModal()">&times;</button>
+                    </div>
+                    <div class="settings-tabs">
+                        <button class="settings-tab active" data-tab="general">General</button>
+                        <button class="settings-tab" data-tab="privacy">Privacy</button>
+                        <button class="settings-tab" data-tab="notifications">Notifications</button>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-section active" id="general">
+                            <h4>General Settings</h4>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" checked> Show subscriber count
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" checked> Allow comments
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox"> Auto-save drafts
+                                </label>
+                            </div>
+                        </div>
+                        <div class="settings-section" id="privacy">
+                            <h4>Privacy Settings</h4>
+                            <div class="form-group">
+                                <label>
+                                    <input type="radio" name="visibility" value="public" checked> Public
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="radio" name="visibility" value="unlisted"> Unlisted
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="radio" name="visibility" value="private"> Private
+                                </label>
+                            </div>
+                        </div>
+                        <div class="settings-section" id="notifications">
+                            <h4>Notification Settings</h4>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" checked> Email notifications
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" checked> Push notifications
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox"> Weekly summary
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                        <button type="button" class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+
+            // Initialize settings tabs
+            initializeSettingsTabs();
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function initializeSettingsTabs() {
+            const tabButtons = document.querySelectorAll('.settings-tab');
+            const tabContents = document.querySelectorAll('.settings-section');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+                    
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        }
+
+        function saveSettings() {
+            console.log('💾 Saving settings...');
+            alert('Settings saved successfully!');
+            closeSettingsModal();
+        }
+
+        // Playlists Functions
+        function createNewPlaylist() {
+            const name = prompt('Enter playlist name:');
+            if (name) {
+                console.log('📝 Creating new playlist:', name);
+                alert('Playlist created successfully!');
+                // In a real app, this would add the playlist to the grid
+            }
+        }
+
+        function editPlaylist(playlistId) {
+            console.log('✏️ Editing playlist:', playlistId);
+            alert('Edit playlist functionality would open here');
+        }
+
+        function deletePlaylist(playlistId) {
+            if (confirm('Are you sure you want to delete this playlist?')) {
+                console.log('🗑️ Deleting playlist:', playlistId);
+                alert('Playlist deleted successfully!');
+                // In a real app, this would remove the playlist from the grid
+            }
+        }
+
+        // About Functions
+        function editAbout() {
+            const description = prompt('Enter new channel description:', 'Welcome to my channel! I create content about technology, programming, and digital creativity.');
+            if (description !== null) {
+                console.log('✏️ Updating channel description:', description);
+                const aboutText = document.querySelector('.about-text p');
+                if (aboutText) {
+                    aboutText.textContent = description;
+                }
+                alert('About section updated successfully!');
+            }
+        }
     
         // Tab Switching Functionality
         function initializeTabs() {
