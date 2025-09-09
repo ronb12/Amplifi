@@ -1357,11 +1357,9 @@
         }
 
         .edit-avatar-btn {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 36px;
-            height: 36px;
+            position: static;
+            width: 40px;
+            height: 40px;
             background: #ff0000;
             border: none;
             border-radius: 50%;
@@ -1370,9 +1368,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin: 12px auto 0;
         }
 
         .edit-avatar-btn:hover {
@@ -1618,6 +1617,96 @@
 
         .delete-name-btn:hover {
             background: #c82333;
+        }
+
+        /* Editable About Section Styles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .edit-section-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .edit-section-btn:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+
+        .edit-form {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .edit-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .edit-form .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .edit-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .edit-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .form-actions .btn-primary,
+        .form-actions .btn-secondary {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 
@@ -1890,10 +1979,10 @@
         <div class="profile-header">
             <div class="profile-avatar">
                 <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Profile">
-                <button class="edit-avatar-btn" title="Change Avatar" onclick="openAvatarModal()">
-                    <i class="fas fa-camera"></i>
-                </button>
             </div>
+            <button class="edit-avatar-btn" title="Change Avatar" onclick="openAvatarModal()">
+                <i class="fas fa-camera"></i>
+            </button>
             <div class="profile-info">
                 <h1 class="channel-title">Your Channel</h1>
                 <p class="username-display">@username</p>
@@ -2296,83 +2385,198 @@
                 <div class="about-dashboard">
                     <div class="about-header">
                         <h2><i class="fas fa-info-circle"></i> About</h2>
-                        <button class="btn-primary" onclick="editAbout()">
+                        <button class="btn-primary" onclick="toggleAboutEdit()">
                             <i class="fas fa-edit"></i> Edit About
                         </button>
                     </div>
                     
                     <div class="about-content">
                         <div class="about-section">
-                            <h3>Channel Description</h3>
-                            <div class="about-text">
-                                <p>Welcome to my channel! I create content about technology, programming, and digital creativity. Join me as we explore the latest trends in web development, video editing, and social media.</p>
-                                <p>I upload new videos every week, so make sure to subscribe and hit the notification bell to never miss an update!</p>
+                            <div class="section-header">
+                                <h3>Channel Description</h3>
+                                <button class="edit-section-btn" onclick="editSection('description')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="about-text" id="descriptionContent">
+                                <p id="descriptionText">Welcome to my channel! I create content about technology, programming, and digital creativity. Join me as we explore the latest trends in web development, video editing, and social media.</p>
+                                <p id="descriptionText2">I upload new videos every week, so make sure to subscribe and hit the notification bell to never miss an update!</p>
+                            </div>
+                            <div class="edit-form" id="descriptionForm" style="display: none;">
+                                <textarea id="descriptionInput" rows="4" placeholder="Enter your channel description...">Welcome to my channel! I create content about technology, programming, and digital creativity. Join me as we explore the latest trends in web development, video editing, and social media.
+
+I upload new videos every week, so make sure to subscribe and hit the notification bell to never miss an update!</textarea>
+                                <div class="form-actions">
+                                    <button class="btn-primary" onclick="saveSection('description')">Save</button>
+                                    <button class="btn-secondary" onclick="cancelEdit('description')">Cancel</button>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="about-section">
-                            <h3>Contact Information</h3>
-                            <div class="contact-info">
+                            <div class="section-header">
+                                <h3>Contact Information</h3>
+                                <button class="edit-section-btn" onclick="editSection('contact')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="contact-info" id="contactContent">
                                 <div class="contact-item">
                                     <i class="fas fa-envelope"></i>
-                                    <span>contact@example.com</span>
+                                    <span id="emailText">contact@example.com</span>
                                 </div>
                                 <div class="contact-item">
                                     <i class="fas fa-globe"></i>
-                                    <span>www.example.com</span>
+                                    <span id="websiteText">www.example.com</span>
                                 </div>
                                 <div class="contact-item">
                                     <i class="fab fa-twitter"></i>
-                                    <span>@username</span>
+                                    <span id="twitterText">@username</span>
                                 </div>
                                 <div class="contact-item">
                                     <i class="fab fa-instagram"></i>
-                                    <span>@username</span>
+                                    <span id="instagramText">@username</span>
+                                </div>
+                            </div>
+                            <div class="edit-form" id="contactForm" style="display: none;">
+                                <div class="form-group">
+                                    <label for="emailInput">Email</label>
+                                    <input type="email" id="emailInput" value="contact@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="websiteInput">Website</label>
+                                    <input type="url" id="websiteInput" value="www.example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="twitterInput">Twitter</label>
+                                    <input type="text" id="twitterInput" value="@username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="instagramInput">Instagram</label>
+                                    <input type="text" id="instagramInput" value="@username">
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn-primary" onclick="saveSection('contact')">Save</button>
+                                    <button class="btn-secondary" onclick="cancelEdit('contact')">Cancel</button>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="about-section">
-                            <h3>Channel Statistics</h3>
-                            <div class="stats-grid">
+                            <div class="section-header">
+                                <h3>Channel Statistics</h3>
+                                <button class="edit-section-btn" onclick="editSection('stats')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="stats-grid" id="statsContent">
                                 <div class="stat-item">
                                     <span class="stat-label">Joined</span>
-                                    <span class="stat-value">January 2023</span>
+                                    <span class="stat-value" id="joinedText">January 2023</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">Total Videos</span>
-                                    <span class="stat-value">45</span>
+                                    <span class="stat-value" id="videosText">45</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">Total Views</span>
-                                    <span class="stat-value">125.6K</span>
+                                    <span class="stat-value" id="viewsText">125.6K</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">Subscribers</span>
-                                    <span class="stat-value">1.2K</span>
+                                    <span class="stat-value" id="subscribersText">1.2K</span>
+                                </div>
+                            </div>
+                            <div class="edit-form" id="statsForm" style="display: none;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="joinedInput">Joined</label>
+                                        <input type="text" id="joinedInput" value="January 2023">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="videosInput">Total Videos</label>
+                                        <input type="number" id="videosInput" value="45">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="viewsInput">Total Views</label>
+                                        <input type="text" id="viewsInput" value="125.6K">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="subscribersInput">Subscribers</label>
+                                        <input type="text" id="subscribersInput" value="1.2K">
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn-primary" onclick="saveSection('stats')">Save</button>
+                                    <button class="btn-secondary" onclick="cancelEdit('stats')">Cancel</button>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="about-section">
-                            <h3>Channel Links</h3>
-                            <div class="links-list">
-                                <a href="#" class="link-item">
+                            <div class="section-header">
+                                <h3>Channel Links</h3>
+                                <button class="edit-section-btn" onclick="editSection('links')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                            <div class="links-list" id="linksContent">
+                                <a href="#" class="link-item" id="websiteLink">
                                     <i class="fas fa-external-link-alt"></i>
-                                    <span>My Website</span>
+                                    <span id="websiteLinkText">My Website</span>
                                 </a>
-                                <a href="#" class="link-item">
+                                <a href="#" class="link-item" id="discordLink">
                                     <i class="fas fa-external-link-alt"></i>
-                                    <span>Discord Server</span>
+                                    <span id="discordLinkText">Discord Server</span>
                                 </a>
-                                <a href="#" class="link-item">
+                                <a href="#" class="link-item" id="patreonLink">
                                     <i class="fas fa-external-link-alt"></i>
-                                    <span>Patreon</span>
+                                    <span id="patreonLinkText">Patreon</span>
                                 </a>
-                                <a href="#" class="link-item">
+                                <a href="#" class="link-item" id="merchLink">
                                     <i class="fas fa-external-link-alt"></i>
-                                    <span>Merch Store</span>
+                                    <span id="merchLinkText">Merch Store</span>
                                 </a>
+                            </div>
+                            <div class="edit-form" id="linksForm" style="display: none;">
+                                <div class="form-group">
+                                    <label for="websiteLinkInput">Website Link</label>
+                                    <input type="url" id="websiteLinkInput" value="https://example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="websiteLinkTextInput">Website Text</label>
+                                    <input type="text" id="websiteLinkTextInput" value="My Website">
+                                </div>
+                                <div class="form-group">
+                                    <label for="discordLinkInput">Discord Link</label>
+                                    <input type="url" id="discordLinkInput" value="https://discord.gg/example">
+                                </div>
+                                <div class="form-group">
+                                    <label for="discordLinkTextInput">Discord Text</label>
+                                    <input type="text" id="discordLinkTextInput" value="Discord Server">
+                                </div>
+                                <div class="form-group">
+                                    <label for="patreonLinkInput">Patreon Link</label>
+                                    <input type="url" id="patreonLinkInput" value="https://patreon.com/example">
+                                </div>
+                                <div class="form-group">
+                                    <label for="patreonLinkTextInput">Patreon Text</label>
+                                    <input type="text" id="patreonLinkTextInput" value="Patreon">
+                                </div>
+                                <div class="form-group">
+                                    <label for="merchLinkInput">Merch Link</label>
+                                    <input type="url" id="merchLinkInput" value="https://merch.example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="merchLinkTextInput">Merch Text</label>
+                                    <input type="text" id="merchLinkTextInput" value="Merch Store">
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn-primary" onclick="saveSection('links')">Save</button>
+                                    <button class="btn-secondary" onclick="cancelEdit('links')">Cancel</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2886,6 +3090,271 @@
                     nameType.className = `name-type ${nameData.useAlias ? 'alias' : 'real'}`;
                 }
                 if (channelTitle) channelTitle.textContent = nameData.name;
+            }
+
+            // Load About section data
+            loadAboutData();
+        }
+
+        // About Section Edit Functions
+        function toggleAboutEdit() {
+            const allEditButtons = document.querySelectorAll('.edit-section-btn');
+            allEditButtons.forEach(btn => {
+                btn.style.display = btn.style.display === 'none' ? 'inline-block' : 'none';
+            });
+        }
+
+        function editSection(section) {
+            // Hide all other edit forms
+            document.querySelectorAll('.edit-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Show the selected edit form
+            const form = document.getElementById(section + 'Form');
+            if (form) {
+                form.style.display = 'block';
+            }
+        }
+
+        function cancelEdit(section) {
+            const form = document.getElementById(section + 'Form');
+            if (form) {
+                form.style.display = 'none';
+            }
+        }
+
+        function saveSection(section) {
+            switch(section) {
+                case 'description':
+                    saveDescription();
+                    break;
+                case 'contact':
+                    saveContact();
+                    break;
+                case 'stats':
+                    saveStats();
+                    break;
+                case 'links':
+                    saveLinks();
+                    break;
+            }
+        }
+
+        function saveDescription() {
+            const description = document.getElementById('descriptionInput').value;
+            const paragraphs = description.split('\n\n');
+            
+            // Update display
+            const descriptionText = document.getElementById('descriptionText');
+            const descriptionText2 = document.getElementById('descriptionText2');
+            
+            if (descriptionText) {
+                descriptionText.textContent = paragraphs[0] || '';
+            }
+            if (descriptionText2) {
+                descriptionText2.textContent = paragraphs[1] || '';
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('amplifi_about_description', description);
+            
+            // Hide form
+            document.getElementById('descriptionForm').style.display = 'none';
+            
+            console.log('💾 Description saved');
+            alert('Description updated successfully!');
+        }
+
+        function saveContact() {
+            const email = document.getElementById('emailInput').value;
+            const website = document.getElementById('websiteInput').value;
+            const twitter = document.getElementById('twitterInput').value;
+            const instagram = document.getElementById('instagramInput').value;
+            
+            // Update display
+            const emailText = document.getElementById('emailText');
+            const websiteText = document.getElementById('websiteText');
+            const twitterText = document.getElementById('twitterText');
+            const instagramText = document.getElementById('instagramText');
+            
+            if (emailText) emailText.textContent = email;
+            if (websiteText) websiteText.textContent = website;
+            if (twitterText) twitterText.textContent = twitter;
+            if (instagramText) instagramText.textContent = instagram;
+            
+            // Save to localStorage
+            const contactData = { email, website, twitter, instagram };
+            localStorage.setItem('amplifi_about_contact', JSON.stringify(contactData));
+            
+            // Hide form
+            document.getElementById('contactForm').style.display = 'none';
+            
+            console.log('💾 Contact info saved');
+            alert('Contact information updated successfully!');
+        }
+
+        function saveStats() {
+            const joined = document.getElementById('joinedInput').value;
+            const videos = document.getElementById('videosInput').value;
+            const views = document.getElementById('viewsInput').value;
+            const subscribers = document.getElementById('subscribersInput').value;
+            
+            // Update display
+            const joinedText = document.getElementById('joinedText');
+            const videosText = document.getElementById('videosText');
+            const viewsText = document.getElementById('viewsText');
+            const subscribersText = document.getElementById('subscribersText');
+            
+            if (joinedText) joinedText.textContent = joined;
+            if (videosText) videosText.textContent = videos;
+            if (viewsText) viewsText.textContent = views;
+            if (subscribersText) subscribersText.textContent = subscribers;
+            
+            // Save to localStorage
+            const statsData = { joined, videos, views, subscribers };
+            localStorage.setItem('amplifi_about_stats', JSON.stringify(statsData));
+            
+            // Hide form
+            document.getElementById('statsForm').style.display = 'none';
+            
+            console.log('💾 Stats saved');
+            alert('Channel statistics updated successfully!');
+        }
+
+        function saveLinks() {
+            const websiteLink = document.getElementById('websiteLinkInput').value;
+            const websiteText = document.getElementById('websiteLinkTextInput').value;
+            const discordLink = document.getElementById('discordLinkInput').value;
+            const discordText = document.getElementById('discordLinkTextInput').value;
+            const patreonLink = document.getElementById('patreonLinkInput').value;
+            const patreonText = document.getElementById('patreonLinkTextInput').value;
+            const merchLink = document.getElementById('merchLinkInput').value;
+            const merchText = document.getElementById('merchLinkTextInput').value;
+            
+            // Update display
+            const websiteLinkEl = document.getElementById('websiteLink');
+            const websiteLinkTextEl = document.getElementById('websiteLinkText');
+            const discordLinkEl = document.getElementById('discordLink');
+            const discordLinkTextEl = document.getElementById('discordLinkText');
+            const patreonLinkEl = document.getElementById('patreonLink');
+            const patreonLinkTextEl = document.getElementById('patreonLinkText');
+            const merchLinkEl = document.getElementById('merchLink');
+            const merchLinkTextEl = document.getElementById('merchLinkText');
+            
+            if (websiteLinkEl) websiteLinkEl.href = websiteLink;
+            if (websiteLinkTextEl) websiteLinkTextEl.textContent = websiteText;
+            if (discordLinkEl) discordLinkEl.href = discordLink;
+            if (discordLinkTextEl) discordLinkTextEl.textContent = discordText;
+            if (patreonLinkEl) patreonLinkEl.href = patreonLink;
+            if (patreonLinkTextEl) patreonLinkTextEl.textContent = patreonText;
+            if (merchLinkEl) merchLinkEl.href = merchLink;
+            if (merchLinkTextEl) merchLinkTextEl.textContent = merchText;
+            
+            // Save to localStorage
+            const linksData = {
+                website: { link: websiteLink, text: websiteText },
+                discord: { link: discordLink, text: discordText },
+                patreon: { link: patreonLink, text: patreonText },
+                merch: { link: merchLink, text: merchText }
+            };
+            localStorage.setItem('amplifi_about_links', JSON.stringify(linksData));
+            
+            // Hide form
+            document.getElementById('linksForm').style.display = 'none';
+            
+            console.log('💾 Links saved');
+            alert('Channel links updated successfully!');
+        }
+
+        function loadAboutData() {
+            // Load description
+            const savedDescription = localStorage.getItem('amplifi_about_description');
+            if (savedDescription) {
+                document.getElementById('descriptionInput').value = savedDescription;
+                const paragraphs = savedDescription.split('\n\n');
+                const descriptionText = document.getElementById('descriptionText');
+                const descriptionText2 = document.getElementById('descriptionText2');
+                
+                if (descriptionText) descriptionText.textContent = paragraphs[0] || '';
+                if (descriptionText2) descriptionText2.textContent = paragraphs[1] || '';
+            }
+
+            // Load contact info
+            const savedContact = localStorage.getItem('amplifi_about_contact');
+            if (savedContact) {
+                const contactData = JSON.parse(savedContact);
+                document.getElementById('emailInput').value = contactData.email || '';
+                document.getElementById('websiteInput').value = contactData.website || '';
+                document.getElementById('twitterInput').value = contactData.twitter || '';
+                document.getElementById('instagramInput').value = contactData.instagram || '';
+                
+                // Update display
+                const emailText = document.getElementById('emailText');
+                const websiteText = document.getElementById('websiteText');
+                const twitterText = document.getElementById('twitterText');
+                const instagramText = document.getElementById('instagramText');
+                
+                if (emailText) emailText.textContent = contactData.email || '';
+                if (websiteText) websiteText.textContent = contactData.website || '';
+                if (twitterText) twitterText.textContent = contactData.twitter || '';
+                if (instagramText) instagramText.textContent = contactData.instagram || '';
+            }
+
+            // Load stats
+            const savedStats = localStorage.getItem('amplifi_about_stats');
+            if (savedStats) {
+                const statsData = JSON.parse(savedStats);
+                document.getElementById('joinedInput').value = statsData.joined || '';
+                document.getElementById('videosInput').value = statsData.videos || '';
+                document.getElementById('viewsInput').value = statsData.views || '';
+                document.getElementById('subscribersInput').value = statsData.subscribers || '';
+                
+                // Update display
+                const joinedText = document.getElementById('joinedText');
+                const videosText = document.getElementById('videosText');
+                const viewsText = document.getElementById('viewsText');
+                const subscribersText = document.getElementById('subscribersText');
+                
+                if (joinedText) joinedText.textContent = statsData.joined || '';
+                if (videosText) videosText.textContent = statsData.videos || '';
+                if (viewsText) viewsText.textContent = statsData.views || '';
+                if (subscribersText) subscribersText.textContent = statsData.subscribers || '';
+            }
+
+            // Load links
+            const savedLinks = localStorage.getItem('amplifi_about_links');
+            if (savedLinks) {
+                const linksData = JSON.parse(savedLinks);
+                
+                // Update form inputs
+                document.getElementById('websiteLinkInput').value = linksData.website?.link || '';
+                document.getElementById('websiteLinkTextInput').value = linksData.website?.text || '';
+                document.getElementById('discordLinkInput').value = linksData.discord?.link || '';
+                document.getElementById('discordLinkTextInput').value = linksData.discord?.text || '';
+                document.getElementById('patreonLinkInput').value = linksData.patreon?.link || '';
+                document.getElementById('patreonLinkTextInput').value = linksData.patreon?.text || '';
+                document.getElementById('merchLinkInput').value = linksData.merch?.link || '';
+                document.getElementById('merchLinkTextInput').value = linksData.merch?.text || '';
+                
+                // Update display
+                const websiteLinkEl = document.getElementById('websiteLink');
+                const websiteLinkTextEl = document.getElementById('websiteLinkText');
+                const discordLinkEl = document.getElementById('discordLink');
+                const discordLinkTextEl = document.getElementById('discordLinkText');
+                const patreonLinkEl = document.getElementById('patreonLink');
+                const patreonLinkTextEl = document.getElementById('patreonLinkText');
+                const merchLinkEl = document.getElementById('merchLink');
+                const merchLinkTextEl = document.getElementById('merchLinkText');
+                
+                if (websiteLinkEl) websiteLinkEl.href = linksData.website?.link || '#';
+                if (websiteLinkTextEl) websiteLinkTextEl.textContent = linksData.website?.text || '';
+                if (discordLinkEl) discordLinkEl.href = linksData.discord?.link || '#';
+                if (discordLinkTextEl) discordLinkTextEl.textContent = linksData.discord?.text || '';
+                if (patreonLinkEl) patreonLinkEl.href = linksData.patreon?.link || '#';
+                if (patreonLinkTextEl) patreonLinkTextEl.textContent = linksData.patreon?.text || '';
+                if (merchLinkEl) merchLinkEl.href = linksData.merch?.link || '#';
+                if (merchLinkTextEl) merchLinkTextEl.textContent = linksData.merch?.text || '';
             }
         }
     
