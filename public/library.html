@@ -26,6 +26,394 @@
     <script src="assets/js/creator-network.js"></script>
     
     <style>
+        /* Header */
+        .yt-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .yt-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .yt-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .yt-search {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 40px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .yt-search-input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 16px;
+            background: #f8f9fa;
+            transition: all 0.2s;
+        }
+
+        .yt-search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #606060;
+        }
+
+        .yt-search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .yt-search-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .yt-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .yt-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .yt-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .yt-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .yt-btn-secondary {
+            background: #f8f9fa;
+            color: #606060;
+            border: 1px solid #e0e0e0;
+        }
+
+        .yt-btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #d0d7de;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .yt-search {
+                margin: 0 20px;
+            }
+            
+            .yt-header-actions {
+                gap: 8px;
+            }
+            
+            .yt-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* Mobile Bottom Navigation */
+        .yt-mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .yt-mobile-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #606060;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            min-width: 60px;
+        }
+
+        .yt-mobile-tab:hover,
+        .yt-mobile-tab.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .yt-mobile-tab i {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .yt-mobile-tab span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .yt-mobile-tab-plus {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            justify-content: center;
+            margin-top: -10px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .yt-mobile-tab-plus:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Mobile Menu Overlay */
+        .yt-mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .yt-mobile-menu-overlay.show {
+            display: flex;
+        }
+
+        .yt-mobile-menu {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .yt-mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .yt-mobile-menu-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .yt-mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #606060;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .yt-mobile-menu-content {
+            padding: 20px;
+        }
+
+        .yt-mobile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            text-decoration: none;
+            color: #1a1a1a;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .yt-mobile-menu-item:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+
+        .yt-mobile-menu-item i {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .yt-mobile-menu-item span {
+            font-weight: 500;
+        }
+
+        .yt-mobile-menu-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 16px 0;
+        }
+
+        /* Desktop Navigation */
+        .yt-desktop-nav {
+            position: sticky;
+            top: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            width: 100%;
+        }
+
+        .yt-desktop-nav-container {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            gap: 0;
+            padding: 0 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 56px;
+        }
+
+        .yt-desktop-nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .yt-desktop-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 20px;
+            background: transparent;
+            color: #6b7280;
+            text-decoration: none;
+            border-radius: 0;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            height: 56px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .yt-desktop-nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .yt-desktop-nav-item.active {
+            background: transparent;
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .yt-desktop-nav-item i {
+            font-size: 16px;
+        }
+
+        /* Hide mobile nav on desktop */
+        @media (min-width: 769px) {
+            .yt-mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Hide desktop nav on mobile */
+        @media (max-width: 768px) {
+            .yt-desktop-nav {
+                display: none;
+            }
+        }
+
         .library-tabs {
             display: flex;
             gap: 8px;
@@ -142,42 +530,190 @@
             color: #030303;
             margin-bottom: 12px;
         }
+
+        /* Additional styles for proper display */
+        .yt-main {
+            margin-top: 120px; /* 64px header + 56px desktop nav */
+            padding: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .yt-main {
+                margin-top: 64px; /* Only header on mobile */
+                padding-bottom: 64px; /* Space for mobile nav */
+            }
+        }
+
+        .yt-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #030303;
+            margin-bottom: 20px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .content-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .content-info {
+            padding: 16px;
+        }
+
+        .content-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .content-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .content-creator {
+            font-size: 14px;
+            color: #030303;
+            font-weight: 500;
+        }
+
+        .content-stats {
+            font-size: 12px;
+            color: #606060;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="yt-header">
-        <a href="index.html" class="yt-logo">
-            <img src="amplifi-icon.svg" alt="Amplifi">
-            <span>Amplifi</span>
-        </a>
-        
-        <nav class="yt-nav">
-            <a href="index.html">Home</a>
-            <a href="feed.html">Feed</a>
-            <a href="trending.html">Trending</a>
-            <a href="library.html" class="active">Library</a>
-            <a href="search.html">Search</a>
-        </nav>
-        
-        <div class="yt-search">
-            <div class="yt-search-container">
-                <i class="fas fa-search yt-search-icon"></i>
-                <input type="text" class="yt-search-input" placeholder="Search content, creators, playlists...">
+        <div class="yt-nav">
+            <a href="index.html" class="yt-logo">
+                <img src="amplifi-icon.svg" alt="Amplifi" class="logo-img">
+                <span class="logo-text">Amplifi</span>
+            </a>
+            
+            <!-- Search -->
+            <div class="yt-search">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="yt-search-input" placeholder="Search videos, creators, topics...">
+                    <button class="yt-search-btn" id="searchBtn">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-        
-        <div class="yt-user-actions">
-            <div id="authButtons">
-                <a href="login.html" class="yt-btn yt-btn-primary">Sign In</a>
-                <a href="login.html" class="yt-btn yt-btn-secondary">Sign Up</a>
+            
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
             </div>
-            <div id="userProfile" style="display: none;">
-                <a href="profile.html" class="yt-btn yt-btn-secondary">Profile</a>
-                <button onclick="signOut()" class="yt-btn yt-btn-secondary">Sign Out</button>
+            
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <a href="profile.html" class="yt-btn yt-btn-secondary">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <button onclick="signOut()" class="yt-btn yt-btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
             </div>
         </div>
     </header>
+
+    <!-- Desktop Navigation -->
+    <nav class="yt-desktop-nav">
+        <div class="yt-desktop-nav-container">
+            <a href="index.html" class="yt-desktop-nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="feed.html" class="yt-desktop-nav-item">
+                <i class="fas fa-rss"></i>
+                <span>Feed</span>
+            </a>
+            <a href="moments.html" class="yt-desktop-nav-item">
+                <i class="fas fa-play"></i>
+                <span>Moments</span>
+            </a>
+            <a href="trending.html" class="yt-desktop-nav-item">
+                <i class="fas fa-fire"></i>
+                <span>Trending</span>
+            </a>
+            <a href="live.html" class="yt-desktop-nav-item">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Live</span>
+            </a>
+            <a href="search.html" class="yt-desktop-nav-item">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+            <a href="upload.html" class="yt-desktop-nav-item">
+                <i class="fas fa-upload"></i>
+                <span>Upload</span>
+            </a>
+            <a href="video-editor.html" class="yt-desktop-nav-item">
+                <i class="fas fa-cut"></i>
+                <span>Editor</span>
+            </a>
+            <a href="schedule.html" class="yt-desktop-nav-item">
+                <i class="fas fa-calendar"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="profile.html" class="yt-desktop-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="library.html" class="yt-desktop-nav-item active">
+                <i class="fas fa-folder"></i>
+                <span>Library</span>
+            </a>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main class="yt-main">
@@ -244,6 +780,101 @@
             </div>
         </div>
     </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="yt-mobile-nav">
+        <a href="index.html" class="yt-mobile-tab">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="feed.html" class="yt-mobile-tab">
+            <i class="fas fa-rss"></i>
+            <span>Feed</span>
+        </a>
+        <a href="#" class="yt-mobile-tab yt-mobile-tab-plus" onclick="openMobileMenu(); return false;">
+            <i class="fas fa-plus"></i>
+            <span>Create</span>
+        </a>
+        <a href="live.html" class="yt-mobile-tab">
+            <i class="fas fa-broadcast-tower"></i>
+            <span>Live</span>
+        </a>
+        <a href="library.html" class="yt-mobile-tab active">
+            <i class="fas fa-folder"></i>
+            <span>Library</span>
+        </a>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">
+        <div class="yt-mobile-menu">
+            <div class="yt-mobile-menu-header">
+                <h3>Navigate</h3>
+                <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">&times;</button>
+            </div>
+            <div class="yt-mobile-menu-content">
+                <a href="index.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="feed.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="moments.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-video"></i>
+                    <span>Moments</span>
+                </a>
+                <a href="trending.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <a href="search.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="upload.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="video-editor.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-cut"></i>
+                    <span>Editor</span>
+                </a>
+                <a href="schedule.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Schedule</span>
+                </a>
+                <a href="live.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Go Live</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="library.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-folder"></i>
+                    <span>Library</span>
+                </a>
+                <a href="profile.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <div class="yt-mobile-menu-divider"></div>
+                <a href="about.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="privacy.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </a>
+                <a href="terms.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Terms</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Library Management
@@ -503,10 +1134,198 @@
             window.location.href = 'index.html';
         }
 
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close mobile menu when clicking overlay
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay && e.target === overlay) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
+
         // Initialize library manager when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new LibraryManager();
+            console.log('✅ Library page loading...');
+            try {
+                new LibraryManager();
+                console.log('✅ Library manager initialized');
+            } catch (error) {
+                console.error('❌ Library manager initialization failed:', error);
+                // Fallback: show sample content
+                loadSampleContent();
+            }
         });
+
+        // Fallback function to load sample content
+        function loadSampleContent() {
+            console.log('📚 Loading sample content...');
+            
+            // Sample watch history
+            const historyGrid = document.getElementById('historyGrid');
+            if (historyGrid) {
+                historyGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Sample Video">
+                            <div class="content-duration">8:45</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Sample Video Title</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">Sample Creator</div>
+                                <div class="content-stats">1.2K views • 2 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Another Video">
+                            <div class="content-duration">12:30</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Another Sample Video</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">Another Creator</div>
+                                <div class="content-stats">856 views • 1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sample watch later
+            const laterGrid = document.getElementById('laterGrid');
+            if (laterGrid) {
+                laterGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Watch Later Video">
+                            <div class="content-duration">15:20</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Video to Watch Later</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">Creator Name</div>
+                                <div class="content-stats">2.1K views • 3 days ago</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sample liked videos
+            const likedGrid = document.getElementById('likedGrid');
+            if (likedGrid) {
+                likedGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Liked Video">
+                            <div class="content-duration">6:45</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Liked Video Title</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">Liked Creator</div>
+                                <div class="content-stats">5.2K views • 1 week ago</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sample playlists
+            const playlistsGrid = document.getElementById('playlistsGrid');
+            if (playlistsGrid) {
+                playlistsGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="My Playlist">
+                            <div class="content-duration">12 videos</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">My Favorite Videos</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">12 videos</div>
+                                <div class="content-stats">Created 2 days ago</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sample subscriptions
+            const subscriptionsGrid = document.getElementById('subscriptionsGrid');
+            if (subscriptionsGrid) {
+                subscriptionsGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Subscribed Creator" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; margin: 20px auto; display: block;">
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Subscribed Creator <i class="fas fa-check-circle" style="color: #ff0000;"></i></h3>
+                            <div class="content-meta">
+                                <div class="content-creator">@creatorname</div>
+                                <div class="content-stats">150K subscribers • 250 videos</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sample creator network
+            const creatorsGrid = document.getElementById('creatorsGrid');
+            if (creatorsGrid) {
+                creatorsGrid.innerHTML = `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Creator 1" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; margin: 20px auto; display: block;">
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Creator 1 <i class="fas fa-check-circle" style="color: #ff0000;"></i></h3>
+                            <div class="content-meta">
+                                <div class="content-creator">@creator1</div>
+                                <div class="content-stats">200K subscribers • 180 videos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Creator 2" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; margin: 20px auto; display: block;">
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">Creator 2</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">@creator2</div>
+                                <div class="content-stats">85K subscribers • 120 videos</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
     </script>
 </body>
 </html>
