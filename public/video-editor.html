@@ -23,12 +23,13 @@
     
     <!-- FFmpeg.js for high-quality video processing -->
     <script>
-        // Load FFmpeg with fallback CDN (skip FFmpegUtil for now)
+        // Load FFmpeg with CORS-friendly approach
         function loadFFmpegScripts() {
             const loadScript = (src, name) => {
                 return new Promise((resolve, reject) => {
                     const script = document.createElement('script');
                     script.src = src;
+                    script.crossOrigin = 'anonymous'; // Add CORS attribute
                     script.onload = () => {
                         console.log(`✅ ${name} script loaded`);
                         resolve();
@@ -41,15 +42,35 @@
                 });
             };
 
-            // Load only FFmpeg (skip FFmpegUtil for now)
-            loadScript('https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg')
-                .catch(() => {
-                    console.log('🔄 Trying jsDelivr FFmpeg...');
-                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg');
-                })
-                .catch(() => {
-                    console.log('❌ All FFmpeg CDNs failed - video editor will work without FFmpeg');
-                });
+            // Try different FFmpeg versions that might work better with CORS
+            const ffmpegVersions = [
+                'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js',
+                'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js',
+                'https://unpkg.com/@ffmpeg/ffmpeg@0.12.5/dist/umd/ffmpeg.js',
+                'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.5/dist/umd/ffmpeg.js',
+                'https://unpkg.com/@ffmpeg/ffmpeg@0.12.4/dist/umd/ffmpeg.js',
+                'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.4/dist/umd/ffmpeg.js'
+            ];
+
+            // Try each version sequentially
+            let currentVersion = 0;
+            const tryNextVersion = () => {
+                if (currentVersion >= ffmpegVersions.length) {
+                    console.log('❌ All FFmpeg versions failed - video editor will work without FFmpeg');
+                    return;
+                }
+                
+                const version = ffmpegVersions[currentVersion];
+                console.log(`🔄 Trying FFmpeg version ${currentVersion + 1}/${ffmpegVersions.length}: ${version}`);
+                
+                loadScript(version, 'FFmpeg')
+                    .catch(() => {
+                        currentVersion++;
+                        tryNextVersion();
+                    });
+            };
+            
+            tryNextVersion();
         }
 
         // Load scripts when DOM is ready
@@ -883,49 +904,72 @@
                         this.progressFill.style.width = `${Math.round(progress * 100)}%`;
                     });
                     
-                    // Try to load FFmpeg core with fallback URLs
-                    const coreURLs = [
-                        'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-                        'https://unpkg.com/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.js',
-                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.js'
-                    ];
+                    // Try to load FFmpeg with different approaches to avoid CORS issues
+                    console.log('🔄 Attempting FFmpeg load with CORS workarounds...');
                     
-                    const wasmURLs = [
-                        'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
-                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
-                        'https://unpkg.com/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.wasm',
-                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.wasm'
-                    ];
-                    
-                    // Try to load with different core versions
-                    let loaded = false;
-                    for (let i = 0; i < coreURLs.length; i++) {
-                        try {
-                            console.log(`🔄 Trying core version ${i + 1}/${coreURLs.length}...`);
-                            await this.ffmpeg.load({
-                                coreURL: coreURLs[i],
-                                wasmURL: wasmURLs[i],
-                            });
-                            console.log('✅ FFmpeg core loaded successfully');
-                            loaded = true;
-                            break;
-                        } catch (error) {
-                            console.log(`❌ Core version ${i + 1} failed:`, error.message);
-                            if (i === coreURLs.length - 1) {
-                                throw error;
+                    // Approach 1: Try minimal load first
+                    try {
+                        console.log('🔄 Trying minimal FFmpeg load...');
+                        await this.ffmpeg.load();
+                        console.log('✅ FFmpeg loaded successfully with minimal config');
+                    } catch (error) {
+                        console.log('❌ Minimal load failed, trying with explicit core URLs...');
+                        
+                        // Approach 2: Try with explicit core URLs but different versions
+                        const coreVersions = [
+                            { core: '0.12.6', wasm: '0.12.6' },
+                            { core: '0.12.5', wasm: '0.12.5' },
+                            { core: '0.12.4', wasm: '0.12.4' },
+                            { core: '0.12.3', wasm: '0.12.3' }
+                        ];
+                        
+                        let loaded = false;
+                        for (let i = 0; i < coreVersions.length; i++) {
+                            const version = coreVersions[i];
+                            try {
+                                console.log(`🔄 Trying core version ${i + 1}/${coreVersions.length} (${version.core})...`);
+                                
+                                // Try unpkg first, then jsDelivr
+                                const coreURLs = [
+                                    `https://unpkg.com/@ffmpeg/core@${version.core}/dist/umd/ffmpeg-core.js`,
+                                    `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${version.core}/dist/umd/ffmpeg-core.js`
+                                ];
+                                
+                                const wasmURLs = [
+                                    `https://unpkg.com/@ffmpeg/core@${version.wasm}/dist/umd/ffmpeg-core.wasm`,
+                                    `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${version.wasm}/dist/umd/ffmpeg-core.wasm`
+                                ];
+                                
+                                for (let j = 0; j < coreURLs.length; j++) {
+                                    try {
+                                        await this.ffmpeg.load({
+                                            coreURL: coreURLs[j],
+                                            wasmURL: wasmURLs[j],
+                                        });
+                                        console.log(`✅ FFmpeg core loaded successfully with version ${version.core} from ${j === 0 ? 'unpkg' : 'jsDelivr'}`);
+                                        loaded = true;
+                                        break;
+                                    } catch (coreError) {
+                                        console.log(`❌ Core ${version.core} from ${j === 0 ? 'unpkg' : 'jsDelivr'} failed:`, coreError.message);
+                                    }
+                                }
+                                
+                                if (loaded) break;
+                            } catch (error) {
+                                console.log(`❌ Core version ${version.core} failed:`, error.message);
                             }
                         }
-                    }
-                    
-                    if (!loaded) {
-                        throw new Error('All FFmpeg core versions failed to load');
+                        
+                        if (!loaded) {
+                            throw new Error('All FFmpeg core versions failed to load due to CORS restrictions');
+                        }
                     }
                     
                     console.log('✅ FFmpeg loaded successfully');
                 } catch (error) {
                     console.error('❌ Failed to load FFmpeg:', error);
                     console.log('⚠️ Video editor will work without FFmpeg for basic editing');
+                    console.log('💡 Note: FFmpeg requires CORS-enabled CDNs or local hosting to work properly');
                     this.ffmpeg = null; // Ensure it's null when failed
                 }
             }
