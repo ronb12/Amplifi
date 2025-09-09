@@ -250,23 +250,23 @@
         
         .edit-tools {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
         
         .tool-btn {
             background: #333;
             border: none;
             color: white;
-            padding: 12px;
+            padding: 10px 8px;
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            font-size: 12px;
+            gap: 4px;
+            font-size: 11px;
         }
         
         .tool-btn:hover {
@@ -275,6 +275,115 @@
         
         .tool-btn.active {
             background: #ff0000;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .filter-tab.active {
+            color: #ff0000;
+            border-bottom-color: #ff0000;
+        }
+        
+        .filter-content {
+            margin-bottom: 15px;
+        }
+        
+        .filter-section {
+            display: none;
+        }
+        
+        .filter-section.active {
+            display: block;
+        }
+        
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .preset-btn {
+            padding: 8px 12px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:hover {
+            background: #444;
+            border-color: #ff0000;
+        }
+        
+        .preset-btn.active {
+            background: #ff0000;
+            border-color: #ff0000;
+        }
+        
+        /* Color Grading */
+        .color-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 6px;
+        }
+        
+        .color-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        /* Checkbox Controls */
+        .control-group label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .control-group input[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Apply Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: #cc0000;
+        }
+        
+        .btn-primary:disabled {
+            background: #666;
+            cursor: not-allowed;
         }
         
         .time-display {
@@ -649,6 +758,26 @@
                         <i class="fas fa-palette"></i>
                         <span>Filters</span>
                     </button>
+                    <button class="tool-btn" id="advancedFiltersBtn" title="Advanced Filters">
+                        <i class="fas fa-magic"></i>
+                        <span>Advanced</span>
+                    </button>
+                    <button class="tool-btn" id="transitionsBtn" title="Transitions">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transitions</span>
+                    </button>
+                    <button class="tool-btn" id="effectsBtn" title="Effects">
+                        <i class="fas fa-star"></i>
+                        <span>Effects</span>
+                    </button>
+                    <button class="tool-btn" id="colorGradingBtn" title="Color Grading">
+                        <i class="fas fa-adjust"></i>
+                        <span>Color</span>
+                    </button>
+                    <button class="tool-btn" id="stabilizationBtn" title="Stabilization">
+                        <i class="fas fa-hand-paper"></i>
+                        <span>Stabilize</span>
+                    </button>
                     <button class="tool-btn" id="textBtn" title="Add Text">
                         <i class="fas fa-font"></i>
                         <span>Text</span>
@@ -748,6 +877,222 @@
                 <button class="btn-primary" id="addText">Add Text</button>
             </div>
             
+            <!-- Advanced Filters Panel -->
+            <div class="sidebar-section" id="advancedFiltersPanel" style="display: none;">
+                <div class="sidebar-title">Advanced Filters</div>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-tab="basic">Basic</button>
+                    <button class="filter-tab" data-tab="advanced">Advanced</button>
+                    <button class="filter-tab" data-tab="presets">Presets</button>
+                </div>
+                
+                <div class="filter-content">
+                    <div class="filter-section active" id="basicFilters">
+                        <div class="control-group">
+                            <label>Brightness</label>
+                            <input type="range" id="brightness" min="0" max="200" value="100">
+                            <span id="brightnessValue">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Contrast</label>
+                            <input type="range" id="contrast" min="0" max="200" value="100">
+                            <span id="contrastValue">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Saturation</label>
+                            <input type="range" id="saturation" min="0" max="200" value="100">
+                            <span id="saturationValue">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Hue</label>
+                            <input type="range" id="hue" min="0" max="360" value="0">
+                            <span id="hueValue">0°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section" id="advancedFilters">
+                        <div class="control-group">
+                            <label>Blur</label>
+                            <input type="range" id="blur" min="0" max="10" value="0">
+                            <span id="blurValue">0</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Sharpen</label>
+                            <input type="range" id="sharpen" min="0" max="10" value="0">
+                            <span id="sharpenValue">0</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Sepia</label>
+                            <input type="range" id="sepia" min="0" max="100" value="0">
+                            <span id="sepiaValue">0%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Vintage</label>
+                            <input type="range" id="vintage" min="0" max="100" value="0">
+                            <span id="vintageValue">0%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Noir</label>
+                            <input type="range" id="noir" min="0" max="100" value="0">
+                            <span id="noirValue">0%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Warm</label>
+                            <input type="range" id="warm" min="0" max="100" value="0">
+                            <span id="warmValue">0%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Cool</label>
+                            <input type="range" id="cool" min="0" max="100" value="0">
+                            <span id="coolValue">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section" id="presetFilters">
+                        <div class="preset-grid">
+                            <button class="preset-btn" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="vintage">Vintage</button>
+                            <button class="preset-btn" data-preset="dramatic">Dramatic</button>
+                            <button class="preset-btn" data-preset="warm">Warm</button>
+                            <button class="preset-btn" data-preset="cool">Cool</button>
+                            <button class="preset-btn" data-preset="noir">Noir</button>
+                            <button class="preset-btn" data-preset="sepia">Sepia</button>
+                            <button class="preset-btn" data-preset="high-contrast">High Contrast</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary" id="applyAdvancedFilters">Apply Filters</button>
+            </div>
+            
+            <!-- Transitions Panel -->
+            <div class="sidebar-section" id="transitionsPanel" style="display: none;">
+                <div class="sidebar-title">Transitions</div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="fadeIn"> Fade In</label>
+                    <input type="range" id="fadeInDuration" min="0" max="5" step="0.1" value="1" disabled>
+                    <span id="fadeInValue">1.0s</span>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="fadeOut"> Fade Out</label>
+                    <input type="range" id="fadeOutDuration" min="0" max="5" step="0.1" value="1" disabled>
+                    <span id="fadeOutValue">1.0s</span>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="slideIn"> Slide In</label>
+                    <select id="slideInDirection" disabled>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                        <option value="up">Up</option>
+                        <option value="down">Down</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="zoomIn"> Zoom In</label>
+                    <input type="range" id="zoomInScale" min="1" max="2" step="0.1" value="1.2" disabled>
+                    <span id="zoomInValue">1.2x</span>
+                </div>
+                <button class="btn-primary" id="applyTransitions">Apply Transitions</button>
+            </div>
+            
+            <!-- Effects Panel -->
+            <div class="sidebar-section" id="effectsPanel" style="display: none;">
+                <div class="sidebar-title">Effects</div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="slowMotion"> Slow Motion</label>
+                    <input type="range" id="slowMotionFactor" min="0.1" max="0.9" step="0.1" value="0.5" disabled>
+                    <span id="slowMotionValue">0.5x</span>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="fastMotion"> Fast Motion</label>
+                    <input type="range" id="fastMotionFactor" min="1.1" max="5" step="0.1" value="2" disabled>
+                    <span id="fastMotionValue">2.0x</span>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="reverse"> Reverse</label>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="mirrorH"> Mirror Horizontal</label>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="mirrorV"> Mirror Vertical</label>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="shake"> Shake</label>
+                    <input type="range" id="shakeIntensity" min="0" max="20" value="5" disabled>
+                    <span id="shakeValue">5</span>
+                </div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="glow"> Glow</label>
+                    <input type="range" id="glowIntensity" min="0" max="50" value="10" disabled>
+                    <input type="color" id="glowColor" value="#ffffff" disabled>
+                </div>
+                <button class="btn-primary" id="applyEffects">Apply Effects</button>
+            </div>
+            
+            <!-- Color Grading Panel -->
+            <div class="sidebar-section" id="colorGradingPanel" style="display: none;">
+                <div class="sidebar-title">Color Grading</div>
+                <div class="color-section">
+                    <h4>Shadows</h4>
+                    <div class="control-group">
+                        <label>R: <input type="range" id="shadowR" min="-100" max="100" value="0"></label>
+                        <span id="shadowRValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>G: <input type="range" id="shadowG" min="-100" max="100" value="0"></label>
+                        <span id="shadowGValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>B: <input type="range" id="shadowB" min="-100" max="100" value="0"></label>
+                        <span id="shadowBValue">0</span>
+                    </div>
+                </div>
+                <div class="color-section">
+                    <h4>Midtones</h4>
+                    <div class="control-group">
+                        <label>R: <input type="range" id="midtoneR" min="-100" max="100" value="0"></label>
+                        <span id="midtoneRValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>G: <input type="range" id="midtoneG" min="-100" max="100" value="0"></label>
+                        <span id="midtoneGValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>B: <input type="range" id="midtoneB" min="-100" max="100" value="0"></label>
+                        <span id="midtoneBValue">0</span>
+                    </div>
+                </div>
+                <div class="color-section">
+                    <h4>Highlights</h4>
+                    <div class="control-group">
+                        <label>R: <input type="range" id="highlightR" min="-100" max="100" value="0"></label>
+                        <span id="highlightRValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>G: <input type="range" id="highlightG" min="-100" max="100" value="0"></label>
+                        <span id="highlightGValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>B: <input type="range" id="highlightB" min="-100" max="100" value="0"></label>
+                        <span id="highlightBValue">0</span>
+                    </div>
+                </div>
+                <button class="btn-primary" id="applyColorGrading">Apply Color Grading</button>
+            </div>
+            
+            <!-- Stabilization Panel -->
+            <div class="sidebar-section" id="stabilizationPanel" style="display: none;">
+                <div class="sidebar-title">Stabilization</div>
+                <div class="control-group">
+                    <label><input type="checkbox" id="stabilizationEnabled"> Enable Stabilization</label>
+                </div>
+                <div class="control-group">
+                    <label>Strength: <input type="range" id="stabilizationStrength" min="0" max="100" value="50" disabled></label>
+                    <span id="stabilizationValue">50%</span>
+                </div>
+                <button class="btn-primary" id="applyStabilization">Apply Stabilization</button>
+            </div>
+            
             <div class="sidebar-section">
                 <div class="sidebar-title">Export</div>
                 <div class="export-section">
@@ -843,9 +1188,43 @@
                 this.edits = {
                     trim: { start: 0, end: 0 },
                     crop: { x: 0, y: 0, width: 0, height: 0 },
-                    filters: { brightness: 100, contrast: 100, saturation: 100, hue: 0 },
+                    filters: { 
+                        brightness: 100, 
+                        contrast: 100, 
+                        saturation: 100, 
+                        hue: 0,
+                        blur: 0,
+                        sharpen: 0,
+                        sepia: 0,
+                        vintage: 0,
+                        noir: 0,
+                        warm: 0,
+                        cool: 0
+                    },
+                    transitions: {
+                        fadeIn: { duration: 0, enabled: false },
+                        fadeOut: { duration: 0, enabled: false },
+                        slideIn: { direction: 'left', duration: 0, enabled: false },
+                        slideOut: { direction: 'right', duration: 0, enabled: false },
+                        zoomIn: { scale: 1.1, duration: 0, enabled: false },
+                        zoomOut: { scale: 0.9, duration: 0, enabled: false }
+                    },
+                    effects: {
+                        slowMotion: { factor: 1, enabled: false },
+                        fastMotion: { factor: 1, enabled: false },
+                        reverse: { enabled: false },
+                        mirror: { horizontal: false, vertical: false },
+                        shake: { intensity: 0, enabled: false },
+                        glow: { intensity: 0, color: '#ffffff', enabled: false }
+                    },
                     text: [],
-                    rotation: 0
+                    rotation: 0,
+                    stabilization: { enabled: false, strength: 50 },
+                    colorGrading: {
+                        shadows: { r: 0, g: 0, b: 0 },
+                        midtones: { r: 0, g: 0, b: 0 },
+                        highlights: { r: 0, g: 0, b: 0 }
+                    }
                 };
                 this.animationId = null;
                 
@@ -973,7 +1352,48 @@
             }
             
             setupEditPanels() {
-                // Filter controls
+                // Tool button event listeners
+                this.setupToolButtons();
+                
+                // Basic filter controls
+                this.setupBasicFilters();
+                
+                // Advanced filter controls
+                this.setupAdvancedFilters();
+                
+                // Transition controls
+                this.setupTransitions();
+                
+                // Effects controls
+                this.setupEffects();
+                
+                // Color grading controls
+                this.setupColorGrading();
+                
+                // Stabilization controls
+                this.setupStabilization();
+                
+                // Apply buttons
+                this.setupApplyButtons();
+            }
+            
+            setupToolButtons() {
+                // Basic tools
+                document.getElementById('trimBtn').addEventListener('click', () => this.togglePanel('trimPanel'));
+                document.getElementById('cropBtn').addEventListener('click', () => this.togglePanel('cropPanel'));
+                document.getElementById('filterBtn').addEventListener('click', () => this.togglePanel('filterPanel'));
+                document.getElementById('textBtn').addEventListener('click', () => this.togglePanel('textPanel'));
+                
+                // Advanced tools
+                document.getElementById('advancedFiltersBtn').addEventListener('click', () => this.togglePanel('advancedFiltersPanel'));
+                document.getElementById('transitionsBtn').addEventListener('click', () => this.togglePanel('transitionsPanel'));
+                document.getElementById('effectsBtn').addEventListener('click', () => this.togglePanel('effectsPanel'));
+                document.getElementById('colorGradingBtn').addEventListener('click', () => this.togglePanel('colorGradingPanel'));
+                document.getElementById('stabilizationBtn').addEventListener('click', () => this.togglePanel('stabilizationPanel'));
+            }
+            
+            setupBasicFilters() {
+                // Basic filter controls
                 document.getElementById('brightness').addEventListener('input', (e) => {
                     document.getElementById('brightnessValue').textContent = e.target.value + '%';
                     this.edits.filters.brightness = parseInt(e.target.value);
@@ -997,12 +1417,275 @@
                     this.edits.filters.hue = parseInt(e.target.value);
                     this.renderFrame();
                 });
+            }
+            
+            setupAdvancedFilters() {
+                // Advanced filter controls
+                const advancedFilters = ['blur', 'sharpen', 'sepia', 'vintage', 'noir', 'warm', 'cool'];
                 
+                advancedFilters.forEach(filter => {
+                    const slider = document.getElementById(filter);
+                    const valueDisplay = document.getElementById(filter + 'Value');
+                    
+                    if (slider && valueDisplay) {
+                        slider.addEventListener('input', (e) => {
+                            const value = parseInt(e.target.value);
+                            valueDisplay.textContent = filter === 'blur' || filter === 'sharpen' ? value : value + '%';
+                            this.edits.filters[filter] = value;
+                            this.renderFrame();
+                        });
+                    }
+                });
+                
+                // Filter tabs
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabName = e.target.dataset.tab;
+                        this.switchFilterTab(tabName);
+                    });
+                });
+                
+                // Preset buttons
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const preset = e.target.dataset.preset;
+                        this.applyPreset(preset);
+                    });
+                });
+            }
+            
+            setupTransitions() {
+                // Transition checkboxes
+                document.getElementById('fadeIn').addEventListener('change', (e) => {
+                    const duration = document.getElementById('fadeInDuration');
+                    duration.disabled = !e.target.checked;
+                    this.edits.transitions.fadeIn.enabled = e.target.checked;
+                });
+                
+                document.getElementById('fadeOut').addEventListener('change', (e) => {
+                    const duration = document.getElementById('fadeOutDuration');
+                    duration.disabled = !e.target.checked;
+                    this.edits.transitions.fadeOut.enabled = e.target.checked;
+                });
+                
+                document.getElementById('slideIn').addEventListener('change', (e) => {
+                    const direction = document.getElementById('slideInDirection');
+                    direction.disabled = !e.target.checked;
+                    this.edits.transitions.slideIn.enabled = e.target.checked;
+                });
+                
+                document.getElementById('zoomIn').addEventListener('change', (e) => {
+                    const scale = document.getElementById('zoomInScale');
+                    scale.disabled = !e.target.checked;
+                    this.edits.transitions.zoomIn.enabled = e.target.checked;
+                });
+                
+                // Transition sliders
+                document.getElementById('fadeInDuration').addEventListener('input', (e) => {
+                    document.getElementById('fadeInValue').textContent = e.target.value + 's';
+                    this.edits.transitions.fadeIn.duration = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('fadeOutDuration').addEventListener('input', (e) => {
+                    document.getElementById('fadeOutValue').textContent = e.target.value + 's';
+                    this.edits.transitions.fadeOut.duration = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('slideInDirection').addEventListener('change', (e) => {
+                    this.edits.transitions.slideIn.direction = e.target.value;
+                });
+                
+                document.getElementById('zoomInScale').addEventListener('input', (e) => {
+                    document.getElementById('zoomInValue').textContent = e.target.value + 'x';
+                    this.edits.transitions.zoomIn.scale = parseFloat(e.target.value);
+                });
+            }
+            
+            setupEffects() {
+                // Effects checkboxes
+                document.getElementById('slowMotion').addEventListener('change', (e) => {
+                    const factor = document.getElementById('slowMotionFactor');
+                    factor.disabled = !e.target.checked;
+                    this.edits.effects.slowMotion.enabled = e.target.checked;
+                });
+                
+                document.getElementById('fastMotion').addEventListener('change', (e) => {
+                    const factor = document.getElementById('fastMotionFactor');
+                    factor.disabled = !e.target.checked;
+                    this.edits.effects.fastMotion.enabled = e.target.checked;
+                });
+                
+                document.getElementById('reverse').addEventListener('change', (e) => {
+                    this.edits.effects.reverse.enabled = e.target.checked;
+                });
+                
+                document.getElementById('mirrorH').addEventListener('change', (e) => {
+                    this.edits.effects.mirror.horizontal = e.target.checked;
+                });
+                
+                document.getElementById('mirrorV').addEventListener('change', (e) => {
+                    this.edits.effects.mirror.vertical = e.target.checked;
+                });
+                
+                document.getElementById('shake').addEventListener('change', (e) => {
+                    const intensity = document.getElementById('shakeIntensity');
+                    intensity.disabled = !e.target.checked;
+                    this.edits.effects.shake.enabled = e.target.checked;
+                });
+                
+                document.getElementById('glow').addEventListener('change', (e) => {
+                    const intensity = document.getElementById('glowIntensity');
+                    const color = document.getElementById('glowColor');
+                    intensity.disabled = !e.target.checked;
+                    color.disabled = !e.target.checked;
+                    this.edits.effects.glow.enabled = e.target.checked;
+                });
+                
+                // Effects sliders
+                document.getElementById('slowMotionFactor').addEventListener('input', (e) => {
+                    document.getElementById('slowMotionValue').textContent = e.target.value + 'x';
+                    this.edits.effects.slowMotion.factor = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('fastMotionFactor').addEventListener('input', (e) => {
+                    document.getElementById('fastMotionValue').textContent = e.target.value + 'x';
+                    this.edits.effects.fastMotion.factor = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('shakeIntensity').addEventListener('input', (e) => {
+                    document.getElementById('shakeValue').textContent = e.target.value;
+                    this.edits.effects.shake.intensity = parseInt(e.target.value);
+                });
+                
+                document.getElementById('glowIntensity').addEventListener('input', (e) => {
+                    this.edits.effects.glow.intensity = parseInt(e.target.value);
+                });
+                
+                document.getElementById('glowColor').addEventListener('change', (e) => {
+                    this.edits.effects.glow.color = e.target.value;
+                });
+            }
+            
+            setupColorGrading() {
+                // Color grading controls
+                const colorControls = [
+                    'shadowR', 'shadowG', 'shadowB',
+                    'midtoneR', 'midtoneG', 'midtoneB',
+                    'highlightR', 'highlightG', 'highlightB'
+                ];
+                
+                colorControls.forEach(control => {
+                    const slider = document.getElementById(control);
+                    const valueDisplay = document.getElementById(control + 'Value');
+                    
+                    if (slider && valueDisplay) {
+                        slider.addEventListener('input', (e) => {
+                            const value = parseInt(e.target.value);
+                            valueDisplay.textContent = value;
+                            
+                            const [tone, channel] = control.split(/(?=[RGB])/);
+                            this.edits.colorGrading[tone.toLowerCase()][channel.toLowerCase()] = value;
+                            this.renderFrame();
+                        });
+                    }
+                });
+            }
+            
+            setupStabilization() {
+                document.getElementById('stabilizationEnabled').addEventListener('change', (e) => {
+                    const strength = document.getElementById('stabilizationStrength');
+                    strength.disabled = !e.target.checked;
+                    this.edits.stabilization.enabled = e.target.checked;
+                });
+                
+                document.getElementById('stabilizationStrength').addEventListener('input', (e) => {
+                    document.getElementById('stabilizationValue').textContent = e.target.value + '%';
+                    this.edits.stabilization.strength = parseInt(e.target.value);
+                });
+            }
+            
+            setupApplyButtons() {
                 // Apply buttons
                 document.getElementById('applyTrim').addEventListener('click', () => this.applyTrim());
                 document.getElementById('applyCrop').addEventListener('click', () => this.applyCrop());
                 document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
+                document.getElementById('applyAdvancedFilters').addEventListener('click', () => this.applyAdvancedFilters());
+                document.getElementById('applyTransitions').addEventListener('click', () => this.applyTransitions());
+                document.getElementById('applyEffects').addEventListener('click', () => this.applyEffects());
+                document.getElementById('applyColorGrading').addEventListener('click', () => this.applyColorGrading());
+                document.getElementById('applyStabilization').addEventListener('click', () => this.applyStabilization());
                 document.getElementById('addText').addEventListener('click', () => this.addText());
+            }
+            
+            togglePanel(panelId) {
+                // Hide all panels
+                document.querySelectorAll('.sidebar-section').forEach(panel => {
+                    if (panel.id.includes('Panel')) {
+                        panel.style.display = 'none';
+                    }
+                });
+                
+                // Show selected panel
+                const panel = document.getElementById(panelId);
+                if (panel) {
+                    panel.style.display = 'block';
+                }
+                
+                // Update active tool button
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const activeBtn = document.querySelector(`[onclick*="${panelId}"]`) || 
+                                 document.querySelector(`#${panelId.replace('Panel', 'Btn')}`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+            }
+            
+            switchFilterTab(tabName) {
+                // Update tab buttons
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Update filter sections
+                document.querySelectorAll('.filter-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(tabName + 'Filters').classList.add('active');
+            }
+            
+            applyPreset(preset) {
+                const presets = {
+                    normal: { brightness: 100, contrast: 100, saturation: 100, hue: 0, blur: 0, sharpen: 0, sepia: 0, vintage: 0, noir: 0, warm: 0, cool: 0 },
+                    vintage: { brightness: 110, contrast: 120, saturation: 80, hue: 20, blur: 1, sharpen: 0, sepia: 30, vintage: 40, noir: 0, warm: 20, cool: 0 },
+                    dramatic: { brightness: 90, contrast: 150, saturation: 120, hue: 0, blur: 0, sharpen: 2, sepia: 0, vintage: 0, noir: 0, warm: 0, cool: 0 },
+                    warm: { brightness: 105, contrast: 110, saturation: 110, hue: 10, blur: 0, sharpen: 0, sepia: 0, vintage: 0, noir: 0, warm: 30, cool: 0 },
+                    cool: { brightness: 95, contrast: 110, saturation: 110, hue: -10, blur: 0, sharpen: 0, sepia: 0, vintage: 0, noir: 0, warm: 0, cool: 30 },
+                    noir: { brightness: 80, contrast: 140, saturation: 0, hue: 0, blur: 0, sharpen: 1, sepia: 0, vintage: 0, noir: 100, warm: 0, cool: 0 },
+                    sepia: { brightness: 100, contrast: 110, saturation: 50, hue: 30, blur: 0, sharpen: 0, sepia: 80, vintage: 0, noir: 0, warm: 0, cool: 0 },
+                    'high-contrast': { brightness: 100, contrast: 180, saturation: 120, hue: 0, blur: 0, sharpen: 3, sepia: 0, vintage: 0, noir: 0, warm: 0, cool: 0 }
+                };
+                
+                const presetValues = presets[preset];
+                if (presetValues) {
+                    // Update sliders
+                    Object.keys(presetValues).forEach(key => {
+                        const slider = document.getElementById(key);
+                        if (slider) {
+                            slider.value = presetValues[key];
+                            slider.dispatchEvent(new Event('input'));
+                        }
+                    });
+                    
+                    // Update preset button
+                    document.querySelectorAll('.preset-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelector(`[data-preset="${preset}"]`).classList.add('active');
+                }
             }
             
             handleDragOver(e) {
@@ -1336,6 +2019,31 @@
                 } else {
                     alert('Please enter text content');
                 }
+            }
+            
+            applyAdvancedFilters() {
+                this.renderFrame();
+                console.log('🎨 Advanced filters applied:', this.edits.filters);
+            }
+            
+            applyTransitions() {
+                this.renderFrame();
+                console.log('🔄 Transitions applied:', this.edits.transitions);
+            }
+            
+            applyEffects() {
+                this.renderFrame();
+                console.log('✨ Effects applied:', this.edits.effects);
+            }
+            
+            applyColorGrading() {
+                this.renderFrame();
+                console.log('🎨 Color grading applied:', this.edits.colorGrading);
+            }
+            
+            applyStabilization() {
+                this.renderFrame();
+                console.log('📹 Stabilization applied:', this.edits.stabilization);
             }
             
             async exportVideo() {
