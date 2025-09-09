@@ -22,8 +22,48 @@
     <script src="assets/js/auth-guard.js"></script>
     
     <!-- FFmpeg.js for high-quality video processing -->
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js"></script>
-    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
+    <script>
+        // Load FFmpeg with fallback CDN
+        function loadFFmpegScripts() {
+            const loadScript = (src, name) => {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = () => {
+                        console.log(`✅ ${name} script loaded`);
+                        resolve();
+                    };
+                    script.onerror = () => {
+                        console.log(`❌ ${name} script failed to load from ${src}`);
+                        reject();
+                    };
+                    document.head.appendChild(script);
+                });
+            };
+
+            // Try primary CDN first
+            Promise.all([
+                loadScript('https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg'),
+                loadScript('https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
+            ]).catch(() => {
+                console.log('🔄 Trying fallback CDN...');
+                // Fallback to jsDelivr
+                Promise.all([
+                    loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg'),
+                    loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
+                ]).catch(() => {
+                    console.log('❌ All FFmpeg CDNs failed - video editor will work without FFmpeg');
+                });
+            });
+        }
+
+        // Load scripts when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadFFmpegScripts);
+        } else {
+            loadFFmpegScripts();
+        }
+    </script>
     
     <style>
         * {
@@ -832,6 +872,10 @@
                     // Wait for FFmpeg scripts to load
                     await this.waitForFFmpeg();
                     
+                    if (typeof FFmpegWASM === 'undefined' || typeof FFmpegUtil === 'undefined') {
+                        throw new Error('FFmpeg scripts not available');
+                    }
+                    
                     const { FFmpeg } = FFmpegWASM;
                     const { fetchFile, toBlobURL } = FFmpegUtil;
                     
@@ -851,18 +895,25 @@
                 } catch (error) {
                     console.error('❌ Failed to load FFmpeg:', error);
                     console.log('⚠️ Video editor will work without FFmpeg for basic editing');
+                    this.ffmpeg = null; // Ensure it's null when failed
                 }
             }
             
             async waitForFFmpeg() {
                 return new Promise((resolve, reject) => {
                     let attempts = 0;
-                    const maxAttempts = 50; // 5 seconds max wait
+                    const maxAttempts = 30; // 3 seconds max wait
                     
                     const checkFFmpeg = () => {
+                        console.log(`🔍 Checking FFmpeg availability (attempt ${attempts + 1}/${maxAttempts})`);
+                        console.log('🔍 FFmpegWASM:', typeof FFmpegWASM);
+                        console.log('🔍 FFmpegUtil:', typeof FFmpegUtil);
+                        
                         if (typeof FFmpegWASM !== 'undefined' && typeof FFmpegUtil !== 'undefined') {
+                            console.log('✅ FFmpeg scripts are available');
                             resolve();
                         } else if (attempts >= maxAttempts) {
+                            console.log('❌ FFmpeg scripts failed to load after timeout');
                             reject(new Error('FFmpeg scripts failed to load'));
                         } else {
                             attempts++;
