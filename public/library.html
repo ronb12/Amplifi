@@ -4,975 +4,485 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library - Amplifi</title>
-    <meta name="description" content="Your personal library of saved content and playlists.">
+    <meta name="description" content="Your personal content library with playlists, watch history, and creator network">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
-          onerror="this.onerror=null;this.href='https://use.fontawesome.com/releases/v6.4.0/css/all.css';">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" 
-          rel="stylesheet" 
-          onerror="this.onerror=null;this.href='https://fonts.gstatic.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap';">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/youtube-style.css">
-
+    
     <!-- Authentication Guard -->
     <script src="assets/js/auth-guard.js"></script>
-
     
+    <!-- Content Library & Creator Network -->
+    <script src="assets/js/content-library.js"></script>
+    <script src="assets/js/creator-network.js"></script>
     
     <style>
-        /* Professional Amplifi Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background: #ffffff;
-            font-size: 16px;
-        }
-
-        /* Header */
-        .yt-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 1001;
+        .library-tabs {
             display: flex;
-            align-items: center;
-            padding: 0 24px;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .yt-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .yt-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: #1a1a1a;
-        }
-
-        .logo-img {
-            width: 40px;
-            height: 40px;
-        }
-
-        .logo-text {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .yt-search {
-            flex: 1;
-            max-width: 600px;
-            margin: 0 40px;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .yt-search-input {
-            width: 100%;
-            height: 44px;
-            padding: 0 20px 0 50px;
-            border: 2px solid #e5e7eb;
-            border-radius: 22px;
-            font-size: 16px;
-            background: #f9fafb;
-            transition: all 0.3s ease;
-        }
-
-        .yt-search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-            font-size: 18px;
-        }
-
-        .yt-search-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 16px;
-            background: #667eea;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .yt-search-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .yt-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .yt-btn {
+        .library-tab {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            height: 44px;
-        }
-
-        .yt-btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .yt-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .yt-btn-secondary {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .yt-btn-secondary:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Desktop Navigation */
-        .yt-desktop-nav {
-            position: sticky;
-            top: 64px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            width: 100%;
-        }
-
-        .yt-desktop-nav-container {
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            gap: 0;
-            padding: 0 24px;
-            max-width: 1400px;
-            margin: 0 auto;
-            height: 56px;
-        }
-
-        .yt-desktop-nav-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .yt-desktop-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0 20px;
-            background: transparent;
-            color: #6b7280;
-            text-decoration: none;
-            border-radius: 0;
-            font-size: 14px;
+            background: none;
+            color: #606060;
             font-weight: 500;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            height: 56px;
-            border-bottom: 3px solid transparent;
-        }
-
-        .yt-desktop-nav-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .yt-desktop-nav-item.active {
-            background: transparent;
-            color: #667eea;
-            border-bottom-color: #667eea;
-            font-weight: 600;
-        }
-
-        .yt-desktop-nav-item i {
-            font-size: 16px;
-        }
-
-        /* Main Content */
-        .yt-main {
-            margin-top: 64px;
-            padding: 0;
-            min-height: calc(100vh - 64px);
-            width: 100%;
-            background: #ffffff;
-        }
-
-        .yt-content-wrapper {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 32px 24px;
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            text-align: center;
-            padding: 80px 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin: -32px -24px 48px -24px;
-        }
-
-        .hero-title {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            line-height: 1.2;
-        }
-
-        .hero-subtitle {
-            font-size: 20px;
-            font-weight: 400;
-            margin-bottom: 32px;
-            opacity: 0.9;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero-btn {
-            padding: 16px 32px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
 
-        .hero-btn-primary {
-            background: white;
-            color: #667eea;
+        .library-tab.active {
+            color: #ff0000;
+            border-bottom-color: #ff0000;
         }
 
-        .hero-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .hero-btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .hero-btn-secondary:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        /* Features Section */
-        .features-section {
+        .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin: 64px 0;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 32px 24px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 24px;
-        }
-
-        .feature-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1a1a1a;
-        }
-
-        .feature-desc {
-            font-size: 16px;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        /* Page Header */
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #1a1a1a;
-        }
-
-        .page-subtitle {
-            font-size: 18px;
-            color: #6b7280;
-        }
-
-        /* Video Grid */
-        .yt-video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
             margin-bottom: 32px;
         }
 
-        .yt-video-card {
+        .content-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .yt-video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
 
-        .yt-video-thumbnail {
+        .content-thumbnail {
             position: relative;
             width: 100%;
             height: 200px;
-            background: #f3f4f6;
             overflow: hidden;
         }
 
-        .yt-video-thumbnail img {
+        .content-thumbnail img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .yt-video-duration {
+        .content-duration {
             position: absolute;
-            bottom: 12px;
-            right: 12px;
+            bottom: 8px;
+            right: 8px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 4px 8px;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
-        .yt-video-info {
-            padding: 20px;
-            display: flex;
-            gap: 12px;
+        .content-info {
+            padding: 16px;
         }
 
-        .yt-video-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f3f4f6;
-            flex-shrink: 0;
-        }
-
-        .yt-video-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .yt-video-title {
+        .content-title {
             font-size: 16px;
             font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 8px 0;
+            color: #030303;
+            margin-bottom: 8px;
             line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
-        .yt-video-meta {
+        .content-meta {
             display: flex;
             flex-direction: column;
             gap: 4px;
+            margin-bottom: 12px;
         }
 
-        .yt-video-author,
-        .yt-video-stats {
+        .content-creator {
             font-size: 14px;
-            color: #6b7280;
-        }
-
-        /* Categories */
-        .yt-categories-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .yt-categories-row::-webkit-scrollbar {
-            display: none;
-        }
-
-        .yt-category-btn {
-            padding: 12px 24px;
-            background: #f3f4f6;
-            color: #6b7280;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
+            color: #030303;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            flex-shrink: 0;
         }
 
-        .yt-category-btn:hover,
-        .yt-category-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: translateY(-2px);
+        .content-stats {
+            font-size: 12px;
+            color: #606060;
         }
 
-        /* Mobile Tab Bar */
-        .yt-mobile-tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: flex;
-            justify-content: space-around;
-            padding: 0;
-            height: 64px;
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #606060;
         }
 
-        .yt-mobile-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            text-decoration: none;
-            color: #6b7280;
-            font-size: 10px;
-            padding: 8px 12px;
-            border-radius: 0;
-            transition: all 0.3s ease;
-            flex: 1;
-            height: 100%;
+        .empty-state i {
+            font-size: 64px;
+            color: #e0e0e0;
+            margin-bottom: 20px;
         }
 
-        .yt-mobile-tab:hover,
-        .yt-mobile-tab.active {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #030303;
+            margin-bottom: 12px;
         }
-
-        .yt-mobile-tab i {
-            font-size: 20px;
-        }
-
-        .yt-mobile-tab-plus {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            margin: 8px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .yt-mobile-tab-plus:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .yt-desktop-nav {
-                display: none;
-            }
-            
-            .yt-main {
-                padding-bottom: 64px;
-            }
-            
-            .yt-content-wrapper {
-                padding: 24px 16px;
-            }
-            
-            .hero-section {
-                padding: 60px 0;
-                margin: -24px -16px 32px -16px;
-            }
-            
-            .hero-title {
-                font-size: 36px;
-            }
-            
-            .hero-subtitle {
-                font-size: 18px;
-            }
-            
-            .yt-video-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .yt-search {
-                display: none;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .yt-mobile-tab-bar {
-                display: none;
-            }
-        }
-
-        /* Utility Classes */
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-8 { margin-top: 2rem; }
-        .p-4 { padding: 1rem; }
-        .p-8 { padding: 2rem; }
-        .hidden { display: none; }
-        .block { display: block; }
-        .flex { display: flex; }
-        .grid { display: grid; }
     </style>
-
-<style>
-/* Authentication Modal Styles */
-.auth-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.auth-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 24px 0;
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 24px;
-}
-
-.auth-modal-header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1a1a1a;
-}
-
-.auth-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6b7280;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-close:hover {
-    color: #1a1a1a;
-}
-
-.auth-tabs {
-    display: flex;
-    margin: 0 24px 24px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.auth-tab {
-    flex: 1;
-    padding: 12px 0;
-    background: none;
-    border: none;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #6b7280;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.auth-tab.active {
-    color: #667eea;
-    border-bottom-color: #667eea;
-}
-
-.auth-forms {
-    padding: 0 24px 24px;
-}
-
-.auth-form {
-    display: none;
-}
-
-.auth-form.active {
-    display: block;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.auth-submit {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.auth-submit:hover {
-    transform: translateY(-2px);
-}
-
-.auth-modal-content {
-    transition: transform 0.3s ease;
-}</style>
-<style>
-/* Auth Message Styles */
-.auth-message {
-    margin-top: 16px;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    text-align: center;
-    animation: slideIn 0.3s ease;
-}
-
-.auth-message.success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
-}
-
-.auth-message.error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fca5a5;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.auth-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}</style>
 </head>
-<body class="yt-layout">
+<body>
     <!-- Header -->
     <header class="yt-header">
-        <div class="yt-nav">
-            <a href="index.html" class="yt-logo">
-                <img src="amplifi-icon.svg" alt="Amplifi" class="logo-img">
-                <span class="logo-text">Amplifi</span>
-            </a>
-            
-            <!-- Search -->
-            <div class="yt-search">
-                <div class="search-input-wrapper">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" class="yt-search-input" placeholder="Search videos, creators, topics...">
-                    <button class="yt-search-btn" id="searchBtn">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
+        <a href="index.html" class="yt-logo">
+            <img src="amplifi-icon.svg" alt="Amplifi">
+            <span>Amplifi</span>
+        </a>
+        
+        <nav class="yt-nav">
+            <a href="index.html">Home</a>
+            <a href="feed.html">Feed</a>
+            <a href="trending.html">Trending</a>
+            <a href="library.html" class="active">Library</a>
+            <a href="search.html">Search</a>
+        </nav>
+        
+        <div class="yt-search">
+            <div class="yt-search-container">
+                <i class="fas fa-search yt-search-icon"></i>
+                <input type="text" class="yt-search-input" placeholder="Search content, creators, playlists...">
             </div>
-            
-            <div class="yt-header-actions" id="authButtons">
-                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
-                </button>
-                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
-                    <i class="fas fa-user-plus"></i> Sign Up
-                </button>
+        </div>
+        
+        <div class="yt-user-actions">
+            <div id="authButtons">
+                <a href="login.html" class="yt-btn yt-btn-primary">Sign In</a>
+                <a href="login.html" class="yt-btn yt-btn-secondary">Sign Up</a>
             </div>
-            
-            <div class="yt-header-actions" id="userProfile" style="display: none;">
-                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
-                    <i class="fas fa-user"></i> Profile
-                </button>
-                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
+            <div id="userProfile" style="display: none;">
+                <a href="profile.html" class="yt-btn yt-btn-secondary">Profile</a>
+                <button onclick="signOut()" class="yt-btn yt-btn-secondary">Sign Out</button>
             </div>
         </div>
     </header>
 
-    
-    <!-- Desktop Navigation -->
-    <nav class="yt-desktop-nav">
-        <div class="yt-desktop-nav-container">
-            <a href="index.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="feed.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-rss"></i>
-                <span>Feed</span>
-            </a>
-            <a href="moments.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-play"></i>
-                <span>Moments</span>
-            </a>
-            <a href="trending.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-fire"></i>
-                <span>Trending</span>
-            </a>
-            <a href="live.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>Live</span>
-            </a>
-            <a href="search.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </a>
-            <a href="upload.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-upload"></i>
-                <span>Upload</span>
-            </a>
-            <a href="profile.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-            <a href="library.html" class="yt-desktop-nav-item active">
-                <i class="fas fa-folder"></i>
-                <span>Library</span>
-            </a>
-        </div>
-    </nav>
-
     <!-- Main Content -->
-    
-<main class="yt-main">
-    
-        <div class="yt-content-wrapper">
-            <div class="page-header">
-                <h1>Library</h1>
-                <p>Your personal library of saved content and playlists.</p>
+    <main class="yt-main">
+        <div class="yt-container">
+            <!-- Library Tabs -->
+            <div class="library-tabs">
+                <button class="library-tab active" data-tab="history">Watch History</button>
+                <button class="library-tab" data-tab="later">Watch Later</button>
+                <button class="library-tab" data-tab="liked">Liked Videos</button>
+                <button class="library-tab" data-tab="playlists">Playlists</button>
+                <button class="library-tab" data-tab="subscriptions">Subscriptions</button>
+                <button class="library-tab" data-tab="creators">Creator Network</button>
             </div>
-            
-            
-        <div class="library-header">
-            <h1>Your Library</h1>
-            <p>Your saved content and playlists</p>
-        </div>
-        
-        <div class="library-content">
-            <div class="library-sections">
-                <div class="library-section">
+
+            <!-- Content Sections -->
+            <div id="contentSections">
+                <!-- Watch History -->
+                <div id="historySection" class="content-section">
+                    <h2>Watch History</h2>
+                    <div class="content-grid" id="historyGrid">
+                        <!-- History content will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Watch Later -->
+                <div id="laterSection" class="content-section" style="display: none;">
                     <h2>Watch Later</h2>
-                    <div class="library-grid">
-                        <!-- Watch later content -->
+                    <div class="content-grid" id="laterGrid">
+                        <!-- Watch later content will be loaded here -->
                     </div>
                 </div>
-                
-                <div class="library-section">
+
+                <!-- Liked Videos -->
+                <div id="likedSection" class="content-section" style="display: none;">
                     <h2>Liked Videos</h2>
-                    <div class="library-grid">
-                        <!-- Liked videos -->
+                    <div class="content-grid" id="likedGrid">
+                        <!-- Liked content will be loaded here -->
                     </div>
                 </div>
-                
-                <div class="library-section">
-                    <h2>Playlists</h2>
-                    <div class="playlist-grid">
-                        <!-- User playlists -->
+
+                <!-- Playlists -->
+                <div id="playlistsSection" class="content-section" style="display: none;">
+                    <h2>Your Playlists</h2>
+                    <div class="content-grid" id="playlistsGrid">
+                        <!-- Playlists will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Subscriptions -->
+                <div id="subscriptionsSection" class="content-section" style="display: none;">
+                    <h2>Subscribed Creators</h2>
+                    <div class="content-grid" id="subscriptionsGrid">
+                        <!-- Subscribed creators will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Creator Network -->
+                <div id="creatorsSection" class="content-section" style="display: none;">
+                    <h2>Creator Network</h2>
+                    <div class="content-grid" id="creatorsGrid">
+                        <!-- Creator network will be loaded here -->
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </main>
 
-    
-    
-    <!-- YouTube-Style Mobile Tab Bar -->
-    <div class="yt-mobile-tab-bar">
-        <a href="index.html" class="yt-mobile-tab">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="feed.html" class="yt-mobile-tab">
-            <i class="fas fa-rss"></i>
-            <span>Feed</span>
-        </a>
-        <a href="#" class="yt-mobile-tab yt-mobile-tab-plus" onclick="openMobileMenu(); return false;">
-            <i class="fas fa-plus"></i>
-            <span>Create</span>
-        </a>
-        <a href="live.html" class="yt-mobile-tab">
-            <i class="fas fa-broadcast-tower"></i>
-            <span>Live</span>
-        </a>
-        <a href="library.html" class="yt-mobile-tab active">
-            <i class="fas fa-folder"></i>
-            <span>Library</span>
-        </a>
-    </div>
-    </div>
-
-    
-    
     <script>
-        console.log('✅ Page loading - using auth-guard for authentication');
+        // Library Management
+        class LibraryManager {
+            constructor() {
+                this.contentLibrary = new ContentLibrary();
+                this.creatorNetwork = new CreatorNetwork();
+                this.currentTab = 'history';
+                this.init();
+            }
+
+            init() {
+                this.setupTabs();
+                this.loadContent();
+            }
+
+            setupTabs() {
+                const tabs = document.querySelectorAll('.library-tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.dataset.tab;
+                        this.switchTab(tabName);
+                    });
+                });
+            }
+
+            switchTab(tabName) {
+                // Update tab appearance
+                document.querySelectorAll('.library-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+                // Show/hide sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(`${tabName}Section`).style.display = 'block';
+
+                this.currentTab = tabName;
+                this.loadContent();
+            }
+
+            loadContent() {
+                switch (this.currentTab) {
+                    case 'history':
+                        this.loadWatchHistory();
+                        break;
+                    case 'later':
+                        this.loadWatchLater();
+                        break;
+                    case 'liked':
+                        this.loadLikedContent();
+                        break;
+                    case 'playlists':
+                        this.loadPlaylists();
+                        break;
+                    case 'subscriptions':
+                        this.loadSubscriptions();
+                        break;
+                    case 'creators':
+                        this.loadCreatorNetwork();
+                        break;
+                }
+            }
+
+            loadWatchHistory() {
+                const history = this.contentLibrary.getWatchHistory(20);
+                const grid = document.getElementById('historyGrid');
+                
+                if (history.length === 0) {
+                    grid.innerHTML = this.getEmptyState('clock', 'No watch history yet', 'Start watching videos to see your history here');
+                    return;
+                }
+
+                grid.innerHTML = history.map(content => this.createContentCard(content)).join('');
+            }
+
+            loadWatchLater() {
+                const later = this.contentLibrary.getWatchLater();
+                const grid = document.getElementById('laterGrid');
+                
+                if (later.length === 0) {
+                    grid.innerHTML = this.getEmptyState('clock', 'No videos in watch later', 'Add videos to watch later to see them here');
+                    return;
+                }
+
+                grid.innerHTML = later.map(content => this.createContentCard(content)).join('');
+            }
+
+            loadLikedContent() {
+                const liked = this.contentLibrary.getLikedContent();
+                const grid = document.getElementById('likedGrid');
+                
+                if (liked.length === 0) {
+                    grid.innerHTML = this.getEmptyState('heart', 'No liked videos yet', 'Like videos to see them here');
+                    return;
+                }
+
+                grid.innerHTML = liked.map(content => this.createContentCard(content)).join('');
+            }
+
+            loadPlaylists() {
+                const userId = this.getCurrentUserId();
+                const playlists = this.contentLibrary.getUserPlaylists(userId);
+                const grid = document.getElementById('playlistsGrid');
+                
+                if (playlists.length === 0) {
+                    grid.innerHTML = this.getEmptyState('list', 'No playlists yet', 'Create playlists to organize your favorite videos');
+                    return;
+                }
+
+                grid.innerHTML = playlists.map(playlist => this.createPlaylistCard(playlist)).join('');
+            }
+
+            loadSubscriptions() {
+                const subscriptions = this.creatorNetwork.getSubscribedCreators();
+                const grid = document.getElementById('subscriptionsGrid');
+                
+                if (subscriptions.length === 0) {
+                    grid.innerHTML = this.getEmptyState('users', 'No subscriptions yet', 'Subscribe to creators to see their content here');
+                    return;
+                }
+
+                grid.innerHTML = subscriptions.map(creator => this.createCreatorCard(creator)).join('');
+            }
+
+            loadCreatorNetwork() {
+                const creators = this.creatorNetwork.getAllCreators(20);
+                const grid = document.getElementById('creatorsGrid');
+                
+                grid.innerHTML = creators.map(creator => this.createCreatorCard(creator)).join('');
+            }
+
+            createContentCard(content) {
+                return `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="${content.thumbnail || 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'}" alt="${content.title}">
+                            <div class="content-duration">${this.formatDuration(content.duration)}</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">${content.title}</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">${content.creator || 'Unknown Creator'}</div>
+                                <div class="content-stats">${this.formatViews(content.views)} views • ${this.formatDate(content.timestamp)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            createPlaylistCard(playlist) {
+                const content = this.contentLibrary.getPlaylistContent(playlist.id);
+                return `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="${content[0]?.thumbnail || 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'}" alt="${playlist.name}">
+                            <div class="content-duration">${content.length} videos</div>
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">${playlist.name}</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">${playlist.contentIds.length} videos</div>
+                                <div class="content-stats">Created ${this.formatDate(playlist.createdAt)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            createCreatorCard(creator) {
+                const isSubscribed = this.creatorNetwork.isSubscribed(creator.id);
+                return `
+                    <div class="content-card">
+                        <div class="content-thumbnail">
+                            <img src="${creator.avatar}" alt="${creator.name}" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; margin: 20px auto; display: block;">
+                        </div>
+                        <div class="content-info">
+                            <h3 class="content-title">${creator.name} ${creator.verified ? '<i class="fas fa-check-circle" style="color: #ff0000;"></i>' : ''}</h3>
+                            <div class="content-meta">
+                                <div class="content-creator">${creator.username}</div>
+                                <div class="content-stats">${this.formatNumber(creator.subscriberCount)} subscribers • ${creator.videoCount} videos</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getEmptyState(icon, title, description) {
+                return `
+                    <div class="empty-state">
+                        <i class="fas fa-${icon}"></i>
+                        <h3>${title}</h3>
+                        <p>${description}</p>
+                    </div>
+                `;
+            }
+
+            // Utility functions
+            formatDuration(seconds) {
+                if (!seconds) return '0:00';
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            formatViews(views) {
+                if (!views) return '0';
+                if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';
+                if (views >= 1000) return (views / 1000).toFixed(1) + 'K';
+                return views.toString();
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                return num.toString();
+            }
+
+            formatDate(timestamp) {
+                if (!timestamp) return 'Unknown';
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                
+                if (days === 0) return 'Today';
+                if (days === 1) return 'Yesterday';
+                if (days < 7) return `${days} days ago`;
+                return date.toLocaleDateString();
+            }
+
+            getCurrentUserId() {
+                const auth = localStorage.getItem('amplifi_auth');
+                return auth ? JSON.parse(auth).userId : null;
+            }
+        }
+
         // Sign out function
         function signOut() {
             console.log('🔐 Signing out...');
@@ -992,106 +502,11 @@
             // Redirect to home page
             window.location.href = 'index.html';
         }
-        
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ Page initialized - using auth-guard for authentication');
-        });
-    
-        // Mobile Menu Functions
-        function openMobileMenu() {
-            const overlay = document.getElementById('mobileMenuOverlay');
-            if (overlay) {
-                overlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-        
-        function closeMobileMenu() {
-            const overlay = document.getElementById('mobileMenuOverlay');
-            if (overlay) {
-                overlay.classList.remove('show');
-                document.body.style.overflow = '';
-            }
-        }
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            const overlay = document.getElementById('mobileMenuOverlay');
-            if (overlay && e.target === overlay) {
-                closeMobileMenu();
-            }
-        });
-        
-        // Close menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeMobileMenu();
-            }
+
+        // Initialize library manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new LibraryManager();
         });
     </script>
-
-    <!-- Mobile Menu Overlay -->
-    <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">
-        <div class="yt-mobile-menu">
-            <div class="yt-mobile-menu-header">
-                <h3>Navigate</h3>
-                <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">&times;</button>
-            </div>
-            <div class="yt-mobile-menu-content">
-                <a href="index.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="feed.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-rss"></i>
-                    <span>Feed</span>
-                </a>
-                <a href="moments.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-video"></i>
-                    <span>Moments</span>
-                </a>
-                <a href="trending.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-fire"></i>
-                    <span>Trending</span>
-                </a>
-                <a href="search.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-search"></i>
-                    <span>Search</span>
-                </a>
-                <div class="yt-mobile-menu-divider"></div>
-                <a href="upload.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-upload"></i>
-                    <span>Upload</span>
-                </a>
-                <a href="live.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-broadcast-tower"></i>
-                    <span>Go Live</span>
-                </a>
-                <div class="yt-mobile-menu-divider"></div>
-                <a href="library.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-folder"></i>
-                    <span>Library</span>
-                </a>
-                <a href="profile.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <div class="yt-mobile-menu-divider"></div>
-                <a href="about.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>About</span>
-                </a>
-                <a href="privacy.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Privacy</span>
-                </a>
-                <a href="terms.html" class="yt-mobile-menu-item">
-                    <i class="fas fa-file-contract"></i>
-                    <span>Terms</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    </body>
+</body>
 </html>

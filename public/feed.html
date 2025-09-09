@@ -30,6 +30,10 @@
     <script src="assets/js/advanced-search.js"></script>
     <script src="assets/js/push-notifications.js"></script>
     
+    <!-- Content Library & Creator Network -->
+    <script src="assets/js/content-library.js"></script>
+    <script src="assets/js/creator-network.js"></script>
+    
     <!-- AdSense Monetization -->
     <link rel="stylesheet" href="assets/css/adsense-styles.css">
     <script src="assets/js/adsense-monetization.js"></script>
@@ -1227,7 +1231,7 @@
         console.log('✅ Feed page loading - using auth-guard for authentication');
         
         // Initialize AI and Social Features
-        let aiEngine, socialFeatures, pushNotifications, adSense;
+        let aiEngine, socialFeatures, pushNotifications, adSense, contentLibrary, creatorNetwork;
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -1243,6 +1247,8 @@
                 socialFeatures = new SocialFeatures();
                 pushNotifications = new PushNotificationManager();
                 adSense = new AdSenseMonetization();
+                contentLibrary = new ContentLibrary();
+                creatorNetwork = new CreatorNetwork();
                 
                 // Initialize AdSense
                 adSense.init().then(() => {
@@ -1271,13 +1277,19 @@
                 console.log('🤖 Loading AI-powered personalized feed...');
                 
                 // Get AI recommendations
-                const recommendations = await aiEngine.generateRecommendations(userId, 20);
+                const recommendations = await aiEngine.generateRecommendations(userId, 10);
                 
                 // Get social feed
-                const socialFeed = await socialFeatures.getUserFeed(userId, 10);
+                const socialFeed = await socialFeatures.getUserFeed(userId, 5);
+                
+                // Get content library content
+                const libraryContent = contentLibrary.getPopularContent(5);
+                
+                // Get subscribed creators content
+                const subscribedContent = contentLibrary.getSubscribedContent(5);
                 
                 // Combine and display
-                const combinedFeed = [...recommendations, ...socialFeed];
+                const combinedFeed = [...recommendations, ...socialFeed, ...libraryContent, ...subscribedContent];
                 displayFeed(combinedFeed);
                 
                 console.log(`✅ Loaded ${combinedFeed.length} personalized recommendations`);
