@@ -22,10 +22,110 @@
     <script src="assets/js/auth-guard.js"></script>
     
     <style>
-        .schedule-container {
-            max-width: 1200px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .yt-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .yt-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+        }
+
+        .yt-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .yt-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .yt-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .yt-btn-primary {
+            background: #ff0000;
+            color: white;
+        }
+
+        .yt-btn-primary:hover {
+            background: #cc0000;
+        }
+
+        .yt-btn-secondary {
+            background: #f8f9fa;
+            color: #1a1a1a;
+            border: 1px solid #e9ecef;
+        }
+
+        .yt-btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .schedule-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 24px 40px;
             background: #fff;
             min-height: 100vh;
         }
@@ -385,6 +485,33 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="yt-header">
+        <div class="yt-nav">
+            <a href="index.html" class="yt-logo">
+                <img src="amplifi-icon.svg" alt="Amplifi" class="logo-img">
+                <span class="logo-text">Amplifi</span>
+            </a>
+            
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </header>
+
     <div class="schedule-container">
         <div class="schedule-header">
             <h1 class="schedule-title">Schedule Content</h1>
@@ -786,6 +913,26 @@
         document.addEventListener('DOMContentLoaded', () => {
             scheduler = new ContentScheduler();
         });
+
+        // Sign out function
+        function signOut() {
+            console.log('🔐 Signing out...');
+            
+            // Clear localStorage
+            localStorage.removeItem('amplifi_auth');
+            
+            // Sign out from Firebase if available
+            if (typeof auth !== 'undefined') {
+                auth.signOut().then(() => {
+                    console.log('✅ Signed out from Firebase');
+                }).catch((error) => {
+                    console.error('❌ Sign out error:', error);
+                });
+            }
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>

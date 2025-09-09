@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Analytics - Amplifi</title>
+    <meta name="description" content="Advanced analytics dashboard for content creators">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="assets/css/youtube-style.css">
+    
+    <!-- Authentication Guard -->
+    <script src="assets/js/auth-guard.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .yt-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .yt-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .yt-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .yt-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .yt-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .yt-btn-primary {
+            background: #ff0000;
+            color: white;
+        }
+
+        .yt-btn-primary:hover {
+            background: #cc0000;
+        }
+
+        .yt-btn-secondary {
+            background: #f8f9fa;
+            color: #1a1a1a;
+            border: 1px solid #e9ecef;
+        }
+
+        .yt-btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        /* Main Content */
+        .analytics-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 24px 40px;
+        }
+
+        .analytics-header {
+            margin-bottom: 40px;
+        }
+
+        .analytics-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .analytics-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        .stat-change.neutral {
+            color: #6c757d;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .chart-header {
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .chart-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Revenue Section */
+        .revenue-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .revenue-header {
+            margin-bottom: 24px;
+        }
+
+        .revenue-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .revenue-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .revenue-stat {
+            text-align: center;
+        }
+
+        .revenue-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .revenue-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Content Performance */
+        .content-performance {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            margin-bottom: 40px;
+        }
+
+        .performance-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .performance-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .performance-filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #ff0000;
+            color: white;
+            border-color: #ff0000;
+        }
+
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .content-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .content-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-thumbnail {
+            width: 120px;
+            height: 68px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 24px;
+        }
+
+        .content-info {
+            flex: 1;
+        }
+
+        .content-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .content-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .content-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .content-stat {
+            text-align: center;
+        }
+
+        .content-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .content-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .revenue-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .content-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="yt-header">
+        <div class="yt-nav">
+            <a href="index.html" class="yt-logo">
+                <img src="amplifi-icon.svg" alt="Amplifi" class="logo-img">
+                <span class="logo-text">Amplifi</span>
+            </a>
+            
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="analytics-container">
+        <!-- Header -->
+        <div class="analytics-header">
+            <h1 class="analytics-title">Creator Analytics</h1>
+            <p class="analytics-subtitle">Track your content performance and earnings</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Views</span>
+                    <div class="stat-icon" style="background: #ff0000;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalViews">1,234,567</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12.5% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Subscribers</span>
+                    <div class="stat-icon" style="background: #28a745;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="subscribers">45,678</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8.2% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Watch Time</span>
+                    <div class="stat-icon" style="background: #17a2b8;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="watchTime">2,456h</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+15.3% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Engagement Rate</span>
+                    <div class="stat-icon" style="background: #ffc107;">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="engagementRate">4.2%</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>-0.3% from last month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Views Over Time</h3>
+                    <p class="chart-subtitle">Daily view count for the last 30 days</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="viewsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Content Types</h3>
+                    <p class="chart-subtitle">Performance by content category</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="contentTypesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Section -->
+        <div class="revenue-section">
+            <div class="revenue-header">
+                <h2 class="revenue-title">Revenue Overview</h2>
+                <p class="revenue-subtitle">Track your earnings and monetization performance</p>
+            </div>
+            <div class="revenue-stats">
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="totalRevenue">$12,456</div>
+                    <div class="revenue-stat-label">Total Revenue</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="monthlyRevenue">$1,234</div>
+                    <div class="revenue-stat-label">This Month</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="avgRevenue">$45.67</div>
+                    <div class="revenue-stat-label">Per Video</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="cpm">$2.34</div>
+                    <div class="revenue-stat-label">CPM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Performance -->
+        <div class="content-performance">
+            <div class="performance-header">
+                <h3 class="performance-title">Top Performing Content</h3>
+                <div class="performance-filters">
+                    <button class="filter-btn active" data-filter="all">All Time</button>
+                    <button class="filter-btn" data-filter="month">This Month</button>
+                    <button class="filter-btn" data-filter="week">This Week</button>
+                </div>
+            </div>
+            <div class="content-list" id="contentList">
+                <!-- Content items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Analytics Dashboard
+        class AnalyticsDashboard {
+            constructor() {
+                this.charts = {};
+                this.contentData = [];
+                this.init();
+            }
+
+            init() {
+                this.setupCharts();
+                this.loadContentData();
+                this.setupFilters();
+                this.updateStats();
+            }
+
+            setupCharts() {
+                // Views Chart
+                const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+                this.charts.views = new Chart(viewsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: this.generateDateLabels(30),
+                        datasets: [{
+                            label: 'Views',
+                            data: this.generateViewsData(30),
+                            borderColor: '#ff0000',
+                            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Content Types Chart
+                const contentTypesCtx = document.getElementById('contentTypesChart').getContext('2d');
+                this.charts.contentTypes = new Chart(contentTypesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Videos', 'Shorts', 'Live Streams', 'Music'],
+                        datasets: [{
+                            data: [45, 25, 20, 10],
+                            backgroundColor: [
+                                '#ff0000',
+                                '#28a745',
+                                '#17a2b8',
+                                '#ffc107'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            generateDateLabels(days) {
+                const labels = [];
+                const today = new Date();
+                for (let i = days - 1; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                }
+                return labels;
+            }
+
+            generateViewsData(days) {
+                const data = [];
+                for (let i = 0; i < days; i++) {
+                    data.push(Math.floor(Math.random() * 10000) + 1000);
+                }
+                return data;
+            }
+
+            loadContentData() {
+                this.contentData = [
+                    {
+                        id: 1,
+                        title: "How to Build a Social Media App",
+                        type: "Video",
+                        thumbnail: "🎥",
+                        views: 125000,
+                        likes: 8500,
+                        comments: 1200,
+                        revenue: 450.50,
+                        published: "2024-01-15"
+                    },
+                    {
+                        id: 2,
+                        title: "Quick Coding Tips #shorts",
+                        type: "Short",
+                        thumbnail: "⚡",
+                        views: 89000,
+                        likes: 12000,
+                        comments: 800,
+                        revenue: 320.75,
+                        published: "2024-01-12"
+                    },
+                    {
+                        id: 3,
+                        title: "Live Q&A Session",
+                        type: "Live",
+                        thumbnail: "🔴",
+                        views: 45000,
+                        likes: 3200,
+                        comments: 1500,
+                        revenue: 180.25,
+                        published: "2024-01-10"
+                    },
+                    {
+                        id: 4,
+                        title: "Amplifi App Demo",
+                        type: "Video",
+                        thumbnail: "📱",
+                        views: 78000,
+                        likes: 5600,
+                        comments: 900,
+                        revenue: 280.00,
+                        published: "2024-01-08"
+                    },
+                    {
+                        id: 5,
+                        title: "Music Production Tutorial",
+                        type: "Music",
+                        thumbnail: "🎵",
+                        views: 34000,
+                        likes: 2100,
+                        comments: 400,
+                        revenue: 120.50,
+                        published: "2024-01-05"
+                    }
+                ];
+
+                this.renderContentList();
+            }
+
+            renderContentList() {
+                const contentList = document.getElementById('contentList');
+                contentList.innerHTML = '';
+
+                this.contentData.forEach(item => {
+                    const contentItem = document.createElement('div');
+                    contentItem.className = 'content-item';
+                    contentItem.innerHTML = `
+                        <div class="content-thumbnail">${item.thumbnail}</div>
+                        <div class="content-info">
+                            <div class="content-title">${item.title}</div>
+                            <div class="content-meta">${item.type} • Published ${item.published}</div>
+                            <div class="content-stats">
+                                <div class="content-stat">
+                                    <div class="content-stat-value">${this.formatNumber(item.views)}</div>
+                                    <div class="content-stat-label">Views</div>
+                                </div>
+                                <div class="content-stat">
+                                    <div class="content-stat-value">${this.formatNumber(item.likes)}</div>
+                                    <div class="content-stat-label">Likes</div>
+                                </div>
+                                <div class="content-stat">
+                                    <div class="content-stat-value">${this.formatNumber(item.comments)}</div>
+                                    <div class="content-stat-label">Comments</div>
+                                </div>
+                                <div class="content-stat">
+                                    <div class="content-stat-value">$${item.revenue.toFixed(2)}</div>
+                                    <div class="content-stat-label">Revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    contentList.appendChild(contentItem);
+                });
+            }
+
+            setupFilters() {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.filterContent(e.target.dataset.filter);
+                    });
+                });
+            }
+
+            filterContent(filter) {
+                // Filter content based on selected time period
+                console.log('Filtering content by:', filter);
+                // Implementation would filter contentData based on filter
+                this.renderContentList();
+            }
+
+            updateStats() {
+                // Update stats with real-time data
+                const totalViews = this.contentData.reduce((sum, item) => sum + item.views, 0);
+                const totalRevenue = this.contentData.reduce((sum, item) => sum + item.revenue, 0);
+                
+                document.getElementById('totalViews').textContent = this.formatNumber(totalViews);
+                document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num.toString();
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AnalyticsDashboard();
+        });
+
+        // Sign out function
+        function signOut() {
+            console.log('🔐 Signing out...');
+            
+            // Clear localStorage
+            localStorage.removeItem('amplifi_auth');
+            
+            // Sign out from Firebase if available
+            if (typeof auth !== 'undefined') {
+                auth.signOut().then(() => {
+                    console.log('✅ Signed out from Firebase');
+                }).catch((error) => {
+                    console.error('❌ Sign out error:', error);
+                });
+            }
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
