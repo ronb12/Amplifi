@@ -24,6 +24,16 @@
     <!-- Authentication Guard -->
     <script src="assets/js/auth-guard.js"></script>
     
+    <!-- AI and Social Features -->
+    <script src="assets/js/ai-recommendations.js"></script>
+    <script src="assets/js/social-features.js"></script>
+    <script src="assets/js/advanced-search.js"></script>
+    <script src="assets/js/push-notifications.js"></script>
+    
+    <!-- AdSense Monetization -->
+    <link rel="stylesheet" href="assets/css/adsense-styles.css">
+    <script src="assets/js/adsense-monetization.js"></script>
+    
     
     <style>
         /* Professional Amplifi Styles */
@@ -641,6 +651,192 @@
         .block { display: block; }
         .flex { display: flex; }
         .grid { display: grid; }
+
+        /* Notification Toast Styles */
+        .notification-toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #ff0000;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-content i {
+            font-size: 18px;
+        }
+
+        /* Video Action Buttons */
+        .yt-video-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .yt-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #606060;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .yt-action-btn:hover {
+            background: #f0f0f0;
+            color: #ff0000;
+        }
+
+        .yt-action-btn i {
+            font-size: 16px;
+        }
+
+        .yt-action-btn span {
+            font-weight: 500;
+        }
+
+        /* Video Card Enhancements */
+        .yt-video-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .yt-video-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .yt-video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .yt-video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .yt-video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .yt-video-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .yt-video-thumbnail:hover .yt-video-overlay {
+            opacity: 1;
+        }
+
+        .yt-play-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .yt-play-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .yt-play-btn i {
+            font-size: 24px;
+            color: #ff0000;
+            margin-left: 4px;
+        }
+
+        .yt-video-info {
+            padding: 16px;
+        }
+
+        .yt-video-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .yt-video-description {
+            font-size: 14px;
+            color: #606060;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .yt-video-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .yt-video-creator {
+            font-size: 14px;
+            color: #030303;
+            font-weight: 500;
+        }
+
+        .yt-video-views,
+        .yt-video-date {
+            font-size: 12px;
+            color: #606060;
+        }
     </style>
 
 <style>
@@ -922,6 +1118,11 @@
         
         
             <div class="feed-content">
+                <!-- Banner Ad -->
+                <div class="ad-container banner">
+                    <div id="banner-ad"></div>
+                </div>
+                
                 <div class="yt-video-grid">
                     
         <div class="yt-video-card">
@@ -1025,10 +1226,259 @@
     <script>
         console.log('✅ Feed page loading - using auth-guard for authentication');
         
+        // Initialize AI and Social Features
+        let aiEngine, socialFeatures, pushNotifications, adSense;
+
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Feed page initialized - using auth-guard for authentication');
+            initializeAIFeatures();
+            loadPersonalizedFeed();
         });
+
+        // Initialize AI Features
+        function initializeAIFeatures() {
+            try {
+                aiEngine = new AIRecommendationEngine();
+                socialFeatures = new SocialFeatures();
+                pushNotifications = new PushNotificationManager();
+                adSense = new AdSenseMonetization();
+                
+                // Initialize AdSense
+                adSense.init().then(() => {
+                    adSense.displayBannerAd();
+                    console.log('✅ AdSense initialized');
+                }).catch(error => {
+                    console.error('❌ AdSense initialization failed:', error);
+                });
+                
+                console.log('✅ AI features initialized');
+            } catch (error) {
+                console.error('❌ AI features initialization failed:', error);
+            }
+        }
+
+        // Load Personalized Feed
+        async function loadPersonalizedFeed() {
+            try {
+                const userId = getCurrentUserId();
+                if (!userId) {
+                    console.log('No user ID found, loading default feed');
+                    loadDefaultFeed();
+                    return;
+                }
+
+                console.log('🤖 Loading AI-powered personalized feed...');
+                
+                // Get AI recommendations
+                const recommendations = await aiEngine.generateRecommendations(userId, 20);
+                
+                // Get social feed
+                const socialFeed = await socialFeatures.getUserFeed(userId, 10);
+                
+                // Combine and display
+                const combinedFeed = [...recommendations, ...socialFeed];
+                displayFeed(combinedFeed);
+                
+                console.log(`✅ Loaded ${combinedFeed.length} personalized recommendations`);
+            } catch (error) {
+                console.error('❌ Error loading personalized feed:', error);
+                loadDefaultFeed();
+            }
+        }
+
+        // Load Default Feed
+        function loadDefaultFeed() {
+            const defaultContent = [
+                {
+                    id: '1',
+                    title: 'Welcome to Amplifi!',
+                    description: 'Discover amazing content with AI-powered recommendations',
+                    category: 'entertainment',
+                    duration: 120,
+                    views: 1000,
+                    likes: 50,
+                    comments: 10,
+                    shares: 5,
+                    creator: 'Amplifi Team',
+                    thumbnail: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'
+                }
+            ];
+            displayFeed(defaultContent);
+        }
+
+        // Display Feed Content
+        function displayFeed(content) {
+            const feedContainer = document.querySelector('.yt-video-grid');
+            if (!feedContainer) return;
+
+            feedContainer.innerHTML = '';
+
+            content.forEach(item => {
+                const videoCard = createVideoCard(item);
+                feedContainer.appendChild(videoCard);
+            });
+        }
+
+        // Create Video Card
+        function createVideoCard(item) {
+            const card = document.createElement('div');
+            card.className = 'yt-video-card';
+            card.innerHTML = `
+                <div class="yt-video-thumbnail">
+                    <img src="${item.thumbnail || 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'}" alt="${item.title}">
+                    <div class="yt-video-duration">${formatDuration(item.duration)}</div>
+                    <div class="yt-video-overlay">
+                        <button class="yt-play-btn" onclick="playVideo('${item.id}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="yt-video-info">
+                    <h3 class="yt-video-title">${item.title}</h3>
+                    <p class="yt-video-description">${item.description}</p>
+                    <div class="yt-video-meta">
+                        <span class="yt-video-creator">${item.creator || 'Unknown Creator'}</span>
+                        <span class="yt-video-views">${formatViews(item.views)} views</span>
+                        <span class="yt-video-date">${formatDate(item.timestamp)}</span>
+                    </div>
+                    <div class="yt-video-actions">
+                        <button class="yt-action-btn" onclick="likeContent('${item.id}')">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span>${item.likes || 0}</span>
+                        </button>
+                        <button class="yt-action-btn" onclick="commentContent('${item.id}')">
+                            <i class="fas fa-comment"></i>
+                            <span>${item.comments || 0}</span>
+                        </button>
+                        <button class="yt-action-btn" onclick="shareContent('${item.id}')">
+                            <i class="fas fa-share"></i>
+                            <span>${item.shares || 0}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Social Interaction Functions
+        async function likeContent(contentId) {
+            try {
+                const userId = getCurrentUserId();
+                if (!userId) {
+                    alert('Please log in to like content');
+                    return;
+                }
+
+                const liked = await socialFeatures.likeContent(contentId, userId, 'content');
+                updateLikeButton(contentId, liked);
+                
+                // Record interaction for AI
+                aiEngine.recordInteraction(userId, contentId, 'like');
+                
+                console.log(liked ? '✅ Content liked' : '❌ Content unliked');
+            } catch (error) {
+                console.error('❌ Error liking content:', error);
+            }
+        }
+
+        async function commentContent(contentId) {
+            try {
+                const commentText = prompt('Enter your comment:');
+                if (!commentText) return;
+
+                const userId = getCurrentUserId();
+                if (!userId) {
+                    alert('Please log in to comment');
+                    return;
+                }
+
+                await socialFeatures.addComment(contentId, userId, commentText);
+                
+                // Record interaction for AI
+                aiEngine.recordInteraction(userId, contentId, 'comment');
+                
+                console.log('✅ Comment added');
+            } catch (error) {
+                console.error('❌ Error adding comment:', error);
+            }
+        }
+
+        async function shareContent(contentId) {
+            try {
+                const userId = getCurrentUserId();
+                if (!userId) {
+                    alert('Please log in to share content');
+                    return;
+                }
+
+                await socialFeatures.shareContent(contentId, userId, 'internal');
+                
+                // Record interaction for AI
+                aiEngine.recordInteraction(userId, contentId, 'share');
+                
+                console.log('✅ Content shared');
+            } catch (error) {
+                console.error('❌ Error sharing content:', error);
+            }
+        }
+
+        // Utility Functions
+        function getCurrentUserId() {
+            const auth = localStorage.getItem('amplifi_auth');
+            return auth ? JSON.parse(auth).userId : null;
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatViews(views) {
+            if (!views) return '0';
+            if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';
+            if (views >= 1000) return (views / 1000).toFixed(1) + 'K';
+            return views.toString();
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days} days ago`;
+            return date.toLocaleDateString();
+        }
+
+        function updateLikeButton(contentId, liked) {
+            const button = document.querySelector(`[onclick="likeContent('${contentId}')"]`);
+            if (button) {
+                const icon = button.querySelector('i');
+                const count = button.querySelector('span');
+                
+                if (liked) {
+                    icon.classList.add('fas', 'fa-thumbs-up');
+                    icon.classList.remove('far');
+                    count.textContent = parseInt(count.textContent) + 1;
+                } else {
+                    icon.classList.add('far', 'fa-thumbs-up');
+                    icon.classList.remove('fas');
+                    count.textContent = Math.max(0, parseInt(count.textContent) - 1);
+                }
+            }
+        }
+
+        function playVideo(videoId) {
+            console.log(`Playing video: ${videoId}`);
+            // This would typically open a video player modal or navigate to video page
+            alert(`Playing video: ${videoId}`);
+        }
         
         // Sign out function
         function signOut() {

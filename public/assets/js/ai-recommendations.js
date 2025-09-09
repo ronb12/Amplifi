@@ -1,535 +1,359 @@
-// AI-Powered Recommendation System for Amplifi - Complete Creator Platform
-// Includes: Personalized recommendations, trending algorithm, watch history analysis
+/**
+ * AI-Powered Content Recommendations System
+ */
 
 class AIRecommendationEngine {
     constructor() {
-        this.userPreferences = {};
-        this.watchHistory = [];
-        this.videoEmbeddings = {};
-        this.recommendationCache = {};
-        this.trendingAlgorithm = new TrendingAlgorithm();
-        this.collaborativeFiltering = new CollaborativeFiltering();
-        this.contentBasedFiltering = new ContentBasedFiltering();
+        this.userPreferences = this.loadUserPreferences();
+        this.contentDatabase = this.loadContentDatabase();
+        this.interactionHistory = this.loadInteractionHistory();
+        this.recommendationCache = new Map();
+    }
+
+    /**
+     * Generate Personalized Recommendations
+     */
+    async generateRecommendations(userId, limit = 20) {
+        const cacheKey = `rec_${userId}_${limit}`;
         
-        this.init();
-    }
+        if (this.recommendationCache.has(cacheKey)) {
+            return this.recommendationCache.get(cacheKey);
+        }
 
-    init() {
-        this.loadUserPreferences();
-        this.loadWatchHistory();
-        this.setupEventListeners();
-        console.log('🤖 AI Recommendation Engine initialized');
-    }
-
-    setupEventListeners() {
-        // Listen for video views
-        document.addEventListener('videoViewed', (e) => {
-            this.recordVideoView(e.detail.videoId, e.detail.watchTime, e.detail.completionRate);
-        });
-
-        // Listen for user interactions
-        document.addEventListener('userInteraction', (e) => {
-            this.recordUserInteraction(e.detail.type, e.detail.videoId, e.detail.data);
-        });
-    }
-
-    // Core recommendation methods
-    async getPersonalizedRecommendations(userId, limit = 20) {
         try {
             const userProfile = await this.getUserProfile(userId);
-            const watchHistory = await this.getWatchHistory(userId);
+            const userInteractions = await this.getUserInteractions(userId);
             
-            // Get recommendations from multiple algorithms
-            const collaborativeRecs = await this.collaborativeFiltering.getRecommendations(userId, limit);
-            const contentRecs = await this.contentBasedFiltering.getRecommendations(userProfile, limit);
-            const trendingRecs = await this.trendingAlgorithm.getTrendingVideos(limit);
+            const recommendations = {
+                personalized: await this.getPersonalizedRecommendations(userProfile, userInteractions, limit),
+                trending: await this.getTrendingRecommendations(limit),
+                similar: await this.getSimilarContentRecommendations(userInteractions, limit),
+                discovery: await this.getDiscoveryRecommendations(userProfile, limit)
+            };
+
+            const finalRecommendations = this.rankAndCombineRecommendations(recommendations, limit);
+            this.recommendationCache.set(cacheKey, finalRecommendations);
             
-            // Combine and rank recommendations
-            const combinedRecs = this.combineRecommendations([
-                { recommendations: collaborativeRecs, weight: 0.4 },
-                { recommendations: contentRecs, weight: 0.4 },
-                { recommendations: trendingRecs, weight: 0.2 }
-            ]);
-            
-            // Apply diversity and freshness filters
-            const finalRecs = this.applyDiversityFilters(combinedRecs, limit);
-            
-            return finalRecs;
+            return finalRecommendations;
         } catch (error) {
-            console.error('Error getting personalized recommendations:', error);
+            console.error('Error generating recommendations:', error);
             return this.getFallbackRecommendations(limit);
         }
     }
 
-    async getHomePageRecommendations(userId) {
-        const recommendations = await this.getPersonalizedRecommendations(userId, 50);
+    /**
+     * Personalized Recommendations using Collaborative Filtering
+     */
+    async getPersonalizedRecommendations(userProfile, interactions, limit) {
+        const userVector = this.createUserVector(userProfile, interactions);
+        const contentVectors = this.createContentVectors();
         
-        // Organize into sections like professional platforms
-        return {
-            trending: recommendations.slice(0, 8),
-            recommended: recommendations.slice(8, 20),
-            continueWatching: await this.getContinueWatching(userId),
-            subscriptions: await this.getSubscriptionVideos(userId),
-            trendingInCategory: await this.getTrendingInCategory(userId)
-        };
+        const similarities = contentVectors.map(content => ({
+            contentId: content.id,
+            similarity: this.calculateCosineSimilarity(userVector, content.vector),
+            content: content
+        }));
+
+        return similarities
+            .sort((a, b) => b.similarity - a.similarity)
+            .slice(0, limit)
+            .map(item => item.content);
     }
 
-    async getRelatedVideos(videoId, limit = 20) {
-        try {
-            const currentVideo = await this.getVideo(videoId);
-            const userProfile = await this.getCurrentUserProfile();
-            
-            // Get videos with similar tags, categories, and creators
-            const similarVideos = await this.findSimilarVideos(currentVideo, limit);
-            
-            // Personalize based on user preferences
-            const personalizedSimilar = this.personalizeRecommendations(similarVideos, userProfile);
-            
-            return personalizedSimilar;
-        } catch (error) {
-            console.error('Error getting related videos:', error);
-            return this.getFallbackRecommendations(limit);
-        }
+    /**
+     * Trending Recommendations
+     */
+    async getTrendingRecommendations(limit) {
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        
+        const recentContent = this.contentDatabase.filter(content => 
+            (now - content.timestamp) < oneDay
+        );
+
+        const trendingContent = recentContent.map(content => ({
+            ...content,
+            trendingScore: this.calculateTrendingScore(content)
+        }));
+
+        return trendingContent
+            .sort((a, b) => b.trendingScore - a.trendingScore)
+            .slice(0, limit);
     }
 
-    async getTrendingVideos(category = null, region = null, limit = 50) {
-        return await this.trendingAlgorithm.getTrendingVideos(limit, category, region);
+    /**
+     * Calculate Trending Score
+     */
+    calculateTrendingScore(content) {
+        const now = Date.now();
+        const age = (now - content.timestamp) / (1000 * 60 * 60);
+        
+        const views = content.views || 0;
+        const likes = content.likes || 0;
+        const comments = content.comments || 0;
+        const shares = content.shares || 0;
+        
+        const engagementScore = (views * 1) + (likes * 3) + (comments * 5) + (shares * 10);
+        const timeDecay = Math.exp(-age / 24);
+        
+        return engagementScore * timeDecay;
     }
 
-    // User behavior tracking
-    recordVideoView(videoId, watchTime, completionRate) {
-        const viewData = {
-            videoId,
-            watchTime,
-            completionRate,
-            timestamp: Date.now(),
-            sessionId: this.getSessionId()
-        };
+    /**
+     * Create User Vector for ML
+     */
+    createUserVector(userProfile, interactions) {
+        const vector = new Array(50).fill(0);
         
-        this.watchHistory.push(viewData);
-        this.updateUserPreferences(videoId, completionRate);
-        this.saveWatchHistory();
+        const categoryPrefs = this.getCategoryPreferences(interactions);
+        Object.keys(categoryPrefs).forEach((category, index) => {
+            if (index < 20) vector[index] = categoryPrefs[category];
+        });
         
-        // Emit event for other components
-        document.dispatchEvent(new CustomEvent('recommendationsUpdated', {
-            detail: { videoId, watchTime, completionRate }
+        const avgDuration = this.getAverageDuration(interactions);
+        vector[20] = avgDuration / 3600;
+        
+        return vector;
+    }
+
+    /**
+     * Create Content Vectors
+     */
+    createContentVectors() {
+        return this.contentDatabase.map(content => ({
+            id: content.id,
+            vector: this.createContentVector(content),
+            content: content
         }));
     }
 
-    recordUserInteraction(type, videoId, data) {
-        const interaction = {
-            type,
-            videoId,
-            data,
-            timestamp: Date.now(),
-            userId: this.getCurrentUserId()
-        };
+    /**
+     * Create Content Vector
+     */
+    createContentVector(content) {
+        const vector = new Array(50).fill(0);
         
-        this.processUserInteraction(interaction);
+        const categories = ['gaming', 'music', 'education', 'entertainment', 'tech', 'lifestyle', 'sports', 'news'];
+        const categoryIndex = categories.indexOf(content.category);
+        if (categoryIndex >= 0) vector[categoryIndex] = 1;
+        
+        vector[20] = (content.duration || 0) / 3600;
+        vector[21] = (content.views || 0) / 1000000;
+        vector[22] = (content.likes || 0) / 10000;
+        
+        return vector;
     }
 
-    // User preference learning
-    updateUserPreferences(videoId, completionRate) {
-        const video = this.videoEmbeddings[videoId];
-        if (!video) return;
+    /**
+     * Calculate Cosine Similarity
+     */
+    calculateCosineSimilarity(vector1, vector2) {
+        if (vector1.length !== vector2.length) return 0;
         
-        // Update category preferences
-        if (completionRate > 0.7) {
-            this.userPreferences[video.category] = (this.userPreferences[video.category] || 0) + 1;
+        let dotProduct = 0;
+        let norm1 = 0;
+        let norm2 = 0;
+        
+        for (let i = 0; i < vector1.length; i++) {
+            dotProduct += vector1[i] * vector2[i];
+            norm1 += vector1[i] * vector1[i];
+            norm2 += vector2[i] * vector2[i];
         }
         
-        // Update creator preferences
-        if (completionRate > 0.5) {
-            this.userPreferences[`creator_${video.creatorId}`] = 
-                (this.userPreferences[`creator_${video.creatorId}`] || 0) + 1;
-        }
+        if (norm1 === 0 || norm2 === 0) return 0;
         
-        // Update tag preferences
-        video.tags.forEach(tag => {
-            if (completionRate > 0.6) {
-                this.userPreferences[`tag_${tag}`] = (this.userPreferences[`tag_${tag}`] || 0) + 1;
-            }
-        });
-        
-        this.saveUserPreferences();
+        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
     }
 
-    // Algorithm implementations
-    combineRecommendations(algorithmResults) {
-        const combined = new Map();
+    /**
+     * Rank and Combine Recommendations
+     */
+    rankAndCombineRecommendations(recommendations, limit) {
+        const allRecommendations = [];
         
-        algorithmResults.forEach(({ recommendations, weight }) => {
-            recommendations.forEach(rec => {
-                const currentScore = combined.get(rec.videoId) || 0;
-                combined.set(rec.videoId, currentScore + (rec.score * weight));
+        recommendations.personalized.forEach((content, index) => {
+            allRecommendations.push({
+                ...content,
+                score: 0.4 * (1 - index / recommendations.personalized.length),
+                type: 'personalized'
             });
         });
         
-        // Convert to array and sort by score
-        return Array.from(combined.entries())
-            .map(([videoId, score]) => ({ videoId, score }))
-            .sort((a, b) => b.score - a.score);
-    }
-
-    applyDiversityFilters(recommendations, limit) {
-        const diverse = [];
-        const categories = new Set();
-        const creators = new Set();
-        
-        for (const rec of recommendations) {
-            if (diverse.length >= limit) break;
-            
-            const video = this.videoEmbeddings[rec.videoId];
-            if (!video) continue;
-            
-            // Ensure diversity in categories
-            if (categories.size < 5 || !categories.has(video.category)) {
-                categories.add(video.category);
-                diverse.push(rec);
-            }
-            // Ensure diversity in creators
-            else if (creators.size < 10 || !creators.has(video.creatorId)) {
-                creators.add(video.creatorId);
-                diverse.push(rec);
-            }
-        }
-        
-        return diverse;
-    }
-
-    personalizeRecommendations(videos, userProfile) {
-        return videos.map(video => {
-            let personalScore = video.score || 1;
-            
-            // Boost based on user preferences
-            if (userProfile.preferredCategories.includes(video.category)) {
-                personalScore *= 1.5;
-            }
-            
-            if (userProfile.subscribedCreators.includes(video.creatorId)) {
-                personalScore *= 1.3;
-            }
-            
-            // Boost based on watch history patterns
-            const watchTime = this.getAverageWatchTime(video.category);
-            if (watchTime > 0.7) {
-                personalScore *= 1.2;
-            }
-            
-            return { ...video, personalScore };
-        }).sort((a, b) => b.personalScore - a.personalScore);
-    }
-
-    // Utility methods
-    async getUserProfile(userId) {
-        // This would typically fetch from Firebase
-        return {
-            preferredCategories: ['gaming', 'technology', 'education'],
-            subscribedCreators: ['creator1', 'creator2'],
-            watchHistory: this.watchHistory,
-            preferences: this.userPreferences
-        };
-    }
-
-    async getCurrentUserProfile() {
-        const userId = this.getCurrentUserId();
-        return userId ? await this.getUserProfile(userId) : null;
-    }
-
-    async getVideo(videoId) {
-        // This would typically fetch from Firebase
-        return this.videoEmbeddings[videoId] || {
-            id: videoId,
-            category: 'general',
-            creatorId: 'unknown',
-            tags: []
-        };
-    }
-
-    async findSimilarVideos(video, limit) {
-        // Find videos with similar characteristics
-        const similar = [];
-        
-        Object.values(this.videoEmbeddings).forEach(candidate => {
-            if (candidate.id === video.id) return;
-            
-            let similarity = 0;
-            
-            // Category similarity
-            if (candidate.category === video.category) similarity += 0.4;
-            
-            // Creator similarity
-            if (candidate.creatorId === video.creatorId) similarity += 0.3;
-            
-            // Tag similarity
-            const commonTags = video.tags.filter(tag => candidate.tags.includes(tag));
-            similarity += (commonTags.length / Math.max(video.tags.length, candidate.tags.length)) * 0.3;
-            
-            if (similarity > 0.2) {
-                similar.push({ ...candidate, similarity });
-            }
+        recommendations.trending.forEach((content, index) => {
+            allRecommendations.push({
+                ...content,
+                score: 0.3 * (1 - index / recommendations.trending.length),
+                type: 'trending'
+            });
         });
         
-        return similar
-            .sort((a, b) => b.similarity - a.similarity)
+        const uniqueRecommendations = this.removeDuplicates(allRecommendations);
+        return uniqueRecommendations
+            .sort((a, b) => b.score - a.score)
             .slice(0, limit);
     }
 
-    getAverageWatchTime(category) {
-        const categoryViews = this.watchHistory.filter(view => {
-            const video = this.videoEmbeddings[view.videoId];
-            return video && video.category === category;
+    /**
+     * Remove Duplicate Recommendations
+     */
+    removeDuplicates(recommendations) {
+        const seen = new Set();
+        return recommendations.filter(rec => {
+            if (seen.has(rec.id)) return false;
+            seen.add(rec.id);
+            return true;
         });
-        
-        if (categoryViews.length === 0) return 0;
-        
-        const totalCompletion = categoryViews.reduce((sum, view) => sum + view.completionRate, 0);
-        return totalCompletion / categoryViews.length;
     }
 
-    async getContinueWatching(userId) {
-        const userHistory = this.watchHistory.filter(h => h.userId === userId);
-        const incompleteVideos = userHistory.filter(h => h.completionRate < 0.9);
-        
-        return incompleteVideos
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, 8)
-            .map(h => this.videoEmbeddings[h.videoId])
-            .filter(Boolean);
-    }
-
-    async getSubscriptionVideos(userId) {
-        const userProfile = await this.getUserProfile(userId);
-        const subscribedCreators = userProfile.subscribedCreators;
-        
-        return Object.values(this.videoEmbeddings)
-            .filter(video => subscribedCreators.includes(video.creatorId))
-            .sort((a, b) => b.uploadDate - a.uploadDate)
-            .slice(0, 12);
-    }
-
-    async getTrendingInCategory(userId) {
-        const userProfile = await this.getUserProfile(userId);
-        const preferredCategory = userProfile.preferredCategories[0];
-        
-        return await this.trendingAlgorithm.getTrendingVideos(8, preferredCategory);
-    }
-
+    /**
+     * Get Fallback Recommendations
+     */
     getFallbackRecommendations(limit) {
-        // Return popular videos when recommendations fail
-        return Object.values(this.videoEmbeddings)
-            .sort((a, b) => b.views - a.views)
+        return this.contentDatabase
+            .sort((a, b) => (b.views || 0) - (a.views || 0))
             .slice(0, limit);
     }
 
-    // Data persistence
-    saveUserPreferences() {
-        localStorage.setItem('amplifi_user_preferences', JSON.stringify(this.userPreferences));
-    }
-
-    saveWatchHistory() {
-        localStorage.setItem('amplifi_watch_history', JSON.stringify(this.watchHistory));
-    }
-
+    /**
+     * Load User Preferences
+     */
     loadUserPreferences() {
         const saved = localStorage.getItem('amplifi_user_preferences');
-        this.userPreferences = saved ? JSON.parse(saved) : {};
-    }
-
-    loadWatchHistory() {
-        const saved = localStorage.getItem('amplifi_watch_history');
-        this.watchHistory = saved ? JSON.parse(saved) : [];
-    }
-
-    // Utility methods
-    getCurrentUserId() {
-        // This would typically get from Firebase Auth
-        return localStorage.getItem('amplifi_user_id') || null;
-    }
-
-    getSessionId() {
-        if (!this.sessionId) {
-            this.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-        return this.sessionId;
-    }
-
-    processUserInteraction(interaction) {
-        // Process different types of interactions
-        switch (interaction.type) {
-            case 'like':
-                this.updateUserPreferences(interaction.videoId, 0.8);
-                break;
-            case 'dislike':
-                this.updateUserPreferences(interaction.videoId, 0.2);
-                break;
-            case 'share':
-                this.updateUserPreferences(interaction.videoId, 0.9);
-                break;
-            case 'comment':
-                this.updateUserPreferences(interaction.videoId, 0.7);
-                break;
-            case 'subscribe':
-                this.updateUserPreferences(`creator_${interaction.data.creatorId}`, 1.0);
-                break;
-        }
-    }
-}
-
-// Trending Algorithm Implementation
-class TrendingAlgorithm {
-    constructor() {
-        this.trendingFactors = {
-            views: 0.3,
-            likes: 0.2,
-            comments: 0.15,
-            shares: 0.15,
-            uploadRecency: 0.2
+        return saved ? JSON.parse(saved) : {
+            categories: [],
+            duration: 'medium',
+            timeOfDay: 'any',
+            language: 'en',
+            quality: 'auto'
         };
     }
 
-    async getTrendingVideos(limit, category = null, region = null) {
-        try {
-            // This would typically fetch from Firebase with real-time analytics
-            const videos = await this.getVideosWithAnalytics(category, region);
-            
-            // Calculate trending scores
-            const trendingVideos = videos.map(video => ({
-                ...video,
-                trendingScore: this.calculateTrendingScore(video)
-            }));
-            
-            // Sort by trending score
-            return trendingVideos
-                .sort((a, b) => b.trendingScore - a.trendingScore)
-                .slice(0, limit);
-        } catch (error) {
-            console.error('Error getting trending videos:', error);
-            return [];
-        }
-    }
-
-    calculateTrendingScore(video) {
-        const now = Date.now();
-        const hoursSinceUpload = (now - video.uploadDate) / (1000 * 60 * 60);
-        
-        // Normalize metrics
-        const normalizedViews = Math.log10(video.views + 1);
-        const normalizedLikes = Math.log10(video.likes + 1);
-        const normalizedComments = Math.log10(video.comments + 1);
-        const normalizedShares = Math.log10(video.shares + 1);
-        
-        // Time decay factor (newer videos get boost)
-        const timeDecay = Math.exp(-hoursSinceUpload / 24);
-        
-        // Calculate final score
-        return (
-            normalizedViews * this.trendingFactors.views +
-            normalizedLikes * this.trendingFactors.likes +
-            normalizedComments * this.trendingFactors.comments +
-            normalizedShares * this.trendingFactors.shares +
-            timeDecay * this.trendingFactors.uploadRecency
-        );
-    }
-
-    async getVideosWithAnalytics(category, region) {
-        // This would fetch from Firebase with real analytics data
-        // For now, return mock data
+    /**
+     * Load Content Database
+     */
+    loadContentDatabase() {
         return [
             {
-                id: 'trending1',
-                title: 'Trending Video 1',
-                views: 150000,
-                likes: 8500,
-                comments: 1200,
+                id: '1',
+                title: 'Amazing Gaming Tutorial',
+                category: 'gaming',
+                duration: 1200,
+                views: 50000,
+                likes: 2500,
+                comments: 150,
+                shares: 200,
+                tags: ['gaming', 'tutorial', 'tips'],
+                creatorId: 'creator1',
+                timestamp: Date.now() - 3600000,
+                engagementScore: 0.85
+            },
+            {
+                id: '2',
+                title: 'Music Production Masterclass',
+                category: 'music',
+                duration: 2400,
+                views: 75000,
+                likes: 4200,
+                comments: 300,
                 shares: 450,
-                uploadDate: Date.now() - (2 * 60 * 60 * 1000), // 2 hours ago
-                category: category || 'general',
-                region: region || 'US'
+                tags: ['music', 'production', 'tutorial'],
+                creatorId: 'creator2',
+                timestamp: Date.now() - 7200000,
+                engagementScore: 0.92
+            },
+            {
+                id: '3',
+                title: 'Tech News Update',
+                category: 'tech',
+                duration: 600,
+                views: 30000,
+                likes: 1800,
+                comments: 80,
+                shares: 120,
+                tags: ['tech', 'news', 'update'],
+                creatorId: 'creator3',
+                timestamp: Date.now() - 1800000,
+                engagementScore: 0.78
             }
         ];
     }
-}
 
-// Collaborative Filtering Implementation
-class CollaborativeFiltering {
-    async getRecommendations(userId, limit) {
-        try {
-            // Find users with similar preferences
-            const similarUsers = await this.findSimilarUsers(userId);
-            
-            // Get videos liked by similar users
-            const recommendations = await this.getVideosFromSimilarUsers(similarUsers);
-            
-            return recommendations.slice(0, limit);
-        } catch (error) {
-            console.error('Error in collaborative filtering:', error);
-            return [];
-        }
+    /**
+     * Load Interaction History
+     */
+    loadInteractionHistory() {
+        const saved = localStorage.getItem('amplifi_interaction_history');
+        return saved ? JSON.parse(saved) : [];
     }
 
-    async findSimilarUsers(userId) {
-        // This would analyze user behavior patterns
-        // For now, return mock similar users
-        return ['user2', 'user3', 'user4'];
+    /**
+     * Record User Interaction
+     */
+    recordInteraction(userId, contentId, interactionType, metadata = {}) {
+        const interaction = {
+            userId,
+            contentId,
+            type: interactionType,
+            timestamp: Date.now(),
+            metadata
+        };
+        
+        this.interactionHistory.push(interaction);
+        localStorage.setItem('amplifi_interaction_history', JSON.stringify(this.interactionHistory));
+        this.recommendationCache.clear();
     }
 
-    async getVideosFromSimilarUsers(similarUsers) {
-        // This would fetch videos liked by similar users
-        // For now, return mock recommendations
-        return [
-            { videoId: 'collab1', score: 0.85 },
-            { videoId: 'collab2', score: 0.78 }
-        ];
-    }
-}
-
-// Content-Based Filtering Implementation
-class ContentBasedFiltering {
-    async getRecommendations(userProfile, limit) {
-        try {
-            // Analyze user's content preferences
-            const preferredFeatures = this.extractPreferredFeatures(userProfile);
-            
-            // Find videos matching these features
-            const recommendations = await this.findMatchingVideos(preferredFeatures);
-            
-            return recommendations.slice(0, limit);
-        } catch (error) {
-            console.error('Error in content-based filtering:', error);
-            return [];
-        }
-    }
-
-    extractPreferredFeatures(userProfile) {
-        // Extract features from user preferences
+    /**
+     * Get User Profile
+     */
+    async getUserProfile(userId) {
         return {
-            categories: userProfile.preferredCategories,
-            creators: userProfile.subscribedCreators,
-            tags: this.extractPreferredTags(userProfile.preferences)
+            id: userId,
+            preferences: this.userPreferences,
+            joinDate: Date.now() - 30 * 24 * 60 * 60 * 1000,
+            totalWatchTime: 0,
+            favoriteCategories: []
         };
     }
 
-    extractPreferredTags(preferences) {
-        return Object.keys(preferences)
-            .filter(key => key.startsWith('tag_'))
-            .map(key => key.replace('tag_', ''))
-            .sort((a, b) => preferences[`tag_${b}`] - preferences[`tag_${a}`])
-            .slice(0, 10);
+    /**
+     * Get User Interactions
+     */
+    async getUserInteractions(userId) {
+        return this.interactionHistory.filter(interaction => interaction.userId === userId);
     }
 
-    async findMatchingVideos(preferredFeatures) {
-        // This would find videos matching user preferences
-        // For now, return mock recommendations
-        return [
-            { videoId: 'content1', score: 0.92 },
-            { videoId: 'content2', score: 0.88 }
-        ];
+    /**
+     * Helper Methods
+     */
+    getCategoryPreferences(interactions) {
+        const categoryCounts = {};
+        interactions.forEach(interaction => {
+            const content = this.contentDatabase.find(c => c.id === interaction.contentId);
+            if (content) {
+                categoryCounts[content.category] = (categoryCounts[content.category] || 0) + 1;
+            }
+        });
+        return categoryCounts;
+    }
+
+    getAverageDuration(interactions) {
+        const durations = interactions.map(interaction => {
+            const content = this.contentDatabase.find(c => c.id === interaction.contentId);
+            return content ? content.duration : 0;
+        });
+        return durations.reduce((sum, duration) => sum + duration, 0) / durations.length || 0;
+    }
+
+    async getSimilarContentRecommendations(interactions, limit) {
+        if (interactions.length === 0) return [];
+        return this.getFallbackRecommendations(limit);
+    }
+
+    async getDiscoveryRecommendations(userProfile, limit) {
+        return this.getFallbackRecommendations(limit);
     }
 }
 
-// Export for global use
+// Initialize AI Recommendation Engine
 window.AIRecommendationEngine = AIRecommendationEngine;
-window.TrendingAlgorithm = TrendingAlgorithm;
-window.CollaborativeFiltering = CollaborativeFiltering;
-window.ContentBasedFiltering = ContentBasedFiltering;

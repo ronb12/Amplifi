@@ -24,6 +24,10 @@
     <!-- Authentication Guard -->
     <script src="assets/js/auth-guard.js"></script>
     
+    <!-- AdSense Monetization -->
+    <link rel="stylesheet" href="assets/css/adsense-styles.css">
+    <script src="assets/js/adsense-monetization.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -581,6 +585,89 @@
             </div>
         </div>
 
+        <!-- AdSense Revenue Section -->
+        <div class="revenue-dashboard">
+            <div class="revenue-header">
+                <h2 class="revenue-title">AdSense Revenue</h2>
+                <button class="revenue-refresh" onclick="refreshAdSenseData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="revenue-stats">
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseTotal">$0.00</div>
+                    <div class="revenue-stat-label">AdSense Total</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseViews">0</div>
+                    <div class="revenue-stat-label">Ad Views</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseClicks">0</div>
+                    <div class="revenue-stat-label">Ad Clicks</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseCTR">0%</div>
+                    <div class="revenue-stat-label">CTR</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseCPM">$0.00</div>
+                    <div class="revenue-stat-label">CPM</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value" id="adsenseCPC">$0.00</div>
+                    <div class="revenue-stat-label">CPC</div>
+                </div>
+            </div>
+
+            <div class="revenue-charts">
+                <div class="revenue-chart">
+                    <h3>Daily AdSense Revenue</h3>
+                    <div class="chart-container">
+                        <canvas id="adsenseDailyChart"></canvas>
+                    </div>
+                </div>
+                <div class="revenue-chart">
+                    <h3>Monthly AdSense Revenue</h3>
+                    <div class="chart-container">
+                        <canvas id="adsenseMonthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-performance-table-container">
+                <h3>Ad Performance by Type</h3>
+                <table class="ad-performance-table">
+                    <thead>
+                        <tr>
+                            <th>Ad Type</th>
+                            <th>Views</th>
+                            <th>Clicks</th>
+                            <th>CTR</th>
+                            <th>Revenue</th>
+                            <th>CPM</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adPerformanceTable">
+                        <!-- Ad performance data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Ad Placement Guidelines -->
+        <div class="ad-placement-guidelines">
+            <h4>Ad Placement Guidelines</h4>
+            <ul>
+                <li>Place banner ads above the fold for maximum visibility</li>
+                <li>Use video ads before or during content for higher engagement</li>
+                <li>Sidebar ads work well for desktop users</li>
+                <li>In-content ads should be contextually relevant</li>
+                <li>Maintain a good balance between content and ads</li>
+            </ul>
+        </div>
+
         <!-- Content Performance -->
         <div class="content-performance">
             <div class="performance-header">
@@ -603,6 +690,7 @@
             constructor() {
                 this.charts = {};
                 this.contentData = [];
+                this.adSense = null;
                 this.init();
             }
 
@@ -611,6 +699,7 @@
                 this.loadContentData();
                 this.setupFilters();
                 this.updateStats();
+                this.initAdSense();
             }
 
             setupCharts() {
@@ -831,6 +920,157 @@
                     return (num / 1000).toFixed(1) + 'K';
                 }
                 return num.toString();
+            }
+
+            // AdSense Methods
+            async initAdSense() {
+                try {
+                    this.adSense = new AdSenseMonetization();
+                    await this.adSense.init();
+                    this.updateAdSenseStats();
+                    this.setupAdSenseCharts();
+                    this.updateAdPerformanceTable();
+                    console.log('✅ AdSense initialized in analytics dashboard');
+                } catch (error) {
+                    console.error('❌ AdSense initialization failed:', error);
+                }
+            }
+
+            updateAdSenseStats() {
+                const userId = this.getCurrentUserId();
+                if (!userId) return;
+
+                const adSenseData = this.adSense.getRevenueDashboardData(userId);
+                
+                // Update AdSense stats
+                document.getElementById('adsenseTotal').textContent = `$${adSenseData.earnings.total.toFixed(2)}`;
+                document.getElementById('adsenseViews').textContent = this.formatNumber(adSenseData.performance.views);
+                document.getElementById('adsenseClicks').textContent = this.formatNumber(adSenseData.performance.clicks);
+                document.getElementById('adsenseCTR').textContent = `${adSenseData.performance.ctr.toFixed(2)}%`;
+                document.getElementById('adsenseCPM').textContent = `$${adSenseData.earnings.cpm.toFixed(2)}`;
+                document.getElementById('adsenseCPC').textContent = `$${adSenseData.earnings.cpc.toFixed(2)}`;
+            }
+
+            setupAdSenseCharts() {
+                const userId = this.getCurrentUserId();
+                if (!userId) return;
+
+                const adSenseData = this.adSense.getRevenueDashboardData(userId);
+
+                // Daily AdSense Revenue Chart
+                const dailyCtx = document.getElementById('adsenseDailyChart').getContext('2d');
+                this.charts.adsenseDaily = new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: adSenseData.charts.daily.labels,
+                        datasets: [{
+                            label: 'Daily Revenue',
+                            data: adSenseData.charts.daily.data,
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Monthly AdSense Revenue Chart
+                const monthlyCtx = document.getElementById('adsenseMonthlyChart').getContext('2d');
+                this.charts.adsenseMonthly = new Chart(monthlyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: adSenseData.charts.monthly.labels,
+                        datasets: [{
+                            label: 'Monthly Revenue',
+                            data: adSenseData.charts.monthly.data,
+                            backgroundColor: '#4caf50',
+                            borderColor: '#388e3c',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateAdPerformanceTable() {
+                const userId = this.getCurrentUserId();
+                if (!userId) return;
+
+                const adSenseData = this.adSense.getRevenueDashboardData(userId);
+                const tableBody = document.getElementById('adPerformanceTable');
+                
+                // Sample ad performance data by type
+                const adTypes = [
+                    { type: 'Banner', views: 1000, clicks: 25, revenue: 12.50 },
+                    { type: 'Video', views: 500, clicks: 15, revenue: 18.75 },
+                    { type: 'Sidebar', views: 800, clicks: 20, revenue: 10.00 },
+                    { type: 'In-Content', views: 600, clicks: 18, revenue: 14.40 }
+                ];
+
+                tableBody.innerHTML = adTypes.map(ad => {
+                    const ctr = ((ad.clicks / ad.views) * 100).toFixed(2);
+                    const cpm = ((ad.revenue / ad.views) * 1000).toFixed(2);
+                    
+                    return `
+                        <tr>
+                            <td>${ad.type}</td>
+                            <td>${this.formatNumber(ad.views)}</td>
+                            <td>${this.formatNumber(ad.clicks)}</td>
+                            <td>${ctr}%</td>
+                            <td>$${ad.revenue.toFixed(2)}</td>
+                            <td>$${cpm}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            getCurrentUserId() {
+                const auth = localStorage.getItem('amplifi_auth');
+                return auth ? JSON.parse(auth).userId : null;
+            }
+        }
+
+        // Global function for refreshing AdSense data
+        function refreshAdSenseData() {
+            const dashboard = window.analyticsDashboard;
+            if (dashboard && dashboard.adSense) {
+                dashboard.updateAdSenseStats();
+                dashboard.setupAdSenseCharts();
+                dashboard.updateAdPerformanceTable();
+                console.log('🔄 AdSense data refreshed');
             }
         }
 
