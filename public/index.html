@@ -641,7 +641,7 @@
     </style>
 
 <style>
-/* Authentication Modal Styles */
+/* Removed Authentication Modal Styles - using dedicated login page */
 .auth-modal {
     position: fixed;
     top: 0;
@@ -832,12 +832,21 @@
                 </div>
             </div>
             
-            <div class="yt-header-actions">
-                <button class="yt-btn yt-btn-primary" onclick="openAuthModal()">
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
-                <button class="yt-btn yt-btn-secondary" onclick="openAuthModal()">
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         </div>
@@ -848,42 +857,50 @@
     <nav class="yt-desktop-nav">
         <div class="yt-desktop-nav-container">
             <a href="index.html" class="yt-desktop-nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
             <a href="feed.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-rss"></i>
-                <span>Feed</span>
-            </a>
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
             <a href="moments.html" class="yt-desktop-nav-item ">
                 <i class="fas fa-play"></i>
                 <span>Moments</span>
             </a>
             <a href="trending.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-fire"></i>
-                <span>Trending</span>
-            </a>
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
             <a href="live.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>Live</span>
-            </a>
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Live</span>
+                </a>
             <a href="search.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </a>
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
             <a href="upload.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-upload"></i>
-                <span>Upload</span>
-            </a>
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+            <a href="video-editor.html" class="yt-desktop-nav-item ">
+                    <i class="fas fa-cut"></i>
+                    <span>Editor</span>
+                </a>
+            <a href="schedule.html" class="yt-desktop-nav-item ">
+                    <i class="fas fa-calendar"></i>
+                    <span>Schedule</span>
+                </a>
             <a href="profile.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
             <a href="library.html" class="yt-desktop-nav-item ">
-                <i class="fas fa-folder"></i>
-                <span>Library</span>
-            </a>
-        </div>
+                    <i class="fas fa-folder"></i>
+                    <span>Library</span>
+                </a>
+            </div>
     </nav>
 
     <!-- Main Content -->
@@ -906,9 +923,9 @@
                     <button class="btn-primary">Get Started</button>
                     <button class="btn-secondary">Learn More</button>
                 </div>
+                </div>
             </div>
-        </div>
-        
+            
         <div class="features-section">
             <h2>Core Features</h2>
             <div class="features-grid">
@@ -921,78 +938,78 @@
                     <i class="fas fa-broadcast-tower"></i>
                     <h3>Live Streaming</h3>
                     <p>Go live and connect with your audience in real-time</p>
-                </div>
+            </div>
                 <div class="feature-card">
                     <i class="fas fa-mobile-alt"></i>
                     <h3>Short Form Content</h3>
                     <p>Create engaging moments and short videos</p>
-                </div>
+            </div>
                 <div class="feature-card">
                     <i class="fas fa-chart-line"></i>
                     <h3>Analytics</h3>
                     <p>Track your performance with detailed insights</p>
-                </div>
-            </div>
         </div>
+                    </div>
+                </div>
         
         
         <div class="trending-section">
             <h2>Trending Now</h2>
-            <div class="yt-video-grid">
+                <div class="yt-video-grid">
                 
-        <div class="yt-video-card">
-            <div class="yt-video-thumbnail">
+                    <div class="yt-video-card">
+                        <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/1374651/pexels-photo-1374651.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Amazing Travel Vlog: Exploring Japan" loading="lazy">
                 <div class="yt-video-duration">15:42</div>
-            </div>
-            <div class="yt-video-info">
+                        </div>
+                        <div class="yt-video-info">
                 <h3 class="yt-video-title">Amazing Travel Vlog: Exploring Japan</h3>
                 <div class="yt-video-meta">
                     <p class="yt-video-author">Travel Explorer</p>
                     <div class="yt-video-stats">
                         <span class="yt-video-views">2.1M views</span>
                         <span class="yt-video-time">2 weeks ago</span>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="yt-video-card">
-            <div class="yt-video-thumbnail">
+                        </div>
+                        </div>
+                    <div class="yt-video-card">
+                        <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/1573141/pexels-photo-1573141.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Cooking Masterclass: Perfect Pasta" loading="lazy">
                 <div class="yt-video-duration">12:18</div>
-            </div>
-            <div class="yt-video-info">
+                        </div>
+                        <div class="yt-video-info">
                 <h3 class="yt-video-title">Cooking Masterclass: Perfect Pasta</h3>
                 <div class="yt-video-meta">
                     <p class="yt-video-author">Chef Master</p>
                     <div class="yt-video-stats">
                         <span class="yt-video-views">856K views</span>
                         <span class="yt-video-time">5 days ago</span>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
-        <div class="yt-video-card">
-            <div class="yt-video-thumbnail">
+                    <div class="yt-video-card">
+                        <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/60726/pexels-photo-60726.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Tech Review: Latest Smartphone Features" loading="lazy">
                 <div class="yt-video-duration">18:35</div>
-            </div>
-            <div class="yt-video-info">
+                        </div>
+                        <div class="yt-video-info">
                 <h3 class="yt-video-title">Tech Review: Latest Smartphone Features</h3>
                 <div class="yt-video-meta">
                     <p class="yt-video-author">Tech Guru</p>
                     <div class="yt-video-stats">
                         <span class="yt-video-views">1.3M views</span>
                         <span class="yt-video-time">1 week ago</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                </div>
         <div class="yt-video-card">
             <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/87611/sun-fireball-solar-flare-sunlight-87611.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Fitness Workout: 30-Minute Full Body" loading="lazy">
                 <div class="yt-video-duration">30:12</div>
-            </div>
+                        </div>
             <div class="yt-video-info">
                 <h3 class="yt-video-title">Fitness Workout: 30-Minute Full Body</h3>
                 <div class="yt-video-meta">
@@ -1000,15 +1017,15 @@
                     <div class="yt-video-stats">
                         <span class="yt-video-views">743K views</span>
                         <span class="yt-video-time">3 days ago</span>
+                        </div>
+                        </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
         <div class="yt-video-card">
             <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/750225/pexels-photo-750225.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Music Production: Beat Making Tutorial" loading="lazy">
                 <div class="yt-video-duration">22:47</div>
-            </div>
+                    </div>
             <div class="yt-video-info">
                 <h3 class="yt-video-title">Music Production: Beat Making Tutorial</h3>
                 <div class="yt-video-meta">
@@ -1016,15 +1033,15 @@
                     <div class="yt-video-stats">
                         <span class="yt-video-views">492K views</span>
                         <span class="yt-video-time">4 days ago</span>
-                    </div>
                 </div>
-            </div>
-        </div>
+                </div>
+                    </div>
+                    </div>
         <div class="yt-video-card">
             <div class="yt-video-thumbnail">
                 <img src="https://images.pexels.com/photos/173880/pexels-photo-173880.jpeg?auto=compress&cs=tinysrgb&h=350" alt="Art Tutorial: Digital Painting Basics" loading="lazy">
                 <div class="yt-video-duration">25:33</div>
-            </div>
+                    </div>
             <div class="yt-video-info">
                 <h3 class="yt-video-title">Art Tutorial: Digital Painting Basics</h3>
                 <div class="yt-video-meta">
@@ -1034,10 +1051,10 @@
                         <span class="yt-video-time">6 days ago</span>
                     </div>
                 </div>
-            </div>
-        </div>
-            </div>
-        </div>
+                </div>
+                    </div>
+                    </div>
+                    </div>
         </div>
     </main>
 
@@ -1065,221 +1082,29 @@
             <i class="fas fa-folder"></i>
             <span>Library</span>
         </a>
-    </div>
-    </div>
-
-    <!-- Authentication Modal -->
-    <div id="authModal" class="auth-modal" style="display: none;">
-        <div class="auth-modal-content">
-            <div class="auth-modal-header">
-                <h2>Welcome to Amplifi</h2>
-                <button class="auth-close" onclick="closeAuthModal()">&times;</button>
-            </div>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
-                <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
-            </div>
-            
-            <div class="auth-forms">
-                <form id="loginForm" class="auth-form active">
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign In</button>
-                </form>
-                
-                <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Full Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="auth-submit">Sign Up</button>
-                </form>
             </div>
         </div>
-    </div>
+        
     
     <script>
         console.log('🔐 Loading authentication system...');
         
         function openAuthModal(type = 'login') {
-            console.log('🔐 Opening auth modal:', type);
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'block';
-                switchAuthTab(type);
-            } else {
-                console.error('❌ Auth modal not found');
-                alert('Authentication modal not found. Please refresh the page.');
-            }
+            console.log('🔐 Redirecting to login page');
+            window.location.href = 'login.html';
         }
         
         function closeAuthModal() {
-            console.log('🔐 Closing auth modal');
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'none';
-                clearForms();
-            }
+            console.log('🔐 Auth modal removed - using dedicated login page');
         }
         
-        function switchAuthTab(type) {
-            console.log('🔐 Switching to tab:', type);
-            
-            // Remove active class from all tabs and forms
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.style.color = '#6b7280';
-                tab.style.borderBottomColor = 'transparent';
-            });
-            document.querySelectorAll('.auth-form').forEach(form => {
-                form.classList.remove('active');
-                form.style.display = 'none';
-            });
-            
-            // Add active class to selected tab and form
-            const selectedTab = document.querySelector('[data-tab="' + type + '"]');
-            const selectedForm = document.getElementById(type + 'Form');
-            
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-                selectedTab.style.color = '#667eea';
-                selectedTab.style.borderBottomColor = '#667eea';
-            }
-            if (selectedForm) {
-                selectedForm.classList.add('active');
-                selectedForm.style.display = 'block';
-            }
-        }
+        // switchAuthTab function removed - using dedicated login page
         
-        function clearForms() {
-            document.querySelectorAll('#authModal input').forEach(input => {
-                input.value = '';
-            });
-        }
+        // clearForms function removed - using dedicated login page
         
-        function showMessage(message, isError = false) {
-            // Remove existing messages
-            const existingMessage = document.querySelector('.auth-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            // Create new message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'auth-message ' + (isError ? 'error' : 'success');
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                margin-top: 16px;
-                padding: 12px 16px;
-                border-radius: 8px;
-                font-weight: 500;
-                text-align: center;
-                background: ${isError ? '#fee2e2' : '#d1fae5'};
-                color: ${isError ? '#991b1b' : '#065f46'};
-                border: 1px solid ${isError ? '#fca5a5' : '#a7f3d0'};
-            `;
-            
-            // Insert after auth-forms
-            const authForms = document.querySelector('.auth-forms');
-            if (authForms) {
-                authForms.appendChild(messageDiv);
-            }
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 5000);
-        }
+        // showMessage function removed - using dedicated login page
         
-        function handleLogin(event) {
-            event.preventDefault();
-            console.log('🔐 Handling login...');
-            
-            const email = document.querySelector('#loginForm input[type="email"]').value;
-            const password = document.querySelector('#loginForm input[type="password"]').value;
-            
-            if (!email || !password) {
-                showMessage('Please fill in all fields', true);
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#loginForm .auth-submit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Signing In...';
-            submitBtn.disabled = true;
-            
-            // Simulate authentication
-            setTimeout(() => {
-                if (email.includes('@') && password.length >= 6) {
-                    showMessage('Welcome back! You are now signed in.');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
-                } else {
-                    showMessage('Invalid email or password. Please try again.', true);
-                }
-                
-                // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }, 1500);
-        }
-        
-        function handleSignup(event) {
-            event.preventDefault();
-            console.log('🔐 Handling signup...');
-            
-            const name = document.querySelector('#signupForm input[placeholder="Full Name"]').value;
-            const email = document.querySelector('#signupForm input[type="email"]').value;
-            const password = document.querySelector('#signupForm input[type="password"]').value;
-            
-            if (!name || !email || !password) {
-                showMessage('Please fill in all fields', true);
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', true);
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#signupForm .auth-submit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Creating Account...';
-            submitBtn.disabled = true;
-            
-            // Simulate account creation
-            setTimeout(() => {
-                if (email.includes('@') && password.length >= 6) {
-                    showMessage('Account created successfully! Welcome to Amplifi!');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
-                } else {
-                    showMessage('Please enter a valid email address', true);
-                }
-                
-                // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }, 1500);
-        }
+        // handleLogin and handleSignup functions removed - using dedicated login page
         
         function updateUI(isSignedIn) {
             const signInBtn = document.querySelector('.yt-btn-primary');
@@ -1311,40 +1136,135 @@
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔐 Initializing authentication system...');
+            console.log('🔐 Authentication system - using dedicated login page');
+            console.log('✅ Home page initialized');
             
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                // Close modal when clicking outside
-                authModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeAuthModal();
+            // Check authentication status and update UI
+            checkAuthStatus();
+            
+            // Listen for storage changes (when user logs in from another tab)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'amplifi_auth') {
+                    console.log('🔍 Auth data changed, updating UI');
+                    checkAuthStatus();
+                }
+            });
+            
+            // Check auth status when page becomes visible (user returns from login page)
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    console.log('🔍 Page became visible, checking auth status');
+                    checkAuthStatus();
+                }
+            });
+            
+            // Also check auth status after a short delay to catch timing issues
+            setTimeout(() => {
+                console.log('🔍 Delayed auth check...');
+                checkAuthStatus();
+            }, 1000);
+        });
+        
+        // Check authentication status
+        function checkAuthStatus() {
+            console.log('🔍 Checking authentication status on home page...');
+            
+            // Check localStorage for persistent auth data
+            const authData = localStorage.getItem('amplifi_auth');
+            console.log('🔍 Auth data from localStorage:', authData);
+            
+            if (authData) {
+                try {
+                    const parsed = JSON.parse(authData);
+                    console.log('🔍 Parsed auth data:', parsed);
+                    
+                    // Check if auth data is still valid (not expired)
+                    if (parsed.isAuthenticated && parsed.timestamp) {
+                        const authAge = Date.now() - parsed.timestamp;
+                        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+                        
+                        if (authAge > maxAge) {
+                            console.log('🔍 Auth data expired, clearing...');
+                            localStorage.removeItem('amplifi_auth');
+                updateUIForSignedOutUser();
+                            return;
+                        } else {
+                            console.log('✅ Valid auth session found, user is authenticated');
+                            updateUIForSignedInUser();
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Error parsing auth data:', error);
+                }
+            }
+            
+            // Check Firebase auth if available
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                console.log('✅ Firebase user detected, updating UI');
+                updateUIForSignedInUser();
+                return;
+            }
+            
+            // Check if Firebase is available and wait for auth state
+            if (typeof auth !== 'undefined') {
+                console.log('🔍 Firebase auth available, waiting for auth state...');
+                auth.onAuthStateChanged((user) => {
+                    console.log('🔍 Firebase auth state changed:', user ? user.email : 'null');
+                    if (user) {
+                        console.log('✅ Firebase user detected via listener, updating UI');
+                        updateUIForSignedInUser();
+                    } else {
+                        console.log('👤 No Firebase user, showing sign in buttons');
+                        updateUIForSignedOutUser();
                     }
                 });
-                
-                // Add form submission handlers
-                const loginForm = document.getElementById('loginForm');
-                const signupForm = document.getElementById('signupForm');
-                
-                if (loginForm) {
-                    loginForm.addEventListener('submit', handleLogin);
-                    console.log('✅ Login form handler attached');
-                } else {
-                    console.error('❌ Login form not found');
-                }
-                
-                if (signupForm) {
-                    signupForm.addEventListener('submit', handleSignup);
-                    console.log('✅ Signup form handler attached');
-                } else {
-                    console.error('❌ Signup form not found');
-                }
-                
-                console.log('✅ Authentication system initialized');
-            } else {
-                console.error('❌ Auth modal not found during initialization');
+                return;
             }
-        });
+            
+            // User is not signed in
+            console.log('👤 User not signed in, showing sign in buttons');
+            updateUIForSignedOutUser();
+        }
+        
+        // Update UI for signed-in user
+        function updateUIForSignedInUser() {
+            const authButtons = document.getElementById('authButtons');
+            const userProfile = document.getElementById('userProfile');
+            
+            if (authButtons) authButtons.style.display = 'none';
+            if (userProfile) userProfile.style.display = 'block';
+        }
+        
+        // Update UI for signed-out user
+        function updateUIForSignedOutUser() {
+            const authButtons = document.getElementById('authButtons');
+            const userProfile = document.getElementById('userProfile');
+            
+            if (authButtons) authButtons.style.display = 'block';
+            if (userProfile) userProfile.style.display = 'none';
+        }
+        
+        // Sign out function
+        function signOut() {
+            // Clear localStorage
+            localStorage.removeItem('amplifi_auth');
+            
+            // Sign out from Firebase if available
+            if (typeof auth !== 'undefined') {
+                auth.signOut().then(() => {
+                    console.log('✅ Signed out from Firebase');
+                }).catch((error) => {
+                    console.error('❌ Sign out error:', error);
+                });
+            }
+            
+            // Update UI
+            updateUIForSignedOutUser();
+            
+            // Show message
+            alert('You have been signed out successfully!');
+        }
     
         // Mobile Menu Functions
         function openMobileMenu() {
@@ -1412,6 +1332,14 @@
                     <i class="fas fa-upload"></i>
                     <span>Upload</span>
                 </a>
+                <a href="video-editor.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-cut"></i>
+                    <span>Editor</span>
+                </a>
+                <a href="schedule.html" class="yt-mobile-menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Schedule</span>
+                </a>
                 <a href="live.html" class="yt-mobile-menu-item">
                     <i class="fas fa-broadcast-tower"></i>
                     <span>Go Live</span>
@@ -1441,5 +1369,5 @@
             </div>
         </div>
     </div>
-    </body>
+</body>
 </html>

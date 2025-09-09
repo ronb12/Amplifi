@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Amplifi</title>
+    <meta name="description" content="Sign in to Amplifi - Your social media platform">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="assets/css/youtube-style.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            box-sizing: border-box;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 30px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #666;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e5e5;
+        }
+
+        .divider span {
+            padding: 0 20px;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .social-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .back-to-home {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-home:hover {
+            color: #764ba2;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .login-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="amplifi-icon.svg" alt="Amplifi" style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
+        <h1 class="login-title">Welcome to Amplifi</h1>
+        <p class="login-subtitle">Sign in to your account or create a new one</p>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <div class="auth-tabs" id="authTabs">
+            <button class="auth-tab active" data-tab="login" onclick="switchTab('login')">Sign In</button>
+            <button class="auth-tab" data-tab="signup" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+        
+        <div id="alreadySignedIn" style="display: none;">
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i> You are already signed in!
+            </div>
+            <div style="margin: 20px 0;">
+                <button class="auth-submit" onclick="redirectToApp()" style="margin-bottom: 10px;">
+                    <i class="fas fa-home"></i> Go to App
+                </button>
+                <button class="auth-submit" onclick="signOut()" style="background: #ef4444;">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+        
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+            <button type="submit" class="auth-submit" id="loginSubmit">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+        
+        <form id="signupForm" class="auth-form">
+            <div class="form-group">
+                <input type="text" id="signupName" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="signupEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signupPassword" placeholder="Password" required>
+            </div>
+            <button type="submit" class="auth-submit" id="signupSubmit">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>or</span>
+        </div>
+        
+        <div class="social-login">
+            <button class="social-btn" onclick="signInWithGoogle()">
+                <i class="fab fa-google"></i>
+                <span>Google</span>
+            </button>
+            <button class="social-btn" onclick="signInWithFacebook()">
+                <i class="fab fa-facebook"></i>
+                <span>Facebook</span>
+            </button>
+        </div>
+        
+        <a href="index.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config (inline to avoid conflicts) -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyANHtCLmNLvp9k_px0lsUHuWK5PasK_gJY",
+            authDomain: "amplifi-a54d9.firebaseapp.com",
+            projectId: "amplifi-a54d9",
+            storageBucket: "amplifi-a54d9.appspot.com",
+            messagingSenderId: "542171119183",
+            appId: "1:542171119183:web:cd96402d1fe4d3ef6ef43a",
+            measurementId: "G-X845LM0VSM"
+        };
+        
+        // Initialize Firebase for login page only
+        let app, auth, db;
+        try {
+            // Check if Firebase app is already initialized
+            try {
+                app = firebase.app();
+                console.log('✅ Using existing Firebase app:', app.name);
+            } catch (e) {
+                // App doesn't exist, initialize it
+                app = firebase.initializeApp(firebaseConfig);
+                console.log('✅ Firebase app initialized for login page');
+            }
+            
+            auth = firebase.auth(app);
+            db = firebase.firestore(app);
+            console.log('✅ Firebase services ready for login page');
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            console.error('❌ Error details:', error.message);
+        }
+    </script>
+    
+    <!-- Debug script -->
+    <script>
+        console.log('🔍 Debug: Firebase SDK loaded');
+        console.log('🔍 Debug: firebase object:', typeof firebase);
+        console.log('🔍 Debug: auth object:', typeof auth);
+    </script>
+    
+    <script>
+        // Firebase services are already initialized above
+        let firebaseReady = false;
+        
+        // Immediate debug logging
+        console.log('🔍 Debug: Login page script loaded');
+        console.log('🔍 Debug: Current URL:', window.location.href);
+        console.log('🔍 Debug: Current pathname:', window.location.pathname);
+        
+        // Temporary alert to confirm page is loading
+        setTimeout(() => {
+            console.log('🔍 Debug: Login page loaded successfully - no redirect detected');
+        }, 1000);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Login page DOM loaded');
+            console.log('🔍 Debug: Auth object available:', typeof auth);
+            console.log('🔍 Debug: Page title:', document.title);
+            
+            // Check if Firebase is ready
+            if (auth) {
+                firebaseReady = true;
+                console.log('✅ Firebase is ready for authentication');
+                
+                // Check if user is already signed in (but don't auto-redirect)
+                auth.onAuthStateChanged((user) => {
+                    console.log('🔍 Debug: Auth state changed on login page, user:', user ? user.email : 'null');
+                    if (user) {
+                        console.log('✅ User already signed in on login page');
+                        showAlreadySignedIn();
+                    } else {
+                        console.log('👤 User not signed in');
+                        showLoginForms();
+                    }
+                });
+            } else {
+                console.error('❌ Firebase auth not available, showing error message');
+                showFirebaseError();
+            }
+        });
+        
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(`${tab}Form`).classList.add('active');
+            
+            // Clear messages
+            hideMessages();
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function setLoading(button, loading) {
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            } else {
+                button.disabled = false;
+                if (button.id === 'loginSubmit') {
+                    button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                } else {
+                    button.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+                }
+            }
+        }
+        
+        function redirectToApp() {
+            console.log('🔍 Debug: redirectToApp() called');
+            // Get the redirect URL from URL parameters or default to home
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || 'index.html';
+            console.log('🔍 Debug: Redirecting to:', redirectUrl);
+            window.location.href = redirectUrl;
+        }
+        
+        function showAlreadySignedIn() {
+            document.getElementById('authTabs').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('alreadySignedIn').style.display = 'block';
+        }
+        
+        function showLoginForms() {
+            document.getElementById('authTabs').style.display = 'flex';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('alreadySignedIn').style.display = 'none';
+        }
+        
+        function showFirebaseError() {
+            document.getElementById('authTabs').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('alreadySignedIn').style.display = 'none';
+            
+            // Show error message
+            showError('Firebase authentication service is not available. Please refresh the page or try again later.');
+        }
+        
+        async function signOut() {
+            try {
+                if (auth) {
+                    await auth.signOut();
+                    console.log('✅ User signed out');
+                    showSuccess('You have been signed out successfully!');
+                    
+                    // Clear local storage
+                    localStorage.removeItem('amplifi_auth');
+                    
+                    // Show login forms after a short delay
+                    setTimeout(() => {
+                        showLoginForms();
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('❌ Sign out error:', error);
+                showError('Error signing out. Please try again.');
+            }
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('🔍 Debug: Login form submitted');
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = document.getElementById('loginSubmit');
+            
+            console.log('🔍 Debug: Email:', email);
+            console.log('🔍 Debug: Auth object:', auth);
+            console.log('🔍 Debug: Firebase ready:', firebaseReady);
+            
+            if (!firebaseReady || !auth) {
+                console.error('❌ Firebase not ready or auth object not available');
+                showError('Authentication service is not ready. Please refresh the page and try again.');
+                return;
+            }
+            
+            setLoading(submitBtn, true);
+            hideMessages();
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Login successful:', userCredential.user.email);
+                showSuccess('Sign in successful! Redirecting...');
+                
+                // Store auth state
+                localStorage.setItem('amplifi_auth', JSON.stringify({
+                    isAuthenticated: true,
+                    user: {
+                        email: userCredential.user.email,
+                        name: userCredential.user.displayName || 'User'
+                    },
+                    timestamp: Date.now()
+                }));
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    redirectToApp();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                console.error('❌ Error code:', error.code);
+                console.error('❌ Error message:', error.message);
+                
+                let errorMessage = 'Sign in failed. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'Authentication not allowed from this domain.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    case 'auth/invalid-api-key':
+                        errorMessage = 'Firebase configuration error.';
+                        break;
+                    default:
+                        errorMessage = `Sign in failed: ${error.message}`;
+                }
+                
+                showError(errorMessage);
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+        
+        // Signup form handler
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const submitBtn = document.getElementById('signupSubmit');
+            
+            if (!firebaseReady || !auth) {
+                showError('Authentication service is not ready. Please refresh the page and try again.');
+                return;
+            }
+            
+            setLoading(submitBtn, true);
+            hideMessages();
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Update user profile with name
+                await userCredential.user.updateProfile({
+                    displayName: name
+                });
+                
+                console.log('✅ Signup successful:', userCredential.user.email);
+                showSuccess('Account created successfully! Redirecting...');
+                
+                // Store auth state
+                localStorage.setItem('amplifi_auth', JSON.stringify({
+                    isAuthenticated: true,
+                    user: {
+                        email: userCredential.user.email,
+                        name: name
+                    },
+                    timestamp: Date.now()
+                }));
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    redirectToApp();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ Signup error:', error);
+                console.error('❌ Error code:', error.code);
+                console.error('❌ Error message:', error.message);
+                
+                let errorMessage = 'Sign up failed. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'An account with this email already exists.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 6 characters.';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'Authentication not allowed from this domain.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    case 'auth/invalid-api-key':
+                        errorMessage = 'Firebase configuration error.';
+                        break;
+                    default:
+                        errorMessage = `Sign up failed: ${error.message}`;
+                }
+                
+                showError(errorMessage);
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+        
+        // Social login functions (placeholder)
+        function signInWithGoogle() {
+            showError('Google sign-in coming soon!');
+        }
+        
+        function signInWithFacebook() {
+            showError('Facebook sign-in coming soon!');
+        }
+    </script>
+</body>
+</html>

@@ -21,6 +21,9 @@
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/youtube-style.css">
     
+    <!-- Authentication Guard -->
+    <script src="assets/js/auth-guard.js"></script>
+    
     
     <style>
         /* Professional Amplifi Styles */
@@ -638,6 +641,347 @@
         .block { display: block; }
         .flex { display: flex; }
         .grid { display: grid; }
+
+        /* Enhanced Profile Styles */
+        .edit-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #ff0000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #cc0000;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #606060;
+            border: 1px solid #e5e5e5;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        /* Analytics Dashboard Styles */
+        .analytics-dashboard, .monetization-dashboard {
+            padding: 24px;
+        }
+
+        .analytics-header, .monetization-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .analytics-header h2, .monetization-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .time-range select {
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .analytics-grid, .monetization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .analytics-card, .monetization-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #606060;
+        }
+
+        .card-header i {
+            font-size: 20px;
+            color: #ff0000;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #030303;
+            margin-bottom: 4px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .metric-change.positive {
+            color: #28a745;
+        }
+
+        .metric-change.negative {
+            color: #dc3545;
+        }
+
+        .metric-subtitle {
+            font-size: 12px;
+            color: #606060;
+            margin-top: 4px;
+        }
+
+        .analytics-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .chart-container h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #606060;
+        }
+
+        .chart-placeholder i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: #ccc;
+        }
+
+        .revenue-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .revenue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .revenue-label {
+            font-weight: 500;
+            color: #030303;
+        }
+
+        .revenue-amount {
+            font-weight: 600;
+            color: #ff0000;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .monetization-settings, .payout-settings {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .monetization-settings h3, .payout-settings h3 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .settings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .setting-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .setting-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #606060;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff0000;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .payout-method {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .payout-method i {
+            font-size: 24px;
+            color: #ff0000;
+        }
+
+        .payout-method h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .payout-method p {
+            margin: 0;
+            font-size: 14px;
+            color: #606060;
+        }
+
+        /* Tab Content Styles */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
     </style>
 
 <style>
@@ -832,12 +1176,21 @@
                 </div>
             </div>
             
-            <div class="yt-header-actions">
-                <button class="yt-btn yt-btn-primary" onclick="openAuthModal()">
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
-                <button class="yt-btn yt-btn-secondary" onclick="openAuthModal()">
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         </div>
@@ -899,33 +1252,262 @@
             
         <div class="profile-header">
             <div class="profile-avatar">
-                <img src="assets/images/default-avatar.svg" alt="Profile">
+                <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200" alt="Profile">
+                <button class="edit-avatar-btn" title="Change Avatar">
+                    <i class="fas fa-camera"></i>
+                </button>
             </div>
             <div class="profile-info">
                 <h1>Your Channel</h1>
                 <p>@username</p>
                 <div class="profile-stats">
                     <div class="stat">
-                        <span class="stat-number">0</span>
+                        <span class="stat-number">12</span>
                         <span class="stat-label">Videos</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-number">0</span>
+                        <span class="stat-number">1.2K</span>
                         <span class="stat-label">Subscribers</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-number">0</span>
+                        <span class="stat-number">45.6K</span>
                         <span class="stat-label">Views</span>
                     </div>
+                    <div class="stat">
+                        <span class="stat-number">$2,340</span>
+                        <span class="stat-label">Earnings</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-primary">
+                        <i class="fas fa-edit"></i> Edit Channel
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
                 </div>
             </div>
         </div>
         
         <div class="profile-content">
             <div class="profile-tabs">
-                <button class="tab-btn active">Videos</button>
-                <button class="tab-btn">Playlists</button>
-                <button class="tab-btn">About</button>
+                <button class="tab-btn active" data-tab="videos">Videos</button>
+                <button class="tab-btn" data-tab="analytics">Analytics</button>
+                <button class="tab-btn" data-tab="monetization">Monetization</button>
+                <button class="tab-btn" data-tab="playlists">Playlists</button>
+                <button class="tab-btn" data-tab="about">About</button>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics" style="display: none;">
+                <div class="analytics-dashboard">
+                    <div class="analytics-header">
+                        <h2><i class="fas fa-chart-line"></i> Channel Analytics</h2>
+                        <div class="time-range">
+                            <select>
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                                <option>Last year</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h3>Views</h3>
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">45.6K</div>
+                                <div class="metric-change positive">+12.5%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h3>Watch Time</h3>
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">2.3K hours</div>
+                                <div class="metric-change positive">+8.2%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h3>Subscribers</h3>
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">1.2K</div>
+                                <div class="metric-change positive">+156</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h3>Revenue</h3>
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">$2,340</div>
+                                <div class="metric-change positive">+23.1%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-charts">
+                        <div class="chart-container">
+                            <h3>Views Over Time</h3>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-area"></i>
+                                <p>Views chart would be displayed here</p>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h3>Revenue Breakdown</h3>
+                            <div class="revenue-breakdown">
+                                <div class="revenue-item">
+                                    <span class="revenue-label">Tips & Donations</span>
+                                    <span class="revenue-amount">$1,890</span>
+                                </div>
+                                <div class="revenue-item">
+                                    <span class="revenue-label">Subscriptions</span>
+                                    <span class="revenue-amount">$320</span>
+                                </div>
+                                <div class="revenue-item">
+                                    <span class="revenue-label">Ad Revenue</span>
+                                    <span class="revenue-amount">$130</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Monetization Tab -->
+            <div class="tab-content" id="monetization" style="display: none;">
+                <div class="monetization-dashboard">
+                    <div class="monetization-header">
+                        <h2><i class="fas fa-dollar-sign"></i> Monetization</h2>
+                        <div class="monetization-status">
+                            <span class="status-badge active">Active</span>
+                        </div>
+                    </div>
+                    
+                    <div class="monetization-grid">
+                        <div class="monetization-card">
+                            <div class="card-header">
+                                <h3>Total Earnings</h3>
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">$2,340.50</div>
+                                <div class="metric-subtitle">Lifetime earnings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="monetization-card">
+                            <div class="card-header">
+                                <h3>This Month</h3>
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">$456.20</div>
+                                <div class="metric-subtitle">Current month</div>
+                            </div>
+                        </div>
+                        
+                        <div class="monetization-card">
+                            <div class="card-header">
+                                <h3>Pending</h3>
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">$89.30</div>
+                                <div class="metric-subtitle">Processing</div>
+                            </div>
+                        </div>
+                        
+                        <div class="monetization-card">
+                            <div class="card-header">
+                                <h3>Next Payout</h3>
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value">$456.20</div>
+                                <div class="metric-subtitle">Dec 15, 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="monetization-settings">
+                        <h3>Monetization Settings</h3>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Tips & Donations</h4>
+                                    <p>Allow viewers to send tips during live streams</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Channel Memberships</h4>
+                                    <p>Offer paid subscriptions to your channel</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Ad Revenue</h4>
+                                    <p>Show ads on your videos and streams</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Super Chat</h4>
+                                    <p>Highlight messages with payments</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payout-settings">
+                        <h3>Payout Settings</h3>
+                        <div class="payout-info">
+                            <div class="payout-method">
+                                <i class="fas fa-credit-card"></i>
+                                <div>
+                                    <h4>Bank Account</h4>
+                                    <p>****1234 - Next payout: Dec 15, 2024</p>
+                                </div>
+                                <button class="btn-secondary">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="profile-videos">
@@ -967,100 +1549,125 @@
     
     
     <script>
-        console.log('🔐 Loading authentication system...');
+        console.log('✅ Page loading - using auth-guard for authentication');
+        // Sign out function
+        function signOut() {
+            console.log('🔐 Signing out...');
+            
+            // Clear localStorage
+            localStorage.removeItem('amplifi_auth');
+            
+            // Sign out from Firebase if available
+            if (typeof auth !== 'undefined') {
+                auth.signOut().then(() => {
+                    console.log('✅ Signed out from Firebase');
+                }).catch((error) => {
+                    console.error('❌ Sign out error:', error);
+                });
+            }
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
         
-        function openAuthModal(type = 'login') {
-            console.log('🔐 Opening auth modal:', type);
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'block';
-                switchAuthTab(type);
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Page initialized - using auth-guard for authentication');
+        });
+    
+        // Tab Switching Functionality
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        content.style.display = 'none';
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Show corresponding content
+                    const targetContent = document.getElementById(targetTab);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                        targetContent.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Initialize tabs when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTabs();
+            initializeAuth();
+        });
+
+        // Initialize Authentication System
+        function initializeAuth() {
+            console.log('🔐 Initializing authentication system...');
+            
+            // Set up login form handler
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+                console.log('✅ Login form handler attached');
+            }
+            
+            // Set up signup form handler
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.addEventListener('submit', handleSignup);
+                console.log('✅ Signup form handler attached');
+            }
+            
+            console.log('✅ Authentication system initialized');
+        }
+
+        // Authentication Functions
+        function openAuthModal(tab = 'login') {
+            console.log('🔐 Opening auth modal:', tab);
+            const modal = document.getElementById('authModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                switchAuthTab(tab);
             } else {
                 console.error('❌ Auth modal not found');
-                alert('Authentication modal not found. Please refresh the page.');
             }
         }
-        
+
         function closeAuthModal() {
             console.log('🔐 Closing auth modal');
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'none';
-                clearForms();
+            const modal = document.getElementById('authModal');
+            if (modal) {
+                modal.style.display = 'none';
             }
         }
-        
-        function switchAuthTab(type) {
-            console.log('🔐 Switching to tab:', type);
+
+        function switchAuthTab(tab) {
+            console.log('🔐 Switching to tab:', tab);
             
-            // Remove active class from all tabs and forms
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.style.color = '#6b7280';
-                tab.style.borderBottomColor = 'transparent';
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
             });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            // Update forms
             document.querySelectorAll('.auth-form').forEach(form => {
                 form.classList.remove('active');
-                form.style.display = 'none';
             });
-            
-            // Add active class to selected tab and form
-            const selectedTab = document.querySelector('[data-tab="' + type + '"]');
-            const selectedForm = document.getElementById(type + 'Form');
-            
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-                selectedTab.style.color = '#667eea';
-                selectedTab.style.borderBottomColor = '#667eea';
-            }
-            if (selectedForm) {
-                selectedForm.classList.add('active');
-                selectedForm.style.display = 'block';
-            }
+            document.getElementById(`${tab}Form`).classList.add('active');
         }
-        
-        function clearForms() {
-            document.querySelectorAll('#authModal input').forEach(input => {
-                input.value = '';
-            });
-        }
-        
-        function showMessage(message, isError = false) {
-            // Remove existing messages
-            const existingMessage = document.querySelector('.auth-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            // Create new message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'auth-message ' + (isError ? 'error' : 'success');
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                margin-top: 16px;
-                padding: 12px 16px;
-                border-radius: 8px;
-                font-weight: 500;
-                text-align: center;
-                background: ${isError ? '#fee2e2' : '#d1fae5'};
-                color: ${isError ? '#991b1b' : '#065f46'};
-                border: 1px solid ${isError ? '#fca5a5' : '#a7f3d0'};
-            `;
-            
-            // Insert after auth-forms
-            const authForms = document.querySelector('.auth-forms');
-            if (authForms) {
-                authForms.appendChild(messageDiv);
-            }
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 5000);
-        }
-        
+
+        // Form Handlers
         function handleLogin(event) {
             event.preventDefault();
             console.log('🔐 Handling login...');
@@ -1069,7 +1676,7 @@
             const password = document.querySelector('#loginForm input[type="password"]').value;
             
             if (!email || !password) {
-                showMessage('Please fill in all fields', true);
+                alert('Please fill in all fields');
                 return;
             }
             
@@ -1082,13 +1689,17 @@
             // Simulate authentication
             setTimeout(() => {
                 if (email.includes('@') && password.length >= 6) {
-                    showMessage('Welcome back! You are now signed in.');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
+                    alert('Welcome back! You are now signed in.');
+                    closeAuthModal();
+                    
+                    // Dispatch auth success event
+                    window.dispatchEvent(new CustomEvent('auth-success', {
+                        detail: {
+                            user: { email: email, name: 'User' }
+                        }
+                    }));
                 } else {
-                    showMessage('Invalid email or password. Please try again.', true);
+                    alert('Invalid email or password. Please try again.');
                 }
                 
                 // Reset button
@@ -1106,12 +1717,12 @@
             const password = document.querySelector('#signupForm input[type="password"]').value;
             
             if (!name || !email || !password) {
-                showMessage('Please fill in all fields', true);
+                alert('Please fill in all fields');
                 return;
             }
             
             if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', true);
+                alert('Password must be at least 6 characters');
                 return;
             }
             
@@ -1123,25 +1734,25 @@
             
             // Simulate account creation
             setTimeout(() => {
-                if (email.includes('@') && password.length >= 6) {
-                    showMessage('Account created successfully! Welcome to Amplifi!');
-                    setTimeout(() => {
-                        closeAuthModal();
-                        updateUI(true);
-                    }, 1500);
-                } else {
-                    showMessage('Please enter a valid email address', true);
-                }
+                alert('Account created successfully! Welcome to Amplifi!');
+                closeAuthModal();
+                
+                // Dispatch auth success event
+                window.dispatchEvent(new CustomEvent('auth-success', {
+                    detail: {
+                        user: { email: email, name: name }
+                    }
+                }));
                 
                 // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }, 1500);
         }
-        
-        function updateUI(isSignedIn) {
-            const signInBtn = document.querySelector('.yt-btn-primary');
-            const signUpBtn = document.querySelector('.yt-btn-secondary');
+
+        function updateAuthUI(isSignedIn) {
+            const signInBtn = document.querySelector('.sign-in-btn');
+            const signUpBtn = document.querySelector('.sign-up-btn');
             
             if (isSignedIn) {
                 if (signInBtn) {
@@ -1151,8 +1762,8 @@
                 if (signUpBtn) {
                     signUpBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
                     signUpBtn.onclick = () => {
-                        updateUI(false);
-                        showMessage('You have been signed out');
+                        updateAuthUI(false);
+                        alert('You have been signed out.');
                     };
                 }
             } else {
@@ -1166,44 +1777,7 @@
                 }
             }
         }
-        
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔐 Initializing authentication system...');
-            
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                // Close modal when clicking outside
-                authModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeAuthModal();
-                    }
-                });
-                
-                // Add form submission handlers
-                const loginForm = document.getElementById('loginForm');
-                const signupForm = document.getElementById('signupForm');
-                
-                if (loginForm) {
-                    loginForm.addEventListener('submit', handleLogin);
-                    console.log('✅ Login form handler attached');
-                } else {
-                    console.error('❌ Login form not found');
-                }
-                
-                if (signupForm) {
-                    signupForm.addEventListener('submit', handleSignup);
-                    console.log('✅ Signup form handler attached');
-                } else {
-                    console.error('❌ Signup form not found');
-                }
-                
-                console.log('✅ Authentication system initialized');
-            } else {
-                console.error('❌ Auth modal not found during initialization');
-            }
-        });
-    
+
         // Mobile Menu Functions
         function openMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
@@ -1212,7 +1786,7 @@
                 document.body.style.overflow = 'hidden';
             }
         }
-        
+
         function closeMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
             if (overlay) {
@@ -1236,6 +1810,46 @@
             }
         });
     </script>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal" style="display: none;">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2>Welcome to Amplifi</h2>
+                <button class="auth-close" onclick="closeAuthModal()">&times;</button>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
+                <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <div class="auth-forms">
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="auth-submit">Sign In</button>
+                </form>
+
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="auth-submit">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">

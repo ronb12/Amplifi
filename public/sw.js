@@ -1,6 +1,6 @@
 // Amplifi Service Worker - Enabling Offline Support
 // Updated to fix CSS conflicts and improve cache management
-const CACHE_NAME = 'amplifi-v17-mobile-menu';
+const CACHE_NAME = 'amplifi-v20-auth-guard';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -9,6 +9,8 @@ const urlsToCache = [
     '/assets/js/core-features.js',
     '/assets/js/dashboard-functions.js',
     '/assets/js/stripe-service.js',
+    '/assets/js/stripe-payments.js',
+    '/assets/js/auth-guard.js',
     '/assets/js/amplifi-features.js',
     '/favicon.svg',
     '/manifest.json'

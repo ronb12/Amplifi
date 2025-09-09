@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Editor - Amplifi</title>
+    <meta name="description" content="Edit your videos with our built-in video editor">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="assets/css/youtube-style.css">
+    
+    <!-- Authentication Guard -->
+    <script src="assets/js/auth-guard.js"></script>
+    
+    <!-- FFmpeg.js for high-quality video processing -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #0f0f0f;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            height: 100%;
+        }
+        
+        html {
+            background: #0f0f0f;
+        }
+        
+        .video-editor-container {
+            display: flex;
+            min-height: 100vh;
+            background: #0f0f0f;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .editor-sidebar {
+            width: 300px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .editor-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-preview {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .video-canvas {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+        
+        .editor-timeline {
+            height: 200px;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+            padding: 20px;
+        }
+        
+        .timeline-track {
+            height: 60px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .timeline-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6b6b);
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        .timeline-scrubber {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: white;
+            cursor: grab;
+            border-radius: 1px;
+        }
+        
+        .editor-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+        }
+        
+        .control-btn {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: #444;
+        }
+        
+        .control-btn.active {
+            background: #ff0000;
+        }
+        
+        .control-btn:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .file-upload {
+            border: 2px dashed #444;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .file-upload:hover {
+            border-color: #666;
+        }
+        
+        .file-upload.dragover {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .video-info {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-label {
+            color: #999;
+        }
+        
+        .info-value {
+            color: white;
+        }
+        
+        .edit-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .tool-btn {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .tool-btn:hover {
+            background: #444;
+        }
+        
+        .tool-btn.active {
+            background: #ff0000;
+        }
+        
+        .time-display {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: white;
+            background: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #ff0000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .export-section {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .export-btn {
+            width: 100%;
+            background: #ff0000;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .export-btn:hover {
+            background: #cc0000;
+        }
+        
+        .export-btn:disabled {
+            background: #333;
+            cursor: not-allowed;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+        
+        .control-group input[type="number"],
+        .control-group input[type="text"],
+        .control-group input[type="color"] {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .control-group input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+        }
+        
+        .control-group span {
+            color: #ccc;
+            font-size: 12px;
+            float: right;
+        }
+        
+        .btn-primary {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: #cc0000;
+        }
+        
+        .btn-primary:disabled {
+            background: #333;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #ff0000;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .video-editor-container {
+                flex-direction: column;
+            }
+            
+            .editor-sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            
+            .editor-main {
+                height: 60vh;
+            }
+            
+            .editor-timeline {
+                height: 150px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-editor-container">
+        <!-- Sidebar -->
+        <div class="editor-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Import Video</div>
+                <div class="file-upload" id="fileUpload">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        Drop video file here or click to browse
+                    </div>
+                    <input type="file" id="videoInput" accept="video/*" style="display: none;">
+                </div>
+                
+                <div class="video-info" id="videoInfo" style="display: none;">
+                    <div class="info-item">
+                        <span class="info-label">File:</span>
+                        <span class="info-value" id="fileName">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Duration:</span>
+                        <span class="info-value" id="videoDuration">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Size:</span>
+                        <span class="info-value" id="fileSize">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Resolution:</span>
+                        <span class="info-value" id="videoResolution">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Edit Tools</div>
+                <div class="edit-tools">
+                    <button class="tool-btn" id="trimBtn" title="Trim Video">
+                        <i class="fas fa-cut"></i>
+                        <span>Trim</span>
+                    </button>
+                    <button class="tool-btn" id="cropBtn" title="Crop Video">
+                        <i class="fas fa-crop"></i>
+                        <span>Crop</span>
+                    </button>
+                    <button class="tool-btn" id="rotateBtn" title="Rotate Video">
+                        <i class="fas fa-redo"></i>
+                        <span>Rotate</span>
+                    </button>
+                    <button class="tool-btn" id="filterBtn" title="Apply Filters">
+                        <i class="fas fa-palette"></i>
+                        <span>Filters</span>
+                    </button>
+                    <button class="tool-btn" id="textBtn" title="Add Text">
+                        <i class="fas fa-font"></i>
+                        <span>Text</span>
+                    </button>
+                    <button class="tool-btn" id="audioBtn" title="Audio Settings">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Audio</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Trim Panel -->
+            <div class="sidebar-section" id="trimPanel" style="display: none;">
+                <div class="sidebar-title">Trim Video</div>
+                <div class="control-group">
+                    <label>Start Time (seconds)</label>
+                    <input type="number" id="trimStart" min="0" step="0.1" value="0">
+                </div>
+                <div class="control-group">
+                    <label>End Time (seconds)</label>
+                    <input type="number" id="trimEnd" min="0" step="0.1" value="0">
+                </div>
+                <button class="btn-primary" id="applyTrim">Apply Trim</button>
+            </div>
+            
+            <!-- Crop Panel -->
+            <div class="sidebar-section" id="cropPanel" style="display: none;">
+                <div class="sidebar-title">Crop Video</div>
+                <div class="control-group">
+                    <label>X Position</label>
+                    <input type="number" id="cropX" min="0" step="1" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Y Position</label>
+                    <input type="number" id="cropY" min="0" step="1" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Width</label>
+                    <input type="number" id="cropWidth" min="1" step="1" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Height</label>
+                    <input type="number" id="cropHeight" min="1" step="1" value="0">
+                </div>
+                <button class="btn-primary" id="applyCrop">Apply Crop</button>
+            </div>
+            
+            <!-- Filter Panel -->
+            <div class="sidebar-section" id="filterPanel" style="display: none;">
+                <div class="sidebar-title">Video Filters</div>
+                <div class="control-group">
+                    <label>Brightness</label>
+                    <input type="range" id="brightness" min="0" max="200" value="100">
+                    <span id="brightnessValue">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Contrast</label>
+                    <input type="range" id="contrast" min="0" max="200" value="100">
+                    <span id="contrastValue">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Saturation</label>
+                    <input type="range" id="saturation" min="0" max="200" value="100">
+                    <span id="saturationValue">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Hue</label>
+                    <input type="range" id="hue" min="0" max="360" value="0">
+                    <span id="hueValue">0°</span>
+                </div>
+                <button class="btn-primary" id="applyFilters">Apply Filters</button>
+            </div>
+            
+            <!-- Text Panel -->
+            <div class="sidebar-section" id="textPanel" style="display: none;">
+                <div class="sidebar-title">Add Text</div>
+                <div class="control-group">
+                    <label>Text Content</label>
+                    <input type="text" id="textContent" placeholder="Enter text">
+                </div>
+                <div class="control-group">
+                    <label>Font Size</label>
+                    <input type="number" id="textSize" min="12" max="72" value="24">
+                </div>
+                <div class="control-group">
+                    <label>Text Color</label>
+                    <input type="color" id="textColor" value="#ffffff">
+                </div>
+                <div class="control-group">
+                    <label>X Position</label>
+                    <input type="number" id="textX" min="0" step="1" value="10">
+                </div>
+                <div class="control-group">
+                    <label>Y Position</label>
+                    <input type="number" id="textY" min="0" step="1" value="10">
+                </div>
+                <button class="btn-primary" id="addText">Add Text</button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Export</div>
+                <div class="export-section">
+                    <button class="export-btn" id="exportBtn" disabled>
+                        <i class="fas fa-download"></i>
+                        Export Video
+                    </button>
+                    <div class="progress-bar" id="progressBar" style="display: none;">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Editor Area -->
+        <div class="editor-main">
+            <div class="video-preview">
+                <video id="videoPlayer" class="video-canvas" controls style="display: none;">
+                    Your browser does not support the video tag.
+                </video>
+                <canvas id="videoCanvas" class="video-canvas" style="display: none;"></canvas>
+                <div id="noVideoMessage" style="text-align: center; color: #666;">
+                    <i class="fas fa-video" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3>No video loaded</h3>
+                    <p>Import a video file to start editing</p>
+                </div>
+            </div>
+            
+            <div class="editor-timeline">
+                <div class="timeline-track" id="timelineTrack">
+                    <div class="timeline-progress" id="timelineProgress"></div>
+                    <div class="timeline-scrubber" id="timelineScrubber"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <span class="time-display" id="currentTime">00:00</span>
+                    <span class="time-display" id="totalTime">00:00</span>
+                </div>
+            </div>
+            
+            <div class="editor-controls">
+                <button class="control-btn" id="playPauseBtn">
+                    <i class="fas fa-play"></i>
+                </button>
+                
+                <button class="control-btn" id="rewindBtn">
+                    <i class="fas fa-backward"></i>
+                </button>
+                
+                <button class="control-btn" id="forwardBtn">
+                    <i class="fas fa-forward"></i>
+                </button>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                </div>
+                
+                <button class="control-btn" id="fullscreenBtn">
+                    <i class="fas fa-expand"></i>
+                </button>
+                
+                <button class="control-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class VideoEditor {
+            constructor() {
+                this.video = document.getElementById('videoPlayer');
+                this.canvas = document.getElementById('videoCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.fileInput = document.getElementById('videoInput');
+                this.fileUpload = document.getElementById('fileUpload');
+                this.videoInfo = document.getElementById('videoInfo');
+                this.timelineTrack = document.getElementById('timelineTrack');
+                this.timelineProgress = document.getElementById('timelineProgress');
+                this.timelineScrubber = document.getElementById('timelineScrubber');
+                this.currentTimeDisplay = document.getElementById('currentTime');
+                this.totalTimeDisplay = document.getElementById('totalTime');
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.exportBtn = document.getElementById('exportBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressFill = document.getElementById('progressFill');
+                
+                this.isPlaying = false;
+                this.isDragging = false;
+                this.currentVideo = null;
+                this.ffmpeg = null;
+                this.edits = {
+                    trim: { start: 0, end: 0 },
+                    crop: { x: 0, y: 0, width: 0, height: 0 },
+                    filters: { brightness: 100, contrast: 100, saturation: 100, hue: 0 },
+                    text: [],
+                    rotation: 0
+                };
+                this.animationId = null;
+                
+                this.init();
+            }
+            
+            async init() {
+                await this.loadFFmpeg();
+                this.setupEventListeners();
+                this.setupEditPanels();
+                console.log('🎬 Video Editor initialized with FFmpeg support');
+            }
+            
+            async loadFFmpeg() {
+                try {
+                    const { FFmpeg } = FFmpegWASM;
+                    const { fetchFile, toBlobURL } = FFmpegUtil;
+                    
+                    this.ffmpeg = new FFmpeg();
+                    this.ffmpeg.on('log', ({ message }) => console.log(message));
+                    this.ffmpeg.on('progress', ({ progress }) => {
+                        this.progressFill.style.width = `${Math.round(progress * 100)}%`;
+                    });
+                    
+                    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+                    await this.ffmpeg.load({
+                        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+                        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                    });
+                    
+                    console.log('✅ FFmpeg loaded successfully');
+                } catch (error) {
+                    console.error('❌ Failed to load FFmpeg:', error);
+                }
+            }
+            
+            setupEventListeners() {
+                // File upload
+                this.fileUpload.addEventListener('click', () => this.fileInput.click());
+                this.fileUpload.addEventListener('dragover', (e) => this.handleDragOver(e));
+                this.fileUpload.addEventListener('drop', (e) => this.handleDrop(e));
+                this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                
+                // Video controls
+                this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+                this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+                
+                // Timeline
+                this.timelineTrack.addEventListener('click', (e) => this.seekTo(e));
+                this.timelineScrubber.addEventListener('mousedown', () => this.startDragging());
+                
+                // Video events
+                this.video.addEventListener('loadedmetadata', () => this.onVideoLoaded());
+                this.video.addEventListener('timeupdate', () => this.updateTimeline());
+                this.video.addEventListener('play', () => this.onPlay());
+                this.video.addEventListener('pause', () => this.onPause());
+                
+                // Export
+                this.exportBtn.addEventListener('click', () => this.exportVideo());
+                
+                // Edit tools
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectTool(e.target.closest('.tool-btn')));
+                });
+                
+                // Global events
+                document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                document.addEventListener('mouseup', () => this.stopDragging());
+            }
+            
+            setupEditPanels() {
+                // Filter controls
+                document.getElementById('brightness').addEventListener('input', (e) => {
+                    document.getElementById('brightnessValue').textContent = e.target.value + '%';
+                    this.edits.filters.brightness = parseInt(e.target.value);
+                    this.renderFrame();
+                });
+                
+                document.getElementById('contrast').addEventListener('input', (e) => {
+                    document.getElementById('contrastValue').textContent = e.target.value + '%';
+                    this.edits.filters.contrast = parseInt(e.target.value);
+                    this.renderFrame();
+                });
+                
+                document.getElementById('saturation').addEventListener('input', (e) => {
+                    document.getElementById('saturationValue').textContent = e.target.value + '%';
+                    this.edits.filters.saturation = parseInt(e.target.value);
+                    this.renderFrame();
+                });
+                
+                document.getElementById('hue').addEventListener('input', (e) => {
+                    document.getElementById('hueValue').textContent = e.target.value + '°';
+                    this.edits.filters.hue = parseInt(e.target.value);
+                    this.renderFrame();
+                });
+                
+                // Apply buttons
+                document.getElementById('applyTrim').addEventListener('click', () => this.applyTrim());
+                document.getElementById('applyCrop').addEventListener('click', () => this.applyCrop());
+                document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
+                document.getElementById('addText').addEventListener('click', () => this.addText());
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                this.fileUpload.classList.add('dragover');
+            }
+            
+            handleDrop(e) {
+                e.preventDefault();
+                this.fileUpload.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.loadVideo(files[0]);
+                }
+            }
+            
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.loadVideo(file);
+                }
+            }
+            
+            loadVideo(file) {
+                console.log('📁 Loading video:', file.name);
+                
+                const url = URL.createObjectURL(file);
+                this.video.src = url;
+                this.currentVideo = file;
+                
+                // Update file info
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = this.formatFileSize(file.size);
+                
+                // Show video info
+                this.videoInfo.style.display = 'block';
+                
+                // Enable export button
+                this.exportBtn.disabled = false;
+                
+                // Hide no video message
+                document.getElementById('noVideoMessage').style.display = 'none';
+                this.video.style.display = 'block';
+                
+                // Start rendering loop
+                this.startRenderLoop();
+            }
+            
+            startRenderLoop() {
+                const render = () => {
+                    if (this.video.readyState >= 2) { // HAVE_CURRENT_DATA
+                        this.renderFrame();
+                    }
+                    this.animationId = requestAnimationFrame(render);
+                };
+                render();
+            }
+            
+            renderFrame() {
+                if (!this.video.videoWidth || !this.video.videoHeight) return;
+                
+                // Set canvas size to video size
+                this.canvas.width = this.video.videoWidth;
+                this.canvas.height = this.video.videoHeight;
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Apply rotation
+                if (this.edits.rotation !== 0) {
+                    this.ctx.save();
+                    this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+                    this.ctx.rotate((this.edits.rotation * Math.PI) / 180);
+                    this.ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
+                }
+                
+                // Draw video frame
+                this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+                
+                // Apply filters
+                this.applyCanvasFilters();
+                
+                // Apply crop
+                if (this.edits.crop.width > 0 && this.edits.crop.height > 0) {
+                    this.applyCropToCanvas();
+                }
+                
+                // Draw text overlays
+                this.drawTextOverlays();
+                
+                // Restore rotation
+                if (this.edits.rotation !== 0) {
+                    this.ctx.restore();
+                }
+                
+                // Show canvas instead of video
+                this.canvas.style.display = 'block';
+                this.video.style.display = 'none';
+            }
+            
+            applyCanvasFilters() {
+                const { brightness, contrast, saturation, hue } = this.edits.filters;
+                
+                // Create filter string
+                let filter = '';
+                if (brightness !== 100) filter += `brightness(${brightness}%) `;
+                if (contrast !== 100) filter += `contrast(${contrast}%) `;
+                if (saturation !== 100) filter += `saturate(${saturation}%) `;
+                if (hue !== 0) filter += `hue-rotate(${hue}deg) `;
+                
+                if (filter) {
+                    this.ctx.filter = filter.trim();
+                }
+            }
+            
+            applyCropToCanvas() {
+                const { x, y, width, height } = this.edits.crop;
+                if (width > 0 && height > 0) {
+                    const imageData = this.ctx.getImageData(x, y, width, height);
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.putImageData(imageData, 0, 0);
+                }
+            }
+            
+            drawTextOverlays() {
+                this.edits.text.forEach(textObj => {
+                    this.ctx.fillStyle = textObj.color;
+                    this.ctx.font = `${textObj.size}px Arial`;
+                    this.ctx.fillText(textObj.content, textObj.x, textObj.y);
+                });
+            }
+            
+            onVideoLoaded() {
+                console.log('✅ Video loaded successfully');
+                
+                const duration = this.video.duration;
+                document.getElementById('videoDuration').textContent = this.formatTime(duration);
+                document.getElementById('videoResolution').textContent = 
+                    `${this.video.videoWidth}x${this.video.videoHeight}`;
+                
+                this.totalTimeDisplay.textContent = this.formatTime(duration);
+            }
+            
+            togglePlayPause() {
+                if (this.isPlaying) {
+                    this.video.pause();
+                } else {
+                    this.video.play();
+                }
+            }
+            
+            onPlay() {
+                this.isPlaying = true;
+                this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            
+            onPause() {
+                this.isPlaying = false;
+                this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+            
+            setVolume(value) {
+                this.video.volume = value / 100;
+            }
+            
+            updateTimeline() {
+                if (this.video.duration) {
+                    const progress = (this.video.currentTime / this.video.duration) * 100;
+                    this.timelineProgress.style.width = `${progress}%`;
+                    this.timelineScrubber.style.left = `${progress}%`;
+                    this.currentTimeDisplay.textContent = this.formatTime(this.video.currentTime);
+                }
+            }
+            
+            seekTo(e) {
+                if (this.video.duration) {
+                    const rect = this.timelineTrack.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const percentage = x / rect.width;
+                    const time = percentage * this.video.duration;
+                    this.video.currentTime = time;
+                }
+            }
+            
+            startDragging() {
+                this.isDragging = true;
+                this.timelineScrubber.style.cursor = 'grabbing';
+            }
+            
+            stopDragging() {
+                this.isDragging = false;
+                this.timelineScrubber.style.cursor = 'grab';
+            }
+            
+            handleMouseMove(e) {
+                if (this.isDragging && this.video.duration) {
+                    const rect = this.timelineTrack.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const percentage = Math.max(0, Math.min(1, x / rect.width));
+                    const time = percentage * this.video.duration;
+                    this.video.currentTime = time;
+                }
+            }
+            
+            selectTool(btn) {
+                // Remove active class from all tools
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                
+                // Hide all panels
+                document.querySelectorAll('[id$="Panel"]').forEach(panel => {
+                    panel.style.display = 'none';
+                });
+                
+                // Add active class to selected tool
+                btn.classList.add('active');
+                
+                const tool = btn.id.replace('Btn', '');
+                console.log('🔧 Selected tool:', tool);
+                
+                // Show corresponding panel
+                const panel = document.getElementById(tool + 'Panel');
+                if (panel) {
+                    panel.style.display = 'block';
+                }
+                
+                // Handle different tools
+                switch(tool) {
+                    case 'trim':
+                        this.setupTrimTool();
+                        break;
+                    case 'crop':
+                        this.setupCropTool();
+                        break;
+                    case 'rotate':
+                        this.rotateVideo();
+                        break;
+                    case 'filter':
+                        this.setupFilterTool();
+                        break;
+                    case 'text':
+                        this.setupTextTool();
+                        break;
+                    case 'audio':
+                        this.setupAudioTool();
+                        break;
+                }
+            }
+            
+            setupTrimTool() {
+                if (this.video.duration) {
+                    document.getElementById('trimEnd').value = this.video.duration.toFixed(1);
+                    this.edits.trim.end = this.video.duration;
+                }
+            }
+            
+            setupCropTool() {
+                if (this.video.videoWidth && this.video.videoHeight) {
+                    document.getElementById('cropWidth').value = this.video.videoWidth;
+                    document.getElementById('cropHeight').value = this.video.videoHeight;
+                    this.edits.crop.width = this.video.videoWidth;
+                    this.edits.crop.height = this.video.videoHeight;
+                }
+            }
+            
+            setupFilterTool() {
+                // Filters are already set up in setupEditPanels
+            }
+            
+            setupTextTool() {
+                // Text tool is already set up in setupEditPanels
+            }
+            
+            setupAudioTool() {
+                alert('Audio tool: Volume control is available in the main controls');
+            }
+            
+            rotateVideo() {
+                this.edits.rotation = (this.edits.rotation + 90) % 360;
+                this.renderFrame();
+                console.log('🔄 Video rotated to:', this.edits.rotation + '°');
+            }
+            
+            applyTrim() {
+                const start = parseFloat(document.getElementById('trimStart').value);
+                const end = parseFloat(document.getElementById('trimEnd').value);
+                
+                if (start >= 0 && end > start && end <= this.video.duration) {
+                    this.edits.trim.start = start;
+                    this.edits.trim.end = end;
+                    this.video.currentTime = start;
+                    console.log('✂️ Trim applied:', start, 'to', end);
+                } else {
+                    alert('Invalid trim values');
+                }
+            }
+            
+            applyCrop() {
+                const x = parseInt(document.getElementById('cropX').value);
+                const y = parseInt(document.getElementById('cropY').value);
+                const width = parseInt(document.getElementById('cropWidth').value);
+                const height = parseInt(document.getElementById('cropHeight').value);
+                
+                if (width > 0 && height > 0 && x >= 0 && y >= 0) {
+                    this.edits.crop = { x, y, width, height };
+                    this.renderFrame();
+                    console.log('✂️ Crop applied:', { x, y, width, height });
+                } else {
+                    alert('Invalid crop values');
+                }
+            }
+            
+            applyFilters() {
+                this.renderFrame();
+                console.log('🎨 Filters applied:', this.edits.filters);
+            }
+            
+            addText() {
+                const content = document.getElementById('textContent').value;
+                const size = parseInt(document.getElementById('textSize').value);
+                const color = document.getElementById('textColor').value;
+                const x = parseInt(document.getElementById('textX').value);
+                const y = parseInt(document.getElementById('textY').value);
+                
+                if (content.trim()) {
+                    this.edits.text.push({ content, size, color, x, y });
+                    this.renderFrame();
+                    console.log('📝 Text added:', content);
+                    
+                    // Clear form
+                    document.getElementById('textContent').value = '';
+                } else {
+                    alert('Please enter text content');
+                }
+            }
+            
+            async exportVideo() {
+                if (!this.currentVideo) {
+                    alert('Please load a video first');
+                    return;
+                }
+                
+                if (!this.ffmpeg) {
+                    alert('FFmpeg not loaded. Please wait and try again.');
+                    return;
+                }
+                
+                console.log('📤 Exporting video with FFmpeg...');
+                
+                // Show progress bar
+                this.progressBar.style.display = 'block';
+                this.exportBtn.disabled = true;
+                this.exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+                
+                try {
+                    // Create a video from canvas frames
+                    const outputVideo = await this.createVideoFromCanvas();
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(outputVideo);
+                    link.download = `edited_${this.currentVideo.name}`;
+                    link.click();
+                    
+                    console.log('✅ Video exported successfully with high quality');
+                } catch (error) {
+                    console.error('❌ Export failed:', error);
+                    alert('Export failed. Please try again.');
+                } finally {
+                    // Reset UI
+                    this.progressBar.style.display = 'none';
+                    this.exportBtn.disabled = false;
+                    this.exportBtn.innerHTML = '<i class="fas fa-download"></i> Export Video';
+                }
+            }
+            
+            async createVideoFromCanvas() {
+                // Create a MediaRecorder to capture canvas frames
+                const stream = this.canvas.captureStream(30); // 30 FPS
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
+                
+                const chunks = [];
+                mediaRecorder.ondataavailable = (event) => {
+                    chunks.push(event.data);
+                };
+                
+                return new Promise((resolve) => {
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        resolve(blob);
+                    };
+                    
+                    // Start recording
+                    mediaRecorder.start();
+                    
+                    // Play video and record
+                    this.video.currentTime = this.edits.trim.start || 0;
+                    this.video.play();
+                    
+                    // Stop recording when video ends or trim end is reached
+                    const endTime = this.edits.trim.end || this.video.duration;
+                    const duration = endTime - (this.edits.trim.start || 0);
+                    
+                    setTimeout(() => {
+                        this.video.pause();
+                        mediaRecorder.stop();
+                    }, duration * 1000);
+                });
+            }
+            
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            formatFileSize(bytes) {
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                if (bytes === 0) return '0 Bytes';
+                const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+            }
+        }
+        
+        // Initialize video editor when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VideoEditor();
+        });
+    </script>
+</body>
+</html>

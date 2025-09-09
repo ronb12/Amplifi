@@ -21,6 +21,13 @@
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/youtube-style.css">
     
+    <!-- Authentication Guard -->
+    <script src="assets/js/auth-guard.js"></script>
+    
+    <!-- Stripe Payment Integration -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="assets/js/stripe-payments.js"></script>
+    
     
     <style>
         /* Professional Amplifi Styles */
@@ -837,12 +844,21 @@
                 </div>
             </div>
             
-            <div class="yt-header-actions">
-                <button class="yt-btn yt-btn-primary" onclick="openAuthModal()">
+            <div class="yt-header-actions" id="authButtons">
+                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
-                <button class="yt-btn yt-btn-secondary" onclick="openAuthModal()">
+                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
                     <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            
+            <div class="yt-header-actions" id="userProfile" style="display: none;">
+                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         </div>
@@ -1041,1614 +1057,33 @@
     
     
     <script>
-        console.log('🔐 Loading authentication system...');
-        
-        function openAuthModal(type = 'login') {
-            console.log('🔐 Opening auth modal:', type);
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'block';
-                switchAuthTab(type);
-            } else {
-                console.error('❌ Auth modal not found');
-                alert('Authentication modal not found. Please refresh the page.');
-            }
-        }
-        
-        function closeAuthModal() {
-            console.log('🔐 Closing auth modal');
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                authModal.style.display = 'none';
-                clearForms();
-            }
-        }
-        
-        function switchAuthTab(type) {
-            console.log('🔐 Switching to tab:', type);
-            
-            // Remove active class from all tabs and forms
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.style.color = '#6b7280';
-                tab.style.borderBottomColor = 'transparent';
-            });
-            document.querySelectorAll('.auth-form').forEach(form => {
-                form.classList.remove('active');
-                form.style.display = 'none';
-            });
-            
-            // Add active class to selected tab and form
-            const selectedTab = document.querySelector('[data-tab="' + type + '"]');
-            const selectedForm = document.getElementById(type + 'Form');
-            
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-                selectedTab.style.color = '#667eea';
-                selectedTab.style.borderBottomColor = '#667eea';
-            }
-            if (selectedForm) {
-                selectedForm.classList.add('active');
-                selectedForm.style.display = 'block';
-            }
-        }
-        
-        function clearForms() {
-            document.querySelectorAll('#authModal input').forEach(input => {
-                input.value = '';
-            });
-        }
-        
-        function showMessage(message, isError = false) {
-            // Remove existing messages
-            const existingMessage = document.querySelector('.auth-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            // Create new message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'auth-message ' + (isError ? 'error' : 'success');
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                margin-top: 16px;
-                padding: 12px 16px;
-                border-radius: 8px;
-                font-weight: 500;
-                text-align: center;
-                background: ${isError ? '#fee2e2' : '#d1fae5'};
-                color: ${isError ? '#991b1b' : '#065f46'};
-                border: 1px solid ${isError ? '#fca5a5' : '#a7f3d0'};
-            `;
-            
-            // Insert after auth-forms
-            const authForms = document.querySelector('.auth-forms');
-            if (authForms) {
-                authForms.appendChild(messageDiv);
-            }
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 5000);
-        }
-        
-        async function handleLogin(event) {
-            event.preventDefault();
-            console.log('🔐 Handling login...');
-            
-            // Check if Firebase auth is available
-            if (typeof auth === 'undefined') {
-                showMessage('Authentication service not available. Please try again later.', true);
-                return;
-            }
-            
-            const email = document.querySelector('#loginForm input[type="email"]').value;
-            const password = document.querySelector('#loginForm input[type="password"]').value;
-            
-            if (!email || !password) {
-                showMessage('Please fill in all fields', true);
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#loginForm .auth-submit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Signing In...';
-            submitBtn.disabled = true;
-            
-            try {
-                // Use real Firebase authentication
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                console.log('✅ Login successful:', userCredential.user.email);
-                
-                showMessage('Welcome back! You are now signed in.');
-                setTimeout(() => {
-                    closeAuthModal();
-                    updateUI(true);
-                }, 1500);
-            } catch (error) {
-                console.error('❌ Login error:', error);
-                showMessage('Invalid email or password. Please try again.', true);
-            } finally {
-                // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-        
-        async function handleSignup(event) {
-            event.preventDefault();
-            console.log('🔐 Handling signup...');
-            
-            // Check if Firebase services are available
-            if (typeof auth === 'undefined' || typeof db === 'undefined') {
-                showMessage('Authentication service not available. Please try again later.', true);
-                return;
-            }
-            
-            const name = document.querySelector('#signupForm input[placeholder="Full Name"]').value;
-            const email = document.querySelector('#signupForm input[type="email"]').value;
-            const password = document.querySelector('#signupForm input[type="password"]').value;
-            
-            if (!name || !email || !password) {
-                showMessage('Please fill in all fields', true);
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', true);
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#signupForm .auth-submit');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Creating Account...';
-            submitBtn.disabled = true;
-            
-            try {
-                // Use real Firebase authentication
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                
-                // Create user profile in Firestore
-                const userProfile = {
-                    displayName: name,
-                    username: email.split('@')[0], // Use email prefix as username
-                    bio: '',
-                    profilePic: '',
-                    banner: '',
-                    createdAt: new Date(),
-                    isAdmin: false
-                };
-
-                await db.collection('users').doc(userCredential.user.uid).set(userProfile);
-                
-                console.log('✅ Signup successful:', userCredential.user.email);
-                showMessage('Account created successfully! Welcome to Amplifi!');
-                setTimeout(() => {
-                    closeAuthModal();
-                    updateUI(true);
-                }, 1500);
-            } catch (error) {
-                console.error('❌ Signup error:', error);
-                showMessage('Signup failed: ' + error.message, true);
-            } finally {
-                // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-        
-        function updateUI(isSignedIn) {
-            const signInBtn = document.querySelector('.yt-btn-primary');
-            const signUpBtn = document.querySelector('.yt-btn-secondary');
-            
-            if (isSignedIn) {
-                if (signInBtn) {
-                    signInBtn.innerHTML = '<i class="fas fa-user"></i> Profile';
-                    signInBtn.onclick = () => window.location.href = 'profile.html';
-                }
-                if (signUpBtn) {
-                    signUpBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
-                    signUpBtn.onclick = async () => {
-                        try {
-                            if (typeof auth !== 'undefined') {
-                                await auth.signOut();
-                                console.log('✅ Sign out successful');
-                            }
-                            updateUI(false);
-                            showMessage('You have been signed out');
-                        } catch (error) {
-                            console.error('❌ Sign out error:', error);
-                            showMessage('Error signing out. Please try again.', true);
-                        }
-                    };
-                }
-            } else {
-                if (signInBtn) {
-                    signInBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-                    signInBtn.onclick = () => openAuthModal('login');
-                }
-                if (signUpBtn) {
-                    signUpBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
-                    signUpBtn.onclick = () => openAuthModal('signup');
-                }
-            }
-        }
+                console.log('✅ Page loading - using auth-guard for authentication');
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔐 Initializing authentication system...');
+            console.log('✅ Page initialized - using auth-guard for authentication');
+        });
+        
+        // Sign out function
+        function signOut() {
+            console.log('🔐 Signing out...');
             
-            const authModal = document.getElementById('authModal');
-            if (authModal) {
-                // Close modal when clicking outside
-                authModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeAuthModal();
-                    }
-                });
-                
-                // Add form submission handlers
-                const loginForm = document.getElementById('loginForm');
-                const signupForm = document.getElementById('signupForm');
-                
-                if (loginForm) {
-                    loginForm.addEventListener('submit', handleLogin);
-                    console.log('✅ Login form handler attached');
-                } else {
-                    console.error('❌ Login form not found');
-                }
-                
-                if (signupForm) {
-                    signupForm.addEventListener('submit', handleSignup);
-                    console.log('✅ Signup form handler attached');
-                } else {
-                    console.error('❌ Signup form not found');
-                }
-                
-                console.log('✅ Authentication system initialized');
-            } else {
-                console.error('❌ Auth modal not found during initialization');
-            }
+            // Clear localStorage
+            localStorage.removeItem('amplifi_auth');
             
-            // Set up Firebase authentication state listener
+            // Sign out from Firebase if available
             if (typeof auth !== 'undefined') {
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        console.log('🔐 User is signed in:', user.email);
-                        updateUI(true);
-                    } else {
-                        console.log('🔐 User is signed out');
-                        updateUI(false);
-                    }
+                auth.signOut().then(() => {
+                    console.log('✅ Signed out from Firebase');
+                }).catch((error) => {
+                    console.error('❌ Sign out error:', error);
                 });
-            } else {
-                console.log('⚠️ Firebase auth not available, using fallback UI');
-                updateUI(false);
             }
-        });
-    </script>
-
-    
-    <!-- YouTube-Style Live Streaming JavaScript -->
-    <script>
-
-// YouTube-Style Live Streaming Manager
-class YouTubeLiveStreamManager {
-    constructor() {
-        this.isStreaming = false;
-        this.stream = null;
-        this.mediaRecorder = null;
-        this.recordedChunks = [];
-        this.streamSettings = {
-            video: {
-                width: { ideal: 1920, min: 640, max: 1920 },
-                height: { ideal: 1080, min: 360, max: 1080 },
-                frameRate: { ideal: 30, min: 15, max: 60 }
-            },
-            audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-                sampleRate: 48000
-            }
-        };
-        this.streamQuality = '1080p';
-        this.viewers = 0;
-        this.chatMessages = [];
-        this.streamTitle = '';
-        this.streamDescription = '';
-        this.streamCategory = 'Gaming';
-        this.streamPrivacy = 'public';
-        this.streamScheduled = false;
-        this.streamStartTime = null;
-        this.streamDuration = 0;
-        this.streamStats = {
-            viewers: 0,
-            likes: 0,
-            comments: 0,
-            shares: 0
-        };
-        this.init();
-    }
-
-    init() {
-        this.setupEventListeners();
-        this.checkBrowserSupport();
-        this.loadStreamHistory();
-        this.initializeUI();
-    }
-
-    checkBrowserSupport() {
-        const features = {
-            getUserMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
-            mediaRecorder: !!(window.MediaRecorder),
-            webRTC: !!(window.RTCPeerConnection),
-            screenShare: !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)
-        };
-
-        console.log('🔍 Browser Support Check:', features);
-        
-        if (!features.getUserMedia) {
-            this.showError('Your browser does not support camera/microphone access');
-            return false;
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
         }
         
-        if (!features.mediaRecorder) {
-            this.showError('Your browser does not support video recording');
-            return false;
-        }
-        
-        return true;
-    }
-
-    initializeUI() {
-        // Create YouTube-style live streaming interface
-        this.createStreamingDashboard();
-        this.createStreamSettings();
-        this.createLiveChat();
-        this.createStreamStats();
-    }
-
-    createStreamingDashboard() {
-        const dashboard = document.createElement('div');
-        dashboard.className = 'yt-live-dashboard';
-        dashboard.innerHTML = `
-            <div class="yt-live-header">
-                <h1><i class="fas fa-broadcast-tower"></i> Go Live</h1>
-                <div class="yt-live-status">
-                    <span class="status-indicator offline">Offline</span>
-                    <span class="stream-key-info">Stream Key: Hidden</span>
-                </div>
-            </div>
-            
-            <div class="yt-live-content">
-                <div class="yt-live-main">
-                    <div class="stream-preview-container">
-                        <video id="streamPreview" autoplay muted playsinline></video>
-                        <div class="stream-overlay">
-                            <div class="stream-controls">
-                                <button class="stream-btn primary go-live-btn">
-                                    <i class="fas fa-video"></i> Go Live
-                                </button>
-                                <button class="stream-btn secondary end-stream-btn" disabled>
-                                    <i class="fas fa-stop"></i> End Stream
-                                </button>
-                                <button class="stream-btn toggle-audio-btn">
-                                    <i class="fas fa-microphone"></i>
-                                </button>
-                                <button class="stream-btn toggle-video-btn">
-                                    <i class="fas fa-video"></i>
-                                </button>
-                                <button class="stream-btn screen-share-btn">
-                                    <i class="fas fa-desktop"></i> Share Screen
-                                </button>
-                                <button class="stream-btn settings-btn">
-                                    <i class="fas fa-cog"></i> Settings
-                                </button>
-                            </div>
-                            
-                            <div class="stream-info-overlay">
-                                <div class="live-indicator" style="display: none;">
-                                    <i class="fas fa-circle"></i> LIVE
-                                </div>
-                                <div class="viewer-count">0 viewers</div>
-                                <div class="stream-duration">00:00:00</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="stream-details">
-                        <div class="stream-form">
-                            <div class="form-group">
-                                <label>Stream Title *</label>
-                                <input type="text" id="streamTitle" placeholder="Enter stream title" maxlength="100" required>
-                                <div class="char-count">0/100</div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea id="streamDescription" placeholder="Tell viewers about your stream" maxlength="5000"></textarea>
-                                <div class="char-count">0/5000</div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Category</label>
-                                    <select id="streamCategory">
-                                        <option value="Gaming">Gaming</option>
-                                        <option value="Music">Music</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Entertainment">Entertainment</option>
-                                        <option value="Sports">Sports</option>
-                                        <option value="Technology">Technology</option>
-                                        <option value="Lifestyle">Lifestyle</option>
-                                        <option value="News">News & Politics</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Privacy</label>
-                                    <select id="streamPrivacy">
-                                        <option value="public">Public</option>
-                                        <option value="unlisted">Unlisted</option>
-                                        <option value="private">Private</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="stream-options">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="enableChat"> Enable live chat
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="recordStream"> Record stream
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="enableDonations"> Enable donations
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="yt-live-sidebar">
-                    <div class="live-chat-container">
-                        <div class="chat-header">
-                            <h3><i class="fas fa-comments"></i> Live Chat</h3>
-                            <button class="chat-settings-btn"><i class="fas fa-cog"></i></button>
-                        </div>
-                        <div class="chat-messages" id="chatMessages">
-                            <div class="chat-welcome">
-                                <p>Welcome to live chat! Start streaming to see messages from viewers.</p>
-                            </div>
-                        </div>
-                        <div class="chat-input-container">
-                            <input type="text" id="chatInput" placeholder="Say something..." disabled>
-                            <button id="sendChatBtn" disabled><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="stream-stats-container">
-                        <div class="stats-header">
-                            <h3><i class="fas fa-chart-line"></i> Stream Stats</h3>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-number" id="viewerCount">0</div>
-                                <div class="stat-label">Viewers</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="likeCount">0</div>
-                                <div class="stat-label">Likes</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="commentCount">0</div>
-                                <div class="stat-label">Comments</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="shareCount">0</div>
-                                <div class="stat-label">Shares</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        const liveContent = document.querySelector('.live-content');
-        if (liveContent) {
-            liveContent.innerHTML = '';
-            liveContent.appendChild(dashboard);
-        }
-    }
-
-    createStreamSettings() {
-        const settingsModal = document.createElement('div');
-        settingsModal.className = 'yt-stream-settings-modal';
-        settingsModal.innerHTML = `
-            <div class="settings-modal-content">
-                <div class="settings-header">
-                    <h3><i class="fas fa-cog"></i> Stream Settings</h3>
-                    <button class="close-settings">&times;</button>
-                </div>
-                
-                <div class="settings-tabs">
-                    <button class="settings-tab active" data-tab="video">Video</button>
-                    <button class="settings-tab" data-tab="audio">Audio</button>
-                    <button class="settings-tab" data-tab="advanced">Advanced</button>
-                </div>
-                
-                <div class="settings-content">
-                    <div class="settings-panel active" id="videoSettings">
-                        <div class="setting-group">
-                            <label>Video Quality</label>
-                            <select id="videoQuality">
-                                <option value="1080p">1080p (1920x1080)</option>
-                                <option value="720p">720p (1280x720)</option>
-                                <option value="480p">480p (854x480)</option>
-                                <option value="360p">360p (640x360)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label>Frame Rate</label>
-                            <select id="frameRate">
-                                <option value="60">60 FPS</option>
-                                <option value="30" selected>30 FPS</option>
-                                <option value="24">24 FPS</option>
-                                <option value="15">15 FPS</option>
-                            </select>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label>Bitrate</label>
-                            <select id="videoBitrate">
-                                <option value="6000">6000 kbps (High)</option>
-                                <option value="4500" selected>4500 kbps (Medium)</option>
-                                <option value="3000">3000 kbps (Low)</option>
-                                <option value="1500">1500 kbps (Very Low)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-panel" id="audioSettings">
-                        <div class="setting-group">
-                            <label>Audio Quality</label>
-                            <select id="audioQuality">
-                                <option value="high">High (128 kbps)</option>
-                                <option value="medium" selected>Medium (96 kbps)</option>
-                                <option value="low">Low (64 kbps)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="echoCancellation" checked> Echo Cancellation
-                            </label>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="noiseSuppression" checked> Noise Suppression
-                            </label>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="autoGainControl" checked> Auto Gain Control
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-panel" id="advancedSettings">
-                        <div class="setting-group">
-                            <label>Stream Key</label>
-                            <div class="stream-key-container">
-                                <input type="password" id="streamKey" value="sk_live_demo_key_12345" readonly>
-                                <button class="copy-key-btn"><i class="fas fa-copy"></i></button>
-                                <button class="show-key-btn"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label>Server URL</label>
-                            <input type="text" id="serverUrl" value="rtmp://live.amplifi.com/live" readonly>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="lowLatency"> Low Latency Mode
-                            </label>
-                        </div>
-                        
-                        <div class="setting-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="adaptiveBitrate"> Adaptive Bitrate
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="settings-actions">
-                    <button class="btn-secondary cancel-settings">Cancel</button>
-                    <button class="btn-primary save-settings">Save Settings</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(settingsModal);
-        this.setupSettingsModal();
-    }
-
-    setupEventListeners() {
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('go-live-btn')) {
-                this.startLiveStream();
-            } else if (e.target.classList.contains('end-stream-btn')) {
-                this.endLiveStream();
-            } else if (e.target.classList.contains('toggle-audio-btn')) {
-                this.toggleAudio();
-            } else if (e.target.classList.contains('toggle-video-btn')) {
-                this.toggleVideo();
-            } else if (e.target.classList.contains('screen-share-btn')) {
-                this.toggleScreenShare();
-            } else if (e.target.classList.contains('settings-btn')) {
-                this.openStreamSettings();
-            } else if (e.target.classList.contains('chat-settings-btn') || e.target.closest('.chat-settings-btn')) {
-                console.log('🔧 Chat settings button clicked (global listener)');
-                this.openChatSettings();
-            }
-        });
-
-        // Stream form listeners
-        document.addEventListener('input', (e) => {
-            if (e.target.id === 'streamTitle') {
-                this.updateCharCount(e.target, 100);
-            } else if (e.target.id === 'streamDescription') {
-                this.updateCharCount(e.target, 5000);
-            }
-        });
-
-        // Chat functionality
-        document.addEventListener('keypress', (e) => {
-            if (e.target.id === 'chatInput' && e.key === 'Enter') {
-                this.sendChatMessage();
-            }
-        });
-    }
-
-    async startLiveStream() {
-        try {
-            console.log('🎥 Starting YouTube-style live stream...');
-            
-            // Validate stream details
-            const title = document.getElementById('streamTitle')?.value.trim();
-            if (!title) {
-                this.showError('Stream title is required');
-                return;
-            }
-
-            // Get media permissions
-            const constraints = this.getStreamConstraints();
-            this.stream = await navigator.mediaDevices.getUserMedia(constraints);
-            
-            // Setup video preview
-            const video = document.getElementById('streamPreview');
-            if (video) {
-                video.srcObject = this.stream;
-            }
-
-            // Setup media recorder
-            this.setupMediaRecorder();
-            
-            // Update UI for live state
-            this.updateUIForLiveState(true);
-            
-            // Start stream timer
-            this.startStreamTimer();
-            
-            // Simulate viewer interactions
-            this.simulateViewerActivity();
-            
-            this.isStreaming = true;
-            console.log('✅ Live stream started successfully');
-            this.showSuccess('You are now live! Stream started successfully.');
-            
-        } catch (error) {
-            console.error('❌ Error starting live stream:', error);
-            this.handleStreamError(error);
-        }
-    }
-
-    getStreamConstraints() {
-        const quality = document.getElementById('videoQuality')?.value || '720p';
-        const frameRate = parseInt(document.getElementById('frameRate')?.value || '30');
-        
-        const qualitySettings = {
-            '1080p': { width: 1920, height: 1080 },
-            '720p': { width: 1280, height: 720 },
-            '480p': { width: 854, height: 480 },
-            '360p': { width: 640, height: 360 }
-        };
-
-        return {
-            video: {
-                width: { ideal: qualitySettings[quality].width },
-                height: { ideal: qualitySettings[quality].height },
-                frameRate: { ideal: frameRate }
-            },
-            audio: {
-                echoCancellation: document.getElementById('echoCancellation')?.checked ?? true,
-                noiseSuppression: document.getElementById('noiseSuppression')?.checked ?? true,
-                autoGainControl: document.getElementById('autoGainControl')?.checked ?? true
-            }
-        };
-    }
-
-    setupMediaRecorder() {
-        if (this.stream && MediaRecorder.isTypeSupported('video/webm')) {
-            this.mediaRecorder = new MediaRecorder(this.stream, {
-                mimeType: 'video/webm;codecs=vp9'
-            });
-
-            this.mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    this.recordedChunks.push(event.data);
-                }
-            };
-
-            this.mediaRecorder.onstop = () => {
-                this.saveRecording();
-            };
-
-            // Start recording if enabled
-            if (document.getElementById('recordStream')?.checked) {
-                this.mediaRecorder.start();
-            }
-        }
-    }
-
-    updateUIForLiveState(isLive) {
-        const statusIndicator = document.querySelector('.status-indicator');
-        const liveIndicator = document.querySelector('.live-indicator');
-        const goLiveBtn = document.querySelector('.go-live-btn');
-        const endStreamBtn = document.querySelector('.end-stream-btn');
-        const chatInput = document.getElementById('chatInput');
-        const sendChatBtn = document.getElementById('sendChatBtn');
-
-        if (isLive) {
-            statusIndicator?.classList.remove('offline');
-            statusIndicator?.classList.add('live');
-            statusIndicator.textContent = 'Live';
-            
-            liveIndicator?.style.setProperty('display', 'flex');
-            
-            goLiveBtn.disabled = true;
-            goLiveBtn.innerHTML = '<i class="fas fa-circle"></i> Live';
-            
-            endStreamBtn.disabled = false;
-            
-            chatInput.disabled = false;
-            sendChatBtn.disabled = false;
-        } else {
-            statusIndicator?.classList.remove('live');
-            statusIndicator?.classList.add('offline');
-            statusIndicator.textContent = 'Offline';
-            
-            liveIndicator?.style.setProperty('display', 'none');
-            
-            goLiveBtn.disabled = false;
-            goLiveBtn.innerHTML = '<i class="fas fa-video"></i> Go Live';
-            
-            endStreamBtn.disabled = true;
-            
-            chatInput.disabled = true;
-            sendChatBtn.disabled = true;
-        }
-    }
-
-    startStreamTimer() {
-        this.streamStartTime = Date.now();
-        this.streamTimer = setInterval(() => {
-            this.streamDuration = Date.now() - this.streamStartTime;
-            this.updateStreamDuration();
-        }, 1000);
-    }
-
-    updateStreamDuration() {
-        const duration = Math.floor(this.streamDuration / 1000);
-        const hours = Math.floor(duration / 3600);
-        const minutes = Math.floor((duration % 3600) / 60);
-        const seconds = duration % 60;
-        
-        const durationElement = document.querySelector('.stream-duration');
-        if (durationElement) {
-            durationElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-    }
-
-    simulateViewerActivity() {
-        // Simulate viewer count changes
-        this.viewerSimulator = setInterval(() => {
-            if (this.isStreaming) {
-                const change = Math.floor(Math.random() * 10) - 3; // -3 to +6 viewers
-                this.streamStats.viewers = Math.max(0, this.streamStats.viewers + change);
-                this.updateViewerCount();
-                
-                // Simulate chat messages
-                if (Math.random() < 0.3) {
-                    this.simulateChatMessage();
-                }
-                
-                // Simulate likes and interactions
-                if (Math.random() < 0.2) {
-                    this.streamStats.likes += Math.floor(Math.random() * 3) + 1;
-                    this.updateStats();
-                }
-            }
-        }, 3000);
-    }
-
-    simulateChatMessage() {
-        const sampleMessages = [
-            { user: 'Viewer123', message: 'Great stream! 👍' },
-            { user: 'StreamFan', message: 'Hello from the chat!' },
-            { user: 'TechGuru', message: 'Amazing content as always' },
-            { user: 'NewViewer', message: 'First time watching, loving it!' },
-            { user: 'RegularViewer', message: 'Keep up the great work! 🔥' }
-        ];
-        
-        const randomMessage = sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
-        this.addChatMessage(randomMessage.user, randomMessage.message, false);
-    }
-
-    addChatMessage(username, message, isStreamer = false, isSystem = false) {
-        const chatMessages = document.getElementById('chatMessages');
-        const messageElement = document.createElement('div');
-        messageElement.className = `chat-message ${isStreamer ? 'streamer-message' : ''} ${isSystem ? 'system-message' : ''}`;
-        messageElement.innerHTML = `
-            <div class="message-header">
-                <span class="username ${isStreamer ? 'streamer' : ''}">${username}</span>
-                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
-            </div>
-            <div class="message-content">${message}</div>
-        `;
-        
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        // Update comment count (not for system messages)
-        if (!isSystem) {
-            this.streamStats.comments++;
-            this.updateStats();
-        }
-    }
-
-    sendChatMessage() {
-        const chatInput = document.getElementById('chatInput');
-        const message = chatInput.value.trim();
-        
-        if (message) {
-            this.addChatMessage('You (Streamer)', message, true);
-            chatInput.value = '';
-        }
-    }
-
-    updateViewerCount() {
-        const viewerCountElements = document.querySelectorAll('.viewer-count, #viewerCount');
-        viewerCountElements.forEach(element => {
-            element.textContent = this.streamStats.viewers + (element.classList.contains('viewer-count') ? ' viewers' : '');
-        });
-    }
-
-    updateStats() {
-        document.getElementById('likeCount').textContent = this.streamStats.likes;
-        document.getElementById('commentCount').textContent = this.streamStats.comments;
-        document.getElementById('shareCount').textContent = this.streamStats.shares;
-    }
-
-    async toggleScreenShare() {
-        try {
-            if (this.screenStream) {
-                // Stop screen sharing
-                this.screenStream.getTracks().forEach(track => track.stop());
-                this.screenStream = null;
-                
-                // Switch back to camera
-                if (this.stream) {
-                    const video = document.getElementById('streamPreview');
-                    video.srcObject = this.stream;
-                }
-                
-                document.querySelector('.screen-share-btn').innerHTML = '<i class="fas fa-desktop"></i> Share Screen';
-            } else {
-                // Start screen sharing
-                this.screenStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: true
-                });
-                
-                const video = document.getElementById('streamPreview');
-                video.srcObject = this.screenStream;
-                
-                document.querySelector('.screen-share-btn').innerHTML = '<i class="fas fa-stop"></i> Stop Sharing';
-                
-                // Handle screen share end
-                this.screenStream.getVideoTracks()[0].onended = () => {
-                    this.toggleScreenShare();
-                };
-            }
-        } catch (error) {
-            console.error('Screen share error:', error);
-            this.showError('Could not start screen sharing');
-        }
-    }
-
-    toggleAudio() {
-        if (this.stream) {
-            const audioTrack = this.stream.getAudioTracks()[0];
-            if (audioTrack) {
-                audioTrack.enabled = !audioTrack.enabled;
-                const btn = document.querySelector('.toggle-audio-btn');
-                const icon = btn.querySelector('i');
-                
-                if (audioTrack.enabled) {
-                    icon.className = 'fas fa-microphone';
-                    btn.classList.remove('muted');
-                } else {
-                    icon.className = 'fas fa-microphone-slash';
-                    btn.classList.add('muted');
-                }
-            }
-        }
-    }
-
-    toggleVideo() {
-        if (this.stream) {
-            const videoTrack = this.stream.getVideoTracks()[0];
-            if (videoTrack) {
-                videoTrack.enabled = !videoTrack.enabled;
-                const btn = document.querySelector('.toggle-video-btn');
-                const icon = btn.querySelector('i');
-                
-                if (videoTrack.enabled) {
-                    icon.className = 'fas fa-video';
-                    btn.classList.remove('disabled');
-                } else {
-                    icon.className = 'fas fa-video-slash';
-                    btn.classList.add('disabled');
-                }
-            }
-        }
-    }
-
-    endLiveStream() {
-        try {
-            console.log('🛑 Ending live stream...');
-            
-            // Stop all tracks
-            if (this.stream) {
-                this.stream.getTracks().forEach(track => track.stop());
-            }
-            
-            if (this.screenStream) {
-                this.screenStream.getTracks().forEach(track => track.stop());
-            }
-
-            // Stop recording
-            if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
-                this.mediaRecorder.stop();
-            }
-
-            // Clear timers
-            if (this.streamTimer) {
-                clearInterval(this.streamTimer);
-            }
-            
-            if (this.viewerSimulator) {
-                clearInterval(this.viewerSimulator);
-            }
-
-            // Update UI
-            this.updateUIForLiveState(false);
-            
-            // Clear video preview
-            const video = document.getElementById('streamPreview');
-            if (video) {
-                video.srcObject = null;
-            }
-
-            this.isStreaming = false;
-            this.showStreamSummary();
-            
-            console.log('✅ Live stream ended');
-            
-        } catch (error) {
-            console.error('❌ Error ending stream:', error);
-        }
-    }
-
-    showStreamSummary() {
-        const duration = Math.floor(this.streamDuration / 1000);
-        const minutes = Math.floor(duration / 60);
-        const seconds = duration % 60;
-        
-        const summary = `
-            <div class="stream-summary">
-                <h3>🎉 Stream Completed!</h3>
-                <div class="summary-stats">
-                    <div class="summary-stat">
-                        <strong>Duration:</strong> ${minutes}m ${seconds}s
-                    </div>
-                    <div class="summary-stat">
-                        <strong>Peak Viewers:</strong> ${this.streamStats.viewers}
-                    </div>
-                    <div class="summary-stat">
-                        <strong>Total Likes:</strong> ${this.streamStats.likes}
-                    </div>
-                    <div class="summary-stat">
-                        <strong>Comments:</strong> ${this.streamStats.comments}
-                    </div>
-                </div>
-                <p>Your stream has been saved and will be available in your channel.</p>
-            </div>
-        `;
-        
-        this.showSuccess(summary);
-    }
-
-    saveRecording() {
-        if (this.recordedChunks.length > 0) {
-            const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `stream-recording-${new Date().toISOString().split('T')[0]}.webm`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            this.recordedChunks = [];
-            console.log('📹 Stream recording saved');
-        }
-    }
-
-    openStreamSettings() {
-        const modal = document.querySelector('.yt-stream-settings-modal');
-        if (modal) {
-            modal.style.display = 'flex';
-        }
-    }
-
-    openChatSettings() {
-        console.log('🔧 openChatSettings() called');
-        this.createChatSettingsModal();
-    }
-
-    createChatSettingsModal() {
-        console.log('🔧 createChatSettingsModal() called');
-        // Remove existing chat settings modal if it exists
-        const existingModal = document.querySelector('.yt-chat-settings-modal');
-        if (existingModal) {
-            console.log('🔧 Removing existing modal');
-            existingModal.remove();
-        }
-
-        const chatSettingsModal = document.createElement('div');
-        chatSettingsModal.className = 'yt-chat-settings-modal';
-        chatSettingsModal.innerHTML = `
-            <div class="chat-settings-modal-content">
-                <div class="chat-settings-header">
-                    <h3><i class="fas fa-comments"></i> Chat Settings</h3>
-                    <button class="close-chat-settings">&times;</button>
-                </div>
-                
-                <div class="chat-settings-content">
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Chat Mode</label>
-                        <select id="chatMode">
-                            <option value="enabled">Enabled - Anyone can chat</option>
-                            <option value="followers">Followers only - Must follow to chat</option>
-                            <option value="subscribers">Subscribers only - Must be subscribed</option>
-                            <option value="moderators">Moderators only - Only moderators can chat</option>
-                            <option value="disabled">Disabled - No one can chat</option>
-                        </select>
-                    </div>
-                    
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Slow Mode</label>
-                        <select id="slowMode">
-                            <option value="off">Off</option>
-                            <option value="5">5 seconds</option>
-                            <option value="10">10 seconds</option>
-                            <option value="30">30 seconds</option>
-                            <option value="60">1 minute</option>
-                            <option value="300">5 minutes</option>
-                        </select>
-                        <small class="setting-description">Prevents users from sending messages too frequently</small>
-                    </div>
-                    
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Message Filtering</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="filterProfanity" checked> Filter profanity
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="filterSpam" checked> Filter spam messages
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="filterLinks"> Filter links
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="filterEmojis"> Limit emoji usage
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Chat Appearance</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="showTimestamps" checked> Show timestamps
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="showUserBadges" checked> Show user badges
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="highlightStreamer"> Highlight streamer messages
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="compactMode"> Compact chat mode
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Moderation</label>
-                        <div class="moderation-controls">
-                            <button class="mod-btn" id="banUserBtn">
-                                <i class="fas fa-ban"></i> Ban User
-                            </button>
-                            <button class="mod-btn" id="timeoutUserBtn">
-                                <i class="fas fa-clock"></i> Timeout User
-                            </button>
-                            <button class="mod-btn" id="addModBtn">
-                                <i class="fas fa-user-shield"></i> Add Moderator
-                            </button>
-                        </div>
-                        <small class="setting-description">Click on a username in chat to moderate them</small>
-                    </div>
-                    
-                    <div class="chat-setting-group">
-                        <label class="setting-label">Chat Commands</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="enableCommands" checked> Enable chat commands
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="allowCustomCommands"> Allow custom commands
-                            </label>
-                        </div>
-                        <div class="commands-list">
-                            <div class="command-item">
-                                <code>!help</code> - Show available commands
-                            </div>
-                            <div class="command-item">
-                                <code>!follow</code> - Follow the streamer
-                            </div>
-                            <div class="command-item">
-                                <code>!social</code> - Show social media links
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="chat-settings-actions">
-                    <button class="btn-secondary cancel-chat-settings">Cancel</button>
-                    <button class="btn-primary save-chat-settings">Save Settings</button>
-                </div>
-            </div>
-        `;
-        
-        console.log('🔧 Appending modal to DOM');
-        document.body.appendChild(chatSettingsModal);
-        console.log('🔧 Modal appended, setting up modal');
-        
-        // Make the modal visible
-        chatSettingsModal.style.display = 'flex';
-        console.log('🔧 Modal display set to flex');
-        
-        this.setupChatSettingsModal();
-        console.log('🔧 Modal setup complete');
-    }
-
-    setupChatSettingsModal() {
-        const modal = document.querySelector('.yt-chat-settings-modal');
-        
-        // Close modal events
-        modal.addEventListener('click', (e) => {
-            if (e.target.classList.contains('close-chat-settings') || 
-                e.target.classList.contains('cancel-chat-settings') ||
-                e.target === modal) {
-                modal.remove();
-            }
-        });
-        
-        // Save settings
-        modal.addEventListener('click', (e) => {
-            if (e.target.classList.contains('save-chat-settings')) {
-                this.saveChatSettings();
-                modal.remove();
-            }
-        });
-        
-        // Moderation button events
-        modal.addEventListener('click', (e) => {
-            if (e.target.id === 'banUserBtn') {
-                this.showModerationPrompt('ban');
-            } else if (e.target.id === 'timeoutUserBtn') {
-                this.showModerationPrompt('timeout');
-            } else if (e.target.id === 'addModBtn') {
-                this.showModerationPrompt('moderator');
-            }
-        });
-    }
-
-    saveChatSettings() {
-        const settings = {
-            chatMode: document.getElementById('chatMode')?.value || 'enabled',
-            slowMode: document.getElementById('slowMode')?.value || 'off',
-            filterProfanity: document.getElementById('filterProfanity')?.checked ?? true,
-            filterSpam: document.getElementById('filterSpam')?.checked ?? true,
-            filterLinks: document.getElementById('filterLinks')?.checked ?? false,
-            filterEmojis: document.getElementById('filterEmojis')?.checked ?? false,
-            showTimestamps: document.getElementById('showTimestamps')?.checked ?? true,
-            showUserBadges: document.getElementById('showUserBadges')?.checked ?? true,
-            highlightStreamer: document.getElementById('highlightStreamer')?.checked ?? false,
-            compactMode: document.getElementById('compactMode')?.checked ?? false,
-            enableCommands: document.getElementById('enableCommands')?.checked ?? true,
-            allowCustomCommands: document.getElementById('allowCustomCommands')?.checked ?? false
-        };
-        
-        localStorage.setItem('chatSettings', JSON.stringify(settings));
-        this.applyChatSettings(settings);
-        this.showSuccess('Chat settings saved successfully!');
-    }
-
-    applyChatSettings(settings) {
-        const chatMessages = document.getElementById('chatMessages');
-        if (!chatMessages) return;
-        
-        // Apply compact mode
-        if (settings.compactMode) {
-            chatMessages.classList.add('compact-mode');
-        } else {
-            chatMessages.classList.remove('compact-mode');
-        }
-        
-        // Apply timestamp visibility
-        const timestamps = chatMessages.querySelectorAll('.timestamp');
-        timestamps.forEach(timestamp => {
-            timestamp.style.display = settings.showTimestamps ? 'block' : 'none';
-        });
-        
-        // Apply user badge visibility
-        const badges = chatMessages.querySelectorAll('.user-badge');
-        badges.forEach(badge => {
-            badge.style.display = settings.showUserBadges ? 'inline' : 'none';
-        });
-    }
-
-    showModerationPrompt(action) {
-        const username = prompt(`Enter username to ${action}:`);
-        if (username && username.trim()) {
-            this.performModerationAction(action, username.trim());
-        }
-    }
-
-    performModerationAction(action, username) {
-        const actions = {
-            ban: `User "${username}" has been banned from chat`,
-            timeout: `User "${username}" has been timed out for 10 minutes`,
-            moderator: `User "${username}" has been added as a moderator`
-        };
-        
-        this.showSuccess(actions[action]);
-        
-        // Add moderation message to chat
-        this.addChatMessage('System', `${action.charAt(0).toUpperCase() + action.slice(1)}: ${username}`, false, true);
-    }
-
-    setupSettingsModal() {
-        // Settings tabs functionality
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('settings-tab')) {
-                const tabName = e.target.dataset.tab;
-                
-                // Update tabs
-                document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
-                e.target.classList.add('active');
-                
-                // Update panels
-                document.querySelectorAll('.settings-panel').forEach(panel => panel.classList.remove('active'));
-                document.getElementById(tabName + 'Settings').classList.add('active');
-            }
-            
-            if (e.target.classList.contains('close-settings') || e.target.classList.contains('cancel-settings')) {
-                document.querySelector('.yt-stream-settings-modal').style.display = 'none';
-            }
-            
-            if (e.target.classList.contains('save-settings')) {
-                this.saveStreamSettings();
-                document.querySelector('.yt-stream-settings-modal').style.display = 'none';
-            }
-        });
-    }
-
-    saveStreamSettings() {
-        // Save settings to localStorage
-        const settings = {
-            videoQuality: document.getElementById('videoQuality')?.value,
-            frameRate: document.getElementById('frameRate')?.value,
-            videoBitrate: document.getElementById('videoBitrate')?.value,
-            audioQuality: document.getElementById('audioQuality')?.value,
-            echoCancellation: document.getElementById('echoCancellation')?.checked,
-            noiseSuppression: document.getElementById('noiseSuppression')?.checked,
-            autoGainControl: document.getElementById('autoGainControl')?.checked,
-            lowLatency: document.getElementById('lowLatency')?.checked,
-            adaptiveBitrate: document.getElementById('adaptiveBitrate')?.checked
-        };
-        
-        localStorage.setItem('streamSettings', JSON.stringify(settings));
-        this.showSuccess('Stream settings saved successfully!');
-    }
-
-    loadStreamHistory() {
-        // Load previous stream settings
-        const savedSettings = localStorage.getItem('streamSettings');
-        if (savedSettings) {
-            const settings = JSON.parse(savedSettings);
-            // Apply saved settings to form elements
-            Object.keys(settings).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    if (element.type === 'checkbox') {
-                        element.checked = settings[key];
-                    } else {
-                        element.value = settings[key];
-                    }
-                }
-            });
-        }
-    }
-
-    updateCharCount(input, maxLength) {
-        const charCount = input.parentElement.querySelector('.char-count');
-        if (charCount) {
-            charCount.textContent = `${input.value.length}/${maxLength}`;
-            if (input.value.length > maxLength * 0.9) {
-                charCount.style.color = '#ff6b6b';
-            } else {
-                charCount.style.color = '#6b7280';
-            }
-        }
-    }
-
-    handleStreamError(error) {
-        let message = 'Failed to start live stream. ';
-        
-        if (error.name === 'NotAllowedError') {
-            message += 'Please allow camera and microphone access to start streaming.';
-        } else if (error.name === 'NotFoundError') {
-            message += 'No camera or microphone found. Please connect your devices.';
-        } else if (error.name === 'NotReadableError') {
-            message += 'Camera or microphone is already in use by another application.';
-        } else {
-            message += 'Please check your camera and microphone settings.';
-        }
-        
-        this.showError(message);
-    }
-
-    showSuccess(message) {
-        this.showNotification(message, 'success');
-    }
-
-    showError(message) {
-        this.showNotification(message, 'error');
-    }
-
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `yt-notification yt-notification-${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                <div class="notification-message">${message}</div>
-            </div>
-            <button class="notification-close">&times;</button>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 5000);
-        
-        // Close button
-        notification.querySelector('.notification-close').addEventListener('click', () => {
-            notification.remove();
-        });
-    }
-
-    createLiveChat() {
-        // Check if chat container already exists
-        const existingChatContainer = document.querySelector('.live-chat-container');
-        if (existingChatContainer) {
-            console.log('✅ Chat container already exists, setting up functionality');
-            // Set up chat functionality on existing container
-            this.setupChatFunctionality();
-            return;
-        }
-
-        // Create new chat container if it doesn't exist
-        const chatContainer = document.createElement('div');
-        chatContainer.className = 'live-chat-container';
-        chatContainer.innerHTML = `
-            <div class="chat-header">
-                <h3><i class="fas fa-comments"></i> Live Chat</h3>
-                <button class="chat-settings-btn" title="Chat Settings">
-                    <i class="fas fa-cog"></i>
-                </button>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="chat-welcome">
-                    <p>Welcome to the live chat! Start streaming to see messages here.</p>
-                </div>
-            </div>
-            <div class="chat-input-container">
-                <input type="text" id="chatInput" placeholder="Send a message..." disabled>
-                <button id="sendChatBtn" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        `;
-
-        // Add chat container to sidebar
-        const sidebar = document.querySelector('.yt-live-sidebar');
-        if (sidebar) {
-            sidebar.appendChild(chatContainer);
-        }
-
-        // Set up chat functionality
-        this.setupChatFunctionality();
-    }
-
-    createStreamStats() {
-        const statsContainer = document.createElement('div');
-        statsContainer.className = 'stream-stats-container';
-        statsContainer.innerHTML = `
-            <div class="stats-header">
-                <h3><i class="fas fa-chart-line"></i> Stream Analytics</h3>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" id="viewerCount">0</div>
-                    <div class="stat-label">Viewers</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="commentCount">0</div>
-                    <div class="stat-label">Comments</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="likeCount">0</div>
-                    <div class="stat-label">Likes</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="shareCount">0</div>
-                    <div class="stat-label">Shares</div>
-                </div>
-            </div>
-        `;
-
-        // Add stats container to sidebar
-        const sidebar = document.querySelector('.yt-live-sidebar');
-        if (sidebar) {
-            sidebar.appendChild(statsContainer);
-        }
-
-        // Initialize stats
-        this.streamStats = {
-            viewers: 0,
-            comments: 0,
-            likes: 0,
-            shares: 0
-        };
-    }
-
-    setupChatFunctionality() {
-        // Use the first chat input and send button (from existing HTML)
-        const chatInput = document.querySelector('#chatInput');
-        const sendBtn = document.querySelector('#sendChatBtn');
-        const chatMessages = document.querySelector('#chatMessages');
-
-        if (chatInput && sendBtn) {
-            // Enable chat when streaming
-            if (this.isStreaming) {
-                chatInput.disabled = false;
-                sendBtn.disabled = false;
-            }
-
-            // Send message functionality
-            const sendMessage = () => {
-                const message = chatInput.value.trim();
-                if (message && this.isStreaming) {
-                    this.addChatMessage('You', message);
-                    chatInput.value = '';
-                }
-            };
-
-            // Remove existing event listeners to avoid duplicates
-            sendBtn.replaceWith(sendBtn.cloneNode(true));
-            chatInput.replaceWith(chatInput.cloneNode(true));
-            
-            // Get the new elements
-            const newSendBtn = document.querySelector('#sendChatBtn');
-            const newChatInput = document.querySelector('#chatInput');
-            
-            newSendBtn.addEventListener('click', sendMessage);
-            newChatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-        }
-
-        // Set up chat settings button
-        const chatSettingsBtn = document.querySelector('.chat-settings-btn');
-        if (chatSettingsBtn) {
-            console.log('🔧 Chat settings button found, setting up listener');
-            chatSettingsBtn.addEventListener('click', (e) => {
-                console.log('🔧 Chat settings button clicked (specific listener)');
-                e.preventDefault();
-                e.stopPropagation();
-                this.openChatSettings();
-            });
-        } else {
-            console.log('❌ Chat settings button not found');
-        }
-    }
-
-    updateStats() {
-        const viewerCount = document.getElementById('viewerCount');
-        const commentCount = document.getElementById('commentCount');
-        const likeCount = document.getElementById('likeCount');
-        const shareCount = document.getElementById('shareCount');
-
-        if (viewerCount) viewerCount.textContent = this.streamStats.viewers;
-        if (commentCount) commentCount.textContent = this.streamStats.comments;
-        if (likeCount) likeCount.textContent = this.streamStats.likes;
-        if (shareCount) shareCount.textContent = this.streamStats.shares;
-    }
-}
-
-// Initialize YouTube-style Live Stream Manager
-let youtubeLiveStreamManager;
-document.addEventListener('DOMContentLoaded', () => {
-    youtubeLiveStreamManager = new YouTubeLiveStreamManager();
-});
-
-    
-        // Mobile Menu Functions
         function openMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
             if (overlay) {
@@ -3561,7 +1996,424 @@ document.addEventListener('DOMContentLoaded', () => {
     font-style: italic;
 }
 
+        /* Tip Button Styles */
+        .tip-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+            margin-left: 8px;
+        }
+
+        .tip-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.5);
+        }
+
+        .tip-btn i {
+            font-size: 16px;
+        }
+
+        /* Donation Goals Styles */
+        .donation-goals-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .goals-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .add-goal-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-goal-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .goal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #ff0000;
+        }
+
+        .goal-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .goal-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .progress-bar {
+            width: 120px;
+            height: 6px;
+            background: #e5e5e5;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6b6b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .goal-amount {
+            font-size: 12px;
+            color: #606060;
+            font-weight: 500;
+        }
+
+        .goal-percentage {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff0000;
+        }
+
+        /* Tip Modal Styles */
+        .tip-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .tip-modal.show {
+            display: flex;
+        }
+
+        .tip-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .tip-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tip-modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .tip-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #606060;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tip-close:hover {
+            background: #f2f2f2;
+            color: #030303;
+        }
+
+        .tip-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tip-amount-btn {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .tip-amount-btn:hover {
+            border-color: #ff0000;
+            background: #fff5f5;
+        }
+
+        .tip-amount-btn.selected {
+            border-color: #ff0000;
+            background: #ff0000;
+            color: white;
+        }
+
+        .tip-custom {
+            margin-bottom: 20px;
+        }
+
+        .tip-custom input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .tip-custom input:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
+        .tip-message {
+            margin-bottom: 20px;
+        }
+
+        .tip-message textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .tip-message textarea:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
+        .tip-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .tip-pay-btn {
+            flex: 1;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tip-pay-btn:hover {
+            background: #cc0000;
+        }
+
+        .tip-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .tip-cancel-btn {
+            background: white;
+            color: #606060;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tip-cancel-btn:hover {
+            border-color: #ccc;
+            background: #f8f9fa;
+        }
+
+        /* Revenue Dashboard Styles */
+        .revenue-dashboard {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .revenue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .revenue-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #030303;
+        }
+
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .revenue-stat {
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .revenue-stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff0000;
+            margin-bottom: 4px;
+        }
+
+        .revenue-stat-label {
+            font-size: 12px;
+            color: #606060;
+            font-weight: 500;
+        }
+
+        /* Payment Processing Styles */
+        .payment-processing {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .payment-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e5e5;
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .payment-success {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .payment-error {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
     </style>
+
+    <!-- Tip Modal -->
+    <div id="tipModal" class="tip-modal">
+        <div class="tip-modal-content">
+            <div class="tip-modal-header">
+                <h3>Send a Tip</h3>
+                <button class="tip-close" onclick="closeTipModal()">&times;</button>
+            </div>
+            
+            <div class="tip-amounts">
+                <button class="tip-amount-btn" data-amount="5">$5</button>
+                <button class="tip-amount-btn" data-amount="10">$10</button>
+                <button class="tip-amount-btn" data-amount="25">$25</button>
+                <button class="tip-amount-btn" data-amount="50">$50</button>
+                <button class="tip-amount-btn" data-amount="100">$100</button>
+                <button class="tip-amount-btn" data-amount="custom">Custom</button>
+            </div>
+            
+            <div class="tip-custom" style="display: none;">
+                <input type="number" id="customAmount" placeholder="Enter amount" min="1" max="1000">
+            </div>
+            
+            <div class="tip-message">
+                <textarea id="tipMessage" placeholder="Add a message (optional)"></textarea>
+            </div>
+            
+            <div class="tip-actions">
+                <button class="tip-cancel-btn" onclick="closeTipModal()">Cancel</button>
+                <button class="tip-pay-btn" id="tipPayBtn" onclick="processTip()">
+                    <span id="tipPayText">Send Tip $0</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobileMenuOverlay" class="yt-mobile-menu-overlay">

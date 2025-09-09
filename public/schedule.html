@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Content - Amplifi</title>
+    <meta name="description" content="Schedule your content for optimal publishing times">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="assets/css/youtube-style.css">
+    
+    <!-- Authentication Guard -->
+    <script src="assets/js/auth-guard.js"></script>
+    
+    <style>
+        .schedule-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            min-height: 100vh;
+        }
+        
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .schedule-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .schedule-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-primary {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background: #cc0000;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .schedule-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+        
+        .calendar-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: white;
+            border: 1px solid #ddd;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: #f0f0f0;
+        }
+        
+        .calendar-day.today {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .calendar-day.selected {
+            background: #007bff;
+            color: white;
+        }
+        
+        .calendar-day.has-content {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .day-number {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .content-indicator {
+            width: 6px;
+            height: 6px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+        
+        .scheduled-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .content-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .content-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #ff0000;
+            transition: all 0.2s;
+        }
+        
+        .content-item:hover {
+            background: #e9ecef;
+        }
+        
+        .content-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .content-item-title {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .content-item-time {
+            font-size: 12px;
+            color: #666;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .content-item-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .content-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .action-btn.edit {
+            color: #007bff;
+            border-color: #007bff;
+        }
+        
+        .action-btn.delete {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .schedule-form {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .empty-state-text {
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .schedule-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="schedule-container">
+        <div class="schedule-header">
+            <h1 class="schedule-title">Schedule Content</h1>
+            <div class="schedule-actions">
+                <button class="btn-secondary" onclick="showScheduleForm()">
+                    <i class="fas fa-plus"></i>
+                    Add Content
+                </button>
+                <button class="btn-primary" onclick="viewCalendar()">
+                    <i class="fas fa-calendar"></i>
+                    Calendar View
+                </button>
+            </div>
+        </div>
+        
+        <div class="schedule-content">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2 class="calendar-title" id="calendarTitle">December 2024</h2>
+                    <div class="calendar-nav">
+                        <button class="nav-btn" onclick="previousMonth()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="nav-btn" onclick="nextMonth()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="scheduled-content">
+                <div class="content-header">
+                    <h2 class="content-title">Scheduled Content</h2>
+                    <span class="content-count" id="contentCount">0 items</span>
+                </div>
+                
+                <div class="content-list" id="contentList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="empty-state-title">No content scheduled</div>
+                        <div class="empty-state-text">Click "Add Content" to schedule your first post</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Schedule Form Modal -->
+        <div class="schedule-form" id="scheduleForm" style="display: none;">
+            <h3>Schedule New Content</h3>
+            <form id="contentForm">
+                <div class="form-group">
+                    <label class="form-label">Content Type</label>
+                    <select class="form-select" id="contentType" required>
+                        <option value="">Select type</option>
+                        <option value="video">Video</option>
+                        <option value="short">Short Video</option>
+                        <option value="live">Live Stream</option>
+                        <option value="post">Post</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" id="contentTitle" placeholder="Enter content title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="contentDescription" placeholder="Enter content description"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Schedule Date</label>
+                        <input type="date" class="form-input" id="scheduleDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Schedule Time</label>
+                        <input type="time" class="form-input" id="scheduleTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Visibility</label>
+                    <select class="form-select" id="contentVisibility">
+                        <option value="public">Public</option>
+                        <option value="unlisted">Unlisted</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tags (comma-separated)</label>
+                    <input type="text" class="form-input" id="contentTags" placeholder="gaming, tutorial, review">
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="hideScheduleForm()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-calendar-plus"></i>
+                        Schedule Content
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        class ContentScheduler {
+            constructor() {
+                this.currentDate = new Date();
+                this.selectedDate = null;
+                this.scheduledContent = JSON.parse(localStorage.getItem('scheduledContent') || '[]');
+                this.calendarGrid = document.getElementById('calendarGrid');
+                this.contentList = document.getElementById('contentList');
+                this.contentForm = document.getElementById('contentForm');
+                this.scheduleForm = document.getElementById('scheduleForm');
+                
+                this.init();
+            }
+            
+            init() {
+                this.renderCalendar();
+                this.renderContentList();
+                this.setupEventListeners();
+                console.log('📅 Content Scheduler initialized');
+            }
+            
+            setupEventListeners() {
+                this.contentForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('scheduleDate').value = today;
+            }
+            
+            renderCalendar() {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                const monthName = this.currentDate.toLocaleString('default', { month: 'long' });
+                
+                document.getElementById('calendarTitle').textContent = `${monthName} ${year}`;
+                
+                // Clear calendar
+                this.calendarGrid.innerHTML = '';
+                
+                // Add day headers
+                const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayHeaders.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'calendar-day-header';
+                    dayHeader.textContent = day;
+                    this.calendarGrid.appendChild(dayHeader);
+                });
+                
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                
+                // Add empty cells for days before month starts
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day';
+                    this.calendarGrid.appendChild(emptyDay);
+                }
+                
+                // Add days of month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.innerHTML = `<div class="day-number">${day}</div>`;
+                    
+                    const currentDay = new Date(year, month, day);
+                    
+                    // Check if it's today
+                    if (currentDay.toDateString() === today.toDateString()) {
+                        dayElement.classList.add('today');
+                    }
+                    
+                    // Check if it has scheduled content
+                    if (this.hasContentOnDate(currentDay)) {
+                        dayElement.classList.add('has-content');
+                        dayElement.innerHTML += '<div class="content-indicator"></div>';
+                    }
+                    
+                    // Add click handler
+                    dayElement.addEventListener('click', () => this.selectDate(currentDay));
+                    
+                    this.calendarGrid.appendChild(dayElement);
+                }
+            }
+            
+            hasContentOnDate(date) {
+                return this.scheduledContent.some(content => {
+                    const contentDate = new Date(content.scheduleDate);
+                    return contentDate.toDateString() === date.toDateString();
+                });
+            }
+            
+            selectDate(date) {
+                this.selectedDate = date;
+                
+                // Update visual selection
+                document.querySelectorAll('.calendar-day').forEach(day => {
+                    day.classList.remove('selected');
+                });
+                
+                event.target.closest('.calendar-day').classList.add('selected');
+                
+                // Filter content for selected date
+                this.renderContentList();
+            }
+            
+            renderContentList() {
+                let contentToShow = this.scheduledContent;
+                
+                // Filter by selected date if one is selected
+                if (this.selectedDate) {
+                    contentToShow = this.scheduledContent.filter(content => {
+                        const contentDate = new Date(content.scheduleDate);
+                        return contentDate.toDateString() === this.selectedDate.toDateString();
+                    });
+                }
+                
+                // Update count
+                document.getElementById('contentCount').textContent = `${contentToShow.length} items`;
+                
+                if (contentToShow.length === 0) {
+                    this.contentList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <div class="empty-state-title">No content scheduled</div>
+                            <div class="empty-state-text">Click "Add Content" to schedule your first post</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort by schedule time
+                contentToShow.sort((a, b) => new Date(a.scheduleDate + ' ' + a.scheduleTime) - new Date(b.scheduleDate + ' ' + b.scheduleTime));
+                
+                this.contentList.innerHTML = contentToShow.map(content => `
+                    <div class="content-item">
+                        <div class="content-item-header">
+                            <div class="content-item-title">${content.title}</div>
+                            <div class="content-item-time">${this.formatDateTime(content.scheduleDate, content.scheduleTime)}</div>
+                        </div>
+                        <div class="content-item-description">${content.description || 'No description'}</div>
+                        <div class="content-item-actions">
+                            <button class="action-btn edit" onclick="editContent('${content.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn delete" onclick="deleteContent('${content.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const content = {
+                    id: Date.now().toString(),
+                    type: document.getElementById('contentType').value,
+                    title: document.getElementById('contentTitle').value,
+                    description: document.getElementById('contentDescription').value,
+                    scheduleDate: document.getElementById('scheduleDate').value,
+                    scheduleTime: document.getElementById('scheduleTime').value,
+                    visibility: document.getElementById('contentVisibility').value,
+                    tags: document.getElementById('contentTags').value.split(',').map(tag => tag.trim()),
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.scheduledContent.push(content);
+                this.saveContent();
+                this.renderCalendar();
+                this.renderContentList();
+                this.hideScheduleForm();
+                
+                console.log('✅ Content scheduled:', content);
+            }
+            
+            saveContent() {
+                localStorage.setItem('scheduledContent', JSON.stringify(this.scheduledContent));
+            }
+            
+            formatDateTime(date, time) {
+                const dateObj = new Date(date + ' ' + time);
+                return dateObj.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+            
+            showScheduleForm() {
+                this.scheduleForm.style.display = 'block';
+                this.scheduleForm.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            hideScheduleForm() {
+                this.scheduleForm.style.display = 'none';
+                this.contentForm.reset();
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('scheduleDate').value = today;
+            }
+            
+            previousMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                this.renderCalendar();
+            }
+            
+            nextMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                this.renderCalendar();
+            }
+            
+            deleteContent(id) {
+                if (confirm('Are you sure you want to delete this scheduled content?')) {
+                    this.scheduledContent = this.scheduledContent.filter(content => content.id !== id);
+                    this.saveContent();
+                    this.renderCalendar();
+                    this.renderContentList();
+                    console.log('🗑️ Content deleted:', id);
+                }
+            }
+            
+            editContent(id) {
+                const content = this.scheduledContent.find(c => c.id === id);
+                if (content) {
+                    // Populate form with content data
+                    document.getElementById('contentType').value = content.type;
+                    document.getElementById('contentTitle').value = content.title;
+                    document.getElementById('contentDescription').value = content.description || '';
+                    document.getElementById('scheduleDate').value = content.scheduleDate;
+                    document.getElementById('scheduleTime').value = content.scheduleTime;
+                    document.getElementById('contentVisibility').value = content.visibility;
+                    document.getElementById('contentTags').value = content.tags.join(', ');
+                    
+                    // Remove from scheduled content
+                    this.scheduledContent = this.scheduledContent.filter(c => c.id !== id);
+                    
+                    // Show form
+                    this.showScheduleForm();
+                }
+            }
+        }
+        
+        // Global functions for button clicks
+        function showScheduleForm() {
+            scheduler.showScheduleForm();
+        }
+        
+        function hideScheduleForm() {
+            scheduler.hideScheduleForm();
+        }
+        
+        function previousMonth() {
+            scheduler.previousMonth();
+        }
+        
+        function nextMonth() {
+            scheduler.nextMonth();
+        }
+        
+        function editContent(id) {
+            scheduler.editContent(id);
+        }
+        
+        function deleteContent(id) {
+            scheduler.deleteContent(id);
+        }
+        
+        function viewCalendar() {
+            // Scroll to calendar section
+            document.querySelector('.calendar-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Initialize scheduler when page loads
+        let scheduler;
+        document.addEventListener('DOMContentLoaded', () => {
+            scheduler = new ContentScheduler();
+        });
+    </script>
+</body>
+</html>

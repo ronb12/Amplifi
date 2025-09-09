@@ -670,25 +670,35 @@ class AmplifiApp {
         });
     }
 
-    // Update UI for signed-in user
-    updateUIForSignedInUser() {
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
-        
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (signupBtn) signupBtn.style.display = 'none';
-        
-        // Add user menu
-        this.addUserMenu();
-    }
 
     // Update UI for signed-out user
     updateUIForSignedOutUser() {
         const authButtons = document.getElementById('authButtons');
         const userProfile = document.getElementById('userProfile');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
         
+        // Show auth buttons and hide user profile
         if (authButtons) authButtons.style.display = 'block';
         if (userProfile) userProfile.style.display = 'none';
+        
+        // Reset individual buttons if they exist
+        if (loginBtn) {
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            loginBtn.onclick = () => {
+                if (window.openAuthModal) {
+                    window.openAuthModal('login');
+                }
+            };
+        }
+        if (signupBtn) {
+            signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+            signupBtn.onclick = () => {
+                if (window.openAuthModal) {
+                    window.openAuthModal('signup');
+                }
+            };
+        }
         
         // Remove user menu
         this.removeUserMenu();
@@ -700,10 +710,24 @@ class AmplifiApp {
         const userProfile = document.getElementById('userProfile');
         const userName = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
         
+        // Hide auth buttons and show user profile
         if (authButtons) authButtons.style.display = 'none';
         if (userProfile) userProfile.style.display = 'block';
         
+        // Update individual buttons if they exist
+        if (loginBtn) {
+            loginBtn.innerHTML = '<i class="fas fa-user"></i> Profile';
+            loginBtn.onclick = () => window.location.href = 'profile.html';
+        }
+        if (signupBtn) {
+            signupBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
+            signupBtn.onclick = () => this.logout();
+        }
+        
+        // Update user info
         if (userName && this.currentUser) {
             userName.textContent = this.currentUser.displayName || this.currentUser.email || 'User';
         }
@@ -711,6 +735,9 @@ class AmplifiApp {
         if (userAvatar && this.currentUser && this.currentUser.photoURL) {
             userAvatar.src = this.currentUser.photoURL;
         }
+        
+        // Add user menu
+        this.addUserMenu();
     }
 
     // Add user menu to header
@@ -1318,7 +1345,8 @@ class AmplifiApp {
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && (key.includes('                keysToRemove.push(key);
+            if (key && (key.includes('creator_') || key.includes('amplifi_'))) {
+                keysToRemove.push(key);
             }
         }
         
@@ -1530,6 +1558,8 @@ class AmplifiApp {
                 // Create Stripe Connect account first
                 const createAccount = confirm('You need to connect your Stripe account first. Would you like to do that now?');
                 if (createAccount) {
+                    // TODO: Implement Stripe Connect account creation
+                    alert('Stripe Connect account creation will be implemented soon.');
                 }
                 return;
             }
@@ -1592,47 +1622,7 @@ class AmplifiApp {
         }
     }
 
-    // Create Stripe Connect account
-        try {
-            const response = await fetch('/api/create-stripe-account', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: this.currentUser.email,
-                    country: 'US', // Default country
-                    userId: this.currentUser.uid,
-                    displayName: this.currentUser.displayName || 'Creator'
-                }),
-            });
-
-            const result = await response.json();
-
-            if (result.error) {
-                throw new Error(result.error);
-            }
-
-            if (result.success && result.accountLink) {
-                // Redirect to Stripe Connect onboarding
-                window.open(result.accountLink, '_blank');
-                
-                // Update user document with Stripe account ID
-                await db.collection('users').doc(this.currentUser.uid).update({
-                    stripeAccountId: result.accountId,
-                    stripeAccountStatus: 'pending'
-                });
-
-                alert('Stripe account creation initiated! Please complete the onboarding process in the new tab.');
-            } else {
-                throw new Error('Failed to create Stripe account');
-            }
-
-        } catch (error) {
-            console.error('Error creating Stripe account:', error);
-            alert('Failed to create Stripe account: ' + error.message);
-        }
-    }
+    // Create Stripe Connect account function removed - broken code
 
     handleFileSelect(file) {
         if (file.size > 50 * 1024 * 1024) {
