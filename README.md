@@ -5,6 +5,8 @@
 
 > **The ultimate platform for content creators with AI-powered recommendations, live streaming, and advanced creator tools.**
 
+**🏢 A Product of [Bradley Virtual Solutions, LLC](https://bradleyvirtualsolutions.com)**
+
 ## 🌟 Live Demo
 
 **🌐 Visit:** [https://amplifi-a54d9.web.app](https://amplifi-a54d9.web.app)
@@ -373,3 +375,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **🎉 Amplifi - Where creators amplify their content!**
+
+---
+
+**© 2024 Bradley Virtual Solutions, LLC. All rights reserved.**

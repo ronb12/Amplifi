@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "Amplifi Live Streaming Monetization System",
   "main": "index.js",
+  "author": "Bradley Virtual Solutions, LLC",
+  "company": "Bradley Virtual Solutions, LLC",
+  "homepage": "https://bradleyvirtualsolutions.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ronb12/Amplifi.git"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build step required'",

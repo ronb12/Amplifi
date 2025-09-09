@@ -677,5 +677,96 @@
             showError('Facebook sign-in coming soon!');
         }
     </script>
+
+    <!-- Footer -->
+    <footer class="login-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="amplifi-icon.svg" alt="Amplifi" class="footer-logo">
+                <span class="footer-title">Amplifi</span>
+            </div>
+            <div class="footer-company">
+                <p>A Product of <a href="https://bradleyvirtualsolutions.com" target="_blank" rel="noopener">Bradley Virtual Solutions, LLC</a></p>
+                <p>&copy; 2024 Bradley Virtual Solutions, LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .login-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            z-index: 1000;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-logo {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .footer-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .footer-company {
+            text-align: right;
+        }
+        
+        .footer-company p {
+            margin: 3px 0;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        .footer-company a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer-company a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-company {
+                text-align: center;
+            }
+            
+            .footer-company p {
+                font-size: 11px;
+            }
+        }
+    </style>
 </body>
 </html>

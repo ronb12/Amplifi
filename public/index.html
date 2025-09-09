@@ -1369,5 +1369,87 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="amplifi-icon.svg" alt="Amplifi" class="footer-logo">
+                <span class="footer-title">Amplifi</span>
+            </div>
+            <div class="footer-company">
+                <p>A Product of <a href="https://bradleyvirtualsolutions.com" target="_blank" rel="noopener">Bradley Virtual Solutions, LLC</a></p>
+                <p>&copy; 2024 Bradley Virtual Solutions, LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .app-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-logo {
+            width: 32px;
+            height: 32px;
+        }
+        
+        .footer-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .footer-company {
+            text-align: right;
+        }
+        
+        .footer-company p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .footer-company a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer-company a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-company {
+                text-align: center;
+            }
+        }
+    </style>
 </body>
 </html>
