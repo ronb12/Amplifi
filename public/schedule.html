@@ -89,6 +89,161 @@
             gap: 12px;
         }
 
+        /* Desktop Navigation */
+        .yt-desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-left: 40px;
+        }
+
+        .yt-desktop-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .yt-desktop-nav-item:hover {
+            background: #f8f9fa;
+        }
+
+        .yt-desktop-nav-item.active {
+            background: #ff0000;
+            color: white;
+        }
+
+        /* Mobile Navigation */
+        .yt-mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .yt-mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .yt-mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #666;
+            font-size: 12px;
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+
+        .yt-mobile-nav-item:hover,
+        .yt-mobile-nav-item.active {
+            color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .yt-mobile-nav-item i {
+            font-size: 18px;
+        }
+
+        /* Mobile Menu Button */
+        .yt-mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #1a1a1a;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* Mobile Menu Overlay */
+        .yt-mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .yt-mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            padding: 80px 24px 24px;
+            transition: right 0.3s ease;
+            z-index: 1001;
+        }
+
+        .yt-mobile-menu.open {
+            right: 0;
+        }
+
+        .yt-mobile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e9ecef;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .yt-mobile-menu-item:hover {
+            color: #ff0000;
+        }
+
+        .yt-mobile-menu-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .yt-desktop-nav {
+                display: none;
+            }
+
+            .yt-mobile-menu-btn {
+                display: block;
+            }
+
+            .yt-mobile-nav {
+                display: block;
+            }
+
+            .schedule-container {
+                padding-bottom: 80px;
+            }
+        }
+
         .yt-btn {
             padding: 8px 16px;
             border: none;
@@ -493,24 +648,149 @@
                 <span class="logo-text">Amplifi</span>
             </a>
             
-            <div class="yt-header-actions" id="authButtons">
-                <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
+            <!-- Desktop Navigation -->
+            <nav class="yt-desktop-nav">
+                <a href="index.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="feed.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="trending.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </a>
+                <a href="upload.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="video-editor.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-cut"></i>
+                    <span>Editor</span>
+                </a>
+                <a href="schedule.html" class="yt-desktop-nav-item active">
+                    <i class="fas fa-calendar"></i>
+                    <span>Schedule</span>
+                </a>
+                <a href="live.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Live</span>
+                </a>
+                <a href="creator-analytics.html" class="yt-desktop-nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </nav>
+            
+            <div class="yt-header-actions">
+                <button class="yt-mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
                 </button>
-                <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
-                    <i class="fas fa-user-plus"></i> Sign Up
-                </button>
-            </div>
-            <div class="yt-header-actions" id="userProfile" style="display: none;">
-                <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
-                    <i class="fas fa-user"></i> Profile
-                </button>
-                <button class="yt-btn yt-btn-secondary" onclick="signOut()">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
+                
+                <div class="yt-header-actions" id="authButtons">
+                    <button class="yt-btn yt-btn-primary" id="loginBtn" onclick="window.location.href='login.html'">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <button class="yt-btn yt-btn-secondary" id="signupBtn" onclick="window.location.href='login.html'">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </button>
+                </div>
+                <div class="yt-header-actions" id="userProfile" style="display: none;">
+                    <button class="yt-btn yt-btn-primary" onclick="window.location.href='profile.html'">
+                        <i class="fas fa-user"></i> Profile
+                    </button>
+                    <button class="yt-btn yt-btn-secondary" onclick="signOut()">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </button>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="yt-mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="yt-mobile-menu" id="mobileMenu">
+        <button class="yt-mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <nav class="yt-mobile-menu-nav">
+            <a href="index.html" class="yt-mobile-menu-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="feed.html" class="yt-mobile-menu-item">
+                <i class="fas fa-th-large"></i>
+                <span>Feed</span>
+            </a>
+            <a href="trending.html" class="yt-mobile-menu-item">
+                <i class="fas fa-fire"></i>
+                <span>Trending</span>
+            </a>
+            <a href="upload.html" class="yt-mobile-menu-item">
+                <i class="fas fa-upload"></i>
+                <span>Upload</span>
+            </a>
+            <a href="video-editor.html" class="yt-mobile-menu-item">
+                <i class="fas fa-cut"></i>
+                <span>Editor</span>
+            </a>
+            <a href="schedule.html" class="yt-mobile-menu-item">
+                <i class="fas fa-calendar"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="live.html" class="yt-mobile-menu-item">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Live</span>
+            </a>
+            <a href="creator-analytics.html" class="yt-mobile-menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="library.html" class="yt-mobile-menu-item">
+                <i class="fas fa-folder"></i>
+                <span>Library</span>
+            </a>
+            <a href="moments.html" class="yt-mobile-menu-item">
+                <i class="fas fa-bolt"></i>
+                <span>Moments</span>
+            </a>
+            <a href="search.html" class="yt-mobile-menu-item">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="yt-mobile-nav">
+        <div class="yt-mobile-nav-items">
+            <a href="index.html" class="yt-mobile-nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="feed.html" class="yt-mobile-nav-item">
+                <i class="fas fa-th-large"></i>
+                <span>Feed</span>
+            </a>
+            <a href="upload.html" class="yt-mobile-nav-item">
+                <i class="fas fa-plus"></i>
+                <span>Create</span>
+            </a>
+            <a href="live.html" class="yt-mobile-nav-item">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Live</span>
+            </a>
+            <a href="schedule.html" class="yt-mobile-nav-item active">
+                <i class="fas fa-calendar"></i>
+                <span>Schedule</span>
+            </a>
+        </div>
+    </nav>
 
     <div class="schedule-container">
         <div class="schedule-header">
@@ -913,6 +1193,23 @@
         document.addEventListener('DOMContentLoaded', () => {
             scheduler = new ContentScheduler();
         });
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            
+            mobileMenu.classList.toggle('open');
+            overlay.style.display = mobileMenu.classList.contains('open') ? 'block' : 'none';
+        }
+
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            
+            mobileMenu.classList.remove('open');
+            overlay.style.display = 'none';
+        }
 
         // Sign out function
         function signOut() {
