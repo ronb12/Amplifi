@@ -23,7 +23,7 @@
     
     <!-- FFmpeg.js for high-quality video processing -->
     <script>
-        // Load FFmpeg with fallback CDN
+        // Load FFmpeg with fallback CDN (skip FFmpegUtil for now)
         function loadFFmpegScripts() {
             const loadScript = (src, name) => {
                 return new Promise((resolve, reject) => {
@@ -41,33 +41,11 @@
                 });
             };
 
-            // Load FFmpeg first, then Util
+            // Load only FFmpeg (skip FFmpegUtil for now)
             loadScript('https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg')
-                .then(() => {
-                    // Try different util versions
-                    return loadScript('https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
-                        .catch(() => {
-                            console.log('🔄 Trying older util version...');
-                            return loadScript('https://unpkg.com/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
-                        })
-                        .catch(() => {
-                            console.log('🔄 Trying jsDelivr util...');
-                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil');
-                        })
-                        .catch(() => {
-                            console.log('🔄 Trying jsDelivr older util...');
-                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
-                        });
-                })
                 .catch(() => {
                     console.log('🔄 Trying jsDelivr FFmpeg...');
-                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg')
-                        .then(() => {
-                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
-                                .catch(() => {
-                                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
-                                });
-                        });
+                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg');
                 })
                 .catch(() => {
                     console.log('❌ All FFmpeg CDNs failed - video editor will work without FFmpeg');
@@ -891,30 +869,58 @@
                     
                     // Check for different possible global variable names
                     const FFmpegWASM = window.FFmpegWASM || window.FFmpeg;
-                    const FFmpegUtil = window.FFmpegUtil;
                     
                     if (typeof FFmpegWASM === 'undefined') {
                         throw new Error('FFmpegWASM not available');
                     }
                     
-                    if (typeof FFmpegUtil === 'undefined') {
-                        throw new Error('FFmpegUtil not available');
-                    }
-                    
                     const { FFmpeg } = FFmpegWASM;
-                    const { fetchFile, toBlobURL } = FFmpegUtil;
                     
+                    // Create FFmpeg instance
                     this.ffmpeg = new FFmpeg();
                     this.ffmpeg.on('log', ({ message }) => console.log(message));
                     this.ffmpeg.on('progress', ({ progress }) => {
                         this.progressFill.style.width = `${Math.round(progress * 100)}%`;
                     });
                     
-                    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-                    await this.ffmpeg.load({
-                        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-                        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-                    });
+                    // Try to load FFmpeg core with fallback URLs
+                    const coreURLs = [
+                        'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+                        'https://unpkg.com/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.js',
+                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.js'
+                    ];
+                    
+                    const wasmURLs = [
+                        'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+                        'https://unpkg.com/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.wasm',
+                        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.5/dist/umd/ffmpeg-core.wasm'
+                    ];
+                    
+                    // Try to load with different core versions
+                    let loaded = false;
+                    for (let i = 0; i < coreURLs.length; i++) {
+                        try {
+                            console.log(`🔄 Trying core version ${i + 1}/${coreURLs.length}...`);
+                            await this.ffmpeg.load({
+                                coreURL: coreURLs[i],
+                                wasmURL: wasmURLs[i],
+                            });
+                            console.log('✅ FFmpeg core loaded successfully');
+                            loaded = true;
+                            break;
+                        } catch (error) {
+                            console.log(`❌ Core version ${i + 1} failed:`, error.message);
+                            if (i === coreURLs.length - 1) {
+                                throw error;
+                            }
+                        }
+                    }
+                    
+                    if (!loaded) {
+                        throw new Error('All FFmpeg core versions failed to load');
+                    }
                     
                     console.log('✅ FFmpeg loaded successfully');
                 } catch (error) {
@@ -932,20 +938,18 @@
                     const checkFFmpeg = () => {
                         console.log(`🔍 Checking FFmpeg availability (attempt ${attempts + 1}/${maxAttempts})`);
                         console.log('🔍 FFmpegWASM:', typeof FFmpegWASM);
-                        console.log('🔍 FFmpegUtil:', typeof FFmpegUtil);
-                        console.log('🔍 window.FFmpegUtil:', typeof window.FFmpegUtil);
+                        console.log('🔍 window.FFmpegWASM:', typeof window.FFmpegWASM);
                         console.log('🔍 Available globals:', Object.keys(window).filter(key => key.includes('FFmpeg')));
                         
-                        // Check for different possible global variable names
+                        // Only check for FFmpegWASM since FFmpegUtil is not loading
                         const hasFFmpeg = typeof FFmpegWASM !== 'undefined' || typeof window.FFmpegWASM !== 'undefined';
-                        const hasUtil = typeof FFmpegUtil !== 'undefined' || typeof window.FFmpegUtil !== 'undefined';
                         
-                        if (hasFFmpeg && hasUtil) {
-                            console.log('✅ FFmpeg scripts are available');
+                        if (hasFFmpeg) {
+                            console.log('✅ FFmpeg script is available (FFmpegUtil will be skipped)');
                             resolve();
                         } else if (attempts >= maxAttempts) {
-                            console.log('❌ FFmpeg scripts failed to load after timeout');
-                            reject(new Error('FFmpeg scripts failed to load'));
+                            console.log('❌ FFmpeg script failed to load after timeout');
+                            reject(new Error('FFmpeg script failed to load'));
                         } else {
                             attempts++;
                             setTimeout(checkFFmpeg, 100);
