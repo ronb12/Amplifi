@@ -41,20 +41,37 @@
                 });
             };
 
-            // Try primary CDN first
-            Promise.all([
-                loadScript('https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg'),
-                loadScript('https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
-            ]).catch(() => {
-                console.log('🔄 Trying fallback CDN...');
-                // Fallback to jsDelivr
-                Promise.all([
-                    loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg'),
-                    loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
-                ]).catch(() => {
+            // Load FFmpeg first, then Util
+            loadScript('https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg')
+                .then(() => {
+                    // Try different util versions
+                    return loadScript('https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
+                        .catch(() => {
+                            console.log('🔄 Trying older util version...');
+                            return loadScript('https://unpkg.com/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
+                        })
+                        .catch(() => {
+                            console.log('🔄 Trying jsDelivr util...');
+                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil');
+                        })
+                        .catch(() => {
+                            console.log('🔄 Trying jsDelivr older util...');
+                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
+                        });
+                })
+                .catch(() => {
+                    console.log('🔄 Trying jsDelivr FFmpeg...');
+                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.js', 'FFmpeg')
+                        .then(() => {
+                            return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/util.js', 'FFmpegUtil')
+                                .catch(() => {
+                                    return loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/umd/util.js', 'FFmpegUtil');
+                                });
+                        });
+                })
+                .catch(() => {
                     console.log('❌ All FFmpeg CDNs failed - video editor will work without FFmpeg');
                 });
-            });
         }
 
         // Load scripts when DOM is ready
@@ -872,8 +889,16 @@
                     // Wait for FFmpeg scripts to load
                     await this.waitForFFmpeg();
                     
-                    if (typeof FFmpegWASM === 'undefined' || typeof FFmpegUtil === 'undefined') {
-                        throw new Error('FFmpeg scripts not available');
+                    // Check for different possible global variable names
+                    const FFmpegWASM = window.FFmpegWASM || window.FFmpeg;
+                    const FFmpegUtil = window.FFmpegUtil;
+                    
+                    if (typeof FFmpegWASM === 'undefined') {
+                        throw new Error('FFmpegWASM not available');
+                    }
+                    
+                    if (typeof FFmpegUtil === 'undefined') {
+                        throw new Error('FFmpegUtil not available');
                     }
                     
                     const { FFmpeg } = FFmpegWASM;
@@ -908,8 +933,14 @@
                         console.log(`🔍 Checking FFmpeg availability (attempt ${attempts + 1}/${maxAttempts})`);
                         console.log('🔍 FFmpegWASM:', typeof FFmpegWASM);
                         console.log('🔍 FFmpegUtil:', typeof FFmpegUtil);
+                        console.log('🔍 window.FFmpegUtil:', typeof window.FFmpegUtil);
+                        console.log('🔍 Available globals:', Object.keys(window).filter(key => key.includes('FFmpeg')));
                         
-                        if (typeof FFmpegWASM !== 'undefined' && typeof FFmpegUtil !== 'undefined') {
+                        // Check for different possible global variable names
+                        const hasFFmpeg = typeof FFmpegWASM !== 'undefined' || typeof window.FFmpegWASM !== 'undefined';
+                        const hasUtil = typeof FFmpegUtil !== 'undefined' || typeof window.FFmpegUtil !== 'undefined';
+                        
+                        if (hasFFmpeg && hasUtil) {
                             console.log('✅ FFmpeg scripts are available');
                             resolve();
                         } else if (attempts >= maxAttempts) {
