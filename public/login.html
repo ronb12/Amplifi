@@ -22,6 +22,7 @@
     
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/youtube-style.css">
+    <script src="assets/js/auth-system.js"></script>
     
     <style>
         body {
@@ -464,11 +465,13 @@
         
         function redirectToApp() {
             console.log('🔍 Debug: redirectToApp() called');
-            // Get the redirect URL from URL parameters or default to home
             const urlParams = new URLSearchParams(window.location.search);
-            const redirectUrl = urlParams.get('redirect') || 'index.html';
-            console.log('🔍 Debug: Redirecting to:', redirectUrl);
-            window.location.href = redirectUrl;
+            const redirectUrl = urlParams.get('redirect');
+            const destination = window.amplifiAuth && typeof window.amplifiAuth.getPostAuthDestination === 'function'
+                ? window.amplifiAuth.getPostAuthDestination(redirectUrl)
+                : (redirectUrl || 'index.html');
+            console.log('🔍 Debug: Redirecting to:', destination);
+            window.location.href = destination;
         }
         
         function showAlreadySignedIn() {
@@ -552,6 +555,13 @@
                     },
                     timestamp: Date.now()
                 }));
+                if (window.amplifiAuth && typeof window.amplifiAuth.setUser === 'function') {
+                    window.amplifiAuth.setUser({
+                        email: userCredential.user.email,
+                        name: userCredential.user.displayName || 'User',
+                        uid: userCredential.user.uid || ''
+                    });
+                }
                 
                 // Redirect after a short delay
                 setTimeout(() => {
@@ -634,6 +644,19 @@
                     },
                     timestamp: Date.now()
                 }));
+                if (window.amplifiAuth && typeof window.amplifiAuth.setUser === 'function') {
+                    window.amplifiAuth.setUser({
+                        email: userCredential.user.email,
+                        name: name,
+                        uid: userCredential.user.uid || ''
+                    });
+                    if (typeof window.amplifiAuth.setCreatorProfile === 'function') {
+                        window.amplifiAuth.setCreatorProfile({
+                            creatorName: name,
+                            completed: false
+                        });
+                    }
+                }
                 
                 // Redirect after a short delay
                 setTimeout(() => {

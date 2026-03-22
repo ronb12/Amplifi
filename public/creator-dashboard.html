@@ -4,48 +4,910 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Creator Dashboard - Amplifi</title>
+  <meta name="description" content="Plan, publish, and grow from Amplifi's creator command center.">
+  <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/youtube-style.css">
+  <link rel="stylesheet" href="assets/css/amplifi-identity.css">
   <script src="assets/js/auth-system.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f8fafc; color: #111827; }
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
-    nav a { margin-right: 14px; color: #4f46e5; text-decoration: none; }
-    .hero, .card { background: #fff; border-radius: 18px; padding: 24px; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; }
-    .btn { display: inline-block; margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: #4f46e5; color: #fff; text-decoration: none; }
-    .muted { color: #6b7280; }
+    .creator-shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 20px 72px;
+    }
+
+    .creator-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .creator-topbar a {
+      color: var(--amplifi-primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .creator-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      color: var(--amplifi-text);
+    }
+
+    .creator-brand img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .creator-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .creator-nav a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(102, 126, 234, 0.12);
+    }
+
+    .creator-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .creator-hero-card,
+    .creator-side-card,
+    .creator-panel,
+    .creator-tool-card,
+    .creator-activity-item {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 255, 0.92));
+      border: 1px solid rgba(102, 126, 234, 0.12);
+      border-radius: 26px;
+      box-shadow: var(--amplifi-shadow);
+    }
+
+    .creator-hero-card,
+    .creator-side-card,
+    .creator-panel {
+      padding: 26px;
+    }
+
+    .creator-hero-card h1 {
+      margin: 12px 0 10px;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .creator-hero-card p,
+    .creator-side-card p,
+    .creator-panel p {
+      color: var(--amplifi-muted);
+    }
+
+    .creator-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .creator-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid rgba(102, 126, 234, 0.14);
+      background: rgba(255, 255, 255, 0.88);
+      color: #334155;
+    }
+
+    .creator-btn.primary {
+      background: linear-gradient(135deg, var(--amplifi-primary), var(--amplifi-secondary));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .creator-stat-grid,
+    .creator-tool-grid,
+    .creator-panel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .creator-stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(102, 126, 234, 0.12);
+    }
+
+    .creator-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+    }
+
+    .creator-stat span {
+      color: var(--amplifi-muted);
+      font-size: 0.92rem;
+    }
+
+    .creator-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .creator-section-title h2 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .creator-two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .creator-tool-card {
+      padding: 20px;
+    }
+
+    .creator-summary-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(102, 126, 234, 0.12);
+    }
+
+    .creator-summary-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.02rem;
+    }
+
+    .creator-summary-card span {
+      color: var(--amplifi-muted);
+      line-height: 1.55;
+    }
+
+    .creator-tool-card h3 {
+      margin: 14px 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .creator-tool-card p {
+      color: var(--amplifi-muted);
+      min-height: 52px;
+    }
+
+    .creator-tool-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.16));
+      color: var(--amplifi-primary);
+      font-size: 1.2rem;
+    }
+
+    .creator-checklist,
+    .creator-activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .creator-checklist-item,
+    .creator-activity-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 18px;
+    }
+
+    .creator-checklist-item i,
+    .creator-activity-item i {
+      margin-top: 3px;
+      color: var(--amplifi-primary);
+    }
+
+    .creator-checklist-item strong,
+    .creator-activity-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .creator-plan-board {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .creator-plan-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 12px 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .creator-progress {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .creator-progress-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(102, 126, 234, 0.12);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .creator-progress-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(135deg, var(--amplifi-primary), var(--amplifi-accent));
+      border-radius: inherit;
+      transition: width 0.25s ease;
+    }
+
+    .creator-plan-count {
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(102, 126, 234, 0.12);
+      font-weight: 600;
+      color: var(--amplifi-muted);
+    }
+
+    .creator-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .creator-task-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: start;
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(102, 126, 234, 0.12);
+    }
+
+    .creator-task-item.completed {
+      opacity: 0.72;
+    }
+
+    .creator-task-toggle {
+      width: 24px;
+      height: 24px;
+      margin-top: 2px;
+      border-radius: 999px;
+      border: 2px solid rgba(102, 126, 234, 0.28);
+      background: #fff;
+      color: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .creator-task-item.completed .creator-task-toggle {
+      background: linear-gradient(135deg, var(--amplifi-primary), var(--amplifi-secondary));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .creator-task-content strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .creator-task-content span {
+      color: var(--amplifi-muted);
+      line-height: 1.55;
+    }
+
+    .creator-task-link {
+      align-self: center;
+      color: var(--amplifi-primary);
+      text-decoration: none;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .creator-goal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .creator-goal-form input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(102, 126, 234, 0.14);
+      background: rgba(255, 255, 255, 0.92);
+      font: inherit;
+      color: var(--amplifi-text);
+      box-sizing: border-box;
+    }
+
+    .creator-goal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .creator-goal-chip {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(102, 126, 234, 0.12);
+      background: rgba(255, 255, 255, 0.84);
+    }
+
+    .creator-goal-chip strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .creator-goal-chip span {
+      color: var(--amplifi-muted);
+      line-height: 1.5;
+    }
+
+    .creator-muted {
+      color: var(--amplifi-muted);
+    }
+
+    @media (max-width: 900px) {
+      .creator-hero,
+      .creator-two-col,
+      .creator-plan-board {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .creator-shell {
+        padding: 20px 14px 72px;
+      }
+
+      .creator-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .creator-actions {
+        flex-direction: column;
+      }
+
+      .creator-btn {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="upload.html">Upload</a>
-      <a href="schedule.html">Schedule</a>
-      <a href="live.html">Live</a>
-      <a href="profile.html">Profile</a>
-    </nav>
-    <section class="hero">
-      <h1>Creator Dashboard</h1>
-      <p id="dashboardWelcome" class="muted">Sign in to manage uploads, schedules, and creator tools.</p>
-      <a class="btn" href="login.html?redirect=creator-dashboard.html">Sign in to continue</a>
-    </section>
-    <div class="grid">
-      <section class="card"><h2>Upload Content</h2><p class="muted">Publish a long-form video or short moment.</p><a class="btn" href="upload.html">Open Upload</a></section>
-      <section class="card"><h2>Video Editor</h2><p class="muted">Trim, crop, filter, and export your next piece of content.</p><a class="btn" href="video-editor.html">Open Editor</a></section>
-      <section class="card"><h2>Schedule Posts</h2><p class="muted">Plan your upcoming content calendar.</p><a class="btn" href="schedule.html">Open Schedule</a></section>
-      <section class="card"><h2>Go Live</h2><p class="muted">Start a stream and manage live creator activity.</p><a class="btn" href="live.html">Open Live</a></section>
+  <main class="creator-shell">
+    <div class="creator-topbar">
+      <div class="creator-brand">
+        <img src="amplifi-icon.svg" alt="Amplifi">
+        <span>Amplifi Creator Hub</span>
+      </div>
+      <nav class="creator-nav" aria-label="Creator dashboard navigation">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="video-editor.html">Editor</a>
+        <a href="schedule.html">Schedule</a>
+        <a href="live.html">Live</a>
+        <a href="profile.html">Profile</a>
+      </nav>
     </div>
-  </div>
+
+    <section class="creator-hero">
+      <article class="creator-hero-card">
+        <div class="amplifi-page-tag">Creator command center</div>
+        <h1>Run your channel like a system, not a scramble.</h1>
+        <p id="dashboardWelcome" class="creator-muted">Sign in to manage uploads, scheduling, live streams, and audience momentum from one place.</p>
+        <div class="creator-actions">
+          <a class="creator-btn primary" id="dashboardPrimaryCta" href="login.html?redirect=creator-dashboard.html"><i class="fas fa-user-check"></i><span>Sign in to continue</span></a>
+          <a class="creator-btn" id="dashboardSetupCta" href="creator-setup.html"><i class="fas fa-sliders"></i><span>Complete creator setup</span></a>
+          <a class="creator-btn" href="upload.html"><i class="fas fa-upload"></i><span>Start a new upload</span></a>
+          <a class="creator-btn" href="schedule.html"><i class="fas fa-calendar"></i><span>Plan next release</span></a>
+        </div>
+      </article>
+
+      <aside class="creator-side-card">
+        <div class="creator-section-title">
+          <h2>Today’s focus</h2>
+        </div>
+        <div class="creator-checklist">
+          <div class="creator-checklist-item">
+            <i class="fas fa-circle-check"></i>
+            <div>
+              <strong>Prep one publish-ready asset</strong>
+              <span class="creator-muted">Keep the next release moving through upload, edit, and schedule.</span>
+            </div>
+          </div>
+          <div class="creator-checklist-item">
+            <i class="fas fa-bolt"></i>
+            <div>
+              <strong>Turn momentum into moments</strong>
+              <span class="creator-muted">Cut highlight clips from long-form videos or live sessions.</span>
+            </div>
+          </div>
+          <div class="creator-checklist-item">
+            <i class="fas fa-chart-line"></i>
+            <div>
+              <strong>Review growth signals</strong>
+              <span class="creator-muted">Use output consistency and audience response to guide the next move.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="creator-panel" aria-labelledby="creatorStatsHeading">
+      <div class="creator-section-title">
+        <h2 id="creatorStatsHeading">Channel pulse</h2>
+      </div>
+      <div class="creator-stat-grid" id="dashboardStatGrid">
+        <div class="creator-stat"><strong>0</strong><span>Recent uploads</span></div>
+        <div class="creator-stat"><strong>3</strong><span>Core workflows</span></div>
+        <div class="creator-stat"><strong>1</strong><span>Growth system</span></div>
+        <div class="creator-stat"><strong>24/7</strong><span>Creator availability</span></div>
+      </div>
+    </section>
+
+    <section class="creator-panel" aria-labelledby="creatorStrategyHeading">
+      <div class="creator-section-title">
+        <h2 id="creatorStrategyHeading">Creator strategy</h2>
+      </div>
+      <div class="creator-panel-grid" id="dashboardStrategyGrid">
+        <div class="creator-summary-card"><strong>Identity</strong><span>Finish setup to define your creator profile.</span></div>
+        <div class="creator-summary-card"><strong>Format</strong><span>Choose the content model you want to build around.</span></div>
+        <div class="creator-summary-card"><strong>Monetization</strong><span>Point your output toward subscriptions, support, or mixed revenue.</span></div>
+      </div>
+    </section>
+
+    <section class="creator-plan-board">
+      <article class="creator-panel" aria-labelledby="creatorExecutionHeading">
+        <div class="creator-section-title">
+          <h2 id="creatorExecutionHeading">Execution board</h2>
+        </div>
+        <p class="creator-muted">Keep your next creator actions visible so the dashboard helps you ship instead of just admire plans.</p>
+        <div class="creator-plan-meta">
+          <div class="creator-progress">
+            <strong id="dashboardPlanTitle">Finish creator setup</strong>
+            <div class="creator-progress-bar"><span id="dashboardPlanProgressBar"></span></div>
+          </div>
+          <div class="creator-plan-count" id="dashboardPlanCount">0 of 0 complete</div>
+        </div>
+        <div class="creator-task-list" id="dashboardTaskList">
+          <div class="creator-task-item">
+            <button class="creator-task-toggle" type="button" aria-label="Task pending"></button>
+            <div class="creator-task-content">
+              <strong>Dashboard tasks will appear here</strong>
+              <span>Complete onboarding to generate a starter plan.</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="creator-panel" aria-labelledby="creatorGoalsHeading">
+        <div class="creator-section-title">
+          <h2 id="creatorGoalsHeading">Goals and custom tasks</h2>
+        </div>
+        <p class="creator-muted">Capture the next goal you want to push so your dashboard reflects the work that matters right now.</p>
+        <form class="creator-goal-form" id="dashboardGoalForm">
+          <input id="dashboardGoalInput" type="text" placeholder="Add a creator goal or next action">
+          <button class="creator-btn primary" type="submit"><i class="fas fa-plus"></i><span>Save goal</span></button>
+        </form>
+        <div class="creator-goal-list" id="dashboardGoalList">
+          <div class="creator-goal-chip">
+            <strong>No saved goals yet</strong>
+            <span>Add a goal here and use the execution board to turn it into action.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="creator-two-col">
+      <article class="creator-panel">
+        <div class="creator-section-title">
+          <h2>Creator tools</h2>
+        </div>
+        <div class="creator-tool-grid">
+          <section class="creator-tool-card">
+            <div class="creator-tool-icon"><i class="fas fa-upload"></i></div>
+            <h3>Upload and publish</h3>
+            <p>Start long-form videos, quick moments, or fresh assets for your next drop.</p>
+            <a class="creator-btn primary" href="upload.html">Open upload</a>
+          </section>
+          <section class="creator-tool-card">
+            <div class="creator-tool-icon"><i class="fas fa-scissors"></i></div>
+            <h3>Edit for retention</h3>
+            <p>Trim, refine, and shape footage into stronger content before release.</p>
+            <a class="creator-btn" href="video-editor.html">Open editor</a>
+          </section>
+          <section class="creator-tool-card">
+            <div class="creator-tool-icon"><i class="fas fa-calendar-days"></i></div>
+            <h3>Schedule strategically</h3>
+            <p>Set your publishing cadence and avoid relying on random posting windows.</p>
+            <a class="creator-btn" href="schedule.html">Open schedule</a>
+          </section>
+          <section class="creator-tool-card">
+            <div class="creator-tool-icon"><i class="fas fa-tower-broadcast"></i></div>
+            <h3>Go live with intent</h3>
+            <p>Launch streams with a clearer audience promise and follow-up path.</p>
+            <a class="creator-btn" href="live.html">Open live tools</a>
+          </section>
+        </div>
+      </article>
+
+      <aside class="creator-panel">
+        <div class="creator-section-title">
+          <h2>Recent creator activity</h2>
+        </div>
+        <div class="creator-activity-list" id="dashboardActivityList">
+          <div class="creator-activity-item">
+            <i class="fas fa-sparkles"></i>
+            <div>
+              <strong>Creator system ready</strong>
+              <span class="creator-muted">Use Amplifi to move from idea to upload, schedule, and audience touchpoint faster.</span>
+            </div>
+          </div>
+          <div class="creator-activity-item">
+            <i class="fas fa-folder-open"></i>
+            <div>
+              <strong>Library and workflow connected</strong>
+              <span class="creator-muted">Your archive, future posts, and live strategy should support each other.</span>
+            </div>
+          </div>
+          <div class="creator-activity-item">
+            <i class="fas fa-star"></i>
+            <div>
+              <strong>Memberships available</strong>
+              <span class="creator-muted">Point your audience toward supporter tiers and premium experiences.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      const welcome = document.getElementById('dashboardWelcome');
+      const primaryCta = document.getElementById('dashboardPrimaryCta');
+      const setupCta = document.getElementById('dashboardSetupCta');
+      const statGrid = document.getElementById('dashboardStatGrid');
+      const strategyGrid = document.getElementById('dashboardStrategyGrid');
+      const activityList = document.getElementById('dashboardActivityList');
+      const taskList = document.getElementById('dashboardTaskList');
+      const planTitle = document.getElementById('dashboardPlanTitle');
+      const planCount = document.getElementById('dashboardPlanCount');
+      const planProgressBar = document.getElementById('dashboardPlanProgressBar');
+      const goalForm = document.getElementById('dashboardGoalForm');
+      const goalInput = document.getElementById('dashboardGoalInput');
+      const goalList = document.getElementById('dashboardGoalList');
+      const uploads = JSON.parse(localStorage.getItem('uploadHistory') || '[]');
+      const recentUploads = JSON.parse(localStorage.getItem('amplifi_recent_uploads') || '[]');
+      const creatorProfile = window.amplifiAuth && typeof window.amplifiAuth.getCreatorProfile === 'function'
+        ? (window.amplifiAuth.getCreatorProfile() || {})
+        : {};
+      const onboardingComplete = Boolean(window.amplifiAuth && typeof window.amplifiAuth.isOnboardingComplete === 'function' && window.amplifiAuth.isOnboardingComplete());
+      const totalUploads = uploads.length + recentUploads.length;
+      const creatorName = creatorProfile.creatorName || (window.amplifiAuth && window.amplifiAuth.getUser && window.amplifiAuth.getUser() ? window.amplifiAuth.getUser().name : '') || 'Creator';
+      let creatorPlan = window.amplifiAuth && typeof window.amplifiAuth.getCreatorPlan === 'function'
+        ? (window.amplifiAuth.getCreatorPlan() || {})
+        : {};
+
+      function slugify(value) {
+        return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+
+      function defaultPlan() {
+        if (!onboardingComplete) {
+          return {
+            title: 'Complete creator onboarding',
+            tasks: [
+              {
+                id: 'finish-setup',
+                title: 'Finish creator setup',
+                description: 'Lock in your creator name, category, and content format before building the workflow.',
+                href: 'creator-setup.html',
+                completed: false
+              },
+              {
+                id: 'review-profile',
+                title: 'Review your profile direction',
+                description: 'Open your profile and make sure the creator identity matches how you want to be seen.',
+                href: 'profile.html?tab=about',
+                completed: false
+              }
+            ],
+            goals: creatorPlan.goals || []
+          };
+        }
+
+        const format = creatorProfile.contentFormat || 'creator';
+        const category = creatorProfile.contentCategory || 'your niche';
+        const cadence = creatorProfile.publishCadence || 'consistent';
+        return {
+          title: `${creatorName}'s ${cadence} ${format} plan`,
+          tasks: [
+            {
+              id: 'upload-next',
+              title: 'Move the next release into upload',
+              description: `Start a ${format} asset for your ${category} pipeline.`,
+              href: 'upload.html',
+              completed: false
+            },
+            {
+              id: 'schedule-next',
+              title: 'Protect your publish cadence',
+              description: `Use scheduling so your ${cadence} rhythm becomes real output.`,
+              href: 'schedule.html',
+              completed: false
+            },
+            {
+              id: 'profile-pass',
+              title: 'Align profile with creator promise',
+              description: 'Update your profile so viewers understand your value and what to expect next.',
+              href: 'profile.html?tab=about',
+              completed: false
+            }
+          ],
+          goals: creatorPlan.goals || [
+            {
+              id: 'goal-primary',
+              title: creatorProfile.audienceGoal ? `Primary goal: ${creatorProfile.audienceGoal}` : 'Primary goal not set',
+              description: creatorProfile.monetizationFocus ? `Monetization focus: ${creatorProfile.monetizationFocus}` : 'Add a monetization focus in creator setup.'
+            }
+          ]
+        };
+      }
+
+      function normalizedPlan() {
+        const base = defaultPlan();
+        const tasks = Array.isArray(creatorPlan.tasks) && creatorPlan.tasks.length ? creatorPlan.tasks : base.tasks;
+        const goals = Array.isArray(creatorPlan.goals) ? creatorPlan.goals : base.goals;
+        return {
+          title: creatorPlan.title || base.title,
+          tasks,
+          goals
+        };
+      }
+
+      function savePlan(plan) {
+        creatorPlan = plan;
+        if (window.amplifiAuth && typeof window.amplifiAuth.setCreatorPlan === 'function') {
+          window.amplifiAuth.setCreatorPlan(plan);
+        } else {
+          localStorage.setItem('amplifi_creator_plan', JSON.stringify(plan));
+        }
+      }
+
+      function renderPlan() {
+        const plan = normalizedPlan();
+        const totalTasks = plan.tasks.length;
+        const completedTasks = plan.tasks.filter(task => task.completed).length;
+        const progress = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+        if (planTitle) {
+          planTitle.textContent = plan.title;
+        }
+        if (planCount) {
+          planCount.textContent = `${completedTasks} of ${totalTasks} complete`;
+        }
+        if (planProgressBar) {
+          planProgressBar.style.width = `${progress}%`;
+        }
+        if (taskList) {
+          taskList.innerHTML = plan.tasks.map((task) => `
+            <div class="creator-task-item ${task.completed ? 'completed' : ''}">
+              <button class="creator-task-toggle" type="button" data-task-id="${task.id}" aria-label="${task.completed ? 'Mark task incomplete' : 'Mark task complete'}">
+                <i class="fas fa-check"></i>
+              </button>
+              <div class="creator-task-content">
+                <strong>${task.title}</strong>
+                <span>${task.description}</span>
+              </div>
+              ${task.href ? `<a class="creator-task-link" href="${task.href}">Open</a>` : '<span></span>'}
+            </div>
+          `).join('');
+        }
+
+        if (goalList) {
+          if (!plan.goals.length) {
+            goalList.innerHTML = `
+              <div class="creator-goal-chip">
+                <strong>No saved goals yet</strong>
+                <span>Add a goal here and use the execution board to turn it into action.</span>
+              </div>
+            `;
+          } else {
+            goalList.innerHTML = plan.goals.map((goal) => `
+              <div class="creator-goal-chip">
+                <strong>${goal.title}</strong>
+                <span>${goal.description || 'Creator focus saved for this dashboard.'}</span>
+              </div>
+            `).join('');
+          }
+        }
+      }
+
+      function updateTask(taskId) {
+        const plan = normalizedPlan();
+        plan.tasks = plan.tasks.map((task) => task.id === taskId ? { ...task, completed: !task.completed } : task);
+        savePlan(plan);
+        renderPlan();
+      }
+
       if (window.amplifiAuth && window.amplifiAuth.isAuthenticated()) {
         const user = window.amplifiAuth.getUser();
-        const welcome = document.getElementById('dashboardWelcome');
         if (welcome && user) {
-          welcome.textContent = `Welcome back, ${user.name || user.email || 'Creator'}. Your creator tools are ready.`;
+          welcome.textContent = onboardingComplete
+            ? `Welcome back, ${creatorName}. Your upload, schedule, live, and audience systems are ready.`
+            : `Welcome back, ${user.name || user.email || 'Creator'}. Finish your creator setup to personalize your dashboard, profile, and publishing flow.`;
         }
+        if (primaryCta) {
+          if (onboardingComplete) {
+            primaryCta.href = 'upload.html';
+            primaryCta.innerHTML = '<i class="fas fa-upload"></i><span>Create your next release</span>';
+          } else {
+            primaryCta.href = 'creator-setup.html';
+            primaryCta.innerHTML = '<i class="fas fa-sliders"></i><span>Finish creator setup</span>';
+          }
+        }
+        if (setupCta && onboardingComplete) {
+          setupCta.innerHTML = '<i class="fas fa-pen-ruler"></i><span>Update creator setup</span>';
+        }
+      }
+
+      if (statGrid) {
+        statGrid.innerHTML = `
+          <div class="creator-stat"><strong>${totalUploads}</strong><span>Total local uploads tracked</span></div>
+          <div class="creator-stat"><strong>${uploads.filter(item => item.status === 'completed').length}</strong><span>Completed uploads</span></div>
+          <div class="creator-stat"><strong>${onboardingComplete ? 'Complete' : 'Pending'}</strong><span>Creator setup</span></div>
+          <div class="creator-stat"><strong>${window.amplifiAuth && window.amplifiAuth.isAuthenticated() ? 'Signed in' : 'Guest'}</strong><span>Creator session</span></div>
+        `;
+      }
+
+      if (strategyGrid) {
+        strategyGrid.innerHTML = onboardingComplete ? `
+          <div class="creator-summary-card"><strong>Identity</strong><span>${creatorProfile.creatorName || creatorName}${creatorProfile.contentCategory ? ` · ${creatorProfile.contentCategory}` : ''}</span></div>
+          <div class="creator-summary-card"><strong>Content model</strong><span>${creatorProfile.contentFormat || 'Not set'}${creatorProfile.publishCadence ? ` · ${creatorProfile.publishCadence}` : ''}</span></div>
+          <div class="creator-summary-card"><strong>Growth path</strong><span>${creatorProfile.audienceGoal || 'No audience goal set'}${creatorProfile.monetizationFocus ? ` · ${creatorProfile.monetizationFocus}` : ''}</span></div>
+        ` : `
+          <div class="creator-summary-card"><strong>Identity</strong><span>Finish setup to define your creator name and positioning.</span></div>
+          <div class="creator-summary-card"><strong>Content model</strong><span>Choose a format and cadence so your dashboard can point to the right next move.</span></div>
+          <div class="creator-summary-card"><strong>Growth path</strong><span>Set your audience and monetization goals before building out your release system.</span></div>
+        `;
+      }
+
+      if (activityList && !onboardingComplete) {
+        activityList.innerHTML = `
+          <div class="creator-activity-item">
+            <i class="fas fa-sliders"></i>
+            <div>
+              <strong>Creator setup pending</strong>
+              <span class="creator-muted">Add your category, format, cadence, and creator promise so Amplifi can personalize your workflow.</span>
+            </div>
+          </div>
+          <div class="creator-activity-item">
+            <i class="fas fa-user-pen"></i>
+            <div>
+              <strong>Profile direction not locked in</strong>
+              <span class="creator-muted">Set your creator identity before pushing viewers into your dashboard and profile.</span>
+            </div>
+          </div>
+        `;
+      } else if (activityList && (uploads.length || recentUploads.length)) {
+        const recentCombined = [
+          ...uploads.map(item => ({
+            name: item.name,
+            status: item.status || 'saved',
+            date: item.uploadedAt || Date.now()
+          })),
+          ...recentUploads.map(item => ({
+            name: item.name,
+            status: 'queued',
+            date: item.addedAt || Date.now()
+          }))
+        ].slice(0, 3);
+        const recent = recentCombined.map((item) => `
+          <div class="creator-activity-item">
+            <i class="fas fa-video"></i>
+            <div>
+              <strong>${item.name}</strong>
+              <span class="creator-muted">${item.status || 'saved'} · ${new Date(item.date || Date.now()).toLocaleDateString()}</span>
+            </div>
+          </div>
+        `).join('');
+        activityList.innerHTML = recent;
+      } else if (activityList && onboardingComplete) {
+        activityList.innerHTML = `
+          <div class="creator-activity-item">
+            <i class="fas fa-rocket"></i>
+            <div>
+              <strong>${creatorName} is ready to publish</strong>
+              <span class="creator-muted">Your creator setup is complete. The next step is to move one asset through upload, edit, and scheduling.</span>
+            </div>
+          </div>
+          <div class="creator-activity-item">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+              <strong>Build your next cadence</strong>
+              <span class="creator-muted">${creatorProfile.publishCadence ? `You chose a ${creatorProfile.publishCadence} rhythm.` : 'Set a publish rhythm in creator setup.'} Use scheduling to make it real.</span>
+            </div>
+          </div>
+        `;
+      }
+
+      renderPlan();
+
+      if (taskList) {
+        taskList.addEventListener('click', function (event) {
+          const toggle = event.target.closest('.creator-task-toggle');
+          if (!toggle) return;
+          updateTask(toggle.getAttribute('data-task-id'));
+        });
+      }
+
+      if (goalForm && goalInput) {
+        goalForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+          const value = goalInput.value.trim();
+          if (!value) return;
+
+          const plan = normalizedPlan();
+          plan.goals = [
+            {
+              id: `goal-${slugify(value)}-${Date.now()}`,
+              title: value,
+              description: `Saved for ${creatorName}'s current creator plan.`
+            },
+            ...plan.goals
+          ].slice(0, 5);
+          savePlan(plan);
+          goalInput.value = '';
+          renderPlan();
+        });
       }
     });
   </script>
+  <script src="assets/js/amplifi-experience.js" defer></script>
 </body>
 </html>

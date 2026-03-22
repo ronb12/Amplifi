@@ -1,6 +1,8 @@
 // Amplifi Authentication System - shared auth helpers for static pages
 (function () {
     const STORAGE_KEY = 'amplifi_auth';
+    const CREATOR_PROFILE_KEY = 'amplifi_creator_profile';
+    const CREATOR_PLAN_KEY = 'amplifi_creator_plan';
     let currentUser = null;
 
     function safeParse(value) {
@@ -42,6 +44,50 @@
         currentUser = null;
         localStorage.removeItem(STORAGE_KEY);
         window.dispatchEvent(new CustomEvent('auth-logout'));
+    }
+
+    function readCreatorProfile() {
+        return safeParse(localStorage.getItem(CREATOR_PROFILE_KEY));
+    }
+
+    function writeCreatorProfile(profile) {
+        const existing = readCreatorProfile() || {};
+        const nextProfile = {
+            ...existing,
+            ...profile,
+            updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(CREATOR_PROFILE_KEY, JSON.stringify(nextProfile));
+        window.dispatchEvent(new CustomEvent('creator-profile-updated', {
+            detail: { profile: nextProfile }
+        }));
+        return nextProfile;
+    }
+
+    function isCreatorSetupComplete() {
+        const profile = readCreatorProfile();
+        return Boolean(profile && profile.completed);
+    }
+
+    function readCreatorPlan() {
+        return safeParse(localStorage.getItem(CREATOR_PLAN_KEY));
+    }
+
+    function writeCreatorPlan(plan) {
+        const nextPlan = {
+            ...(readCreatorPlan() || {}),
+            ...(plan || {}),
+            updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(CREATOR_PLAN_KEY, JSON.stringify(nextPlan));
+        window.dispatchEvent(new CustomEvent('creator-plan-updated', {
+            detail: { plan: nextPlan }
+        }));
+        return nextPlan;
+    }
+
+    function defaultPostAuthDestination() {
+        return isCreatorSetupComplete() ? 'creator-dashboard.html' : 'creator-setup.html';
     }
 
     function syncFirebaseState() {
@@ -86,6 +132,30 @@
 
         setUser(user) {
             writeStoredAuth(user);
+        },
+
+        getPostAuthDestination(redirectUrl) {
+            return redirectUrl || defaultPostAuthDestination();
+        },
+
+        getCreatorProfile() {
+            return readCreatorProfile();
+        },
+
+        setCreatorProfile(profile) {
+            return writeCreatorProfile(profile);
+        },
+
+        isOnboardingComplete() {
+            return isCreatorSetupComplete();
+        },
+
+        getCreatorPlan() {
+            return readCreatorPlan();
+        },
+
+        setCreatorPlan(plan) {
+            return writeCreatorPlan(plan);
         },
 
         clear() {
