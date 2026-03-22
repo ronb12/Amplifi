@@ -1,289 +1,123 @@
-// Amplifi Service Worker - Enabling Offline Support
-// Updated to fix CSS conflicts and improve cache management
-const CACHE_NAME = 'amplifi-v20-auth-guard';
-const urlsToCache = [
+const CACHE_NAME = 'amplifi-v21-shell';
+const CORE_ASSETS = [
     '/',
     '/index.html',
+    '/login.html',
+    '/feed.html',
+    '/moments.html',
+    '/trending.html',
+    '/search.html',
+    '/upload.html',
+    '/video-editor.html',
+    '/schedule.html',
+    '/live.html',
+    '/library.html',
+    '/profile.html',
+    '/about.html',
+    '/privacy.html',
+    '/terms.html',
+    '/subscriptions.html',
+    '/music-library.html',
+    '/creator-dashboard.html',
+    '/signin.html',
+    '/signup.html',
+    '/manifest.json',
+    '/favicon.svg',
+    '/amplifi-icon.svg',
     '/assets/css/youtube-style.css',
     '/assets/js/app.js',
     '/assets/js/core-features.js',
     '/assets/js/dashboard-functions.js',
-    '/assets/js/stripe-service.js',
     '/assets/js/stripe-payments.js',
+    '/assets/js/stripe-service.js',
     '/assets/js/auth-guard.js',
-    '/assets/js/amplifi-features.js',
-    '/favicon.svg',
-    '/manifest.json'
+    '/assets/js/auth-system.js',
+    '/assets/js/upload.js',
+    '/assets/js/live-streaming.js',
+    '/assets/js/ai-recommendations.js',
+    '/assets/js/amplifi-features.js'
 ];
 
-// Install event - cache resources
 self.addEventListener('install', (event) => {
-    console.log('🔧 Amplifi Service Worker v2 installing...');
-    
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('✅ Opened cache:', CACHE_NAME);
-                return cache.addAll(urlsToCache);
-            })
-            .then(() => {
-                console.log('✅ All resources cached successfully');
-                return self.skipWaiting();
-            })
-            .catch((error) => {
-                console.error('❌ Cache installation failed:', error);
-            })
-    );
-});
-
-// Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-    console.log('🚀 Amplifi Service Worker v2 activating...');
-    
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('🗑️ Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => {
-            console.log('✅ Service Worker activated, old caches cleaned');
-            return self.clients.claim();
-        })
-    );
-});
-
-// Fetch event - serve from cache when offline
-self.addEventListener('fetch', (event) => {
-    const request = event.request;
-    
-    // Skip non-GET requests
-    if (request.method !== 'GET') {
-        return;
-    }
-    
-    // Skip external requests
-    if (!request.url.startsWith(self.location.origin)) {
-        return;
-    }
-    
-    // Skip service worker requests
-    if (request.url.includes('sw.js')) {
-        return;
-    }
-    
-    event.respondWith(
-        caches.match(request)
-            .then((response) => {
-                // Return cached version if available
-                if (response) {
-                    console.log('💾 Serving from cache:', request.url);
-                    return response;
+    event.waitUntil((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        await Promise.allSettled(CORE_ASSETS.map(async (url) => {
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (response.ok) {
+                    await cache.put(url, response.clone());
                 }
-                
-                // Fetch from network if not cached
-                return fetch(request)
-                    .then((response) => {
-                        // Check if response is valid
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
-                        
-                        // Clone response for caching
-                        const responseToCache = response.clone();
-                        
-                        caches.open(CACHE_NAME)
-                            .then((cache) => {
-                                cache.put(request, responseToCache);
-                                console.log('💾 Cached new resource:', request.url);
-                            });
-                        
-                        return response;
-                    })
-                    .catch(() => {
-                        // Return offline fallback for HTML requests
-                        if (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) {
-                            return caches.match('/index.html');
-                        }
-                        
-                        // Return offline fallback for CSS requests
-                        if (request.url.includes('.css')) {
-                            return caches.match('/assets/css/youtube-style.css');
-                        }
-                        
-                        // Return offline fallback for other requests
-                        return new Response('Offline content not available', {
-                            status: 503,
-                            statusText: 'Service Unavailable',
-                            headers: new Headers({
-                                'Content-Type': 'text/plain'
-                            })
-                        });
-                    });
-            })
-    );
+            } catch (error) {
+                console.warn('Skipping cache for', url, error);
+            }
+        }));
+        await self.skipWaiting();
+    })());
 });
 
-// Background sync for offline actions
-self.addEventListener('sync', (event) => {
-    console.log('🔄 Background sync triggered:', event.tag);
-    
-    if (event.tag === 'background-sync') {
-        event.waitUntil(doBackgroundSync());
-    }
+self.addEventListener('activate', (event) => {
+    event.waitUntil((async () => {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames
+            .filter((cacheName) => cacheName !== CACHE_NAME)
+            .map((cacheName) => caches.delete(cacheName)));
+        await self.clients.claim();
+    })());
 });
 
-async function doBackgroundSync() {
-    try {
-        // Sync offline data when connection is restored
-        console.log('🔄 Syncing offline data...');
-        
-        // Get all clients
-        const clients = await self.clients.matchAll();
-        
-        // Notify clients about sync completion
-        clients.forEach((client) => {
-            client.postMessage({
-                type: 'background-sync-complete',
-                timestamp: new Date().toISOString()
-            });
-        });
-        
-        console.log('✅ Background sync completed');
-    } catch (error) {
-        console.error('❌ Background sync failed:', error);
+async function fromNetworkThenCache(request) {
+    const response = await fetch(request);
+    if (response && response.ok && request.method === 'GET' && request.url.startsWith(self.location.origin)) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, response.clone());
     }
+    return response;
 }
 
-// Push notification handling
-self.addEventListener('push', (event) => {
-    console.log('🔔 Push notification received');
-    
-    const options = {
-        body: event.data ? event.data.text() : 'New content available on Amplifi!',
-        icon: '/favicon.svg',
-        badge: '/favicon.svg',
-        vibrate: [100, 50, 100],
-        data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        },
-        actions: [
-            {
-                action: 'explore',
-                title: 'Explore',
-                icon: '/favicon.svg'
-            },
-            {
-                action: 'close',
-                title: 'Close',
-                icon: '/favicon.svg'
-            }
-        ]
-    };
-    
-    event.waitUntil(
-        self.registration.showNotification('Amplifi', options)
-    );
-});
+async function fromCache(request) {
+    const cache = await caches.open(CACHE_NAME);
+    return cache.match(request);
+}
 
-// Notification click handling
-self.addEventListener('notificationclick', (event) => {
-    console.log('👆 Notification clicked:', event.action);
-    
-    event.notification.close();
-    
-    if (event.action === 'explore') {
-        // Open the app
-        event.waitUntil(
-            clients.matchAll({ type: 'window' }).then((clientList) => {
-                if (clientList.length > 0) {
-                    clientList[0].focus();
-                } else {
-                    clients.openWindow('/');
-                }
-            })
-        );
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+
+    if (request.method !== 'GET' || !request.url.startsWith(self.location.origin)) {
+        return;
     }
+
+    event.respondWith((async () => {
+        const isNavigation = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
+
+        if (isNavigation) {
+            try {
+                return await fromNetworkThenCache(request);
+            } catch (error) {
+                return await fromCache(request) || await fromCache('/index.html') || new Response('Offline', {
+                    status: 503,
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+                });
+            }
+        }
+
+        const cached = await fromCache(request);
+        if (cached) {
+            return cached;
+        }
+
+        try {
+            return await fromNetworkThenCache(request);
+        } catch (error) {
+            return new Response('Offline content not available', {
+                status: 503,
+                headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+            });
+        }
+    })());
 });
 
-// Message handling from main thread
 self.addEventListener('message', (event) => {
-    console.log('📨 Message received in Service Worker:', event.data);
-    
     if (event.data && event.data.type === 'skipWaiting') {
         self.skipWaiting();
     }
-    
-    if (event.data && event.data.type === 'cache-urls') {
-        event.waitUntil(
-            caches.open(CACHE_NAME).then((cache) => {
-                return cache.addAll(event.data.urls);
-            })
-        );
-    }
-    
-    if (event.data && event.data.type === 'clear-cache') {
-        event.waitUntil(
-            caches.delete(CACHE_NAME).then(() => {
-                console.log('🗑️ Cache cleared as requested');
-                return caches.open(CACHE_NAME).then((cache) => {
-                    return cache.addAll(urlsToCache);
-                });
-            })
-        );
-    }
-});
-
-console.log('✅ Amplifi Service Worker v2 loaded successfully');
-
-// Security enhancements for service worker
-const SECURITY_HEADERS = {
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-    'X-XSS-Protection': '1; mode=block',
-    'Referrer-Policy': 'strict-origin-when-cross-origin'
-};
-
-// Add security headers to all responses
-self.addEventListener('fetch', (event) => {
-    // Only handle GET requests for our domain
-    if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
-        return;
-    }
-    
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            if (response) {
-                // Clone the response to modify headers
-                const newResponse = new Response(response.body, {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: new Headers(response.headers)
-                });
-                
-                // Add security headers
-                Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
-                    newResponse.headers.set(key, value);
-                });
-                
-                return newResponse;
-            }
-            
-            return fetch(event.request).then((response) => {
-                // Only cache successful responses from our origin
-                if (response.status === 200 && response.url.startsWith(self.location.origin)) {
-                    const responseToCache = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-                }
-                return response;
-            });
-        })
-    );
 });

@@ -382,6 +382,11 @@
             console.log('🔍 Debug: Auth object available:', typeof auth);
             console.log('🔍 Debug: Page title:', document.title);
             
+            const requestedTab = new URLSearchParams(window.location.search).get('tab');
+            if (requestedTab === 'signup' || requestedTab === 'login') {
+                switchTab(requestedTab);
+            }
+            
             // Check if Firebase is ready
             if (auth) {
                 firebaseReady = true;
@@ -414,8 +419,11 @@
             // Update forms
             document.querySelectorAll('.auth-form').forEach(form => {
                 form.classList.remove('active');
+                form.style.display = 'none';
             });
-            document.getElementById(`${tab}Form`).classList.add('active');
+            const activeForm = document.getElementById(`${tab}Form`);
+            activeForm.classList.add('active');
+            activeForm.style.display = 'block';
             
             // Clear messages
             hideMessages();
