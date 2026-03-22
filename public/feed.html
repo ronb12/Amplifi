@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed - Amplifi</title>
-    <meta name="description" content="Your personalized content feed with AI recommendations.">
+    <title>Feed - Amplifi Social Feed</title>
+    <meta name="description" content="Your social feed for posts, moments, live energy, and community discovery.">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
@@ -24,6 +24,7 @@
     
     <!-- Authentication Guard -->
     <script src="assets/js/auth-guard.js"></script>
+    <script src="assets/js/auth-system.js"></script>
     
     <!-- AI and Social Features -->
     <script src="assets/js/ai-recommendations.js"></script>
@@ -1029,7 +1030,7 @@
             <div class="yt-search">
                 <div class="search-input-wrapper">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" class="yt-search-input" placeholder="Search videos, creators, topics...">
+                    <input type="text" id="searchInput" class="yt-search-input" placeholder="Search posts, people, topics...">
                     <button class="yt-search-btn" id="searchBtn">
                         <i class="fas fa-arrow-right"></i>
                     </button>
@@ -1114,13 +1115,13 @@
         <div class="yt-content-wrapper">
             <div class="page-header">
                 <h1>Feed</h1>
-                <p>Your personalized content feed with AI recommendations.</p>
+                <p>Your social feed for discovery, reactions, follows, and community momentum.</p>
             </div>
             
             
         <div class="feed-header">
             <h1>Your Feed</h1>
-            <p>Content personalized just for you</p>
+            <p>Discover what is moving right now and join the conversation faster.</p>
             <div class="feed-filters">
                 <button class="filter-btn active">All</button>
                 <button class="filter-btn">Videos</button>
@@ -1236,20 +1237,51 @@
 
     
     
+    <div class="amplifi-comments-sheet" id="commentsSheet" aria-hidden="true">
+        <div class="amplifi-comments-header">
+            <div>
+                <h3 id="commentsSheetTitle">Comments</h3>
+                <p class="amplifi-comments-hint" id="commentsSheetMeta">Join the conversation around this post.</p>
+            </div>
+            <button class="amplifi-comments-close" type="button" onclick="closeCommentsSheet()" aria-label="Close comments">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="amplifi-comments-list" id="commentsList">
+            <div class="amplifi-comment-item">
+                <strong>No comments yet</strong>
+                <span>Start the thread and give people a reason to return.</span>
+            </div>
+        </div>
+        <div class="amplifi-comments-compose">
+            <textarea id="commentComposer" placeholder="Add something thoughtful, funny, or useful..."></textarea>
+            <div class="amplifi-comments-actions">
+                <span class="amplifi-comments-hint">Great social products make commenting feel easy and visible.</span>
+                <button class="amplifi-pill-btn primary" type="button" onclick="submitComment()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Post comment</span>
+                </button>
+            </div>
+        </div>
+    </div>
     <script>
         console.log('✅ Feed page loading - using auth-guard for authentication');
-        
-        // Initialize AI and Social Features
-        let aiEngine, socialFeatures, pushNotifications, adSense, contentLibrary, creatorNetwork;
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        let aiEngine;
+        let socialFeatures;
+        let pushNotifications;
+        let adSense;
+        let contentLibrary;
+        let creatorNetwork;
+        let currentCommentContentId = null;
+        const feedItems = new Map();
+
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('✅ Feed page initialized - using auth-guard for authentication');
             initializeAIFeatures();
             loadPersonalizedFeed();
         });
 
-        // Initialize AI Features
         function initializeAIFeatures() {
             try {
                 aiEngine = new AIRecommendationEngine();
@@ -1258,22 +1290,20 @@
                 adSense = new AdSenseMonetization();
                 contentLibrary = new ContentLibrary();
                 creatorNetwork = new CreatorNetwork();
-                
-                // Initialize AdSense
+
                 adSense.init().then(() => {
                     adSense.displayBannerAd();
                     console.log('✅ AdSense initialized');
-                }).catch(error => {
+                }).catch((error) => {
                     console.error('❌ AdSense initialization failed:', error);
                 });
-                
+
                 console.log('✅ AI features initialized');
             } catch (error) {
                 console.error('❌ AI features initialization failed:', error);
             }
         }
 
-        // Load Personalized Feed
         async function loadPersonalizedFeed() {
             try {
                 const userId = getCurrentUserId();
@@ -1283,24 +1313,19 @@
                     return;
                 }
 
-                console.log('🤖 Loading AI-powered personalized feed...');
-                
-                // Get AI recommendations
-                const recommendations = await aiEngine.generateRecommendations(userId, 10);
-                
-                // Get social feed
-                const socialFeed = await socialFeatures.getUserFeed(userId, 5);
-                
-                // Get content library content
-                const libraryContent = contentLibrary.getPopularContent(5);
-                
-                // Get subscribed creators content
-                const subscribedContent = contentLibrary.getSubscribedContent(5);
-                
-                // Combine and display
-                const combinedFeed = [...recommendations, ...socialFeed, ...libraryContent, ...subscribedContent];
+                const recommendations = aiEngine ? await aiEngine.generateRecommendations(userId, 10) : [];
+                const socialFeed = socialFeatures ? await socialFeatures.getUserFeed(userId, 6) : [];
+                const libraryContent = contentLibrary ? contentLibrary.getPopularContent(5) : [];
+                const subscribedContent = contentLibrary ? contentLibrary.getSubscribedContent(5) : [];
+
+                const combinedFeed = dedupeContent([
+                    ...recommendations,
+                    ...socialFeed,
+                    ...libraryContent,
+                    ...subscribedContent
+                ]).map(normalizeItem);
+
                 displayFeed(combinedFeed);
-                
                 console.log(`✅ Loaded ${combinedFeed.length} personalized recommendations`);
             } catch (error) {
                 console.error('❌ Error loading personalized feed:', error);
@@ -1308,152 +1333,499 @@
             }
         }
 
-        // Load Default Feed
         function loadDefaultFeed() {
-            const defaultContent = [
-                {
-                    id: '1',
-                    title: 'Welcome to Amplifi!',
-                    description: 'Discover amazing content with AI-powered recommendations',
-                    category: 'entertainment',
-                    duration: 120,
-                    views: 1000,
-                    likes: 50,
-                    comments: 10,
-                    shares: 5,
+            displayFeed([
+                normalizeItem({
+                    id: 'welcome-post',
+                    title: 'Welcome to Amplifi',
+                    description: 'A stronger social feed should feel active the second you arrive. Start following people, saving posts, and joining conversations.',
+                    category: 'community',
+                    duration: 92,
+                    views: 5400,
+                    likes: 412,
+                    comments: 38,
+                    shares: 17,
                     creator: 'Amplifi Team',
-                    thumbnail: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'
-                }
-            ];
-            displayFeed(defaultContent);
+                    creatorId: 'amplifi-team',
+                    thumbnail: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200',
+                    timestamp: Date.now() - 1000 * 60 * 45
+                }),
+                normalizeItem({
+                    id: 'social-momentum',
+                    title: 'Build a profile people want to revisit',
+                    description: 'Profiles, moments, and live should all reinforce the same identity so community growth compounds instead of resetting every visit.',
+                    category: 'education',
+                    duration: 188,
+                    views: 12800,
+                    likes: 930,
+                    comments: 61,
+                    shares: 24,
+                    creator: 'Community Lab',
+                    creatorId: 'community-lab',
+                    thumbnail: 'https://images.pexels.com/photos/983200/pexels-photo-983200.jpeg?auto=compress&cs=tinysrgb&h=200',
+                    timestamp: Date.now() - 1000 * 60 * 60 * 4
+                }),
+                normalizeItem({
+                    id: 'live-energy',
+                    title: 'Turn a live stream into a social event',
+                    description: 'The best live products create momentum before, during, and after the stream with clips, threads, and follow-up moments.',
+                    category: 'live',
+                    duration: 1640,
+                    views: 21300,
+                    likes: 1400,
+                    comments: 129,
+                    shares: 52,
+                    creator: 'Stream Circle',
+                    creatorId: 'stream-circle',
+                    thumbnail: 'https://images.pexels.com/photos/307006/pexels-photo-307006.jpeg?auto=compress&cs=tinysrgb&h=200',
+                    timestamp: Date.now() - 1000 * 60 * 60 * 10
+                })
+            ]);
         }
 
-        // Display Feed Content
-        function displayFeed(content) {
-            const feedContainer = document.querySelector('.yt-video-grid');
-            if (!feedContainer) return;
-
-            feedContainer.innerHTML = '';
-
-            content.forEach(item => {
-                const videoCard = createVideoCard(item);
-                feedContainer.appendChild(videoCard);
+        function dedupeContent(items) {
+            const seen = new Set();
+            return items.filter((item, index) => {
+                const key = String((item && item.id) || `feed-${index}`);
+                if (seen.has(key)) {
+                    return false;
+                }
+                seen.add(key);
+                return true;
             });
         }
 
-        // Create Video Card
+        function readJson(key, fallback) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || 'null');
+                return value === null ? fallback : value;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function writeJson(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+            window.dispatchEvent(new CustomEvent('amplifi-social-state-updated'));
+        }
+
+        function recordSocialEvent(type, payload = {}) {
+            const events = readJson('amplifi_social_events', []);
+            events.push({
+                id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                type,
+                timestamp: Date.now(),
+                page: 'feed.html',
+                ...payload
+            });
+            writeJson('amplifi_social_events', events.slice(-250));
+        }
+
+        function addMirroredComment(contentId, text, userId) {
+            const comments = readJson('amplifi_social_comments', []);
+            comments.push({
+                id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                contentKey: contentId,
+                author: userId,
+                text,
+                timestamp: Date.now(),
+                page: 'feed.html'
+            });
+            writeJson('amplifi_social_comments', comments.slice(-250));
+        }
+
+        function getMirroredCommentCount(contentId) {
+            return readJson('amplifi_social_comments', []).filter((comment) => comment.contentKey === contentId).length;
+        }
+
+        function normalizeItem(item, index = 0) {
+            const creatorName = item.creator || item.author || 'Amplifi';
+            const creatorId = item.creatorId || item.userId || slugify(creatorName) || `creator-${index}`;
+            const timestamp = item.timestamp || item.createdAt || Date.now() - index * 3600000;
+            const category = String(item.category || item.type || 'video').toLowerCase();
+            const isMoment = item.duration && item.duration <= 90;
+            const filterType = category.includes('live') ? 'live' : isMoment ? 'moments' : 'videos';
+            const tags = [
+                filterType === 'live' ? 'Live energy' : filterType === 'moments' ? 'Short-form' : 'Video post',
+                category === 'community' ? 'Community' : category.charAt(0).toUpperCase() + category.slice(1),
+                item.views > 100000 ? 'High traction' : 'Growing now'
+            ];
+
+            return {
+                ...item,
+                id: String(item.id || `content-${index}`),
+                creator: creatorName,
+                creatorId,
+                creatorHandle: `@${slugify(creatorName) || `amplifi${index + 1}`}`,
+                title: item.title || 'Untitled post',
+                description: item.description || 'No description yet.',
+                timestamp: typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime(),
+                duration: Number(item.duration || 0),
+                views: Number(item.views || 0),
+                likes: Number(item.likes || 0),
+                comments: Number(item.comments || 0),
+                shares: Number(item.shares || 0),
+                filterType,
+                tags
+            };
+        }
+
+        function displayFeed(content) {
+            const feedContainer = document.querySelector('.yt-video-grid');
+            if (!feedContainer) {
+                return;
+            }
+
+            feedItems.clear();
+            feedContainer.innerHTML = '';
+
+            content.forEach((rawItem, index) => {
+                const item = normalizeItem(rawItem, index);
+                item.comments = getCommentCount(item);
+                feedItems.set(item.id, item);
+                feedContainer.appendChild(createVideoCard(item));
+            });
+
+            document.dispatchEvent(new CustomEvent('amplifi:feed-updated'));
+        }
+
         function createVideoCard(item) {
             const card = document.createElement('div');
             card.className = 'yt-video-card';
+            card.dataset.filterType = item.filterType;
+            card.dataset.contentId = item.id;
+
+            const isSaved = getSavedPosts().includes(item.id);
+            const isFollowing = getFollowedCreators().includes(item.creatorId);
+
             card.innerHTML = `
                 <div class="yt-video-thumbnail">
-                    <img src="${item.thumbnail || 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'}" alt="${item.title}">
+                    <img src="${item.thumbnail || 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&h=200'}" alt="${escapeHtml(item.title)}">
                     <div class="yt-video-duration">${formatDuration(item.duration)}</div>
                     <div class="yt-video-overlay">
-                        <button class="yt-play-btn" onclick="playVideo('${item.id}')">
+                        <button class="yt-play-btn" type="button" onclick="playVideo('${item.id}')">
                             <i class="fas fa-play"></i>
                         </button>
                     </div>
                 </div>
                 <div class="yt-video-info">
-                    <h3 class="yt-video-title">${item.title}</h3>
-                    <p class="yt-video-description">${item.description}</p>
+                    <div class="amplifi-feed-meta">
+                        <span class="amplifi-feed-badge"><i class="fas fa-signal"></i>${item.filterType === 'live' ? 'Live now' : item.filterType === 'moments' ? 'Moment' : 'Post'}</span>
+                        <span class="amplifi-feed-badge"><i class="fas fa-users"></i>Social pick</span>
+                    </div>
+                    <div class="amplifi-card-topline">
+                        <div>
+                            <strong class="yt-video-creator">${escapeHtml(item.creator)}</strong>
+                            <div class="amplifi-card-handle">${item.creatorHandle}</div>
+                        </div>
+                        <button class="amplifi-card-follow${isFollowing ? ' active' : ''}" type="button" onclick="toggleFollowCreator('${item.creatorId}', '${escapeAttr(item.creator)}')">
+                            <span>${isFollowing ? 'Following' : 'Follow'}</span>
+                        </button>
+                    </div>
+                    <h3 class="yt-video-title">${escapeHtml(item.title)}</h3>
+                    <p class="yt-video-description">${escapeHtml(item.description)}</p>
                     <div class="yt-video-meta">
-                        <span class="yt-video-creator">${item.creator || 'Unknown Creator'}</span>
                         <span class="yt-video-views">${formatViews(item.views)} views</span>
                         <span class="yt-video-date">${formatDate(item.timestamp)}</span>
                     </div>
-                    <div class="yt-video-actions">
-                        <button class="yt-action-btn" onclick="likeContent('${item.id}')">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span>${item.likes || 0}</span>
+                    <div class="amplifi-card-tags">
+                        ${item.tags.map((tag) => `<span class="amplifi-card-tag">${escapeHtml(tag)}</span>`).join('')}
+                    </div>
+                    <div class="yt-video-actions amplifi-social-actions">
+                        <button class="yt-action-btn" type="button" onclick="likeContent('${item.id}')">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>${item.likes}</span>
                         </button>
-                        <button class="yt-action-btn" onclick="commentContent('${item.id}')">
+                        <button class="yt-action-btn" type="button" onclick="commentContent('${item.id}')">
                             <i class="fas fa-comment"></i>
-                            <span>${item.comments || 0}</span>
+                            <span>${item.comments}</span>
                         </button>
-                        <button class="yt-action-btn" onclick="shareContent('${item.id}')">
+                        <button class="yt-action-btn" type="button" onclick="shareContent('${item.id}')">
                             <i class="fas fa-share"></i>
-                            <span>${item.shares || 0}</span>
+                            <span>${item.shares}</span>
+                        </button>
+                        <button class="yt-action-btn${isSaved ? ' active' : ''}" type="button" onclick="toggleSaveContent('${item.id}')">
+                            <i class="fas fa-bookmark"></i>
+                            <span>${isSaved ? 'Saved' : 'Save'}</span>
                         </button>
                     </div>
+                    <div class="amplifi-social-note">This feed card keeps the social loop close: react, follow, save, and comment without leaving the grid.</div>
                 </div>
             `;
+
             return card;
         }
 
-        // Social Interaction Functions
         async function likeContent(contentId) {
             try {
                 const userId = getCurrentUserId();
                 if (!userId) {
-                    alert('Please log in to like content');
+                    showFeedToast('Please log in to like posts');
                     return;
                 }
 
-                const liked = await socialFeatures.likeContent(contentId, userId, 'content');
+                const liked = socialFeatures ? await socialFeatures.likeContent(contentId, userId, 'content') : true;
+                const item = feedItems.get(contentId);
+                if (item) {
+                    item.likes = Math.max(0, item.likes + (liked ? 1 : -1));
+                }
+                recordSocialEvent('like', { contentKey: contentId, active: liked });
+
                 updateLikeButton(contentId, liked);
-                
-                // Record interaction for AI
-                aiEngine.recordInteraction(userId, contentId, 'like');
-                
-                console.log(liked ? '✅ Content liked' : '❌ Content unliked');
+                if (aiEngine && typeof aiEngine.recordInteraction === 'function') {
+                    aiEngine.recordInteraction(userId, contentId, 'like');
+                }
             } catch (error) {
                 console.error('❌ Error liking content:', error);
             }
         }
 
-        async function commentContent(contentId) {
-            try {
-                const commentText = prompt('Enter your comment:');
-                if (!commentText) return;
+        function commentContent(contentId) {
+            const userId = getCurrentUserId();
+            if (!userId) {
+                showFeedToast('Please log in to comment');
+                return;
+            }
 
-                const userId = getCurrentUserId();
-                if (!userId) {
-                    alert('Please log in to comment');
-                    return;
+            currentCommentContentId = contentId;
+            renderComments(contentId);
+
+            const item = feedItems.get(contentId);
+            const title = document.getElementById('commentsSheetTitle');
+            const meta = document.getElementById('commentsSheetMeta');
+            if (title && item) {
+                title.textContent = `Comments on ${item.title}`;
+            }
+            if (meta && item) {
+                meta.textContent = `${item.creator} ${item.creatorHandle} · ${formatDate(item.timestamp)}`;
+            }
+
+            const sheet = document.getElementById('commentsSheet');
+            if (sheet) {
+                sheet.classList.add('show');
+                sheet.setAttribute('aria-hidden', 'false');
+            }
+        }
+
+        async function submitComment() {
+            if (!currentCommentContentId) {
+                return;
+            }
+
+            const textarea = document.getElementById('commentComposer');
+            const userId = getCurrentUserId();
+            const text = textarea ? textarea.value.trim() : '';
+            if (!text) {
+                return;
+            }
+            if (!userId) {
+                showFeedToast('Please log in to comment');
+                return;
+            }
+
+            try {
+                if (socialFeatures) {
+                    await socialFeatures.addComment(currentCommentContentId, userId, text);
+                }
+                addMirroredComment(currentCommentContentId, text, userId);
+                recordSocialEvent('comment', { contentKey: currentCommentContentId });
+
+                const item = feedItems.get(currentCommentContentId);
+                if (item) {
+                    item.comments = getCommentCount(item);
+                    updateCommentButton(item.id, item.comments);
                 }
 
-                await socialFeatures.addComment(contentId, userId, commentText);
-                
-                // Record interaction for AI
-                aiEngine.recordInteraction(userId, contentId, 'comment');
-                
-                console.log('✅ Comment added');
+                if (aiEngine && typeof aiEngine.recordInteraction === 'function') {
+                    aiEngine.recordInteraction(userId, currentCommentContentId, 'comment');
+                }
+
+                if (textarea) {
+                    textarea.value = '';
+                }
+
+                renderComments(currentCommentContentId);
+                showFeedToast('Comment posted');
             } catch (error) {
                 console.error('❌ Error adding comment:', error);
             }
+        }
+
+        function closeCommentsSheet() {
+            const sheet = document.getElementById('commentsSheet');
+            if (sheet) {
+                sheet.classList.remove('show');
+                sheet.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function renderComments(contentId) {
+            const container = document.getElementById('commentsList');
+            if (!container) {
+                return;
+            }
+
+            const comments = socialFeatures && typeof socialFeatures.getComments === 'function'
+                ? socialFeatures.getComments(contentId, 25)
+                : [];
+
+            if (!comments.length) {
+                container.innerHTML = `
+                    <div class="amplifi-comment-item">
+                        <strong>No comments yet</strong>
+                        <span>Start the thread and give people a reason to return.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comments.map((comment) => `
+                <div class="amplifi-comment-item">
+                    <strong>${escapeHtml(comment.userId)}</strong>
+                    <span>${escapeHtml(comment.text)}</span>
+                    <div class="amplifi-comment-time">${formatDate(comment.timestamp)}</div>
+                </div>
+            `).join('');
         }
 
         async function shareContent(contentId) {
             try {
                 const userId = getCurrentUserId();
                 if (!userId) {
-                    alert('Please log in to share content');
+                    showFeedToast('Please log in to share posts');
                     return;
                 }
 
-                await socialFeatures.shareContent(contentId, userId, 'internal');
-                
-                // Record interaction for AI
-                aiEngine.recordInteraction(userId, contentId, 'share');
-                
-                console.log('✅ Content shared');
+                if (socialFeatures) {
+                    await socialFeatures.shareContent(contentId, userId, 'internal');
+                }
+                recordSocialEvent('share', { contentKey: contentId });
+
+                const item = feedItems.get(contentId);
+                if (item) {
+                    item.shares += 1;
+                    updateShareButton(item.id, item.shares);
+                }
+
+                if (navigator.clipboard && window.location.href) {
+                    await navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${contentId}`);
+                }
+
+                if (aiEngine && typeof aiEngine.recordInteraction === 'function') {
+                    aiEngine.recordInteraction(userId, contentId, 'share');
+                }
+
+                showFeedToast('Share link copied');
             } catch (error) {
                 console.error('❌ Error sharing content:', error);
             }
         }
 
-        // Utility Functions
+        async function toggleFollowCreator(creatorId, creatorName) {
+            const userId = getCurrentUserId();
+            if (!userId) {
+                showFeedToast('Please log in to follow creators');
+                return;
+            }
+
+            try {
+                if (socialFeatures && typeof socialFeatures.followUser === 'function') {
+                    await socialFeatures.followUser(userId, creatorId);
+                }
+
+                const following = getFollowedCreators();
+                const next = following.includes(creatorId)
+                    ? following.filter((id) => id !== creatorId)
+                    : [...following, creatorId];
+                localStorage.setItem('amplifi_following', JSON.stringify(next));
+                recordSocialEvent('follow', { creatorId, active: next.includes(creatorId) });
+                window.dispatchEvent(new CustomEvent('amplifi-social-state-updated'));
+
+                document.querySelectorAll(`.amplifi-card-follow`).forEach((button) => {
+                    const card = button.closest('.yt-video-card');
+                    if (!card) {
+                        return;
+                    }
+                    const item = feedItems.get(card.dataset.contentId);
+                    if (item && item.creatorId === creatorId) {
+                        const active = next.includes(creatorId);
+                        button.classList.toggle('active', active);
+                        button.querySelector('span').textContent = active ? 'Following' : 'Follow';
+                    }
+                });
+
+                showFeedToast(next.includes(creatorId) ? `Following ${creatorName}` : `Unfollowed ${creatorName}`);
+            } catch (error) {
+                console.error('❌ Error following creator:', error);
+            }
+        }
+
+        function toggleSaveContent(contentId) {
+            const saved = getSavedPosts();
+            const next = saved.includes(contentId)
+                ? saved.filter((id) => id !== contentId)
+                : [...saved, contentId];
+
+            localStorage.setItem('amplifi_saved_posts', JSON.stringify(next));
+            recordSocialEvent('save', { contentKey: contentId, active: next.includes(contentId) });
+            window.dispatchEvent(new CustomEvent('amplifi-social-state-updated'));
+
+            const button = document.querySelector(`[onclick="toggleSaveContent('${contentId}')"]`);
+            if (button) {
+                const isSaved = next.includes(contentId);
+                button.classList.toggle('active', isSaved);
+                button.querySelector('span').textContent = isSaved ? 'Saved' : 'Save';
+            }
+        }
+
+        function getSavedPosts() {
+            try {
+                const value = JSON.parse(localStorage.getItem('amplifi_saved_posts') || '[]');
+                return Array.isArray(value) ? value : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function getFollowedCreators() {
+            try {
+                const value = JSON.parse(localStorage.getItem('amplifi_following') || '[]');
+                return Array.isArray(value) ? value : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function getCommentCount(item) {
+            if (socialFeatures && typeof socialFeatures.getComments === 'function') {
+                return Math.max(socialFeatures.getComments(item.id, 100).length, getMirroredCommentCount(item.id));
+            }
+            return Math.max(Number(item.comments || 0), getMirroredCommentCount(item.id));
+        }
+
         function getCurrentUserId() {
-            const auth = localStorage.getItem('amplifi_auth');
-            return auth ? JSON.parse(auth).userId : null;
+            if (window.amplifiAuth && typeof window.amplifiAuth.getUser === 'function') {
+                const user = window.amplifiAuth.getUser();
+                if (user) {
+                    return user.uid || user.email || user.name || null;
+                }
+            }
+
+            try {
+                const auth = JSON.parse(localStorage.getItem('amplifi_auth') || 'null');
+                if (auth && auth.user) {
+                    return auth.user.uid || auth.user.email || auth.user.name || auth.userId || null;
+                }
+                return auth ? auth.userId || null : null;
+            } catch (error) {
+                return null;
+            }
         }
 
         function formatDuration(seconds) {
             if (!seconds) return '0:00';
             const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
+            const secs = Math.floor(seconds % 60);
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
@@ -1467,48 +1839,90 @@
         function formatDate(timestamp) {
             if (!timestamp) return 'Unknown';
             const date = new Date(timestamp);
-            const now = new Date();
-            const diff = now - date;
+            const diff = Date.now() - date.getTime();
+            const hours = Math.floor(diff / (1000 * 60 * 60));
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            
-            if (days === 0) return 'Today';
-            if (days === 1) return 'Yesterday';
-            if (days < 7) return `${days} days ago`;
+
+            if (hours < 1) return 'Just now';
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
             return date.toLocaleDateString();
+        }
+
+        function slugify(value) {
+            return String(value || '')
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 18);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeAttr(value) {
+            return String(value || '').replace(/'/g, "\\'");
         }
 
         function updateLikeButton(contentId, liked) {
             const button = document.querySelector(`[onclick="likeContent('${contentId}')"]`);
+            if (!button) {
+                return;
+            }
+
+            const icon = button.querySelector('i');
+            const count = button.querySelector('span');
+            const item = feedItems.get(contentId);
+            const nextCount = item ? item.likes : parseInt(count.textContent, 10) + (liked ? 1 : -1);
+
+            button.classList.toggle('active', liked);
+            if (icon) {
+                icon.classList.toggle('far', !liked);
+                icon.classList.toggle('fas', liked);
+            }
+            if (count) {
+                count.textContent = Math.max(0, nextCount);
+            }
+        }
+
+        function updateCommentButton(contentId, countValue) {
+            const button = document.querySelector(`[onclick="commentContent('${contentId}')"] span`);
             if (button) {
-                const icon = button.querySelector('i');
-                const count = button.querySelector('span');
-                
-                if (liked) {
-                    icon.classList.add('fas', 'fa-thumbs-up');
-                    icon.classList.remove('far');
-                    count.textContent = parseInt(count.textContent) + 1;
-                } else {
-                    icon.classList.add('far', 'fa-thumbs-up');
-                    icon.classList.remove('fas');
-                    count.textContent = Math.max(0, parseInt(count.textContent) - 1);
-                }
+                button.textContent = countValue;
+            }
+        }
+
+        function updateShareButton(contentId, countValue) {
+            const button = document.querySelector(`[onclick="shareContent('${contentId}')"] span`);
+            if (button) {
+                button.textContent = countValue;
             }
         }
 
         function playVideo(videoId) {
-            console.log(`Playing video: ${videoId}`);
-            // This would typically open a video player modal or navigate to video page
-            alert(`Playing video: ${videoId}`);
+            showFeedToast(`Opening ${videoId}`);
         }
-        
-        // Sign out function
+
+        function showFeedToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast show';
+            toast.innerHTML = `<div class="notification-content"><i class="fas fa-sparkles"></i><span>${escapeHtml(message)}</span></div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('show'), 1800);
+            setTimeout(() => toast.remove(), 2200);
+        }
+
         function signOut() {
             console.log('🔐 Signing out...');
-            
-            // Clear localStorage
             localStorage.removeItem('amplifi_auth');
-            
-            // Sign out from Firebase if available
+
             if (typeof auth !== 'undefined') {
                 auth.signOut().then(() => {
                     console.log('✅ Signed out from Firebase');
@@ -1516,12 +1930,10 @@
                     console.error('❌ Sign out error:', error);
                 });
             }
-            
-            // Redirect to home page
+
             window.location.href = 'index.html';
         }
-    
-        // Mobile Menu Functions
+
         function openMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
             if (overlay) {
@@ -1529,7 +1941,7 @@
                 document.body.style.overflow = 'hidden';
             }
         }
-        
+
         function closeMobileMenu() {
             const overlay = document.getElementById('mobileMenuOverlay');
             if (overlay) {
@@ -1537,19 +1949,18 @@
                 document.body.style.overflow = '';
             }
         }
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
+
+        document.addEventListener('click', function (e) {
             const overlay = document.getElementById('mobileMenuOverlay');
             if (overlay && e.target === overlay) {
                 closeMobileMenu();
             }
         });
-        
-        // Close menu on escape key
-        document.addEventListener('keydown', function(e) {
+
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 closeMobileMenu();
+                closeCommentsSheet();
             }
         });
     </script>

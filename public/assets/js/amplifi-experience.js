@@ -2,97 +2,97 @@
     const pageConfig = {
         'index.html': {
             tag: 'Amplifi Identity',
-            eyebrow: 'Built for serious creators',
-            title: 'Create once. Publish smarter. Build a stronger fan connection.',
-            description: 'Amplifi should feel less like a clone and more like a creator operating system: sharper workflows, clearer monetization touchpoints, and a cleaner path from idea to audience.',
+            eyebrow: 'Built for social connection',
+            title: 'Share what matters. Discover people. Build real communities.',
+            description: 'Amplifi should feel like a social media platform first: stronger discovery, cleaner community interactions, and creator tools that support sharing instead of overshadowing it.',
             stats: [
-                ['Creator workflow', 'Edit, schedule, go live, and publish from one product lane.'],
-                ['Audience clarity', 'Surface what matters most instead of burying actions under clutter.'],
-                ['Faster discovery', 'Make it obvious where new viewers should go next.']
+                ['Community first', 'Keep feeds, profiles, and live moments centered on people and conversations.'],
+                ['Better discovery', 'Make it easier to find creators, topics, and content worth following.'],
+                ['Sharing momentum', 'Support posting, going live, and reacting without losing the social feel.']
             ],
             actions: [
-                { href: 'login.html', label: 'Start your creator setup', primary: true, icon: 'fa-rocket' },
-                { href: 'creator-dashboard.html', label: 'See creator workflow', icon: 'fa-chart-line' },
-                { href: 'upload.html', label: 'Open content studio', icon: 'fa-upload' }
+                { href: 'login.html', label: 'Join the community', primary: true, icon: 'fa-rocket' },
+                { href: 'feed.html', label: 'Explore the feed', icon: 'fa-chart-line' },
+                { href: 'profile.html', label: 'Open your profile', icon: 'fa-user' }
             ]
         },
         'feed.html': {
             tag: 'Feed Experience',
             eyebrow: 'Designed for momentum',
-            title: 'Your feed should feel curated, not chaotic.',
-            description: 'This pass gives the feed a more premium identity and a clearer sense of what users can do next: explore, publish, or jump into the creator workflow without friction.',
+            title: 'Your feed should feel alive, relevant, and social.',
+            description: 'This pass gives the feed a cleaner identity and a clearer sense of what users can do next: discover people, react to posts, and move naturally through the social experience.',
             filterTypes: ['videos', 'moments', 'videos', 'videos'],
             links: [
-                ['Go live', 'Jump from browsing straight into your live creator flow.', 'live.html'],
-                ['Upload next', 'Turn inspiration into your next publish-ready asset.', 'upload.html'],
-                ['View library', 'Keep your content organized and closer to reuse.', 'library.html']
+                ['Go live', 'Jump from browsing into a live social moment with your audience.', 'live.html'],
+                ['Share next', 'Turn what you are seeing into your next post, video, or moment.', 'upload.html'],
+                ['View library', 'Keep saved content, playlists, and social activity close by.', 'library.html']
             ]
         },
         'profile.html': {
-            tag: 'Creator Presence',
-            eyebrow: 'Own your channel story',
-            title: 'A creator profile should feel like a brand hub, not just an account page.',
-            description: 'Highlight credibility, make creator stats easier to scan, and frame profile management as a growth tool instead of a settings page.',
+            tag: 'Social Presence',
+            eyebrow: 'Show people who you are',
+            title: 'A social profile should feel like a living identity, not just an account page.',
+            description: 'Highlight personality, make activity easier to scan, and frame profile management as part of community building instead of just creator admin.',
             actions: [
-                { href: 'creator-dashboard.html', label: 'Open creator dashboard', primary: true, icon: 'fa-chart-pie' },
-                { href: 'subscriptions.html', label: 'Review memberships', icon: 'fa-star' }
+                { href: 'creator-dashboard.html', label: 'Open social hub', primary: true, icon: 'fa-chart-pie' },
+                { href: 'subscriptions.html', label: 'Review supporter community', icon: 'fa-star' }
             ]
         },
         'creator-dashboard.html': {
-            tag: 'Creator Hub',
+            tag: 'Social Hub',
             eyebrow: 'Operate with clarity',
-            title: 'Your creator dashboard should feel like a command center, not a placeholder.',
-            description: 'Tie creation, publishing, scheduling, and monetization into one obvious workflow so creators know what to do next.',
+            title: 'Your social hub should help you connect, share, and keep momentum.',
+            description: 'Tie posting, live moments, community planning, and profile growth into one clear hub so social activity feels coordinated instead of scattered.',
             actions: [
-                { href: 'upload.html', label: 'Create next release', primary: true, icon: 'fa-upload' },
-                { href: 'schedule.html', label: 'Open content plan', icon: 'fa-calendar' }
+                { href: 'upload.html', label: 'Share something new', primary: true, icon: 'fa-upload' },
+                { href: 'schedule.html', label: 'Open posting plan', icon: 'fa-calendar' }
             ]
         },
         'creator-setup.html': {
-            tag: 'Creator Setup',
-            eyebrow: 'Start with structure',
-            title: 'New creators need a clearer first-run path than just landing on a dashboard.',
-            description: 'Use onboarding to define identity, content focus, publishing rhythm, and monetization direction before jumping into tools.',
+            tag: 'Profile Setup',
+            eyebrow: 'Start with identity',
+            title: 'New users need a clearer first-run path into the social experience.',
+            description: 'Use onboarding to define your profile identity, content focus, posting rhythm, and community direction before jumping into the app.',
             actions: [
-                { href: 'creator-dashboard.html', label: 'Back to creator hub', primary: true, icon: 'fa-gauge' },
-                { href: 'profile.html?tab=about', label: 'Review creator profile', icon: 'fa-user' }
+                { href: 'creator-dashboard.html', label: 'Back to social hub', primary: true, icon: 'fa-gauge' },
+                { href: 'profile.html?tab=about', label: 'Review social profile', icon: 'fa-user' }
             ]
         },
         'upload.html': {
             tag: 'Content Studio',
-            eyebrow: 'Ship faster',
-            title: 'Upload should feel like the start of a creator workflow, not a dead-end form.',
-            description: 'The experience is now framed around what comes next: editing, scheduling, publishing, and creating moments from the same entry point.',
+            eyebrow: 'Share faster',
+            title: 'Posting should feel like a social action, not a dead-end form.',
+            description: 'The experience should make it easy to post, schedule, go live, and create moments that keep your social presence active.',
             actions: [
                 { href: 'video-editor.html', label: 'Jump into editor', primary: true, icon: 'fa-scissors' },
-                { href: 'schedule.html', label: 'Plan publish time', icon: 'fa-calendar' }
+                { href: 'schedule.html', label: 'Plan post time', icon: 'fa-calendar' }
             ]
         },
         'live.html': {
             tag: 'Live Experience',
-            eyebrow: 'Real-time creator energy',
-            title: 'Live should communicate momentum, monetization, and audience connection instantly.',
-            description: 'This UX pass reframes live as a premium creator touchpoint with clearer actions for streaming, scheduling, and viewer support.',
+            eyebrow: 'Real-time social energy',
+            title: 'Live should communicate momentum, community, and connection instantly.',
+            description: 'This UX pass reframes live as a core social touchpoint with clearer actions for streaming, scheduling, and audience participation.',
             actions: [
-                { href: 'creator-dashboard.html', label: 'Manage creator flow', primary: true, icon: 'fa-bolt' },
+                { href: 'creator-dashboard.html', label: 'Manage social hub', primary: true, icon: 'fa-bolt' },
                 { href: 'subscriptions.html', label: 'View supporter tiers', icon: 'fa-heart' }
             ]
         },
         'library.html': {
             tag: 'Content Library',
             eyebrow: 'Organize with intent',
-            title: 'A creator library should help you reuse momentum, not just store files.',
-            description: 'Keep watch history, saved items, playlists, and creator tools feeling like part of one clean publishing system.',
+            title: 'A social library should help you return to what matters, not just store files.',
+            description: 'Keep watch history, saved items, playlists, and social activity feeling like part of one connected experience.',
             actions: [
                 { href: 'music-library.html', label: 'Browse music library', primary: true, icon: 'fa-music' },
-                { href: 'creator-dashboard.html', label: 'Go to creator dashboard', icon: 'fa-chart-line' }
+                { href: 'creator-dashboard.html', label: 'Go to social hub', icon: 'fa-chart-line' }
             ]
         },
         'search.html': {
             tag: 'Discovery',
             eyebrow: 'Find the next idea faster',
-            title: 'Search should feel like discovery, not just filtering.',
-            description: 'This layer gives search more direction by emphasizing creators, content types, and the next actions users usually take once they find something useful.'
+            title: 'Search should feel like social discovery, not just filtering.',
+            description: 'This layer gives search more direction by emphasizing people, content types, and the next social actions users usually take once they find something useful.'
         },
         'moments.html': {
             tag: 'Short-Form',
@@ -103,14 +103,14 @@
         'trending.html': {
             tag: 'What is rising',
             eyebrow: 'Signal over noise',
-            title: 'Trending should spotlight cultural energy and creator opportunity.',
-            description: 'This pass helps users understand why they are here: discover momentum, study patterns, and find what is worth reacting to next.'
+            title: 'Trending should spotlight cultural energy and social momentum.',
+            description: 'This pass helps users understand why they are here: discover what people are reacting to and find what is worth joining next.'
         },
         'schedule.html': {
             tag: 'Publishing cadence',
             eyebrow: 'Plan with confidence',
-            title: 'Scheduling should feel like strategic publishing, not just date picking.',
-            description: 'Make the calendar and content planning area feel more creator-centric, premium, and outcome-driven.'
+            title: 'Scheduling should feel like planning your social presence, not just date picking.',
+            description: 'Make the calendar and posting plan feel tied to community momentum, not just creator admin.'
         },
         'video-editor.html': {
             tag: 'Editing suite',
@@ -122,57 +122,57 @@
 
     const workflowConfig = {
         'upload.html': {
-            title: 'Creator workflow',
-            description: 'Move from raw footage to published content without bouncing between disconnected tools.',
+            title: 'Social posting flow',
+            description: 'Move from an idea to a post, moment, or live share without bouncing between disconnected tools.',
             items: [
-                ['1. Upload source', 'Bring in full videos, short-form clips, or assets for your next post.'],
-                ['2. Refine quickly', 'Open the editor, create moments, and prep titles before publishing.'],
-                ['3. Schedule with intent', 'Choose the best drop time and build momentum before launch.']
+                ['1. Start a share', 'Bring in videos, clips, or assets for your next post or moment.'],
+                ['2. Refine quickly', 'Open the editor, create moments, and prep titles before posting.'],
+                ['3. Schedule with intent', 'Choose the best time to post and keep your social momentum moving.']
             ]
         },
         'live.html': {
-            title: 'Live launch checklist',
-            description: 'Treat live streaming like a show, with prep, audience hooks, and monetization cues built in.',
+            title: 'Live social checklist',
+            description: 'Treat live streaming like a community moment, with prep, conversation hooks, and follow-up built in.',
             items: [
-                ['Prep the room', 'Check title, thumbnail, stream key, and your audience promise.'],
-                ['Prime engagement', 'Point viewers toward live chat, supporter tiers, and next content.'],
+                ['Prep the room', 'Check title, thumbnail, stream key, and what people should expect.'],
+                ['Prime engagement', 'Point viewers toward live chat, supporter tiers, and what to do next.'],
                 ['Repurpose after stream', 'Turn the replay into clips, highlights, and scheduled follow-ups.']
             ]
         },
         'profile.html': {
-            title: 'Channel credibility',
-            description: 'Your profile should signal what you make, who it is for, and what viewers should do next.',
+            title: 'Social credibility',
+            description: 'Your profile should signal who you are, what you share, and why people should follow or come back.',
             items: [
-                ['Clarify positioning', 'Make your niche and creator promise obvious at a glance.'],
-                ['Show momentum', 'Surface stats, playlists, and recent output to reinforce trust.'],
-                ['Guide the audience', 'Link viewers toward memberships, uploads, and creator touchpoints.']
+                ['Clarify identity', 'Make your interests, tone, and social promise obvious at a glance.'],
+                ['Show momentum', 'Surface activity, playlists, and recent posts to reinforce trust.'],
+                ['Guide the community', 'Link people toward memberships, uploads, and the next social touchpoint.']
             ]
         },
         'library.html': {
             title: 'Reuse momentum',
-            description: 'A strong library helps you find your best content quickly and turn old assets into new growth.',
+            description: 'A strong library helps you find your best content quickly and turn saved media into new social momentum.',
             items: [
                 ['Watch patterns', 'Use history and saved items to spot what deserves a follow-up.'],
-                ['Organize by intent', 'Separate inspiration, publish-ready items, and evergreen assets.'],
+                ['Organize by intent', 'Separate inspiration, post-ready items, and evergreen assets.'],
                 ['Create from the archive', 'Jump from stored content into new uploads, playlists, or edits.']
             ]
         },
         'creator-dashboard.html': {
-            title: 'Creator operating system',
-            description: 'Use the dashboard as your decision layer: what to publish, when to schedule, and how to turn activity into growth.',
+            title: 'Social operating hub',
+            description: 'Use the hub as your decision layer: what to share, when to post, and how to turn activity into stronger community momentum.',
             items: [
-                ['Prioritize the next release', 'Pick the one asset that should move today and ship it.'],
-                ['Connect the workflow', 'Move between upload, editor, schedule, and live without losing momentum.'],
-                ['Support monetization', 'Point viewers toward memberships, live moments, and premium creator value.']
+                ['Prioritize the next share', 'Pick the one post, moment, or live event that should move today.'],
+                ['Connect the flow', 'Move between upload, editor, schedule, and live without losing social momentum.'],
+                ['Support community value', 'Point people toward memberships, live moments, and deeper interaction.']
             ]
         },
         'creator-setup.html': {
-            title: 'Setup with intent',
-            description: 'Use onboarding to turn Amplifi into a creator system personalized to your niche instead of a generic shell.',
+            title: 'Profile setup with intent',
+            description: 'Use onboarding to turn Amplifi into a social platform personalized to your identity and interests instead of a generic shell.',
             items: [
-                ['Define your positioning', 'Clarify your niche, audience promise, and publishing format from the start.'],
-                ['Pick a repeatable cadence', 'Make your schedule realistic enough to maintain momentum consistently.'],
-                ['Align monetization early', 'Tie subscriptions, support, or brand goals to the content you actually plan to publish.']
+                ['Define your positioning', 'Clarify your niche, community promise, and content style from the start.'],
+                ['Pick a repeatable cadence', 'Make your schedule realistic enough to stay active consistently.'],
+                ['Align support early', 'Tie subscriptions, support, or growth goals to what you actually share.']
             ]
         }
     };
@@ -192,6 +192,13 @@
         return window.amplifiAuth.getCreatorProfile() || null;
     }
 
+    function getCreatorPlanData() {
+        if (!window.amplifiAuth || typeof window.amplifiAuth.getCreatorPlan !== 'function') {
+            return null;
+        }
+        return window.amplifiAuth.getCreatorPlan() || null;
+    }
+
     function isCreatorSetupReady() {
         return Boolean(window.amplifiAuth && typeof window.amplifiAuth.isOnboardingComplete === 'function' && window.amplifiAuth.isOnboardingComplete());
     }
@@ -205,11 +212,11 @@
         if (window.amplifiAuth && typeof window.amplifiAuth.getUser === 'function') {
             const user = window.amplifiAuth.getUser();
             if (user) {
-                return user.name || user.email || 'Creator';
+                return user.name || user.email || 'User';
             }
         }
 
-        return 'Creator';
+        return 'User';
     }
 
     function slugify(value) {
@@ -359,6 +366,141 @@
         return grid;
     }
 
+    function getStoredList(key) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || '[]');
+            return Array.isArray(value) ? value : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function setStoredList(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function toggleStoredValue(key, value) {
+        const current = getStoredList(key);
+        const next = current.includes(value)
+            ? current.filter((item) => item !== value)
+            : [...current, value];
+        setStoredList(key, next);
+        return next.includes(value);
+    }
+
+    function updateSearchPlaceholders() {
+        document.querySelectorAll('#searchInput, .yt-search-input').forEach((input) => {
+            input.setAttribute('placeholder', 'Search posts, people, topics...');
+        });
+    }
+
+    function readStoredJson(key, fallback) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || 'null');
+            return value === null ? fallback : value;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function writeStoredJson(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function emitSocialStateUpdate() {
+        window.dispatchEvent(new CustomEvent('amplifi-social-state-updated'));
+    }
+
+    function readSocialEvents() {
+        const events = readStoredJson('amplifi_social_events', []);
+        return Array.isArray(events) ? events : [];
+    }
+
+    function writeSocialEvents(events) {
+        writeStoredJson('amplifi_social_events', events.slice(-250));
+        emitSocialStateUpdate();
+    }
+
+    function recordSocialEvent(type, payload) {
+        const events = readSocialEvents();
+        const entry = {
+            id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            type,
+            timestamp: Date.now(),
+            page: currentPage(),
+            ...(payload || {})
+        };
+        events.push(entry);
+        writeSocialEvents(events);
+        return entry;
+    }
+
+    function readSocialComments() {
+        const comments = readStoredJson('amplifi_social_comments', []);
+        return Array.isArray(comments) ? comments : [];
+    }
+
+    function writeSocialComments(comments) {
+        writeStoredJson('amplifi_social_comments', comments.slice(-250));
+        emitSocialStateUpdate();
+    }
+
+    function addSocialComment(comment) {
+        const comments = readSocialComments();
+        comments.push({
+            id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            timestamp: Date.now(),
+            page: currentPage(),
+            ...(comment || {})
+        });
+        writeSocialComments(comments);
+    }
+
+    function getCommentsForKey(contentKey) {
+        return readSocialComments()
+            .filter((comment) => comment.contentKey === contentKey)
+            .sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    function formatCompactNumber(value) {
+        const number = Number(value || 0);
+        if (number >= 1000000) {
+            return `${(number / 1000000).toFixed(1)}M`;
+        }
+        if (number >= 1000) {
+            return `${(number / 1000).toFixed(1)}K`;
+        }
+        return String(number);
+    }
+
+    function getCommunityMetrics() {
+        const uploads = readStoredJson('uploadHistory', []);
+        const following = Array.from(new Set(getStoredList('amplifi_following')));
+        const saved = Array.from(new Set(getStoredList('amplifi_saved_posts')));
+        const plan = getCreatorPlanData() || {};
+        const goals = Array.isArray(plan.goals) ? plan.goals.length : 0;
+        const comments = readSocialComments();
+        const commentCount = Array.isArray(comments) ? comments.length : 0;
+        const events = readSocialEvents();
+        const shareCount = events.filter((event) => event.type === 'share').length;
+        const likeCount = events.filter((event) => event.type === 'like' && event.active !== false).length;
+        const saveCount = saved.length;
+        const support = commentCount + shareCount + saveCount;
+        const followingCount = following.length;
+
+        return {
+            uploads: uploads.length || 12,
+            following: followingCount || 18,
+            saved: saveCount || 7,
+            goals: goals || 3,
+            commentCount: commentCount || 24,
+            shareCount: shareCount || 12,
+            likeCount: likeCount || 120,
+            support: support || 36,
+            reach: Math.max(45600, (uploads.length * 2400) + (followingCount * 320) + (saveCount * 180) + (commentCount * 24) + (shareCount * 36) + 10000)
+        };
+    }
+
     function injectContextPanel() {
         const config = pageConfig[currentPage()];
         if (!config) {
@@ -451,16 +593,16 @@
         section.className = 'amplifi-home-section';
         section.innerHTML = `
             <div class="amplifi-page-tag">Why Amplifi</div>
-            <h2>Build a creator workflow that actually compounds.</h2>
-            <p>Amplifi should make it easier to produce consistently, connect formats together, and guide viewers into deeper creator relationships.</p>
+            <h2>Build a social presence that actually compounds.</h2>
+            <p>Amplifi should make it easier to stay active, connect formats together, and guide people into deeper community relationships.</p>
         `;
 
         const grid = document.createElement('div');
         grid.className = 'amplifi-home-grid';
         [
-            ['Creator operating system', 'Upload, edit, schedule, and go live from one connected workflow.'],
-            ['Multi-format momentum', 'Turn long-form, moments, and live streams into a tighter content engine.'],
-            ['Audience pathways', 'Move people from discovery into memberships, library, and creator touchpoints.']
+            ['Social-first experience', 'Feed, profiles, live, and posting should feel centered on people and interaction.'],
+            ['Multi-format momentum', 'Turn posts, moments, and live streams into a tighter social rhythm.'],
+            ['Community pathways', 'Move people from discovery into follows, memberships, library, and deeper participation.']
         ].forEach(([title, description]) => {
             const card = document.createElement('article');
             card.className = 'amplifi-home-card';
@@ -470,6 +612,459 @@
 
         section.appendChild(grid);
         anchor.insertAdjacentElement('beforebegin', section);
+    }
+
+    function injectSocialProofStrip() {
+        if (currentPage() !== 'index.html' || document.querySelector('.amplifi-proof-strip')) {
+            return;
+        }
+
+        const anchor = document.querySelector('.hero-section');
+        if (!anchor || !anchor.parentElement) {
+            return;
+        }
+
+        const strip = document.createElement('section');
+        strip.className = 'amplifi-proof-strip';
+        [
+            ['Faster social loop', 'Post, react, and move without product clutter.'],
+            ['People-first discovery', 'Profiles, moments, and trending feel connected.'],
+            ['Community depth', 'Feed actions push real return visits, not passive browsing.'],
+            ['Cleaner creator tools', 'Support creators without making the app feel like a dashboard.']
+        ].forEach(([title, description]) => {
+            const item = document.createElement('article');
+            item.className = 'amplifi-proof-chip';
+            item.innerHTML = `<strong>${title}</strong><span>${description}</span>`;
+            strip.appendChild(item);
+        });
+
+        anchor.insertAdjacentElement('afterend', strip);
+    }
+
+    function injectHomeCommunitySnapshot() {
+        if (currentPage() !== 'index.html' || document.querySelector('.amplifi-discovery-rail')) {
+            return;
+        }
+
+        const anchor = document.querySelector('.trending-section');
+        if (!anchor) {
+            return;
+        }
+
+        const metrics = getCommunityMetrics();
+        const profile = getCreatorProfileData() || {};
+        const section = document.createElement('section');
+        section.className = 'amplifi-discovery-rail';
+        [
+            ['Community snapshot', `${formatCompactNumber(metrics.following)} people/creators followed · ${formatCompactNumber(metrics.saved)} saves ready to revisit.`],
+            ['Why this can beat YouTube', 'Faster interaction loops, cleaner discovery, and more visible identity across the whole product.'],
+            ['Best next move', `Use ${profile.contentCategory || 'your niche'} to turn feed traffic into profile visits, saves, and repeat follows.`]
+        ].forEach(([title, description]) => {
+            const card = document.createElement('article');
+            card.className = 'amplifi-discovery-card';
+            card.innerHTML = `<strong>${title}</strong><span>${description}</span>`;
+            section.appendChild(card);
+        });
+
+        anchor.insertAdjacentElement('beforebegin', section);
+    }
+
+    function injectFeedComposer() {
+        if (currentPage() !== 'feed.html' || document.querySelector('.amplifi-social-composer')) {
+            return;
+        }
+
+        const anchor = document.querySelector('.feed-header');
+        if (!anchor) {
+            return;
+        }
+
+        const profile = getCreatorProfileData() || {};
+        const panel = document.createElement('section');
+        panel.className = 'amplifi-social-composer';
+        panel.innerHTML = `
+            <div>
+                <div class="amplifi-page-tag">Social momentum</div>
+                <h3>Stay active without leaving the conversation.</h3>
+                <p>Amplifi should feel more social than a video catalog. Move from discovery into posting, moments, live, and community actions in one flow.</p>
+                <div class="amplifi-composer-actions">
+                    <a class="amplifi-composer-btn primary" href="upload.html"><i class="fas fa-pen"></i><span>Post an update</span></a>
+                    <a class="amplifi-composer-btn" href="moments.html"><i class="fas fa-bolt"></i><span>Create a moment</span></a>
+                    <a class="amplifi-composer-btn" href="live.html"><i class="fas fa-broadcast-tower"></i><span>Go live now</span></a>
+                </div>
+            </div>
+            <aside class="amplifi-social-panel">
+                <h3>${creatorDisplayName()}'s feed pulse</h3>
+                <div class="amplifi-pulse-list">
+                    <div class="amplifi-pulse-item">
+                        <div class="amplifi-pulse-icon"><i class="fas fa-users"></i></div>
+                        <div><strong>People want a reason to return</strong><span>${profile.contentCategory || 'Your community'} grows faster when feed, profile, and moments all reinforce the same identity.</span></div>
+                    </div>
+                    <div class="amplifi-pulse-item">
+                        <div class="amplifi-pulse-icon"><i class="fas fa-fire"></i></div>
+                        <div><strong>Short actions compound</strong><span>Likes, follows, comments, and saves should be visible everywhere, not buried behind a player page.</span></div>
+                    </div>
+                </div>
+            </aside>
+        `;
+
+        anchor.insertAdjacentElement('afterend', panel);
+    }
+
+    function enhanceDiscoveryCards() {
+        if (!['index.html', 'trending.html', 'moments.html'].includes(currentPage())) {
+            return;
+        }
+
+        document.querySelectorAll('.yt-video-card').forEach((card, index) => {
+            if (card.dataset.amplifiDiscoveryEnhanced === 'true') {
+                return;
+            }
+
+            card.dataset.amplifiDiscoveryEnhanced = 'true';
+            const info = card.querySelector('.yt-video-info');
+            const title = card.querySelector('.yt-video-title');
+            const author = card.querySelector('.yt-video-author, .yt-video-creator');
+            if (!info || !title) {
+                return;
+            }
+
+            const creator = author ? author.textContent.trim() : 'Amplifi';
+            const creatorId = slugify(creator) || `amplifi${index + 1}`;
+            const contentKey = `${currentPage()}::${creatorId}::${slugify(title.textContent.trim()) || index}`;
+            const localCommentCount = getCommentsForKey(contentKey).length;
+            const localShareCount = readSocialEvents().filter((event) => event.type === 'share' && event.contentKey === contentKey).length;
+            const handle = `@${slugify(creator) || `amplifi${index + 1}`}`;
+            const badges = document.createElement('div');
+            badges.className = 'amplifi-feed-meta';
+            badges.innerHTML = currentPage() === 'moments.html'
+                ? '<span class="amplifi-feed-badge"><i class="fas fa-bolt"></i>Replay-worthy</span><span class="amplifi-feed-badge"><i class="fas fa-comment-dots"></i>Conversation starter</span>'
+                : '<span class="amplifi-feed-badge"><i class="fas fa-chart-line"></i>Rising now</span><span class="amplifi-feed-badge"><i class="fas fa-users"></i>Community pick</span>';
+
+            const topline = document.createElement('div');
+            topline.className = 'amplifi-card-topline';
+            topline.innerHTML = `
+                <span class="amplifi-card-handle">${handle}</span>
+                <button class="amplifi-card-follow" type="button" data-follow-value="${creatorId}">
+                    <span>Follow</span>
+                </button>
+            `;
+
+            const bottomline = document.createElement('div');
+            bottomline.className = 'amplifi-social-actions';
+            bottomline.innerHTML = `
+                <button class="amplifi-static-action" type="button" data-save-value="${contentKey}"><i class="fas fa-bookmark"></i><span>Save</span></button>
+                <button class="amplifi-static-action" type="button" data-comment-key="${contentKey}" data-comment-title="${title.textContent.trim()}" data-comment-creator="${creator}"><i class="fas fa-comments"></i><span>Comment${localCommentCount ? ` · ${localCommentCount}` : ''}</span></button>
+                <button class="amplifi-static-action" type="button" data-share-key="${contentKey}" data-share-title="${title.textContent.trim()}"><i class="fas fa-share-nodes"></i><span>Share${localShareCount ? ` · ${localShareCount}` : ''}</span></button>
+                <a class="amplifi-static-action" href="profile.html"><i class="fas fa-user-plus"></i><span>View profile</span></a>
+            `;
+
+            info.insertBefore(badges, info.firstChild);
+            info.insertBefore(topline, title);
+            info.appendChild(bottomline);
+        });
+
+        document.querySelectorAll('.amplifi-card-follow').forEach((button) => {
+            const value = button.dataset.followValue;
+            const active = getStoredList('amplifi_following').includes(value);
+            button.classList.toggle('active', active);
+            button.querySelector('span').textContent = active ? 'Following' : 'Follow';
+            button.onclick = () => {
+                const isFollowing = toggleStoredValue('amplifi_following', value);
+                recordSocialEvent('follow', { creatorId: value, active: isFollowing });
+                button.classList.toggle('active', isFollowing);
+                button.querySelector('span').textContent = isFollowing ? 'Following' : 'Follow';
+            };
+        });
+
+        document.querySelectorAll('.amplifi-static-action[data-save-value]').forEach((button) => {
+            const value = button.dataset.saveValue;
+            button.classList.toggle('active', getStoredList('amplifi_saved_posts').includes(value));
+            button.onclick = () => {
+                const isSaved = toggleStoredValue('amplifi_saved_posts', value);
+                recordSocialEvent('save', { contentKey: value, active: isSaved });
+                button.classList.toggle('active', isSaved);
+            };
+        });
+
+        document.querySelectorAll('.amplifi-static-action[data-comment-key]').forEach((button) => {
+            button.onclick = () => {
+                openSharedCommentsSheet({
+                    contentKey: button.dataset.commentKey,
+                    title: button.dataset.commentTitle,
+                    creator: button.dataset.commentCreator
+                });
+            };
+        });
+
+        document.querySelectorAll('.amplifi-static-action[data-share-key]').forEach((button) => {
+            button.onclick = async () => {
+                const contentKey = button.dataset.shareKey;
+                recordSocialEvent('share', {
+                    contentKey,
+                    title: button.dataset.shareTitle
+                });
+                const shareCount = readSocialEvents().filter((event) => event.type === 'share' && event.contentKey === contentKey).length;
+                button.querySelector('span').textContent = `Share${shareCount ? ` · ${shareCount}` : ''}`;
+                if (navigator.clipboard) {
+                    try {
+                        await navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${contentKey}`);
+                    } catch (error) {
+                        // Ignore clipboard failures on unsupported browsers.
+                    }
+                }
+            };
+        });
+    }
+
+    function injectDiscoverySnapshot() {
+        if (!['trending.html', 'moments.html'].includes(currentPage()) || document.querySelector('.amplifi-social-panel[data-snapshot]')) {
+            return;
+        }
+
+        const anchor = document.querySelector('.trending-header, .moments-header');
+        if (!anchor) {
+            return;
+        }
+
+        const metrics = getCommunityMetrics();
+        const panel = document.createElement('section');
+        panel.className = 'amplifi-social-panel';
+        panel.dataset.snapshot = 'true';
+        panel.innerHTML = `
+            <div class="amplifi-page-tag">${currentPage() === 'trending.html' ? 'Cultural momentum' : 'Short-form loop'}</div>
+            <h3>${currentPage() === 'trending.html' ? 'See what communities are rallying around.' : 'Keep short-form tied to identity, not random clips.'}</h3>
+            <p>${currentPage() === 'trending.html'
+                ? `Trending should point people toward creators and conversations worth following. Right now you have ${formatCompactNumber(metrics.following)} followed identities, ${formatCompactNumber(metrics.shareCount)} shares, and ${formatCompactNumber(metrics.saved)} saved posts shaping repeat visits.`
+                : `Moments work best when they feed profile growth and return visits. Right now you have ${formatCompactNumber(metrics.saved)} saved posts, ${formatCompactNumber(metrics.commentCount)} comments, and ${formatCompactNumber(metrics.likeCount)} lightweight reactions worth building on.`}</p>
+            <div class="amplifi-inline-actions">
+                <a class="amplifi-pill-btn primary" href="feed.html"><i class="fas fa-rss"></i><span>Open social feed</span></a>
+                <a class="amplifi-pill-btn" href="profile.html"><i class="fas fa-user"></i><span>Strengthen profile</span></a>
+            </div>
+        `;
+
+        anchor.insertAdjacentElement('afterend', panel);
+    }
+
+    function upgradeProfileToSocialProfile() {
+        if (currentPage() !== 'profile.html') {
+            return;
+        }
+
+        const metrics = getCommunityMetrics();
+        const labels = Array.from(document.querySelectorAll('.stat-label'));
+        const replacements = ['Posts', 'Followers', 'Reach', 'Support'];
+        labels.slice(0, replacements.length).forEach((label, index) => {
+            label.textContent = replacements[index];
+        });
+
+        const numbers = Array.from(document.querySelectorAll('.profile-stats .stat-number'));
+        const values = [
+            formatCompactNumber(metrics.uploads),
+            formatCompactNumber(metrics.following * 42),
+            formatCompactNumber(metrics.reach),
+            formatCompactNumber(metrics.support)
+        ];
+        numbers.slice(0, values.length).forEach((node, index) => {
+            node.textContent = values[index];
+        });
+
+        const tabMap = {
+            videos: 'Posts',
+            analytics: 'Insights',
+            monetization: 'Community',
+            playlists: 'Collections',
+            about: 'About'
+        };
+
+        document.querySelectorAll('.profile-tabs .tab-btn').forEach((button) => {
+            const label = tabMap[button.dataset.tab];
+            if (label) {
+                button.textContent = label;
+            }
+        });
+
+        document.querySelectorAll('h2, h3').forEach((heading) => {
+            if (heading.textContent.trim() === 'Channel Analytics') {
+                heading.textContent = 'Profile Insights';
+            }
+            if (heading.textContent.trim() === 'Monetization') {
+                heading.textContent = 'Community Support';
+            }
+        });
+
+        const actionButtons = Array.from(document.querySelectorAll('.profile-actions button'));
+        if (actionButtons[0]) {
+            actionButtons[0].innerHTML = '<i class="fas fa-user-pen"></i> Edit Profile';
+        }
+        if (actionButtons[1]) {
+            actionButtons[1].innerHTML = '<i class="fas fa-sliders"></i> Profile Settings';
+        }
+
+        const profile = getCreatorProfileData() || {};
+        let rail = document.querySelector('.amplifi-discovery-rail');
+        if (!rail) {
+            const header = document.querySelector('.profile-header');
+            if (!header) {
+                return;
+            }
+            rail = document.createElement('section');
+            rail.className = 'amplifi-discovery-rail';
+            header.insertAdjacentElement('afterend', rail);
+        }
+
+        const cardData = [
+            ['Profile promise', profile.creatorPromise || 'Use your profile to explain what people get when they follow you.'],
+            ['Primary vibe', `${profile.contentCategory || 'Community'} · ${profile.contentFormat || 'Social video'}`],
+            ['Community traction', `${formatCompactNumber(metrics.following * 42)} followers, ${formatCompactNumber(metrics.saved)} saved posts, ${formatCompactNumber(metrics.commentCount)} active comments tracked locally.`],
+            ['Best next move', 'Point visitors to your latest post, your strongest collection, and your next live moment.']
+        ];
+
+        if (!rail.children.length) {
+            cardData.forEach(([title, description]) => {
+                const card = document.createElement('article');
+                card.className = 'amplifi-discovery-card';
+                card.innerHTML = `<strong>${title}</strong><span>${description}</span>`;
+                rail.appendChild(card);
+            });
+        } else {
+            Array.from(rail.querySelectorAll('.amplifi-discovery-card')).slice(0, cardData.length).forEach((card, index) => {
+                const [title, description] = cardData[index];
+                const strong = card.querySelector('strong');
+                const span = card.querySelector('span');
+                if (strong) {
+                    strong.textContent = title;
+                }
+                if (span) {
+                    span.textContent = description;
+                }
+            });
+        }
+    }
+
+    function ensureSharedCommentsSheet() {
+        if (!['index.html', 'trending.html', 'moments.html'].includes(currentPage()) || document.getElementById('amplifiSharedCommentsSheet')) {
+            return;
+        }
+
+        const sheet = document.createElement('div');
+        sheet.className = 'amplifi-comments-sheet';
+        sheet.id = 'amplifiSharedCommentsSheet';
+        sheet.setAttribute('aria-hidden', 'true');
+        sheet.innerHTML = `
+            <div class="amplifi-comments-header">
+                <div>
+                    <h3 id="amplifiSharedCommentsTitle">Comments</h3>
+                    <p class="amplifi-comments-hint" id="amplifiSharedCommentsMeta">Join the conversation around this post.</p>
+                </div>
+                <button class="amplifi-comments-close" type="button" aria-label="Close comments">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="amplifi-comments-list" id="amplifiSharedCommentsList"></div>
+            <div class="amplifi-comments-compose">
+                <textarea id="amplifiSharedCommentComposer" placeholder="Add something worth replying to..."></textarea>
+                <div class="amplifi-comments-actions">
+                    <span class="amplifi-comments-hint">Keep discovery social by making replies easy here too.</span>
+                    <button class="amplifi-pill-btn primary" type="button" id="amplifiSharedCommentSubmit">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Post comment</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(sheet);
+        sheet.querySelector('.amplifi-comments-close').addEventListener('click', closeSharedCommentsSheet);
+        sheet.querySelector('#amplifiSharedCommentSubmit').addEventListener('click', submitSharedComment);
+    }
+
+    function renderSharedComments(contentKey) {
+        const list = document.getElementById('amplifiSharedCommentsList');
+        if (!list) {
+            return;
+        }
+
+        const comments = getCommentsForKey(contentKey);
+        if (!comments.length) {
+            list.innerHTML = `
+                <div class="amplifi-comment-item">
+                    <strong>No comments yet</strong>
+                    <span>Be the first person to move this discovery into a conversation.</span>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = comments.map((comment) => `
+            <div class="amplifi-comment-item">
+                <strong>${comment.author || 'Amplifi user'}</strong>
+                <span>${comment.text}</span>
+                <div class="amplifi-comment-time">${new Date(comment.timestamp).toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+
+    function openSharedCommentsSheet(options) {
+        ensureSharedCommentsSheet();
+        const sheet = document.getElementById('amplifiSharedCommentsSheet');
+        if (!sheet) {
+            return;
+        }
+
+        sheet.dataset.contentKey = options.contentKey;
+        const title = document.getElementById('amplifiSharedCommentsTitle');
+        const meta = document.getElementById('amplifiSharedCommentsMeta');
+        if (title) {
+            title.textContent = `Comments on ${options.title || 'this post'}`;
+        }
+        if (meta) {
+            meta.textContent = `${options.creator || 'Amplifi'} · ${currentPage()}`;
+        }
+
+        renderSharedComments(options.contentKey);
+        sheet.classList.add('show');
+        sheet.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSharedCommentsSheet() {
+        const sheet = document.getElementById('amplifiSharedCommentsSheet');
+        if (!sheet) {
+            return;
+        }
+        sheet.classList.remove('show');
+        sheet.setAttribute('aria-hidden', 'true');
+    }
+
+    function submitSharedComment() {
+        const sheet = document.getElementById('amplifiSharedCommentsSheet');
+        const composer = document.getElementById('amplifiSharedCommentComposer');
+        if (!sheet || !composer) {
+            return;
+        }
+
+        const contentKey = sheet.dataset.contentKey;
+        const text = composer.value.trim();
+        if (!contentKey || !text) {
+            return;
+        }
+
+        const user = window.amplifiAuth && typeof window.amplifiAuth.getUser === 'function'
+            ? window.amplifiAuth.getUser()
+            : null;
+        addSocialComment({
+            contentKey,
+            text,
+            author: user ? (user.name || user.email || 'Amplifi user') : 'Amplifi user'
+        });
+        recordSocialEvent('comment', { contentKey });
+        composer.value = '';
+        renderSharedComments(contentKey);
+
+        document.querySelectorAll(`[data-comment-key="${contentKey}"] span`).forEach((label) => {
+            const count = getCommentsForKey(contentKey).length;
+            label.textContent = `Comment${count ? ` · ${count}` : ''}`;
+        });
     }
 
     function enhanceSectionHeadings() {
@@ -517,7 +1112,7 @@
             emptyState.className = 'amplifi-empty-state';
             emptyState.innerHTML = `
                 <strong>No content in this view yet.</strong>
-                <span>Try another filter or jump into the creator workflow to publish something new.</span>
+                <span>Try another filter or jump into the social flow to share something new.</span>
             `;
             const grid = document.querySelector('.yt-video-grid');
             if (grid && grid.parentElement) {
@@ -575,25 +1170,25 @@
         section.innerHTML = `
             <div class="amplifi-workflow-panel amplifi-inline-panel">
                 <div class="amplifi-page-tag">Channel output</div>
-                <h2>${creatorName}'s publishing focus</h2>
-                <p>Use this area to spotlight your latest uploads, reinforce your ${formatLabel} strategy, and make your ${categoryLabel} positioning easier to understand.</p>
+                <h2>${creatorName}'s social focus</h2>
+                <p>Use this area to spotlight recent posts, reinforce your ${formatLabel} style, and make your ${categoryLabel} identity easier to understand.</p>
                 <div class="amplifi-workflow-grid">
                     <article class="amplifi-step-card">
                         <strong>Signature series</strong>
                         <span>Build repeatable ${formatLabel} formats so viewers know what to return for each week.</span>
                     </article>
                     <article class="amplifi-step-card">
-                        <strong>High-performing backlog</strong>
-                        <span>Promote your strongest evergreen uploads, not just the newest post.</span>
+                        <strong>High-performing posts</strong>
+                        <span>Promote your strongest evergreen posts, not just the newest upload.</span>
                     </article>
                     <article class="amplifi-step-card">
                         <strong>Next action</strong>
-                        <span>Guide viewers into playlists, subscriptions, or your next launch window.</span>
+                        <span>Guide people into playlists, subscriptions, or your next live/post moment.</span>
                     </article>
                 </div>
                 <div class="amplifi-action-row">
-                    <a class="amplifi-action-btn primary" href="upload.html"><i class="fas fa-upload"></i><span>Upload a new video</span></a>
-                    <a class="amplifi-action-btn" href="schedule.html"><i class="fas fa-calendar"></i><span>Plan next release</span></a>
+                    <a class="amplifi-action-btn primary" href="upload.html"><i class="fas fa-upload"></i><span>Share something new</span></a>
+                    <a class="amplifi-action-btn" href="schedule.html"><i class="fas fa-calendar"></i><span>Plan next post</span></a>
                 </div>
             </div>
         `;
@@ -679,19 +1274,19 @@
             title.textContent = `Welcome back, ${creatorDisplayName()}`;
         }
         if (subtitle) {
-            subtitle.textContent = `${profile.contentFormat || 'Creator'} workflow ready`;
+            subtitle.textContent = `${profile.contentFormat || 'Social'} momentum ready`;
         }
         if (description) {
-            description.textContent = `Your ${profile.contentCategory || 'creator'} system is set up. Move your next release through upload, schedule, and audience growth with more clarity.`;
+            description.textContent = `Your ${profile.contentCategory || 'community'} presence is set up. Move your next post through moments, feed discovery, and live interaction with more momentum.`;
         }
         if (primary) {
-            primary.textContent = 'Open Creator Hub';
+            primary.textContent = 'Open Social Hub';
             primary.onclick = () => {
                 window.location.href = 'creator-dashboard.html';
             };
         }
         if (secondary) {
-            secondary.textContent = 'Start Next Upload';
+            secondary.textContent = 'Start Next Post';
             secondary.onclick = () => {
                 window.location.href = 'upload.html';
             };
@@ -712,7 +1307,7 @@
         const currentName = document.getElementById('currentDisplayName');
 
         if (pageHeaderDescription) {
-            pageHeaderDescription.textContent = `${creatorName}'s ${profile.contentCategory || 'creator'} hub with a ${profile.contentFormat || 'content'}-first workflow.`;
+            pageHeaderDescription.textContent = `${creatorName}'s ${profile.contentCategory || 'community'} profile with a ${profile.contentFormat || 'social video'} rhythm built for repeat visits.`;
         }
         if (channelTitle) {
             channelTitle.textContent = creatorName;
@@ -723,6 +1318,59 @@
         if (currentName) {
             currentName.textContent = creatorName;
         }
+    }
+
+    function injectProfileAboutPreview() {
+        if (currentPage() !== 'profile.html' || !isCreatorSetupReady()) {
+            return;
+        }
+
+        const aboutTab = document.getElementById('about');
+        const aboutContent = aboutTab ? aboutTab.querySelector('.about-content') : null;
+        if (!aboutContent || aboutContent.querySelector('.amplifi-profile-preview')) {
+            return;
+        }
+
+        const profile = getCreatorProfileData() || {};
+        const plan = getCreatorPlanData() || {};
+        const creatorName = creatorDisplayName();
+        const goals = Array.isArray(plan.goals) ? plan.goals.slice(0, 3) : [];
+
+        const panel = document.createElement('section');
+        panel.className = 'amplifi-workflow-panel amplifi-inline-panel amplifi-profile-preview';
+        panel.innerHTML = `
+            <div class="amplifi-page-tag">Social identity</div>
+            <h2>${creatorName}'s public profile story</h2>
+            <p>${profile.creatorPromise || `Use this space to explain what ${creatorName} shares, who it resonates with, and why people should come back.`}</p>
+            <div class="amplifi-workflow-grid">
+                <article class="amplifi-step-card">
+                    <strong>Primary interest</strong>
+                    <span>${profile.contentCategory || 'Set a primary category in creator setup.'}</span>
+                </article>
+                <article class="amplifi-step-card">
+                    <strong>Format and rhythm</strong>
+                    <span>${profile.contentFormat || 'No format set yet'}${profile.publishCadence ? ` · ${profile.publishCadence}` : ''}</span>
+                </article>
+                <article class="amplifi-step-card">
+                    <strong>Community direction</strong>
+                    <span>${profile.audienceGoal || 'No audience goal set'}${profile.monetizationFocus ? ` · ${profile.monetizationFocus}` : ''}</span>
+                </article>
+            </div>
+        `;
+
+        if (goals.length) {
+            const goalWrap = document.createElement('div');
+            goalWrap.className = 'amplifi-link-grid';
+            goals.forEach((goal) => {
+                const item = document.createElement('div');
+                item.className = 'amplifi-link-card';
+                        item.innerHTML = `<strong>${goal.title}</strong><span>${goal.description || 'Social goal saved from the dashboard.'}</span>`;
+                goalWrap.appendChild(item);
+            });
+            panel.appendChild(goalWrap);
+        }
+
+        aboutContent.insertAdjacentElement('afterbegin', panel);
     }
 
     function personalizeUploadPage() {
@@ -768,6 +1416,121 @@
         }
     }
 
+    function personalizeSchedulePage() {
+        if (currentPage() !== 'schedule.html' || !isCreatorSetupReady()) {
+            return;
+        }
+
+        const profile = getCreatorProfileData() || {};
+        const plan = getCreatorPlanData() || {};
+        const creatorName = creatorDisplayName();
+        const pageHeaderDescription = document.querySelector('.page-header p');
+        const scheduleTitle = document.querySelector('.schedule-title');
+        const scheduleHeader = document.querySelector('.schedule-header');
+        const contentType = document.getElementById('contentType');
+        const contentTitle = document.getElementById('contentTitle');
+        const scheduleDate = document.getElementById('scheduleDate');
+
+        if (pageHeaderDescription) {
+            pageHeaderDescription.textContent = `${creatorName} is planning a ${profile.publishCadence || 'consistent'} ${profile.contentFormat || 'creator'} cadence for ${profile.contentCategory || 'their audience'}.`;
+        }
+
+        if (scheduleTitle) {
+            scheduleTitle.textContent = `${creatorName}'s content calendar`;
+        }
+
+        if (contentType && !contentType.value && profile.contentFormat) {
+            const typeMap = {
+                'long-form': 'video',
+                'shorts': 'short',
+                'live': 'live',
+                'hybrid': 'video'
+            };
+            contentType.value = typeMap[profile.contentFormat] || '';
+        }
+
+        if (contentTitle && !contentTitle.value) {
+            const categoryLabel = profile.contentCategory || 'creator';
+            contentTitle.placeholder = `${creatorName} ${categoryLabel} release`;
+        }
+
+        if (scheduleDate && !scheduleDate.value) {
+            scheduleDate.value = new Date().toISOString().split('T')[0];
+        }
+
+        if (scheduleHeader && !document.querySelector('.amplifi-schedule-plan')) {
+            const panel = document.createElement('section');
+            panel.className = 'amplifi-workflow-panel amplifi-inline-panel amplifi-schedule-plan';
+            const incompleteTasks = Array.isArray(plan.tasks) ? plan.tasks.filter((task) => !task.completed).slice(0, 3) : [];
+            const goals = Array.isArray(plan.goals) ? plan.goals.slice(0, 2) : [];
+
+            panel.innerHTML = `
+                <div class="amplifi-page-tag">Planning layer</div>
+                <h2>Schedule around your creator strategy</h2>
+                <p>${profile.creatorPromise || `Plan releases that support ${creatorName}'s audience promise, not just random publish dates.`}</p>
+                <div class="amplifi-workflow-grid">
+                    <article class="amplifi-step-card">
+                        <strong>Cadence</strong>
+                        <span>${profile.publishCadence || 'No cadence selected yet'}${profile.contentFormat ? ` · ${profile.contentFormat}` : ''}</span>
+                    </article>
+                    <article class="amplifi-step-card">
+                        <strong>Audience focus</strong>
+                        <span>${profile.audienceGoal || 'No audience goal set'}${profile.monetizationFocus ? ` · ${profile.monetizationFocus}` : ''}</span>
+                    </article>
+                    <article class="amplifi-step-card">
+                        <strong>Category</strong>
+                        <span>${profile.contentCategory || 'Set a category in creator setup to sharpen scheduling decisions.'}</span>
+                    </article>
+                </div>
+            `;
+
+            if (incompleteTasks.length || goals.length) {
+                const extra = document.createElement('div');
+                extra.className = 'amplifi-link-grid';
+                [...incompleteTasks.map((task) => [task.title, task.description || 'Open the dashboard to manage this task.', task.href || 'creator-dashboard.html']),
+                 ...goals.map((goal) => [goal.title, goal.description || 'Saved from your creator dashboard.', 'creator-dashboard.html'])].slice(0, 4)
+                    .forEach(([title, description, href]) => {
+                        const item = document.createElement('a');
+                        item.className = 'amplifi-link-card';
+                        item.href = href;
+                        item.innerHTML = `<strong>${title}</strong><span>${description}</span>`;
+                        extra.appendChild(item);
+                    });
+                panel.appendChild(extra);
+            }
+
+            scheduleHeader.insertAdjacentElement('afterend', panel);
+        }
+    }
+
+    function wireSchedulePlanPersistence() {
+        if (currentPage() !== 'schedule.html') {
+            return;
+        }
+
+        const form = document.getElementById('contentForm');
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener('submit', function () {
+            if (!window.amplifiAuth || typeof window.amplifiAuth.getCreatorPlan !== 'function' || typeof window.amplifiAuth.setCreatorPlan !== 'function') {
+                return;
+            }
+
+            const plan = window.amplifiAuth.getCreatorPlan() || {};
+            if (!Array.isArray(plan.tasks) || !plan.tasks.length) {
+                return;
+            }
+
+            const updated = {
+                ...plan,
+                tasks: plan.tasks.map((task) => task.id === 'schedule-next' ? { ...task, completed: true } : task)
+            };
+            window.amplifiAuth.setCreatorPlan(updated);
+        });
+    }
+
     function personalizeLivePage() {
         if (currentPage() !== 'live.html' || !isCreatorSetupReady()) {
             return;
@@ -793,20 +1556,55 @@
         document.body.classList.add('amplifi-experience-ready');
         setActiveNavigation();
         wireSearch();
+        updateSearchPlaceholders();
         wireHeroButtons();
         injectContextPanel();
         injectWorkflowPanel();
         enhanceHomePageSections();
+        injectSocialProofStrip();
+        injectHomeCommunitySnapshot();
+        injectFeedComposer();
         enhanceSectionHeadings();
         tuneAuthLinks();
         enhanceFeedFilters();
+        ensureSharedCommentsSheet();
+        enhanceDiscoveryCards();
+        injectDiscoverySnapshot();
         ensureProfileVideosPanel();
         enhanceProfileTabs();
+        upgradeProfileToSocialProfile();
         enhanceUploadOptions();
         enhanceLiveAndLibraryCards();
         personalizeIndexHero();
         personalizeProfileSurface();
+        injectProfileAboutPreview();
         personalizeUploadPage();
+        personalizeSchedulePage();
+        wireSchedulePlanPersistence();
         personalizeLivePage();
+    });
+
+    document.addEventListener('amplifi:feed-updated', function () {
+        enhanceFeedFilters();
+    });
+
+    window.addEventListener('amplifi-social-state-updated', function () {
+        if (['index.html', 'trending.html', 'moments.html'].includes(currentPage())) {
+            enhanceDiscoveryCards();
+            injectDiscoverySnapshot();
+        }
+        if (currentPage() === 'profile.html') {
+            upgradeProfileToSocialProfile();
+        }
+        if (currentPage() === 'index.html') {
+            injectHomeCommunitySnapshot();
+        }
+    });
+
+    window.addEventListener('storage', function (event) {
+        if (!event.key || !event.key.startsWith('amplifi_')) {
+            return;
+        }
+        window.dispatchEvent(new CustomEvent('amplifi-social-state-updated'));
     });
 })();

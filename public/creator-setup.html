@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creator Setup - Amplifi</title>
-  <meta name="description" content="Set up your creator identity, content focus, and publishing system in Amplifi.">
+  <title>Profile Setup - Amplifi</title>
+  <meta name="description" content="Set up your profile identity, posting focus, and community direction in Amplifi.">
   <link rel="icon" type="image/svg+xml" href="amplifi-icon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/youtube-style.css">
@@ -223,20 +223,20 @@
     <div class="setup-topbar">
       <div class="setup-brand">
         <img src="amplifi-icon.svg" alt="Amplifi">
-        <span>Amplifi Creator Setup</span>
+        <span>Amplifi Profile Setup</span>
       </div>
-      <a href="creator-dashboard.html"><i class="fas fa-arrow-left"></i> Back to dashboard</a>
+      <a href="creator-dashboard.html"><i class="fas fa-arrow-left"></i> Back to social hub</a>
     </div>
 
     <div class="setup-layout">
       <section class="setup-panel">
         <div class="amplifi-page-tag">Onboarding</div>
-        <h1>Set up your creator identity and publishing rhythm.</h1>
-        <p id="setupIntro">Tell Amplifi what kind of creator you are so the dashboard, profile, and workflow feel more intentional.</p>
+        <h1>Set up your social identity and posting rhythm.</h1>
+        <p id="setupIntro">Tell Amplifi what kind of person you are and what you share so the profile, feed, and social hub feel more intentional.</p>
 
         <div class="setup-gate" id="setupGate">
           <strong>Sign in recommended</strong>
-          <p>Setup works best when tied to your creator account so your dashboard and profile stay personalized.</p>
+          <p>Setup works best when tied to your account so your social hub and profile stay personalized.</p>
           <div class="setup-actions">
             <a class="setup-btn primary" href="login.html?redirect=creator-setup.html"><i class="fas fa-user-check"></i><span>Sign in first</span></a>
             <a class="setup-btn" href="index.html"><i class="fas fa-house"></i><span>Go home</span></a>
@@ -246,11 +246,11 @@
         <form class="setup-form" id="creatorSetupForm">
           <div class="setup-grid">
             <div class="setup-field">
-              <label for="creatorName">Creator or channel name</label>
+              <label for="creatorName">Profile or display name</label>
               <input id="creatorName" name="creatorName" type="text" placeholder="Amplifi Studio">
             </div>
             <div class="setup-field">
-              <label for="contentCategory">Primary category</label>
+              <label for="contentCategory">Primary interest or category</label>
               <select id="contentCategory" name="contentCategory">
                 <option value="">Choose a category</option>
                 <option value="education">Education</option>
@@ -267,17 +267,17 @@
 
           <div class="setup-grid">
             <div class="setup-field">
-              <label for="contentFormat">Best-fit content format</label>
+              <label for="contentFormat">Main content style</label>
               <select id="contentFormat" name="contentFormat">
                 <option value="">Choose a format</option>
                 <option value="long-form">Long-form videos</option>
                 <option value="shorts">Short-form moments</option>
                 <option value="live">Live streaming</option>
-                <option value="hybrid">Hybrid creator mix</option>
+                <option value="hybrid">Hybrid social mix</option>
               </select>
             </div>
             <div class="setup-field">
-              <label for="publishCadence">Publishing cadence</label>
+              <label for="publishCadence">Posting cadence</label>
               <select id="publishCadence" name="publishCadence">
                 <option value="">Choose a cadence</option>
                 <option value="daily">Daily</option>
@@ -290,7 +290,7 @@
 
           <div class="setup-grid">
             <div class="setup-field">
-              <label for="audienceGoal">Primary audience goal</label>
+              <label for="audienceGoal">Primary community goal</label>
               <select id="audienceGoal" name="audienceGoal">
                 <option value="">Choose a goal</option>
                 <option value="grow">Grow audience reach</option>
@@ -300,7 +300,7 @@
               </select>
             </div>
             <div class="setup-field">
-              <label for="monetizationFocus">Monetization focus</label>
+              <label for="monetizationFocus">Support focus</label>
               <select id="monetizationFocus" name="monetizationFocus">
                 <option value="">Choose a focus</option>
                 <option value="subscriptions">Subscriptions</option>
@@ -312,13 +312,13 @@
           </div>
 
           <div class="setup-field">
-            <label for="creatorPromise">Creator promise</label>
-            <textarea id="creatorPromise" name="creatorPromise" placeholder="Describe what viewers should expect from your channel and why they should come back."></textarea>
+              <label for="creatorPromise">Profile promise</label>
+            <textarea id="creatorPromise" name="creatorPromise" placeholder="Describe what people should expect from your profile and why they should come back."></textarea>
           </div>
 
           <div class="setup-actions">
-            <button class="setup-btn primary" type="submit"><i class="fas fa-check"></i><span>Save creator setup</span></button>
-            <a class="setup-btn" href="creator-dashboard.html"><i class="fas fa-gauge"></i><span>Open dashboard</span></a>
+            <button class="setup-btn primary" type="submit"><i class="fas fa-check"></i><span>Save profile setup</span></button>
+            <a class="setup-btn" href="creator-dashboard.html"><i class="fas fa-gauge"></i><span>Open social hub</span></a>
             <a class="setup-btn" href="profile.html?tab=about"><i class="fas fa-user"></i><span>Review profile</span></a>
           </div>
           <div class="setup-message" id="setupMessage"></div>
@@ -331,16 +331,16 @@
         </div>
         <div class="setup-roadmap">
           <article class="setup-step">
-            <strong>Sharper dashboard guidance</strong>
-            <p>Use your creator details to make the next recommended action feel more relevant.</p>
+            <strong>Sharper social guidance</strong>
+            <p>Use your profile details to make the next recommended action feel more relevant.</p>
           </article>
           <article class="setup-step">
-            <strong>Cleaner creator positioning</strong>
-            <p>Clarify your niche, format, cadence, and monetization direction from the start.</p>
+            <strong>Cleaner profile positioning</strong>
+            <p>Clarify your niche, style, cadence, and support direction from the start.</p>
           </article>
           <article class="setup-step">
-            <strong>Better publishing consistency</strong>
-            <p>Connect uploads, scheduling, library management, and audience goals into one system.</p>
+            <strong>Better social consistency</strong>
+            <p>Connect posting, scheduling, library management, and community goals into one system.</p>
           </article>
         </div>
 
@@ -349,7 +349,7 @@
         </div>
         <div class="setup-summary-grid" id="setupSummaryGrid">
           <article class="setup-summary">
-            <strong>Creator identity</strong>
+            <strong>Profile identity</strong>
             <p>Not set yet</p>
           </article>
           <article class="setup-summary">
@@ -357,7 +357,7 @@
             <p>Not set yet</p>
           </article>
           <article class="setup-summary">
-            <strong>Audience and monetization</strong>
+            <strong>Community and support</strong>
             <p>Not set yet</p>
           </article>
         </div>
@@ -380,7 +380,7 @@
 
         grid.innerHTML = `
           <article class="setup-summary">
-            <strong>Creator identity</strong>
+            <strong>Profile identity</strong>
             <p>${profile.creatorName || 'Not set yet'}${profile.contentCategory ? ` · ${profile.contentCategory}` : ''}</p>
           </article>
           <article class="setup-summary">
@@ -388,8 +388,8 @@
             <p>${profile.contentFormat || 'No format selected'}${profile.publishCadence ? ` · ${profile.publishCadence}` : ''}</p>
           </article>
           <article class="setup-summary">
-            <strong>Audience and monetization</strong>
-            <p>${profile.audienceGoal || 'No audience goal set'}${profile.monetizationFocus ? ` · ${profile.monetizationFocus}` : ''}</p>
+            <strong>Community and support</strong>
+            <p>${profile.audienceGoal || 'No community goal set'}${profile.monetizationFocus ? ` · ${profile.monetizationFocus}` : ''}</p>
           </article>
         `;
       }
@@ -416,7 +416,7 @@
           setFieldValue('creatorName', profile.creatorName || user.name || '');
           const intro = document.getElementById('setupIntro');
           if (intro) {
-            intro.textContent = `${user.name || user.email || 'Creator'}, define your channel direction so Amplifi can feel more like your operating system than a generic profile.`;
+            intro.textContent = `${user.name || user.email || 'User'}, define your social direction so Amplifi can feel more like a living platform than a generic profile.`;
           }
         }
 
@@ -432,7 +432,7 @@
           event.preventDefault();
 
           if (!auth || !auth.isAuthenticated || !auth.isAuthenticated()) {
-            message('error', 'Sign in first so your creator setup can be tied to your account.');
+            message('error', 'Sign in first so your profile setup can be tied to your account.');
             return;
           }
 
@@ -448,13 +448,13 @@
           };
 
           if (!nextProfile.creatorName || !nextProfile.contentCategory || !nextProfile.contentFormat) {
-            message('error', 'Add your creator name, category, and content format to complete setup.');
+            message('error', 'Add your name, category, and content format to complete setup.');
             return;
           }
 
           auth.setCreatorProfile(nextProfile);
           populateSummary(nextProfile);
-          message('success', 'Creator setup saved. Redirecting you to the dashboard...');
+          message('success', 'Profile setup saved. Redirecting you to the social hub...');
           setTimeout(function () {
             window.location.href = 'creator-dashboard.html';
           }, 900);
