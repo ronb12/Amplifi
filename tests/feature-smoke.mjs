@@ -177,3 +177,5 @@ try {
   await browser.close();
   server.kill('SIGTERM');
 }
+
+process.exit(0);
