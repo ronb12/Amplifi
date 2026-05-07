@@ -15,6 +15,7 @@ export interface User {
   description: string;
   location: string;
   website?: string;
+  isAdmin?: boolean;
   socialLinks: {
     twitter?: string;
     instagram?: string;
@@ -26,6 +27,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (userData: RegisterData) => Promise<{ success: boolean; error?: string }>;
@@ -84,7 +86,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      if (email === 'demo@example.com' && password === 'demo123') {
+      const normalizedEmail = email.trim().toLowerCase();
+
+      if (normalizedEmail === 'demo@example.com' && password === 'demo123') {
         const mockUser: User = {
           id: 'user_1',
           email: 'demo@example.com',
@@ -101,6 +105,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(mockUser);
         saveState(storageKeys.authUser, mockUser);
         saveState(storageKeys.authToken, 'mock_token');
+        return { success: true };
+      } else if (normalizedEmail === 'admin@amplifi.com' && password === 'admin123') {
+        const adminUser: User = {
+          id: 'admin_1',
+          email: 'admin@amplifi.com',
+          username: 'amplifi_admin',
+          displayName: 'Amplifi Admin',
+          avatar: '/amplifi-logo.svg',
+          isCreator: true,
+          isAdmin: true,
+          subscriberCount: 0,
+          joinDate: '2024-01-01',
+          description: 'Platform administrator',
+          location: 'United States',
+          socialLinks: {}
+        };
+        setUser(adminUser);
+        saveState(storageKeys.authUser, adminUser);
+        saveState(storageKeys.authToken, 'mock_admin_token');
         return { success: true };
       } else {
         return { success: false, error: 'Invalid credentials' };
@@ -202,6 +225,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
+    isAdmin: Boolean(user?.isAdmin),
     isLoading,
     login,
     register,

@@ -188,6 +188,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
 
             <div className="text-center text-sm text-gray-500">
               <p>Demo credentials: demo@example.com / demo123</p>
+              <p>Admin credentials: admin@amplifi.com / admin123</p>
             </div>
           </form>
         ) : (
