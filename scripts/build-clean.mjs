@@ -1,5 +1,5 @@
-import { existsSync, rmSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { cpSync, existsSync, readdirSync, rmSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
@@ -32,21 +32,28 @@ const env = existsSync(node20)
   ? { ...process.env, PATH: `${node20Bin}:${process.env.PATH ?? ''}` }
   : process.env;
 
+const copyProject = () => {
+  const excluded = new Set(['node_modules', '.git', 'dist', 'public 2']);
+
+  for (const entry of readdirSync(projectRoot, { withFileTypes: true })) {
+    if (excluded.has(entry.name) || entry.name.startsWith('.git.dataless-backup-')) {
+      continue;
+    }
+
+    cpSync(join(projectRoot, entry.name), join(buildRoot, entry.name), {
+      recursive: true,
+      dereference: false,
+      filter: (source) => {
+        const name = basename(source);
+        return !excluded.has(name) && !name.startsWith('.git.dataless-backup-');
+      }
+    });
+  }
+};
+
 rmSync(buildRoot, { recursive: true, force: true });
 run('mkdir', ['-p', buildRoot]);
-run('rsync', [
-  '-a',
-  '--exclude',
-  'node_modules',
-  '--exclude',
-  '.git',
-  '--exclude',
-  'dist',
-  '--exclude',
-  'public 2',
-  `${projectRoot}/`,
-  `${buildRoot}/`
-]);
+copyProject();
 run('npm', ['install', '--no-audit', '--no-fund', '--fetch-timeout=30000', '--fetch-retries=2'], {
   cwd: buildRoot,
   env
@@ -55,4 +62,5 @@ run('npm', ['run', 'build:direct'], {
   cwd: buildRoot,
   env
 });
-run('rsync', ['-a', '--delete', `${buildRoot}/dist/`, `${projectRoot}/dist/`]);
+rmSync(resolve(projectRoot, 'dist'), { recursive: true, force: true });
+cpSync(resolve(buildRoot, 'dist'), resolve(projectRoot, 'dist'), { recursive: true });
