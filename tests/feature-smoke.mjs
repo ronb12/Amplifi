@@ -53,6 +53,13 @@ const expectVisibleText = async text => {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible', timeout: 10_000 });
 };
 
+const dismissPreRollIfVisible = async () => {
+  const skipAd = page.getByRole('button', { name: 'Skip ad' });
+  if (await skipAd.isVisible({ timeout: 1_000 }).catch(() => false)) {
+    await skipAd.click();
+  }
+};
+
 try {
   await waitForServer();
 
@@ -124,6 +131,7 @@ try {
   await expectVisibleText('Liked content');
 
   await page.goto(`${baseUrl}/video/6`, { waitUntil: 'networkidle' });
+  await dismissPreRollIfVisible();
   await expectVisibleText('Premium content');
   await page.getByRole('button', { name: 'Unlock video' }).click();
   await page.locator('video').waitFor({ state: 'visible', timeout: 10_000 });
