@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { loadState, removeState, saveState, storageKeys } from '../services/storage';
+import type { Channel } from './VideoContext';
 
 export interface User {
   id: string;
@@ -55,30 +57,16 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => loadState<User | null>(storageKeys.authUser, null));
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-          // In a real app, validate token with backend
-          const mockUser: User = {
-            id: 'user_1',
-            email: 'user@example.com',
-            username: 'demo_user',
-            displayName: 'Demo User',
-            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-            isCreator: false,
-            subscriberCount: 0,
-            joinDate: '2024-01-01',
-            description: 'Welcome to my channel!',
-            location: 'United States',
-            socialLinks: {}
-          };
-          setUser(mockUser);
+        const token = loadState<string | null>(storageKeys.authToken, null);
+        const storedUser = loadState<User | null>(storageKeys.authUser, null);
+        if (token && storedUser) {
+          setUser(storedUser);
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -102,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: 'demo@example.com',
           username: 'demo_user',
           displayName: 'Demo User',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          avatar: '/amplifi-logo.svg',
           isCreator: false,
           subscriberCount: 0,
           joinDate: '2024-01-01',
@@ -111,7 +99,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           socialLinks: {}
         };
         setUser(mockUser);
-        localStorage.setItem('authToken', 'mock_token');
+        saveState(storageKeys.authUser, mockUser);
+        saveState(storageKeys.authToken, 'mock_token');
         return { success: true };
       } else {
         return { success: false, error: 'Invalid credentials' };
@@ -138,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email: userData.email,
         username: userData.username,
         displayName: userData.displayName,
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+        avatar: '/amplifi-logo.svg',
         isCreator: false,
         subscriberCount: 0,
         joinDate: new Date().toISOString().split('T')[0],
@@ -148,7 +137,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
 
       setUser(newUser);
-      localStorage.setItem('authToken', 'mock_token');
+      saveState(storageKeys.authUser, newUser);
+      saveState(storageKeys.authToken, 'mock_token');
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Registration failed' };
@@ -159,7 +149,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('authToken');
+    removeState(storageKeys.authToken);
+    removeState(storageKeys.authUser);
   };
 
   const updateProfile = async (updates: Partial<User>) => {
@@ -168,6 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
+      saveState(storageKeys.authUser, updatedUser);
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Profile update failed' };
@@ -177,14 +169,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const becomeCreator = async () => {
     try {
       if (!user) return { success: false, error: 'Not authenticated' };
+      const channelId = user.channelId || `channel_${Date.now()}`;
       
       const updatedUser = { 
         ...user, 
         isCreator: true,
-        channelId: `channel_${Date.now()}`,
+        channelId,
         description: user.description || 'Welcome to my channel!'
       };
+      const existingChannels = loadState<Channel[]>(storageKeys.channels, []);
+      if (!existingChannels.some(channel => channel.id === channelId)) {
+        saveState(storageKeys.channels, [
+          ...existingChannels,
+          {
+            id: channelId,
+            name: user.displayName,
+            avatar: user.avatar,
+            subscribers: user.subscriberCount,
+            videos: 0,
+            description: user.description || 'Welcome to my channel!'
+          }
+        ]);
+      }
       setUser(updatedUser);
+      saveState(storageKeys.authUser, updatedUser);
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Failed to become creator' };

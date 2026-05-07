@@ -1,7 +1,13 @@
 import React from "react";
-import { FiClock, FiThumbsUp, FiPlay, FiBookmark } from "react-icons/fi";
+import { FiClock, FiThumbsUp, FiPlay } from "react-icons/fi";
+import { useVideo } from "../contexts/VideoContext";
+import VideoCard from "../components/VideoCard";
 
 const LibraryPage: React.FC = () => {
+  const { videos, likedVideoIds, savedVideoIds } = useVideo();
+  const likedVideos = videos.filter(video => likedVideoIds.includes(video.id));
+  const savedVideos = videos.filter(video => savedVideoIds.includes(video.id));
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Library</h1>
@@ -51,6 +57,24 @@ const LibraryPage: React.FC = () => {
           <button className="btn-secondary w-full">View Watch Later</button>
         </div>
       </div>
+
+      {savedVideos.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Saved videos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {savedVideos.map(video => <VideoCard key={video.id} video={video} />)}
+          </div>
+        </section>
+      )}
+
+      {likedVideos.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Liked content</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {likedVideos.map(video => <VideoCard key={video.id} video={video} />)}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

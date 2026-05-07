@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { loadState, saveState, storageKeys } from '../services/storage';
 
 export interface LiveEvent {
   id: string;
@@ -57,84 +58,89 @@ interface LiveEventProviderProps {
   children: ReactNode;
 }
 
-export const LiveEventProvider: React.FC<LiveEventProviderProps> = ({ children }) => {
-  const [events, setEvents] = useState<LiveEvent[]>([
-    {
-      id: '1',
-      title: 'Advanced React Workshop',
-      description: 'Join us for a 2-hour intensive workshop on advanced React patterns, hooks, and performance optimization.',
-      thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400',
-      creatorId: '1',
-      creatorName: 'CodeMaster Pro',
-      creatorAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-      startTime: '2024-02-15T18:00:00Z',
-      endTime: '2024-02-15T20:00:00Z',
-      price: 29.99,
-      maxAttendees: 100,
-      currentAttendees: 67,
-      isLive: false,
-      isSoldOut: false,
-      category: 'workshop',
-      benefits: [
-        'Live Q&A with instructor',
-        'Access to workshop materials',
-        'Certificate of completion',
-        'Recording available for 30 days'
-      ],
-      tags: ['React', 'JavaScript', 'Web Development', 'Workshop']
-    },
-    {
-      id: '2',
-      title: 'Gaming Tournament Finals',
-      description: 'Watch the final round of our monthly gaming tournament with commentary and prizes.',
-      thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',
-      creatorId: '2',
-      creatorName: 'CSS Wizard',
-      creatorAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      startTime: '2024-02-10T20:00:00Z',
-      endTime: '2024-02-10T22:00:00Z',
-      price: 9.99,
-      maxAttendees: 500,
-      currentAttendees: 423,
-      isLive: false,
-      isSoldOut: false,
-      category: 'gaming',
-      benefits: [
-        'Exclusive tournament access',
-        'Chat with other viewers',
-        'Chance to win prizes',
-        'Behind-the-scenes content'
-      ],
-      tags: ['Gaming', 'Tournament', 'Esports', 'Competition']
-    },
-    {
-      id: '3',
-      title: 'Business Strategy Masterclass',
-      description: 'Learn business strategy from successful entrepreneurs and business leaders.',
-      thumbnail: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400',
-      creatorId: '3',
-      creatorName: 'JS Ninja',
-      creatorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-      startTime: '2024-02-20T19:00:00Z',
-      endTime: '2024-02-20T21:00:00Z',
-      price: 49.99,
-      maxAttendees: 50,
-      currentAttendees: 50,
-      isLive: false,
-      isSoldOut: true,
-      category: 'business',
-      benefits: [
-        'Interactive Q&A session',
-        'Business plan templates',
-        'Networking opportunities',
-        'Follow-up consultation'
-      ],
-      tags: ['Business', 'Strategy', 'Entrepreneurship', 'Leadership']
-    }
-  ]);
+const defaultEvents: LiveEvent[] = [
+  {
+    id: '1',
+    title: 'Advanced React Workshop',
+    description: 'Join us for a 2-hour intensive workshop on advanced React patterns, hooks, and performance optimization.',
+    thumbnail: '/amplifi-logo.svg',
+    creatorId: '1',
+    creatorName: 'CodeMaster Pro',
+    creatorAvatar: '/amplifi-logo.svg',
+    startTime: '2024-02-15T18:00:00Z',
+    endTime: '2024-02-15T20:00:00Z',
+    price: 29.99,
+    maxAttendees: 100,
+    currentAttendees: 67,
+    isLive: false,
+    isSoldOut: false,
+    category: 'workshop',
+    benefits: [
+      'Live Q&A with instructor',
+      'Access to workshop materials',
+      'Certificate of completion',
+      'Recording available for 30 days'
+    ],
+    tags: ['React', 'JavaScript', 'Web Development', 'Workshop']
+  },
+  {
+    id: '2',
+    title: 'Gaming Tournament Finals',
+    description: 'Watch the final round of our monthly gaming tournament with commentary and prizes.',
+    thumbnail: '/amplifi-logo.svg',
+    creatorId: '2',
+    creatorName: 'CSS Wizard',
+    creatorAvatar: '/amplifi-logo.svg',
+    startTime: '2024-02-10T20:00:00Z',
+    endTime: '2024-02-10T22:00:00Z',
+    price: 9.99,
+    maxAttendees: 500,
+    currentAttendees: 423,
+    isLive: false,
+    isSoldOut: false,
+    category: 'gaming',
+    benefits: [
+      'Exclusive tournament access',
+      'Chat with other viewers',
+      'Chance to win prizes',
+      'Behind-the-scenes content'
+    ],
+    tags: ['Gaming', 'Tournament', 'Esports', 'Competition']
+  },
+  {
+    id: '3',
+    title: 'Business Strategy Masterclass',
+    description: 'Learn business strategy from successful entrepreneurs and business leaders.',
+    thumbnail: '/amplifi-logo.svg',
+    creatorId: '3',
+    creatorName: 'JS Ninja',
+    creatorAvatar: '/amplifi-logo.svg',
+    startTime: '2024-02-20T19:00:00Z',
+    endTime: '2024-02-20T21:00:00Z',
+    price: 49.99,
+    maxAttendees: 50,
+    currentAttendees: 50,
+    isLive: false,
+    isSoldOut: true,
+    category: 'business',
+    benefits: [
+      'Interactive Q&A session',
+      'Business plan templates',
+      'Networking opportunities',
+      'Follow-up consultation'
+    ],
+    tags: ['Business', 'Strategy', 'Entrepreneurship', 'Leadership']
+  }
+];
 
-  const [tickets, setTickets] = useState<EventTicket[]>([]);
+export const LiveEventProvider: React.FC<LiveEventProviderProps> = ({ children }) => {
+  const [events, setEvents] = useState<LiveEvent[]>(() => loadState('amplifi:v1:live-events', defaultEvents));
+
+  const [tickets, setTickets] = useState<EventTicket[]>(() => loadState('amplifi:v1:event-tickets', []));
   const [currentEvent, setCurrentEvent] = useState<LiveEvent | null>(null);
+
+  useEffect(() => saveState('amplifi:v1:live-events', events), [events]);
+  useEffect(() => saveState('amplifi:v1:event-tickets', tickets), [tickets]);
 
   const createEvent = (eventData: Omit<LiveEvent, 'id' | 'currentAttendees' | 'isLive' | 'isSoldOut'>) => {
     const newEvent: LiveEvent = {

@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiBell, FiShield, FiMonitor, FiDownload, FiGlobe, FiPalette, FiHelpCircle } from 'react-icons/fi';
+import { FiUser, FiBell, FiShield, FiMonitor, FiDownload, FiHelpCircle } from 'react-icons/fi';
 
 const SettingsPage: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
+  const [activeHelpPanel, setActiveHelpPanel] = useState('guide');
+  const [supportMessage, setSupportMessage] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
   const [profileData, setProfileData] = useState({
     displayName: user?.displayName || '',
     username: user?.username || '',
     email: user?.email || '',
-    bio: user?.bio || ''
+    bio: user?.description || ''
   });
 
   const [notificationSettings, setNotificationSettings] = useState({
@@ -55,6 +57,16 @@ const SettingsPage: React.FC = () => {
   const handleInstallPWA = () => {
     // PWA installation logic will be implemented
     alert('PWA installation feature coming soon!');
+  };
+
+  const handleSupportSubmit = () => {
+    if (!supportMessage.trim()) {
+      alert('Tell us what you need help with first.');
+      return;
+    }
+
+    alert('Support request saved. The team will follow up in your inbox.');
+    setSupportMessage('');
   };
 
   const tabs = [
@@ -144,7 +156,7 @@ const SettingsPage: React.FC = () => {
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={value}
+                checked={Boolean(value)}
                 onChange={(e) => setNotificationSettings(prev => ({ ...prev, [key]: e.target.checked }))}
                 className="sr-only peer"
               />
@@ -188,7 +200,7 @@ const SettingsPage: React.FC = () => {
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={value}
+                checked={Boolean(value)}
                 onChange={(e) => setPrivacySettings(prev => ({ ...prev, [key]: e.target.checked }))}
                 className="sr-only peer"
               />
@@ -336,6 +348,36 @@ const SettingsPage: React.FC = () => {
     </div>
   );
 
+  const helpContent = {
+    guide: {
+      title: 'Getting Started Guide',
+      items: [
+        'Use Home feed controls to switch between For You, Following, and New Creators.',
+        'Open a channel to join posts, events, memberships, store offers, and community chat.',
+        'Save videos to your Library and subscribe to creators to build a personal feed.',
+        'Use reports when content or comments need moderation review.'
+      ]
+    },
+    creators: {
+      title: 'Creator Resources',
+      items: [
+        'Enable creator mode from Creator Dashboard to unlock uploads, posts, events, and monetization.',
+        'Use channel Posts and Chat to keep the community active between uploads.',
+        'Create paid events and membership tiers for recurring revenue.',
+        'Review analytics and payout tools from Creator Dashboard.'
+      ]
+    },
+    faq: {
+      title: 'FAQ',
+      items: [
+        'How do memberships work? Choose a creator tier to unlock member benefits.',
+        'How do I report content? Use Report on videos or comments; admins review reports in moderation.',
+        'Can creators sell products? Creator Store supports demo offers now and can be connected to checkout later.',
+        'Can I control recommendations? Yes, Home includes discovery modes and feed controls.'
+      ]
+    }
+  };
+
   const renderHelpTab = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Help & Support</h3>
@@ -346,7 +388,10 @@ const SettingsPage: React.FC = () => {
           <p className="text-sm text-gray-600 mb-3">
             Learn the basics of using Amplifi and discover all the features.
           </p>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button
+            onClick={() => setActiveHelpPanel('guide')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
             View Guide →
           </button>
         </div>
@@ -356,7 +401,10 @@ const SettingsPage: React.FC = () => {
           <p className="text-sm text-gray-600 mb-3">
             Tips and tools to help you grow your audience and monetize content.
           </p>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button
+            onClick={() => setActiveHelpPanel('creators')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
             Learn More →
           </button>
         </div>
@@ -366,7 +414,10 @@ const SettingsPage: React.FC = () => {
           <p className="text-sm text-gray-600 mb-3">
             Need help? Our support team is here to assist you.
           </p>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button
+            onClick={() => setActiveHelpPanel('contact')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
             Contact Us →
           </button>
         </div>
@@ -376,10 +427,51 @@ const SettingsPage: React.FC = () => {
           <p className="text-sm text-gray-600 mb-3">
             Find answers to commonly asked questions.
           </p>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button
+            onClick={() => setActiveHelpPanel('faq')}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
             Browse FAQ →
           </button>
         </div>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+        {activeHelpPanel === 'contact' ? (
+          <div>
+            <h4 className="font-semibold text-blue-950 mb-2">Contact Support</h4>
+            <p className="text-sm text-blue-800 mb-4">
+              Send the team a quick note. We include your account email when available.
+            </p>
+            <textarea
+              value={supportMessage}
+              onChange={(event) => setSupportMessage(event.target.value)}
+              rows={4}
+              placeholder="Describe the issue or question..."
+              className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <div className="flex items-center justify-between mt-3">
+              <span className="text-xs text-blue-700">{user?.email || 'No account email detected'}</span>
+              <button onClick={handleSupportSubmit} className="btn-primary">
+                Send Request
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h4 className="font-semibold text-blue-950 mb-3">
+              {helpContent[activeHelpPanel as keyof typeof helpContent].title}
+            </h4>
+            <ul className="space-y-2">
+              {helpContent[activeHelpPanel as keyof typeof helpContent].items.map(item => (
+                <li key={item} className="text-sm text-blue-900 flex gap-2">
+                  <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

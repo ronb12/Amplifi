@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiX, FiEye, FiEyeOff, FiMail, FiLock, FiUser } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -29,6 +29,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
   });
 
   const { login, register } = useAuth();
+
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setError('');
+    }
+  }, [initialMode, isOpen]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

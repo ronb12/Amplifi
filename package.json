@@ -2,14 +2,26 @@
   "name": "amplifi",
   "version": "1.0.0",
   "description": "A modern social media platform for creators and communities",
-  "main": "public/index.html",
+  "type": "module",
+  "main": "dist/index.html",
   "scripts": {
-    "start": "firebase serve --only hosting",
+    "dev": "vite",
+    "start": "vite --host 0.0.0.0",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "validate:json": "node -e \"for (const f of ['package.json','firebase.json','tsconfig.json']) JSON.parse(require('fs').readFileSync(f, 'utf8'));\"",
+    "check": "npm run validate:json && npm run typecheck && npm run lint && npm run lint:css && npm run build",
+    "firebase:serve": "firebase emulators:start --only hosting",
     "deploy": "firebase deploy --only hosting",
+    "deploy:vercel": "vercel --prod",
     "deploy-all": "firebase deploy",
     "auto-deploy": "./auto-deploy.sh",
-    "build": "echo 'No build step required for static site'",
-    "test": "echo 'No tests specified'"
+    "build": "node scripts/build-clean.mjs",
+    "build:direct": "vite build",
+    "test:e2e": "node tests/feature-smoke.mjs",
+    "test": "npm run check && npm run test:e2e"
   },
   "keywords": [
     "social-media",
@@ -20,20 +32,38 @@
   "author": "Amplifi Team",
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0"
+    "node": "20.x"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
     "eslint": "^9.31.0",
     "eslint-plugin-react": "^7.37.5",
+    "firebase-tools": "^15.17.0",
     "globals": "^16.3.0",
-    "jsonlint": "^1.6.3",
-    "markdownlint-cli": "^0.45.0",
-    "playwright": "^1.54.1",
+    "markdownlint-cli": "^0.48.0",
+    "playwright": "^1.59.1",
+    "postcss": "^8.5.14",
     "stylelint": "^16.22.0",
-    "stylelint-config-standard": "^38.0.0"
+    "stylelint-config-standard": "^38.0.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.59.2",
+    "vite": "^8.0.11"
   },
   "dependencies": {
-    "firebase-admin": "^13.4.0"
+    "@neondatabase/serverless": "^1.1.0",
+    "@stripe/stripe-js": "^9.4.0",
+    "agora-rtc-sdk-ng": "^4.24.3",
+    "agora-token": "^2.0.5",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^7.15.0",
+    "stripe": "^22.1.1"
   }
 }

@@ -12,6 +12,11 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import LibraryPage from './pages/LibraryPage';
 import PlaylistsPage from './pages/PlaylistsPage';
 import LiveEventsPage from './pages/LiveEventsPage';
+import SettingsPage from './pages/SettingsPage';
+import StoriesPage from './pages/StoriesPage';
+import AdminPage from './pages/AdminPage';
+import AdminReportsPage from './pages/AdminReportsPage';
+import AdvertiserDashboardPage from './pages/AdvertiserDashboardPage';
 import CreatorDashboard from './components/CreatorDashboard';
 import { VideoProvider } from './contexts/VideoContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -27,28 +32,37 @@ function App() {
           <AdProvider>
             <LiveEventProvider>
               <Router>
-        <div className="flex h-screen bg-gray-50">
-          <Sidebar />
-          <div className="flex-1 flex flex-col">
-            <Header />
-            <main className="flex-1 overflow-y-auto">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/video/:videoId" element={<VideoPage />} />
-                <Route path="/channel/:channelId" element={<ChannelPage />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/trending" element={<TrendingPage />} />
-                                        <Route path="/subscriptions" element={<SubscriptionsPage />} />
+                <div className="flex h-screen bg-gray-50">
+                  <Sidebar />
+                  <div className="flex-1 flex flex-col">
+                    <Header />
+                    <main className="flex-1 overflow-y-auto">
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/video/:videoId" element={<VideoPage />} />
+                        <Route path="/channel/:channelId" element={<ChannelPage />} />
+                        <Route path="/search" element={<SearchPage />} />
+                        <Route path="/trending" element={<TrendingPage />} />
+                        <Route path="/subscriptions" element={<SubscriptionsPage />} />
                         <Route path="/library" element={<LibraryPage />} />
+                        <Route path="/history" element={<LibraryPage />} />
+                        <Route path="/liked" element={<LibraryPage />} />
                         <Route path="/playlists" element={<PlaylistsPage />} />
+                        <Route path="/shorts" element={<StoriesPage />} />
+                        <Route path="/stories" element={<StoriesPage />} />
                         <Route path="/live-events" element={<LiveEventsPage />} />
                         <Route path="/creator-dashboard" element={<CreatorDashboard />} />
-              </Routes>
-            </main>
-          </div>
-        </div>
-        <Toaster position="top-right" />
-      </Router>
+                        <Route path="/advertiser-dashboard" element={<AdvertiserDashboardPage />} />
+                        <Route path="/admin" element={<AdminPage />} />
+                        <Route path="/admin/reports" element={<AdminReportsPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="*" element={<HomePage />} />
+                      </Routes>
+                    </main>
+                  </div>
+                </div>
+                <Toaster position="top-right" />
+              </Router>
             </LiveEventProvider>
           </AdProvider>
         </PlaylistProvider>

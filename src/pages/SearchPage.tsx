@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FiFilter, FiX } from "react-icons/fi";
-import { useVideo } from "../contexts/VideoContext";
+import { useVideo, type Video } from "../contexts/VideoContext";
 import VideoCard from "../components/VideoCard";
 import AdvancedSearch, { SearchFilters } from "../components/AdvancedSearch";
 
 const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { searchVideos } = useVideo();
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);

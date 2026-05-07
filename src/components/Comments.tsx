@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { FiHeart, FiMessageCircle, FiMoreVertical, FiFlag } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+import { loadState, saveState, storageKeys } from '../services/storage';
 
 interface Comment {
   id: string;
@@ -17,11 +20,12 @@ interface CommentsProps {
 }
 
 const Comments: React.FC<CommentsProps> = ({ videoId }) => {
-  const [comments, setComments] = useState<Comment[]>([
+  const { user } = useAuth();
+  const defaultComments: Comment[] = [
     {
       id: '1',
       author: 'John Doe',
-      authorAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40',
+      authorAvatar: '/amplifi-logo.svg',
       content: 'Great content! Really helped me understand the concepts better.',
       timestamp: '2 hours ago',
       likes: 24,
@@ -31,7 +35,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
     {
       id: '2',
       author: 'Sarah Wilson',
-      authorAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40',
+      authorAvatar: '/amplifi-logo.svg',
       content: 'Can you make more videos about this topic? It\'s really interesting!',
       timestamp: '5 hours ago',
       likes: 18,
@@ -41,18 +45,28 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
     {
       id: '3',
       author: 'Mike Johnson',
-      authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40',
+      authorAvatar: '/amplifi-logo.svg',
       content: 'I\'ve been looking for this explanation everywhere. Thank you!',
       timestamp: '1 day ago',
       likes: 42,
       replies: 0,
       isLiked: false
     }
-  ]);
+  ];
+
+  const [comments, setComments] = useState<Comment[]>(() => {
+    const storedComments = loadState<Record<string, Comment[]>>(storageKeys.comments, {});
+    return storedComments[videoId] ?? defaultComments;
+  });
 
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
+
+  useEffect(() => {
+    const storedComments = loadState<Record<string, Comment[]>>(storageKeys.comments, {});
+    saveState(storageKeys.comments, { ...storedComments, [videoId]: comments });
+  }, [comments, videoId]);
 
   const handleLike = (commentId: string) => {
     setComments(prev => prev.map(comment => 
@@ -67,8 +81,8 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
 
     const comment: Comment = {
       id: Date.now().toString(),
-      author: 'Current User',
-      authorAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40',
+      author: user?.displayName || 'Current User',
+      authorAvatar: user?.avatar || '/amplifi-logo.svg',
       content: newComment,
       timestamp: 'Just now',
       likes: 0,
@@ -83,9 +97,32 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
   const handleSubmitReply = (commentId: string) => {
     if (!replyText.trim()) return;
 
-    // In a real app, you'd add the reply to the comment
+    setComments(prev => prev.map(comment =>
+      comment.id === commentId
+        ? { ...comment, replies: comment.replies + 1 }
+        : comment
+    ));
     setReplyingTo(null);
     setReplyText('');
+    toast.success('Reply added');
+  };
+
+  const handleReport = (commentId: string) => {
+    const reports = loadState<Array<{ id: string; type: string; contentId: string; reason: string; createdAt: string }>>(
+      storageKeys.reports,
+      []
+    );
+    saveState(storageKeys.reports, [
+      {
+        id: `report_${Date.now()}`,
+        type: 'comment',
+        contentId: commentId,
+        reason: 'viewer-report',
+        createdAt: new Date().toISOString()
+      },
+      ...reports
+    ]);
+    toast.success('Comment reported for review');
   };
 
   const formatNumber = (num: number): string => {
@@ -99,7 +136,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
       {/* Comment Input */}
       <div className="flex space-x-3">
         <img 
-          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40"
+          src="/amplifi-logo.svg"
           alt="Your avatar"
           className="w-10 h-10 rounded-full"
         />
@@ -159,7 +196,15 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
                     <span>Reply</span>
                   </button>
                   
-                  <button className="text-gray-500 hover:text-gray-700">
+                  <button
+                    onClick={() => handleReport(comment.id)}
+                    className="flex items-center space-x-1 text-gray-500 hover:text-red-600"
+                  >
+                    <FiFlag className="w-4 h-4" />
+                    <span>Report</span>
+                  </button>
+
+                  <button className="text-gray-500 hover:text-gray-700" title="More actions">
                     <FiMoreVertical className="w-4 h-4" />
                   </button>
                 </div>

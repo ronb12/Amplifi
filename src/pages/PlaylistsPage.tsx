@@ -22,7 +22,7 @@ const PlaylistsPage: React.FC = () => {
         channelName: user?.displayName || '',
         videoCount: 0,
         isPublic: newPlaylist.isPublic,
-        thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400'
+        thumbnail: '/amplifi-logo.svg'
       });
 
       setNewPlaylist({ title: '', description: '', isPublic: true });

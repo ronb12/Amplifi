@@ -11,7 +11,9 @@ import {
   FiSettings,
   FiDollarSign,
   FiCalendar,
-  FiZap
+  FiZap,
+  FiShield,
+  FiTarget
 } from "react-icons/fi";
 
 const Sidebar: React.FC = () => {
@@ -31,6 +33,8 @@ const Sidebar: React.FC = () => {
     { path: "/playlists", icon: FiPlay, label: "Playlists" },
     { path: "/live-events", icon: FiCalendar, label: "Live Events" },
     { path: "/creator-dashboard", icon: FiDollarSign, label: "Creator Dashboard" },
+    { path: "/advertiser-dashboard", icon: FiTarget, label: "Advertiser Dashboard" },
+    { path: "/admin", icon: FiShield, label: "Admin" },
     { path: "/settings", icon: FiSettings, label: "Settings" },
   ];
 

@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { FiVideo, FiMic, FiUsers, FiMessageCircle } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+import { startProductionStream, stopPublishedStream, type PublishedStream } from '../services/liveStreaming';
 
 interface LiveStreamProps {
   isOpen: boolean;
@@ -10,31 +12,54 @@ const LiveStream: React.FC<LiveStreamProps> = ({ isOpen, onClose }) => {
   const [isLive, setIsLive] = useState(false);
   const [viewerCount, setViewerCount] = useState(0);
   const [title, setTitle] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
+  const [allowChat, setAllowChat] = useState(true);
+  const [streamSession, setStreamSession] = useState<PublishedStream | null>(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [previewType, setPreviewType] = useState<'local' | 'agora'>('local');
   const videoRef = useRef<HTMLVideoElement>(null);
+  const agoraPreviewRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   const startStream = async () => {
+    if (!title.trim()) {
+      alert('Add a stream title before going live.');
+      return;
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
+      setStatusMessage('Starting stream...');
+      const published = await startProductionStream({
+        title: title.trim(),
+        creatorId: user?.channelId || user?.id || 'demo-creator',
+        isPublic,
+        allowChat,
+        previewElement: agoraPreviewRef.current || videoRef.current
       });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsLive(true);
-        setViewerCount(Math.floor(Math.random() * 100) + 10);
-      }
+      setStreamSession(published);
+      setPreviewType(published.tracks ? 'agora' : 'local');
+      setIsLive(true);
+      setViewerCount(Math.floor(Math.random() * 100) + 10);
+      setStatusMessage(`Live on ${published.session.channelName}`);
     } catch (error) {
-      alert('Failed to start stream. Please check camera and microphone permissions.');
+      setStatusMessage('');
+      alert(error instanceof Error ? error.message : 'Failed to start stream. Please check camera and microphone permissions.');
     }
   };
 
-  const stopStream = () => {
+  const stopStream = async () => {
+    await stopPublishedStream(streamSession);
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    if (agoraPreviewRef.current) {
+      agoraPreviewRef.current.innerHTML = '';
+    }
+    setStreamSession(null);
+    setPreviewType('local');
     setIsLive(false);
     setViewerCount(0);
+    setStatusMessage('');
   };
 
   if (!isOpen) return null;
@@ -63,11 +88,21 @@ const LiveStream: React.FC<LiveStreamProps> = ({ isOpen, onClose }) => {
 
             <div className="space-y-3">
               <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded text-blue-600" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="rounded text-blue-600"
+                  checked={isPublic}
+                  onChange={(event) => setIsPublic(event.target.checked)}
+                />
                 <span className="text-sm text-gray-700">Public stream</span>
               </label>
               <label className="flex items-center space-x-3">
-                <input type="checkbox" className="rounded text-blue-600" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="rounded text-blue-600"
+                  checked={allowChat}
+                  onChange={(event) => setAllowChat(event.target.checked)}
+                />
                 <span className="text-sm text-gray-700">Allow live chat</span>
               </label>
             </div>
@@ -92,11 +127,15 @@ const LiveStream: React.FC<LiveStreamProps> = ({ isOpen, onClose }) => {
           {/* Video Preview */}
           <div className="lg:col-span-2">
             <div className="bg-black rounded-lg overflow-hidden">
+              <div
+                ref={agoraPreviewRef}
+                className={previewType === 'agora' ? 'w-full h-96' : 'hidden'}
+              />
               <video
                 ref={videoRef}
                 autoPlay
                 muted
-                className="w-full h-96 object-cover"
+                className={previewType === 'local' ? 'w-full h-96 object-cover' : 'hidden'}
               />
             </div>
 
@@ -120,6 +159,10 @@ const LiveStream: React.FC<LiveStreamProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
+            )}
+
+            {statusMessage && (
+              <p className="mt-3 text-sm text-gray-600">{statusMessage}</p>
             )}
           </div>
         </div>

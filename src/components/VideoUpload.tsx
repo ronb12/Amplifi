@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { FiUpload, FiX, FiPlay, FiImage, FiEdit3, FiGlobe, FiLock } from 'react-icons/fi';
+import { useAuth, type User } from '../contexts/AuthContext';
+import { useVideo } from '../contexts/VideoContext';
+import { loadState, storageKeys } from '../services/storage';
 
 interface VideoUploadProps {
   isOpen: boolean;
@@ -19,6 +22,8 @@ interface UploadData {
 }
 
 const VideoUpload: React.FC<VideoUploadProps> = ({ isOpen, onClose }) => {
+  const { user, becomeCreator } = useAuth();
+  const { addChannel, addVideo, channels } = useVideo();
   const [uploadData, setUploadData] = useState<UploadData>({
     title: '',
     description: '',
@@ -95,13 +100,59 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ isOpen, onClose }) => {
 
     setIsUploading(true);
     setUploadProgress(0);
+    let creatorChannelId = user?.channelId;
+    if (!creatorChannelId && user) {
+      await becomeCreator();
+      const storedUser = loadState<User | null>(storageKeys.authUser, null);
+      creatorChannelId = storedUser?.channelId;
+    }
+    creatorChannelId = creatorChannelId || user?.id || `channel_${Date.now()}`;
+    const creatorName = user?.displayName || 'Amplifi Creator';
 
-    // Simulate upload progress
     const interval = setInterval(() => {
       setUploadProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           setIsUploading(false);
+          if (!channels.some(channel => channel.id === creatorChannelId)) {
+            addChannel({
+              id: creatorChannelId,
+              name: creatorName,
+              avatar: user?.avatar || '/amplifi-logo.svg',
+              subscribers: user?.subscriberCount || 0,
+              videos: 0,
+              description: user?.description || 'Welcome to my Amplifi channel.'
+            });
+          }
+          addVideo({
+            id: `video_${Date.now()}`,
+            title: uploadData.title.trim() || uploadData.video?.name.replace(/\.[^/.]+$/, '') || 'Untitled upload',
+            description: uploadData.description.trim() || 'No description provided.',
+            thumbnail: '/amplifi-logo.svg',
+            channelId: creatorChannelId,
+            channelName: creatorName,
+            channelAvatar: user?.avatar || '/amplifi-logo.svg',
+            views: 0,
+            timestamp: 'Just now',
+            duration: 'Processing',
+            likes: 0,
+            dislikes: 0,
+            comments: 0,
+            videoUrl: ''
+          });
+          setUploadData({
+            title: '',
+            description: '',
+            tags: [],
+            visibility: 'public',
+            thumbnail: null,
+            video: null,
+            category: 'education',
+            language: 'en',
+            ageRestriction: false
+          });
+          setCurrentStep(1);
+          setTagInput('');
           onClose();
           return 100;
         }
@@ -346,7 +397,10 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ isOpen, onClose }) => {
                       name="visibility"
                       value={option.value}
                       checked={uploadData.visibility === option.value}
-                      onChange={(e) => setUploadData(prev => ({ ...prev, visibility: e.target.value as any }))}
+                      onChange={(e) => setUploadData(prev => ({
+                        ...prev,
+                        visibility: e.target.value as UploadData['visibility']
+                      }))}
                       className="mt-1"
                     />
                     <div className="flex items-center space-x-2">

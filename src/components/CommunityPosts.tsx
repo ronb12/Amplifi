@@ -80,7 +80,7 @@ const CommunityPosts: React.FC<CommunityPostsProps> = ({
         author: {
           id: currentUserId || '',
           name: 'Current User',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          avatar: '/amplifi-logo.svg',
           isCreator: isCreator
         }
       });
@@ -159,7 +159,7 @@ const CommunityPosts: React.FC<CommunityPostsProps> = ({
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-center space-x-3 mb-4">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"
+              src="/amplifi-logo.svg"
               alt="Your avatar"
               className="w-10 h-10 rounded-full"
             />

@@ -25,14 +25,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 }) => {
   const [filters, setFilters] = useState<SearchFilters>(currentFilters);
 
-  const sortOptions = [
+  const sortOptions: Array<{ value: SearchFilters['sortBy']; label: string; icon: typeof FiTrendingUp }> = [
     { value: 'relevance', label: 'Relevance', icon: FiTrendingUp },
     { value: 'upload_date', label: 'Upload date', icon: FiCalendar },
     { value: 'view_count', label: 'View count', icon: FiEye },
     { value: 'rating', label: 'Rating', icon: FiTrendingUp }
   ];
 
-  const uploadDateOptions = [
+  const uploadDateOptions: Array<{ value: Exclude<SearchFilters['uploadDate'], 'any'>; label: string }> = [
     { value: 'hour', label: 'Last hour' },
     { value: 'today', label: 'Today' },
     { value: 'week', label: 'This week' },
@@ -40,19 +40,19 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     { value: 'year', label: 'This year' }
   ];
 
-  const durationOptions = [
+  const durationOptions: Array<{ value: Exclude<SearchFilters['duration'], 'any'>; label: string }> = [
     { value: 'short', label: 'Under 4 minutes' },
     { value: 'medium', label: '4-20 minutes' },
     { value: 'long', label: 'Over 20 minutes' }
   ];
 
-  const qualityOptions = [
+  const qualityOptions: Array<{ value: SearchFilters['quality']; label: string }> = [
     { value: 'any', label: 'Any quality' },
     { value: 'hd', label: 'HD' },
     { value: '4k', label: '4K' }
   ];
 
-  const typeOptions = [
+  const typeOptions: Array<{ value: SearchFilters['type']; label: string }> = [
     { value: 'video', label: 'Videos' },
     { value: 'channel', label: 'Channels' },
     { value: 'playlist', label: 'Playlists' }
@@ -72,7 +72,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     'Purchased'
   ];
 
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
+  const handleFilterChange = <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -132,7 +132,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                       name="sortBy"
                       value={option.value}
                       checked={filters.sortBy === option.value}
-                      onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                      onChange={(e) => handleFilterChange('sortBy', e.target.value as SearchFilters['sortBy'])}
                       className="text-blue-600"
                     />
                     <Icon className="w-4 h-4 text-gray-500" />
@@ -154,7 +154,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                     name="uploadDate"
                     value={option.value}
                     checked={filters.uploadDate === option.value}
-                    onChange={(e) => handleFilterChange('uploadDate', e.target.value)}
+                    onChange={(e) => handleFilterChange('uploadDate', e.target.value as SearchFilters['uploadDate'])}
                     className="text-blue-600"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>
@@ -174,7 +174,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                     name="duration"
                     value={option.value}
                     checked={filters.duration === option.value}
-                    onChange={(e) => handleFilterChange('duration', e.target.value)}
+                    onChange={(e) => handleFilterChange('duration', e.target.value as SearchFilters['duration'])}
                     className="text-blue-600"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>
@@ -194,7 +194,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                     name="quality"
                     value={option.value}
                     checked={filters.quality === option.value}
-                    onChange={(e) => handleFilterChange('quality', e.target.value)}
+                    onChange={(e) => handleFilterChange('quality', e.target.value as SearchFilters['quality'])}
                     className="text-blue-600"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>
@@ -214,7 +214,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                     name="type"
                     value={option.value}
                     checked={filters.type === option.value}
-                    onChange={(e) => handleFilterChange('type', e.target.value)}
+                    onChange={(e) => handleFilterChange('type', e.target.value as SearchFilters['type'])}
                     className="text-blue-600"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>

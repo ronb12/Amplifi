@@ -1,24 +1,70 @@
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
-import { defineConfig } from "eslint/config";
-
+import js from '@eslint/js';
+import globals from 'globals';
+import react from 'eslint-plugin-react';
+import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    files: ["**/*.js"],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      '.vercel/**',
+      'public/**',
+      'public 2/**',
+      '.firebase/**',
+      '*.js',
+      'functions/**'
+    ]
+  },
+  js.configs.recommended,
+  {
+    files: ['src/**/*.{ts,tsx}', 'vite.config.ts'],
+    plugins: {
+      react
+    },
     languageOptions: {
-      ecmaVersion: 2021,
-      sourceType: "module",
+      parser: tsParser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      ecmaVersion: 2022,
+      sourceType: 'module',
       globals: {
-        db: "readonly",
-        auth: "readonly",
-        firebase: "readonly",
-        storage: "readonly"
+        ...globals.browser
+      }
+    },
+    settings: {
+      react: {
+        version: 'detect'
       }
     },
     rules: {
-      // Add or adjust rules as needed
+      'react/react-in-jsx-scope': 'off',
+      'no-undef': 'off',
+      'no-unused-vars': 'off'
+    }
+  },
+  {
+    files: ['tests/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node
+      }
+    }
+  },
+  {
+    files: ['api/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node
+      }
     }
   }
 ];

@@ -1,13 +1,39 @@
 import React, { useState } from 'react';
 import { useLiveEvent } from '../contexts/LiveEventContext';
 import { useAuth } from '../contexts/AuthContext';
-import { FiCalendar, FiClock, FiUsers, FiDollarSign, FiPlay, FiTag, FiStar } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiPlay, FiStar, FiUsers, FiX } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+import type { LiveEvent } from '../contexts/LiveEventContext';
+
+const toDateTimeLocalValue = (date: Date) => {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+};
+
+const createDefaultEventForm = () => {
+  const start = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  return {
+    title: '',
+    description: '',
+    startTime: toDateTimeLocalValue(start),
+    endTime: toDateTimeLocalValue(end),
+    price: '9.99',
+    maxAttendees: '100',
+    category: 'workshop' as LiveEvent['category'],
+    tags: '',
+    benefits: ''
+  };
+};
 
 const LiveEventsPage: React.FC = () => {
-  const { events, purchaseTicket } = useLiveEvent();
+  const { events, createEvent, purchaseTicket } = useLiveEvent();
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'price' | 'popularity'>('date');
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [eventForm, setEventForm] = useState(createDefaultEventForm);
 
   const categories = [
     { id: 'all', name: 'All Events', icon: FiStar },
@@ -52,6 +78,38 @@ const LiveEventsPage: React.FC = () => {
     }
   };
 
+  const handleCreateEvent = () => {
+    if (!user) {
+      alert('Please log in to create events');
+      return;
+    }
+
+    if (!eventForm.title.trim()) {
+      toast.error('Add an event title');
+      return;
+    }
+    const fallbackTimes = createDefaultEventForm();
+
+    createEvent({
+      title: eventForm.title.trim(),
+      description: eventForm.description.trim() || 'Join this live Amplifi event.',
+      thumbnail: '/amplifi-logo.svg',
+      creatorId: user.channelId || user.id,
+      creatorName: user.displayName,
+      creatorAvatar: user.avatar,
+      startTime: new Date(eventForm.startTime || fallbackTimes.startTime).toISOString(),
+      endTime: new Date(eventForm.endTime || fallbackTimes.endTime).toISOString(),
+      price: Number.parseFloat(eventForm.price) || 0,
+      maxAttendees: Number.parseInt(eventForm.maxAttendees, 10) || 100,
+      category: eventForm.category,
+      benefits: eventForm.benefits.split('\n').map(benefit => benefit.trim()).filter(Boolean),
+      tags: eventForm.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+    });
+    setEventForm(createDefaultEventForm());
+    setIsCreatingEvent(false);
+    toast.success('Event created');
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -85,11 +143,141 @@ const LiveEventsPage: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Live Events</h1>
         {user?.isCreator && (
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+          <button
+            onClick={() => {
+              setEventForm(createDefaultEventForm());
+              setIsCreatingEvent(true);
+            }}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
             Create Event
           </button>
         )}
       </div>
+
+      {isCreatingEvent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Create Event</h2>
+              <button
+                onClick={() => setIsCreatingEvent(false)}
+                className="text-gray-500 hover:text-gray-700"
+                title="Close"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input
+                  value={eventForm.title}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, title: event.target.value }))}
+                  placeholder="Event title"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={eventForm.description}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, description: event.target.value }))}
+                  placeholder="Describe the event"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Start time</label>
+                <input
+                  type="datetime-local"
+                  value={eventForm.startTime}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, startTime: event.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">End time</label>
+                <input
+                  type="datetime-local"
+                  value={eventForm.endTime}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, endTime: event.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={eventForm.price}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, price: event.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Capacity</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={eventForm.maxAttendees}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, maxAttendees: event.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select
+                  value={eventForm.category}
+                  onChange={(event) => setEventForm(prev => ({
+                    ...prev,
+                    category: event.target.value as LiveEvent['category']
+                  }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {categories.filter(category => category.id !== 'all').map(category => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                <input
+                  value={eventForm.tags}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, tags: event.target.value }))}
+                  placeholder="React, Design, Workshop"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Benefits</label>
+                <textarea
+                  value={eventForm.benefits}
+                  onChange={(event) => setEventForm(prev => ({ ...prev, benefits: event.target.value }))}
+                  placeholder="One benefit per line"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setIsCreatingEvent(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button onClick={handleCreateEvent} className="btn-primary">
+                Publish Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="mb-6 flex flex-wrap gap-4">
