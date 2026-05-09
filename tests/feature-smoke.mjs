@@ -35,6 +35,10 @@ server.stderr.on('data', chunk => process.stderr.write(chunk));
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const errors = [];
+const ignoredRequestHosts = new Set([
+  'ep1.adtrafficquality.google',
+  'pagead2.googlesyndication.com'
+]);
 
 page.on('console', message => {
   if (message.type() === 'error') {
@@ -44,7 +48,9 @@ page.on('console', message => {
 page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
 page.on('requestfailed', request => {
   const failure = request.failure();
-  if (failure && !request.url().startsWith('data:')) {
+  const url = request.url();
+  const host = URL.canParse(url) ? new URL(url).hostname : '';
+  if (failure && !url.startsWith('data:') && !ignoredRequestHosts.has(host)) {
     errors.push(`request failed: ${request.url()} ${failure.errorText}`);
   }
 });
