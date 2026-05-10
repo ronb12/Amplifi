@@ -35,10 +35,22 @@ server.stderr.on('data', chunk => process.stderr.write(chunk));
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const errors = [];
-const ignoredRequestHosts = new Set([
-  'ep1.adtrafficquality.google',
-  'pagead2.googlesyndication.com'
-]);
+const ignoredRequestHostSuffixes = [
+  'adtrafficquality.google',
+  'googlesyndication.com',
+  'doubleclick.net'
+];
+
+const isIgnoredRequestFailure = (url, errorText = '') => {
+  if (!errorText.includes('ERR_ABORTED') || !URL.canParse(url)) {
+    return false;
+  }
+
+  const { hostname } = new URL(url);
+  return ignoredRequestHostSuffixes.some(
+    suffix => hostname === suffix || hostname.endsWith(`.${suffix}`)
+  );
+};
 
 page.on('console', message => {
   if (message.type() === 'error') {
@@ -49,8 +61,7 @@ page.on('pageerror', error => errors.push(`pageerror: ${error.message}`));
 page.on('requestfailed', request => {
   const failure = request.failure();
   const url = request.url();
-  const host = URL.canParse(url) ? new URL(url).hostname : '';
-  if (failure && !url.startsWith('data:') && !ignoredRequestHosts.has(host)) {
+  if (failure && !url.startsWith('data:') && !isIgnoredRequestFailure(url, failure.errorText)) {
     errors.push(`request failed: ${request.url()} ${failure.errorText}`);
   }
 });
